@@ -17,9 +17,9 @@ min_version = "0.59.1"
 
 # If porting an existing theme
 [original]
-  author = "Canonical Ltd."
-  homepage = "https://canonical.com/"
-  repo = "https://github.com/canonical/vanilla-framework"
+  author = "Ubuntu Korea Community"
+  homepage = "https://blog.ubuntu-kr.org"
+  repo = "https://github.com/ubuntu-kr/blog.ubuntu-kr.org"
 
 [module]
   [[module.mounts]]
