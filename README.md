@@ -4,4 +4,4 @@ Built with Hugo and vanillaframework.io
 
 ## License
 
-MIT License
+MIT License (See `LICENSE`)
