@@ -1,5 +1,5 @@
 {
-	"name": "vanilla",
+	"name": "vanilla-framework",
 	"version": "1.0.0",
 	"dependencies": {
 		"vanilla-framework": "^3.11.0"

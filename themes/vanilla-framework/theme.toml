@@ -1,0 +1,27 @@
+# theme.toml template for a Hugo theme
+# See https://github.com/gohugoio/hugoThemes#themetoml for an example
+
+name = "vanilla-framework"
+license = "LGPL"
+licenselink = "https://github.com/canonical/vanilla-framework/blob/main/LICENSE"
+description = "Vanilla Framework"
+homepage = "https://github.com/kkumtree/blog.minseong.xyz"
+tags = ["blog", "personal"]
+features = []
+min_version = "0.59.1"
+
+# If the theme has a single author
+[author]
+  name = "kkumtree"
+	homepage = "https://github.com/kkumtree/"
+
+# If porting an existing theme
+[original]
+  author = "Canonical Ltd."
+  homepage = "https://canonical.com/"
+  repo = "https://github.com/canonical/vanilla-framework"
+
+[module]
+  [[module.mounts]]
+	  source = "node_nodules"
+		target = "assets/node_modules"
