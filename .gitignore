@@ -1,6 +1,8 @@
 # Hugo default output directory
+
 /public
 resources
+*.lock
 
 ## OS Files
 

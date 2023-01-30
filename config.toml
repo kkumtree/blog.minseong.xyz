@@ -1,3 +1,32 @@
-baseURL = 'http://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
+baseURL = 'blog.minseong.xyz'
+languageCode = 'ko-kr'
+title = "Minseong's Blog"
+theme = "valila"
+buildFuture = true
+paginate = 5
+permalinks = [
+  { post = "/:2006/:01/:02/:filename" }
+]
+params = [
+  shortTitle = "Blog"
+  contact = "mscho@ubuntu-kr.org"
+  github = "kkumtree"
+  launchpad = "mscho7969"
+  source_repo = "https://github.com/kkumtree/blog.minseong.xyz"
+defaultContentLanguage = "ko"
+
+
+
+paginate: 5
+permalinks: 
+  post: /:2006/:01/:02/:filename
+params:
+  shortTitle: Blog
+  contact: contact@ubuntu-kr.org
+  facebook: ubuntukorea
+  twitter: UbuntuKrOrg
+  github: ubuntu-kr
+  launchpad: ubuntu-ko
+  youtube: https://www.youtube.com/user/UbuntuKorea
+  source_repo: https://github.com/ubuntu-kr/blog.ubuntu-kr.org
+defaultContentLanguage: ko
