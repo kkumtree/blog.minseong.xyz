@@ -3,6 +3,7 @@
 /public
 resources
 *.lock
+*.lock*
 
 ## OS Files
 

@@ -2,7 +2,7 @@
 
 # blog.minseong.xyz
 
-Built with Hugo and vanillaframework.io
+Built with [Hugo](https://gohugo.io) and [Vanilla - A simple, extensible CSS framework](https://vanillaframework.io/)
 
 ## License
 
