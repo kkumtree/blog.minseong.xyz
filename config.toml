@@ -7,10 +7,62 @@ paginate = 5
 permalinks = [
   { post = "/:2006/:01/:02/:filename" }
 ]
-params = [
+
+[params]
   shortTitle = "Blog"
   contact = "mscho@ubuntu-kr.org"
   github = "kkumtree"
   launchpad = "mscho7969"
   source_repo = "https://github.com/kkumtree/blog.minseong.xyz"
   defaultContentLanguage = "ko"
+
+[params.languages.ko]
+  languageName = "한국어"
+  title = "Magic(physics) tool's blog"
+  weight = 1
+
+[params.languages.ko.params]
+  shortTitle = "블로그"
+  description = "Magic(physics) tool's blog"
+  copyright = "© 2023 blog.minseong.xyz All rights reserved. 별도 고지가 있는 경우를 제외하고, 웹 사이트 소스코드는 MIT, 웹 사이트의 컨텐츠는 CC BY-SA 4.0 라이선스로 이용 가능합니다. "
+
+[params.languages.ko.params.main_slide]
+  label = "About this blog"
+  link = "about"
+
+[params.languages.ko.params.menu.main]
+  identifier = "tags"
+  name = "태그"
+  weight = 2
+  url = "/tags"
+
+[params.languages.ko.params.menu.link]
+  identifier = "home"
+  name = "Github"
+  weight = 3
+  url = "https://github.com/kkumtree"
+   
+[params.languages.en]
+  languageName = "English"
+  title = "Magic(physics) tool's blog"
+  weight = 2
+
+[params.languages.en.params]
+  shortTitle = "Blog"
+  description = "Magic(physics) tool's blog"
+
+[params.languages.en.params.main_slide]
+  label = "About this blog"
+  link = "about"
+
+[params.languages.en.params.menu.main]
+  identifier = "tags"
+  name = "Tags"
+  weight = 2
+  url = "/tags"
+
+[params.languages.en.params.menu.link]
+  identifier = "home"
+  name = "Github"
+  weight = 3
+  url = "https://github.com/kkumtree"
