@@ -1,4 +1,4 @@
-![Deploy Website](https://github.com/kkumtree/blog.minseong.xyz/actions/workflows/deploy.yml/badge.svg)](https://github.com/https://github.com/kkumtree/blog.minseong.xyz/actions/workflows/deploy.yml)
+[![Deploy Website](https://github.com/kkumtree/blog.minseong.xyz/actions/workflows/deploy.yml/badge.svg)](https://github.com/https://github.com/kkumtree/blog.minseong.xyz/actions/workflows/deploy.yml)
 
 # blog.minseong.xyz
 
