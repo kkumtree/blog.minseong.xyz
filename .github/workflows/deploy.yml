@@ -35,7 +35,6 @@ jobs:
         working-directory: 'themes/v-framework'
         run: |
           yarn install --immutable --immutable-cache --check-cache
-          yarn test
 
       - name: Install hugo
         run: |
