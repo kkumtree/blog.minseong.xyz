@@ -1,5 +1,5 @@
 name: Deploy Website
-
+needs: cache
 on:
   push:
     branches: [ main ]
@@ -10,6 +10,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    
     # Check out latest commit 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -22,12 +23,15 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: '^1.19.5' # The Go version to download (if necessary) and use.
-      
+          cache: true # Enable caching
+
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-
+          node-version: 'lts/*'
+          cache: 'yarn'
+          cache-dependency-path: 'src/themes/vanilla-framework/yarn.lock'
+        
       - name: Install hugo
         working-directory: src
         run: |
@@ -43,8 +47,9 @@ jobs:
           hugo mod get
           cd themes/vanilla-framework && yarn install && cd ../../
           hugo
+
       # Checkout destination branch
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         name: Checkout dest repo
         with:
           path: dest
@@ -57,6 +62,7 @@ jobs:
         run: |
           rm -rf *
           yes | cp -rf ../src/public/* .
+
       # Commit and push changes
       - name: Commit website updates
         working-directory: dest
