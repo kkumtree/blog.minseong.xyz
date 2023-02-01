@@ -17,23 +17,23 @@ jobs:
         name: Checkout src repo
         with:
           ref: main
-          path: src
       
       - uses: actions/setup-go@v3
         with:
-          go-version-file: 'src/go.mod' # The Go version to download (if necessary) and use.
+          go-version-file: |
+            'go.mod'
+            'themes/v-framework/go.mod'
           check-latest: false # Check for the latest version of Go available for download.
           cache: true # Enable caching
-          cache-dependency-path: 'src/go.sum' # The path to the dependency file to use for the cache key.
+          cache-dependency-path: 'go.sum' # The path to the dependency file to use for the cache key.
 
       - uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
           cache: 'yarn'
-          cache-dependency-path: 'src/themes/vanilla-framework/yarn.lock'
+          cache-dependency-path: 'themes/v-framework/yarn.lock'
         
       - name: Install hugo
-        working-directory: src
         run: |
           wget https://github.com/gohugoio/hugo/releases/download/v0.110.0/hugo_extended_0.110.0_linux-amd64.deb -O hugo.deb
           DEBIAN_FRONTEND=noninteractive sudo dpkg -i hugo.deb
@@ -42,7 +42,6 @@ jobs:
           sudo cp sass_embedded/dart-sass-embedded /usr/bin/
 
       - name: Build website with hugo
-        working-directory: src
         run: |
           hugo mod get
           hugo
@@ -60,7 +59,7 @@ jobs:
         working-directory: dest
         run: |
           rm -rf *
-          yes | cp -rf ../src/public/* .
+          yes | cp -rf ../public/* .
 
       # Commit and push changes
       - name: Commit website updates
