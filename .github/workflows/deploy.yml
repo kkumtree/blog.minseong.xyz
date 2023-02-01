@@ -27,9 +27,13 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
+          working-directory: 'themes/v-framework'
           node-version: 'lts/*'
           cache: 'yarn'
-          cache-dependency-path: 'themes/v-framework/yarn.lock'
+          cache-dependency-path: 'yarn.lock'
+        run: |
+          yarn install --immutable --immutable-cache --check-cache
+          yarn test
         
       - name: Install hugo
         run: |
@@ -41,8 +45,6 @@ jobs:
 
       - name: Build website with hugo
         run: |
-          pwd
-          ls -al
           hugo mod get
           hugo
 
