@@ -24,6 +24,7 @@ jobs:
           go-version-file: 'src/go.mod' # The Go version to download (if necessary) and use.
           check-latest: false # Check for the latest version of Go available for download.
           cache: true # Enable caching
+          cache-dependency-path: 'src/go.sum' # The path to the dependency file to use for the cache key.
 
       - uses: actions/setup-node@v3
         with:
