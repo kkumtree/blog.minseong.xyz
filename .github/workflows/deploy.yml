@@ -23,6 +23,7 @@ jobs:
         with:
           go-version-file: 'src/go.mod' # The Go version to download (if necessary) and use.
           cache: true # Enable caching
+          cache-dependency-path: 'src/go.mod' # The path to the dependency file to use for the cache key.
 
       - uses: actions/setup-node@v3
         with:
