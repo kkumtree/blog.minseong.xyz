@@ -1,6 +1,6 @@
 baseURL = 'blog.minseong.xyz'
 languageCode = 'ko-kr'
-title = "Magic(physics) tool, which could resolve any bugs"
+title = "kkumtree"
 theme = "vanilla-framework"
 buildFuture = true
 paginate = 5
