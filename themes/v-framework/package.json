@@ -1,6 +1,7 @@
 {
 	"name": "v-framework",
 	"version": "0.1.0",
+	"private": true,
 	"dependencies": {
 		"vanilla-framework": "^3.11.0"
 	}

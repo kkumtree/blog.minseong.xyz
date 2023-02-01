@@ -23,7 +23,6 @@ jobs:
           go-version-file: 'go.mod'
           check-latest: false # Check for the latest version of Go available for download.
           cache: true # Enable caching
-          cache-dependency-path: 'go.sum' # The path to the dependency file to use for the cache key.
 
       - uses: actions/setup-node@v3
         with:
