@@ -1,5 +1,4 @@
 name: Deploy Website
-needs: cache
 on:
   push:
     branches: [ main ]
