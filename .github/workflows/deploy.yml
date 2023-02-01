@@ -45,7 +45,6 @@ jobs:
         working-directory: src
         run: |
           hugo mod get
-          cd themes/vanilla-framework && yarn install && cd ../../
           hugo
 
       # Checkout destination branch
