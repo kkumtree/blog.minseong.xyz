@@ -31,6 +31,9 @@ jobs:
           node-version: 'lts/*'
           cache: 'yarn'
           cache-dependency-path: 'yarn.lock'
+
+      - name: Install yarn dependencies  
+        working-directory: 'themes/v-framework'
         run: |
           yarn install --immutable --immutable-cache --check-cache
           yarn test
