@@ -2,9 +2,9 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on kkumtree</title>
-    <link>blog.minseong.xyz/categories/</link>
+    <link>https://blog.minseong.xyz/categories/</link>
     <description>Recent content in Categories on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>ko-kr</language><atom:link href="blog.minseong.xyz/categories/index.xml" rel="self" type="application/rss+xml" />
+    <language>ko-kr</language><atom:link href="https://blog.minseong.xyz/categories/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
