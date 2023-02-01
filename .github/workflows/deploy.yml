@@ -41,7 +41,7 @@ jobs:
         working-directory: src
         run: |
           hugo mod get
-          cd themes/ubuntukr && yarn install && cd ../../
+          cd themes/vanilla-framework && yarn install && cd ../../
           hugo
       # Checkout destination branch
       - uses: actions/checkout@v2
