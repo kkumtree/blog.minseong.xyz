@@ -1,4 +1,4 @@
-baseURL = 'blog.minseong.xyz'
+baseURL = 'https://blog.minseong.xyz'
 languageCode = 'ko-kr'
 title = "kkumtree"
 theme = "v-framework"

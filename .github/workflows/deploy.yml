@@ -41,6 +41,8 @@ jobs:
 
       - name: Build website with hugo
         run: |
+          pwd
+          ls -al
           hugo mod get
           hugo
 
