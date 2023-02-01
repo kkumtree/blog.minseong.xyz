@@ -1,3 +1,3 @@
-module vanilla-framework-theme
+module kkumtree-blog
 
 go 1.19.5
