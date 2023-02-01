@@ -1,7 +1,7 @@
 baseURL = 'blog.minseong.xyz'
 languageCode = 'ko-kr'
 title = "kkumtree"
-theme = "vanilla-framework"
+theme = "v-framework"
 buildFuture = true
 paginate = 5
 permalinks = [

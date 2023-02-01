@@ -1,67 +1,67 @@
 function toggleDropdown(toggle, open) {
-    var parentElement = toggle.parentNode;
-    var dropdown = document.getElementById(toggle.getAttribute('aria-controls'));
-    dropdown.setAttribute('aria-hidden', !open);
-  
-    if (open) {
-      parentElement.classList.add('is-active');
-    } else {
-      parentElement.classList.remove('is-active');
-    }
+  var parentElement = toggle.parentNode;
+  var dropdown = document.getElementById(toggle.getAttribute('aria-controls'));
+  dropdown.setAttribute('aria-hidden', !open);
+
+  if (open) {
+    parentElement.classList.add('is-active');
+  } else {
+    parentElement.classList.remove('is-active');
   }
-  
-  function closeAllDropdowns(toggles) {
-    toggles.forEach(function (toggle) {
-      toggleDropdown(toggle, false);
-    });
-  }
-  
-  function handleClickOutside(toggles, containerClass) {
-    document.addEventListener('click', function (event) {
-      var target = event.target;
-  
-      if (target.closest) {
-        if (!target.closest(containerClass)) {
-          closeAllDropdowns(toggles);
-        }
-      } else if (target.msMatchesSelector) {
-        // IE friendly `Element.closest` equivalent
-        // as in https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
-        do {
-          if (target.msMatchesSelector(containerClass)) {
-            return;
-          }
-          target = target.parentElement || target.parentNode;
-        } while (target !== null && target.nodeType === 1);
-  
+}
+
+function closeAllDropdowns(toggles) {
+  toggles.forEach(function (toggle) {
+    toggleDropdown(toggle, false);
+  });
+}
+
+function handleClickOutside(toggles, containerClass) {
+  document.addEventListener('click', function (event) {
+    var target = event.target;
+
+    if (target.closest) {
+      if (!target.closest(containerClass)) {
         closeAllDropdowns(toggles);
       }
-    });
-  }
-  
-  function initNavDropdowns(containerClass) {
-    var toggles = [].slice.call(document.querySelectorAll(containerClass + ' [aria-controls]'));
-  
-    handleClickOutside(toggles, containerClass);
-  
-    toggles.forEach(function (toggle) {
-      toggle.addEventListener('click', function (e) {
-        e.preventDefault();
-  
-        closeAllDropdowns(toggles);
-        toggleDropdown(toggle, true);
-      });
-    });
-  }
-    
-  initNavDropdowns('.p-navigation__item--dropdown-toggle')
+    } else if (target.msMatchesSelector) {
+      // IE friendly `Element.closest` equivalent
+      // as in https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+      do {
+        if (target.msMatchesSelector(containerClass)) {
+          return;
+        }
+        target = target.parentElement || target.parentNode;
+      } while (target !== null && target.nodeType === 1);
 
-  /**
-  Toggles the necessary aria- attributes' values on the menus
-  and handles to show or hide them.
-  @param {HTMLElement} element The menu link or button.
-  @param {Boolean} show Whether to show or hide the menu.
-  @param {Number} top Top offset in pixels where to show the menu.
+      closeAllDropdowns(toggles);
+    }
+  });
+}
+
+function initNavDropdowns(containerClass) {
+  var toggles = [].slice.call(document.querySelectorAll(containerClass + ' [aria-controls]'));
+
+  handleClickOutside(toggles, containerClass);
+
+  toggles.forEach(function (toggle) {
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      closeAllDropdowns(toggles);
+      toggleDropdown(toggle, true);
+    });
+  });
+}
+
+initNavDropdowns('.p-navigation__item--dropdown-toggle')
+
+/**
+Toggles the necessary aria- attributes' values on the menus
+and handles to show or hide them.
+@param {HTMLElement} element The menu link or button.
+@param {Boolean} show Whether to show or hide the menu.
+@param {Number} top Top offset in pixels where to show the menu.
 */
 function toggleMenu(element, show, top) {
   var target = document.getElementById(element.getAttribute('aria-controls'));
