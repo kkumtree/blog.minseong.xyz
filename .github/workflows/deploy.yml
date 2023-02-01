@@ -27,17 +27,16 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          working-directory: 'themes/v-framework'
           node-version: 'lts/*'
           cache: 'yarn'
-          cache-dependency-path: 'yarn.lock'
+          cache-dependency-path: 'themes/v-framework/yarn.lock'
 
       - name: Install yarn dependencies  
         working-directory: 'themes/v-framework'
         run: |
           yarn install --immutable --immutable-cache --check-cache
           yarn test
-        
+
       - name: Install hugo
         run: |
           wget https://github.com/gohugoio/hugo/releases/download/v0.110.0/hugo_extended_0.110.0_linux-amd64.deb -O hugo.deb
