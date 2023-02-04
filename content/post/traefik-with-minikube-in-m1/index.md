@@ -1,5 +1,5 @@
 ---
-date: 2023-02-03T16:10:06+09:00
+date: 2023-02-04T19:44:06+09:00
 title: "Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon"
 tags:
  - minikube
@@ -463,3 +463,12 @@ k8s.io/v1 API를 기준으로 작성되어 있으니, 참고바랍니다.
 - traefik 대시보드 확인
 
   ![traefik-dashboard](./images/traefik-dashboard.png)
+
+## reference
+
+- [Traefik Quick Start w/k8s](https://doc.traefik.io/traefik/getting-started/quick-start-with-kubernetes/)
+- [faun.pub](https://faun.pub/kubernetes-whoami-service-with-traefik-650d8311cf9b)
+- [CloudNet@](https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)
+- [Enable ingress 1](https://www.reddit.com/r/kubernetes/comments/e5dzse/does_traefik_as_ingress_work_in_minikube/)
+- [Enable ingress 2](https://doc.traefik.io/traefik/v1.7/user-guide/kubernetes/#prerequisites)
+- [ingress minikube](https://medium.com/@Oskarr3/setting-up-ingress-on-minikube-6ae825e98f82)
