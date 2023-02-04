@@ -32,7 +32,7 @@ jobs:
 
       - name: Install yarn dependencies  
         working-directory: 'themes/v-framework'
-        run: yarn install --frozen-lockfile
+        run: yarn install
 
       - name: Install hugo
         run: |
