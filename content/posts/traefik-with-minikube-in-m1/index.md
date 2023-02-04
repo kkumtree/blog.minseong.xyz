@@ -19,7 +19,7 @@ draft: true
 
 ```notice
 traefik v1.7에서는 예제 설명의 기준이
-k8s.io/v1beta1 API(deprecated)입니다.   
+k8s.io/v1beta1 API(deprecated)입니다   
 k8s.io/v1 API를 기준으로 작성되어 있으니, 참고바랍니다.
 ```
 
