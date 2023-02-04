@@ -30,10 +30,6 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'themes/v-framework/yarn.lock'
 
-      - name: Install yarn dependencies  
-        working-directory: 'themes/v-framework'
-        run: yarn install
-
       - name: Install hugo
         run: |
           wget https://github.com/gohugoio/hugo/releases/download/v0.110.0/hugo_extended_0.110.0_linux-amd64.deb -O hugo.deb
@@ -42,10 +38,15 @@ jobs:
           tar -xvzf dartsass.tar.gz
           sudo cp sass_embedded/dart-sass-embedded /usr/bin/
 
+      - name: check hugo mod 
+        run: hugo mod get
+          
+      - name: Install yarn dependencies  
+        working-directory: 'themes/v-framework'
+        run: yarn install
+         
       - name: Build website with hugo
-        run: |
-          hugo mod get
-          hugo
+        run: hugo
 
       # Checkout destination branch
       - uses: actions/checkout@v3
