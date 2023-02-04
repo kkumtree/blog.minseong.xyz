@@ -6,11 +6,11 @@
     <description>Recent content in minikube on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Fri, 03 Feb 2023 16:10:06 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/minikube/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 04 Feb 2023 19:44:06 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/minikube/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon</title>
       <link>https://blog.minseong.xyz/post/traefik-with-minikube-in-m1/</link>
-      <pubDate>Fri, 03 Feb 2023 16:10:06 +0900</pubDate>
+      <pubDate>Sat, 04 Feb 2023 19:44:06 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/post/traefik-with-minikube-in-m1/</guid>
       <description>traefik v1.7에서는 예제 설명의 기준이 k8s.io/v1beta1 API(deprecated)입니다 k8s.io/v1 API를 기준으로 작성되어 있으니, 참고바랍니다. 로컬환경(minikube)에서 Traefik(^2) 예제를 구현해보겠습니다.
