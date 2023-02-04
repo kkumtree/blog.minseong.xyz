@@ -14,7 +14,7 @@
     <loc>https://blog.minseong.xyz/tags/minikube/</loc>
     <lastmod>2023-02-03T16:10:06+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/posts/</loc>
+    <loc>https://blog.minseong.xyz/post/</loc>
     <lastmod>2023-02-03T16:10:06+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/</loc>
@@ -23,7 +23,7 @@
     <loc>https://blog.minseong.xyz/tags/traefik/</loc>
     <lastmod>2023-02-03T16:10:06+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/posts/traefik-with-minikube-in-m1/</loc>
+    <loc>https://blog.minseong.xyz/post/traefik-with-minikube-in-m1/</loc>
     <lastmod>2023-02-03T16:10:06+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/categories/</loc>
