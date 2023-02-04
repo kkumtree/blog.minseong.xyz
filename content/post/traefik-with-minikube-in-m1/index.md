@@ -1,5 +1,5 @@
 ---
-date: 2023-02-04T19:44:06+09:00
+date: 2023-02-05T04:54:06+09:00
 title: "Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon"
 tags:
  - minikube
