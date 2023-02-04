@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>kkumtree</title>
-    <link>https://blog.minseong.xyz/</link>
-    <description>Recent content on kkumtree</description>
+    <title>Traefik on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/traefik/</link>
+    <description>Recent content in Traefik on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Fri, 03 Feb 2023 16:10:06 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 03 Feb 2023 16:10:06 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/traefik/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon</title>
       <link>https://blog.minseong.xyz/posts/traefik-with-minikube-in-m1/</link>
