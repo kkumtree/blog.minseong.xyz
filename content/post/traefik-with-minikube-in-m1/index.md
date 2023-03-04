@@ -17,6 +17,17 @@ image: cover.png
 draft: false
 ---
 
+```deprecated
+주변으로부터 피드백을 받은 내용이 있어 새로운 글로 보완예정입니다. 
+- colima는 containerd처럼 cri가 아닌, Docker engine과 containerd 사이의 물건으로 추정됩니다. 
+  - 도커 엔진은 현재 containerd를 통해 프로세스를 관리.
+  - colima도 docker shim 구조는 탈피했을 거라고 추측 중. 
+  - 도커 엔진과 containerd 사이의 컨테이너 엔진(관리도구?)로 보임
+- colima 시작 시, 특정 런타임을 선택할 수 있습니다. 문서를 잘 읽어봅시다.
+  `colima start --runtime containerd`
+- k8s를 위한 colima 시작 명령어는 별도로 있습니다. colima github를 참고해주세요.
+```
+
 ```notice
 traefik v1.7에서는 예제 설명의 기준이
 k8s.io/v1beta1 API(deprecated)입니다   
