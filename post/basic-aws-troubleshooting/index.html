@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>AWS 트러블 슈팅 - 7주 간의 k8s 실무 스터디를 마치며 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="AWS 트러블 슈팅 - 7주 간의 k8s 실무 스터디를 마치며" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/basic-aws-troubleshooting/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/basic-aws-troubleshooting/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/basic-aws-troubleshooting/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.8c1fb07f2dee90a6523f7317a7d023e3c1b14bd4706bff237c94e366d59facf9.css">
+</head><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>AWS 트러블 슈팅 - 7주 간의 k8s 실무 스터디를 마치며</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-02-25T22:07:23&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">AWS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kops" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kops</span>
+              </div>
+            </a>
+            
+            <a href="/tags/troubleshooting" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">troubleshooting</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>최근 <a href="https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 Production Kubernetes Online Study(이하, PKOS)도 마지막 주차가 끝났습니다.<br>
+남은 계획은 4월부터 시작되는 휴식기간(a.k.a. 계약만료 후)중 복습 겸, 포스팅을 해보는 것입니다.</p>
+<p>오늘은 아래와 같이 실패를 거듭하여 추가로 알게된 소소한 트러블슈팅을 정리해보려고 합니다.<br>
+(물론, 새벽에 겨우겨우 주차별 과제 제출하고 기절하는 바람에, 맛점하다 깨닫고 소스라치게 휴대폰으로 수동 삭제한게 좀 큰 편입니다.)</p>
+<p><img src="./images/cost_explorer.png" alt="keep_your_wallet"></p>
+<p>불필요한 Try &amp; Fail을 줄이고, 즐거운 k8s 학습되시기 바랍니다.</p>
+<h2 id="0-aws-계정-잠금-해제">0. AWS 계정 잠금 해제</h2>
+<h3 id="상황">상황</h3>
+<ul>
+<li>
+<p>처음 1주차 안내가 끝나고 Route53 Hostname을 구매하려고 하니, 자꾸 결제가 실패하는 문제가 발생했습니다.</p>
+</li>
+<li>
+<p>kops 및 실습에서 주로 사용한 DNS가 CoreDNS였기 때문에, 이쪽에서 공수를 줄이기 위해 추가로 도메인을 구매하려 했으나 여러번 실패하였습니다.</p>
+</li>
+<li>
+<p>다만, 기존에 타 DNS 서비스를 사용하고 있다면, 해당 제공사에서 제공하는 Domain transfer registrar를 통해 Route53으로 이전할 수 있습니다.<br>
+저는 icann 90일 제한이 풀리자마자, 구입했던 제공사에서 타 제공사로 옮긴지 얼마 안된 도메인이라서, 새로 구매해야 했습니다.</p>
+<p><img src="./images/problem0.png" alt="problem0"></p>
+</li>
+</ul>
+<h3 id="원인">원인</h3>
+<ul>
+<li>
+<p>AWS는 친절하게도 <a href="https://www.merriam-webster.com/dictionary/compromised">compromised</a> account에 대한 알림을 보내줍니다.</p>
+</li>
+<li>
+<p>작년에 개설한 free-tier 계정의 암호도 잊어서 재설정하고, 도메인 결제를 위해 카드 변경까지 하였는데, 이로 인해 AWS 측에서 이상탐지를 하여 계정 잠금을 걸었던 것입니다.</p>
+</li>
+<li>
+<p>개인적으로는 이미 Virtual MFA도 걸어놓았었기 때문에, 많이 민감하다고 생각은 하지만 IAM User 접속도 아니고 Root 접속이라 민감하게 반응한 것처럼 보입니다.</p>
+<p><img src="./images/problem0-1.png" alt="problem0-1"></p>
+</li>
+</ul>
+<h3 id="해결">해결</h3>
+<ul>
+<li>
+<p>자동 생성된 케이스를 끝까지 제대로 읽어보니, 마지막에 이 부분이 있습니다.</p>
+<pre tabindex="0"><code class="language-msg" data-lang="msg">Step 4: [IMPORTANT] You must respond to the existing Support Case or create a new one to confirm completion of the steps above in order to restore access to your account, prevent suspension, and apply for a billing adjustment, if applicable. 
+
+While logged in to your account, access the Support Center and reply to the existing Support Case to confirm completion of steps 1-3. If you cannot find an existing Support Case, please create a new one by going here: https://console.aws.amazon.com/support/home?#/  
+</code></pre></li>
+<li>
+<p>즉, AWS 측에서 자동으로 생성한 케이스에 대한 답변을 해주어야 계정 잠금이 해제되는 것입니다.</p>
+</li>
+<li>
+<p>저는 해당 부분을 바로 인지를 못했기 때문에, 새로운 케이스를 열어서 계정 해제를 요청하는 방법을 택했습니다.</p>
+<ul>
+<li>아마존 직구하면서, 파손품에 대한 문의를 할 때처럼 채팅을 통해 문의를 해도 해결이 가능했습니다.</li>
+<li>본인을 확인하는 기본적인 스핑크스-like 질문들에 대해 답변을 하면, 진행이 가능합니다.
+<ul>
+<li>주어진 질문은 간단하니 직접&hellip; 해보시면 압니다(?)</li>
+</ul>
+</li>
+<li>다만, 처음 해본것이라서 새벽 02시와 오전 11시에 두 번 채팅하여 해결했습니다.<br>
+서비스팀이 검토하는 시간이 있었던 것 같네요.</li>
+</ul>
+<pre tabindex="0"><code class="language-msg" data-lang="msg">05:10:03 PM Unknown0: Hello, my name is Unknown0 and I am here to assist you today. While I review your case details, would you please share your name with me?
+05:10:17 PM Customer: Hi, my name is Lorem Ipsum
+05:11:21 PM Unknown0: I see that your account is compromised
+05:11:43 PM Unknown0: A case 11712364061 was sent to you but you did not respond
+05:11:51 PM Unknown0: Your account needs to be secured
+05:12:11 PM Customer: Oh, I see. How can I respond about it?
+05:12:17 PM Unknown0: I will transfer your case to the team that will beable to assist you to get the account secured
+05:13:34 PM Customer: Okay... How much time I have to take?
+05:15:08 PM Unknown0: You can initiate another chat after 10 minutes
+05:15:19 PM Customer: A case 11712364061... I just forgot my password so... I close the case as solved. // Aha.
+05:15:38 PM Unknown0: Just need to put in some notes before i can transfer the case to the team
+</code></pre><pre tabindex="0"><code class="language-msg" data-lang="msg">02:18:52 AM Unknown1: The service team had placed restrictions on your account as the system detected unauthorized activity, and after a discussion with we requested for additional information, the service team reviewed your account and the information you had provided, and confirmed that your account has not been compromised and does not indicate a risk of compromise.
+</code></pre></li>
+<li>
+<p>이후에, 정상적으로 도메인 구매가 가능했습니다.</p>
+</li>
+</ul>
+<h2 id="2-kops-cluster-생성-실패-후-수동-삭제">2. kops cluster 생성 실패 후 수동 삭제</h2>
+<h3 id="상황-1">상황</h3>
+<ul>
+<li>
+<p>cloudformation stack을 생성하여 kops cluster 구성 시, 흔한 유저에러로 이를 삭제를 해야하는 상황이 생깁니다. 예를 들면&hellip;.</p>
+<ul>
+<li>key pairs에는 등록을 하였으나, 현재 사용 중인 단말기에는 해당 키가 없는 경우 (ssh 접속 실패)</li>
+<li>ssh 접속에 실패하면, 아래와 같은 클러스터 삭제 스크립트를 실행하지 못하기 때문에 웹 콘솔에서 작업을 해야합니다.</li>
+</ul>
+<pre tabindex="0"><code class="language-script" data-lang="script">kops delete cluster --yes &amp;&amp; aws cloudformation delete-stack --stack-name mykops
+</code></pre></li>
+<li>
+<p>웹 콘솔로 하다보면, 분명 cloudfomation stack을 삭제하였는데, EC2 인스턴스를 아무리 지워도 지워지지 않는 그런 기현상이 일어납니다.</p>
+</li>
+</ul>
+<h3 id="원인-1">원인</h3>
+<ul>
+<li>(추정) 스터디를 하면서 활용했던 cloudformation stack 구성 파일에서 생성을 하는 것으로 보입니다.
+<ul>
+<li>복습하면서 한번 더 살펴보겠지만&hellip; kops 파라미터에서<br>
+<code>--master-size</code>, <code>--node-size</code>, <code>--node-count</code> 등을 지정하기 때문에<br>
+이를 ASG에 반영하는 것으로 보입니다.</li>
+</ul>
+</li>
+<li><a href="https://kops.sigs.k8s.io/getting_started/aws/#create-cluster-configuration">Docs</a>에서도 그렇다고 하네요.</li>
+</ul>
+<h3 id="해결-1">해결</h3>
+<ul>
+<li>
+<p>관성에 따라, 웹 콘솔 하나씩 클릭해보면서 아래 4가지 먼저 해보았습니다.</p>
+<ul>
+<li>자동 생성되면, 당연히 ASG에 의해 관리되는 것이니, 이를 지우면 되겠거니 하고 삭제</li>
+<li>이후에 EC2 인스턴스를 지우면, 재생성되지 않음을 확인</li>
+<li>S3에 파일이 남아있을테니 삭제</li>
+<li>DNS를 통해 대시보드나 어플리케이션 Route53에 남아있는 kops 관련 A레코드 삭제</li>
+</ul>
+</li>
+<li>
+<p>각잡고 k8s를 건들어본 적이 없었던지라 첫 주차부터 허둥지둥 헤메었는데,<br>
+이미 가시다님이 가이드에 써두셨었던 걸 제가 못찾았었습니다. 아래와 같이 진행하면 됩니다.</p>
+<pre tabindex="0"><code class="language-guide" data-lang="guide">1. EC2 Auto Scaling 그룹 : 3개 삭제
+2. EC2 시작 템플릿 Launch Templates : 3개 삭제
+3. S3 버킷 비우기
+4. Route53 에 추가된 A 레코드 3개 삭제
+5. CloudFormation 삭제
+</code></pre></li>
+</ul>
+<h2 id="3-kops-롤링-업데이트가-무한정-진행되는-현상">3. kops 롤링 업데이트가 무한정 진행되는 현상</h2>
+<h3 id="상황-2">상황</h3>
+<ul>
+<li>
+<p>알려주신 방법대로 <code>kops edit $(TARGET)</code> 이후, 롤링 업데이트를 했는데 예상 시간보다 2~3배 지나도 완료가 되지 않았습니다.</p>
+</li>
+<li>
+<p><code>kops update cluster --yes &amp;&amp; echo &amp;&amp; sleep 3 &amp;&amp; kops rolling-update cluster --yes</code></p>
+</li>
+<li>
+<p>제 경우에는 설정 값에서 정의된 노드 수 만큼 생성이 되지 않는 현상이었습니다.</p>
+<p><img src="./images/problem3.png" alt="problem3"></p>
+</li>
+</ul>
+<h3 id="원인-2">원인</h3>
+<ul>
+<li>이는 김예준(a.k.a. 동막골)님께서 해결방법을 공유해주셨는데, 기본 인스턴스 쿼타에 도달해서 일어난 것이라고 합니다.</li>
+<li>쿼타 문제라는 사실 자체를 몰랐으면, 아마 중간에 탈락했었을 것 같았는데, 이어질 <code>해결</code>방법을 공유받아서, 해당 주차 과제를 할 수 있었습니다. 감사합니다.</li>
+</ul>
+<h3 id="해결-2">해결</h3>
+<ul>
+<li>
+<p><a href="https://support.console.aws.amazon.com/support/home#/case/create?issueType=service-limit-increase&amp;limitType=service-code-ec2-instances&amp;serviceLimitIncreaseType=ec2-instances&amp;type=service_limit_increase">AWS support</a>에서 증설을 요청하면 됩니다.</p>
+</li>
+<li>
+<p>서울 리전 / All Standard Instance Types / 40개로 증설을 요청하였습니다.</p>
+<p><img src="./images/problem3-1.png" alt="problem3-1"></p>
+</li>
+<li>
+<p>공유해주신 내용대로, 자동으로 응답 및 적용이 이루어지고 아무리 늦어도 30분 내로 완료되는 것 같습니다.</p>
+<ul>
+<li>실제로는 메일 받자마자, 롤링 업데이트 끄고 켰더니 정상적으로 잘 적용되었습니다.</li>
+</ul>
+</li>
+<li>
+<p>아쉽게도 요청했던 해당 쿼타는 웹 콘솔에서 따로 확인하는 방법은 찾지 못했습니다.</p>
+</li>
+</ul>
+<h2 id="reference">reference</h2>
+<ul>
+<li><a href="https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a> Notion 및 Slack 채널</li>
+<li><a href="https://kops.sigs.k8s.io/getting_started/aws/#create-cluster-configuration">kops Docs</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/traefik-with-minikube-in-m1/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

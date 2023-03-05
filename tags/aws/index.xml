@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on kkumtree</title>
-    <link>https://blog.minseong.xyz/post/</link>
-    <description>Recent content in Posts on kkumtree</description>
+    <title>AWS on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/aws/</link>
+    <description>Recent content in AWS on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sat, 25 Feb 2023 22:07:23 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 25 Feb 2023 22:07:23 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/aws/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>AWS 트러블 슈팅 - 7주 간의 k8s 실무 스터디를 마치며</title>
       <link>https://blog.minseong.xyz/post/basic-aws-troubleshooting/</link>
@@ -19,15 +19,6 @@
 (물론, 새벽에 겨우겨우 주차별 과제 제출하고 기절하는 바람에, 맛점하다 깨닫고 소스라치게 휴대폰으로 수동 삭제한게 좀 큰 편입니다.)
 불필요한 Try &amp;amp; Fail을 줄이고, 즐거운 k8s 학습되시기 바랍니다.
 0. AWS 계정 잠금 해제 상황 처음 1주차 안내가 끝나고 Route53 Hostname을 구매하려고 하니, 자꾸 결제가 실패하는 문제가 발생했습니다.</description>
-    </item>
-    
-    <item>
-      <title>Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon</title>
-      <link>https://blog.minseong.xyz/post/traefik-with-minikube-in-m1/</link>
-      <pubDate>Sun, 05 Feb 2023 04:54:06 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/post/traefik-with-minikube-in-m1/</guid>
-      <description>주변으로부터 피드백을 받은 내용이 있어 새로운 글로 보완예정입니다. - colima는 containerd처럼 cri가 아닌, Docker engine과 containerd 사이의 물건으로 추정됩니다. - 도커 엔진은 현재 containerd를 통해 프로세스를 관리. - colima도 docker shim 구조는 탈피했을 거라고 추측 중. - 도커 엔진과 containerd 사이의 컨테이너 엔진(관리도구?)로 보임 - colima 시작 시, 특정 런타임을 선택할 수 있습니다. 문서를 잘 읽어봅시다. `colima start --runtime containerd` - k8s를 위한 colima 시작 명령어는 별도로 있습니다. colima github를 참고해주세요.</description>
     </item>
     
   </channel>
