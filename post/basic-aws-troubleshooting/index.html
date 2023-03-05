@@ -190,8 +190,40 @@ While logged in to your account, access the Support Center and reply to the exis
 <p>이후에, 정상적으로 도메인 구매가 가능했습니다.</p>
 </li>
 </ul>
-<h2 id="2-kops-cluster-생성-실패-후-수동-삭제">2. kops cluster 생성 실패 후 수동 삭제</h2>
+<h2 id="2-route53-도메인과-acm">2. Route53 도메인과 ACM</h2>
 <h3 id="상황-1">상황</h3>
+<ul>
+<li>다른 DNS 제공회사에서도 물론 고유의 편의기능을 제공하겠지만, AWS도 ACM을 통해 SSL 인증서를 발급받을 수 있습니다.<br>
+다만, AWS에서 ACM을 처음 다뤄봐서 마리오/테트리스 등 테스트 게임 어플리케이션을 위한 서브도메인에는 정상적으로 적용되지 않았습니다.</li>
+<li>(예시)
+<ul>
+<li><a href="https://awskops.null/">https://awskops.null/</a> 에 접속할 경우, 정상적으로 SSL 적용 확인</li>
+<li><a href="https://subdomain.awskops.null/">https://subdomain.awskops.null/</a> 에 접속할 경우, SSL 적용이 <strong>안됨</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="원인-1">원인</h3>
+<ul>
+<li>ACM을 통해 발급받은 인증서를 Route53에 등록할 때 서브도메인에 대한 값도 설정해야 하는데,<br>
+이를 설정하지 않아 발생한 문제였습니다.</li>
+</ul>
+<h3 id="해결-1">해결</h3>
+<ul>
+<li>
+<p>아래와 같이, 서브도메인도 허용을 하면 됩니다. 스터디용이었기 때문에 모든 서브도메인에 대해 허용하였습니다.</p>
+<p><img src="./images/problem2.png" alt="problem2"></p>
+</li>
+<li>
+<p>다만, 처음에 적용한 인증서는 서브도메인 추가가 어렵습니다. 저는 아래와 같은 스텝으로 진행하였습니다.</p>
+<ol>
+<li>ACM에서 서브도메인도 포함하는 인증서를 새로 발급.</li>
+<li>Route53 CNAME에서 기존 인증서 정보를 지우고, 새로 발급받은 인증서 정보를 등록.</li>
+<li>ACM에서 기존 인증서를 삭제.</li>
+</ol>
+</li>
+</ul>
+<h2 id="3-kops-cluster-생성-실패-후-수동-삭제">3. kops cluster 생성 실패 후 수동 삭제</h2>
+<h3 id="상황-2">상황</h3>
 <ul>
 <li>
 <p>cloudformation stack을 생성하여 kops cluster 구성 시, 흔한 유저에러로 이를 삭제를 해야하는 상황이 생깁니다. 예를 들면&hellip;.</p>
@@ -205,7 +237,7 @@ While logged in to your account, access the Support Center and reply to the exis
 <p>웹 콘솔로 하다보면, 분명 cloudfomation stack을 삭제하였는데, EC2 인스턴스를 아무리 지워도 지워지지 않는 그런 기현상이 일어납니다.</p>
 </li>
 </ul>
-<h3 id="원인-1">원인</h3>
+<h3 id="원인-2">원인</h3>
 <ul>
 <li>(추정) 스터디를 하면서 활용했던 cloudformation stack 구성 파일에서 생성을 하는 것으로 보입니다.
 <ul>
@@ -216,7 +248,7 @@ While logged in to your account, access the Support Center and reply to the exis
 </li>
 <li><a href="https://kops.sigs.k8s.io/getting_started/aws/#create-cluster-configuration">Docs</a>에서도 그렇다고 하네요.</li>
 </ul>
-<h3 id="해결-1">해결</h3>
+<h3 id="해결-2">해결</h3>
 <ul>
 <li>
 <p>관성에 따라, 웹 콘솔 하나씩 클릭해보면서 아래 4가지 먼저 해보았습니다.</p>
@@ -237,8 +269,8 @@ While logged in to your account, access the Support Center and reply to the exis
 5. CloudFormation 삭제
 </code></pre></li>
 </ul>
-<h2 id="3-kops-롤링-업데이트가-무한정-진행되는-현상">3. kops 롤링 업데이트가 무한정 진행되는 현상</h2>
-<h3 id="상황-2">상황</h3>
+<h2 id="4-kops-롤링-업데이트가-무한정-진행되는-현상">4. kops 롤링 업데이트가 무한정 진행되는 현상</h2>
+<h3 id="상황-3">상황</h3>
 <ul>
 <li>
 <p>알려주신 방법대로 <code>kops edit $(TARGET)</code> 이후, 롤링 업데이트를 했는데 예상 시간보다 2~3배 지나도 완료가 되지 않았습니다.</p>
@@ -248,22 +280,22 @@ While logged in to your account, access the Support Center and reply to the exis
 </li>
 <li>
 <p>제 경우에는 설정 값에서 정의된 노드 수 만큼 생성이 되지 않는 현상이었습니다.</p>
-<p><img src="./images/problem3.png" alt="problem3"></p>
+<p><img src="./images/problem4.png" alt="problem4"></p>
 </li>
 </ul>
-<h3 id="원인-2">원인</h3>
+<h3 id="원인-3">원인</h3>
 <ul>
 <li>이는 김예준(a.k.a. 동막골)님께서 해결방법을 공유해주셨는데, 기본 인스턴스 쿼타에 도달해서 일어난 것이라고 합니다.</li>
 <li>쿼타 문제라는 사실 자체를 몰랐으면, 아마 중간에 탈락했었을 것 같았는데, 이어질 <code>해결</code>방법을 공유받아서, 해당 주차 과제를 할 수 있었습니다. 감사합니다.</li>
 </ul>
-<h3 id="해결-2">해결</h3>
+<h3 id="해결-3">해결</h3>
 <ul>
 <li>
 <p><a href="https://support.console.aws.amazon.com/support/home#/case/create?issueType=service-limit-increase&amp;limitType=service-code-ec2-instances&amp;serviceLimitIncreaseType=ec2-instances&amp;type=service_limit_increase">AWS support</a>에서 증설을 요청하면 됩니다.</p>
 </li>
 <li>
 <p>서울 리전 / All Standard Instance Types / 40개로 증설을 요청하였습니다.</p>
-<p><img src="./images/problem3-1.png" alt="problem3-1"></p>
+<p><img src="./images/problem4-1.png" alt="problem4-1"></p>
 </li>
 <li>
 <p>공유해주신 내용대로, 자동으로 응답 및 적용이 이루어지고 아무리 늦어도 30분 내로 완료되는 것 같습니다.</p>
