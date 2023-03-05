@@ -27,7 +27,7 @@ draft: false # 글 초안 여부
 
 불필요한 Try & Fail을 줄이고, 즐거운 k8s 학습되시기 바랍니다.
 
-## 0. AWS 계정 잠금 해제
+## 1. AWS 계정 잠금 해제
 
 ### 상황
 
@@ -36,7 +36,7 @@ draft: false # 글 초안 여부
 - 다만, 기존에 타 DNS 서비스를 사용하고 있다면, 해당 제공사에서 제공하는 Domain transfer registrar를 통해 Route53으로 이전할 수 있습니다.  
   저는 icann 90일 제한이 풀리자마자, 구입했던 제공사에서 타 제공사로 옮긴지 얼마 안된 도메인이라서, 새로 구매해야 했습니다.  
 
-  ![problem0](./images/problem0.png)
+  ![problem1](./images/problem1.png)
 
 ### 원인
 
@@ -44,7 +44,7 @@ draft: false # 글 초안 여부
 - 작년에 개설한 free-tier 계정의 암호도 잊어서 재설정하고, 도메인 결제를 위해 카드 변경까지 하였는데, 이로 인해 AWS 측에서 이상탐지를 하여 계정 잠금을 걸었던 것입니다.
 - 개인적으로는 이미 Virtual MFA도 걸어놓았었기 때문에, 많이 민감하다고 생각은 하지만 IAM User 접속도 아니고 Root 접속이라 민감하게 반응한 것처럼 보입니다.
 
-  ![problem0-1](./images/problem0-1.png)
+  ![problem1-1](./images/problem1-1.png)
 
 ### 해결
 
