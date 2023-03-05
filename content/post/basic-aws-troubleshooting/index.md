@@ -84,7 +84,33 @@ draft: false # 글 초안 여부
 
 - 이후에, 정상적으로 도메인 구매가 가능했습니다.
 
-## 2. kops cluster 생성 실패 후 수동 삭제
+## 2. Route53 도메인과 ACM
+
+### 상황
+
+- 다른 DNS 제공회사에서도 물론 고유의 편의기능을 제공하겠지만, AWS도 ACM을 통해 SSL 인증서를 발급받을 수 있습니다.  
+  다만, AWS에서 ACM을 처음 다뤄봐서 마리오/테트리스 등 테스트 게임 어플리케이션을 위한 서브도메인에는 정상적으로 적용되지 않았습니다.
+- (예시)  
+  - <https://awskops.null/> 에 접속할 경우, 정상적으로 SSL 적용 확인
+  - <https://subdomain.awskops.null/> 에 접속할 경우, SSL 적용이 **안됨**
+
+### 원인
+
+- ACM을 통해 발급받은 인증서를 Route53에 등록할 때 서브도메인에 대한 값도 설정해야 하는데,  
+  이를 설정하지 않아 발생한 문제였습니다.
+
+### 해결
+
+- 아래와 같이, 서브도메인도 허용을 하면 됩니다. 스터디용이었기 때문에 모든 서브도메인에 대해 허용하였습니다.
+
+  ![problem2](./images/problem2.png)
+
+- 다만, 처음에 적용한 인증서는 서브도메인 추가가 어렵습니다. 저는 아래와 같은 스텝으로 진행하였습니다.
+  1. ACM에서 서브도메인도 포함하는 인증서를 새로 발급.
+  2. Route53 CNAME에서 기존 인증서 정보를 지우고, 새로 발급받은 인증서 정보를 등록.
+  3. ACM에서 기존 인증서를 삭제.
+
+## 3. kops cluster 생성 실패 후 수동 삭제
 
 ### 상황
 
@@ -125,7 +151,7 @@ draft: false # 글 초안 여부
   5. CloudFormation 삭제
   ```
 
-## 3. kops 롤링 업데이트가 무한정 진행되는 현상
+## 4. kops 롤링 업데이트가 무한정 진행되는 현상
 
 ### 상황
 
@@ -133,7 +159,7 @@ draft: false # 글 초안 여부
 - `kops update cluster --yes && echo && sleep 3 && kops rolling-update cluster --yes`
 - 제 경우에는 설정 값에서 정의된 노드 수 만큼 생성이 되지 않는 현상이었습니다.  
 
-  ![problem3](./images/problem3.png)
+  ![problem4](./images/problem4.png)
 
 ### 원인
 
@@ -145,7 +171,7 @@ draft: false # 글 초안 여부
 - [AWS support](https://support.console.aws.amazon.com/support/home#/case/create?issueType=service-limit-increase&limitType=service-code-ec2-instances&serviceLimitIncreaseType=ec2-instances&type=service_limit_increase)에서 증설을 요청하면 됩니다.
 - 서울 리전 / All Standard Instance Types / 40개로 증설을 요청하였습니다.
 
-  ![problem3-1](./images/problem3-1.png)
+  ![problem4-1](./images/problem4-1.png)
 
 - 공유해주신 내용대로, 자동으로 응답 및 적용이 이루어지고 아무리 늦어도 30분 내로 완료되는 것 같습니다.
   - 실제로는 메일 받자마자, 롤링 업데이트 끄고 켰더니 정상적으로 잘 적용되었습니다.
