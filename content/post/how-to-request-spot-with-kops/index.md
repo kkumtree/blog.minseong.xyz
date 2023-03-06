@@ -128,6 +128,14 @@ draft: false # 글 초안 여부
 
     ![예시](./images/6-spot-savings-summary.png)
 
+## MSA 앱 테스트
+
+잘 구동됩니다. :)
+
+![예제 yaml 확인](./images/7-1-msa-app.png)
+![예제 yaml 적용하여 pod 생성](./images/7-2-msa-app.png)
+![테스트 앱 구동 확인](./images/7-3-msa-app.png)
+
 ## reference
 
 - [CloudNet@](https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion
