@@ -32,7 +32,7 @@ draft: false # 글 초안 여부
   아무리 클라우드 서비스가 합리적이어도 On-demand 인스턴스를 학습용으로 사용하기엔 살짝 비효율적이라는 생각이 들었습니다.  
 - 보통은 엔터프라이즈 급에서는 온디맨드 대신에 미리 사용량 가격표를 정해놓고 쓰는 Reserved Instance를 사용하는 것으로 알고 있습니다.  
   하지만 개인 단위로, 그것도 학습자의 입장에서 사용량 예측도 어렵다고 생각하기에 스팟 인스턴스가 남은 절감 대안이라고 봅니다.  
-- 게다가 AWS 블로그 [(efficiently-scaling-kops-clusters-with-amazon-ec2-spot-instances)](https://aws.amazon.com/ko/blogs/compute/efficiently-scaling-kops-clusters-with-amazon-ec2-spot-instances/)를 참고하면 알 수 있듯이,  
+- 게다가 [AWS 블로그](https://aws.amazon.com/ko/blogs/compute/efficiently-scaling-kops-clusters-with-amazon-ec2-spot-instances/)를 참고하면 알 수 있듯이,  
   자사 제품인 EKS를 가장 권장하고 있으나, kops로 self-managed k8s를 구축하는 경우 스팟 인스턴스를 사용방법을 안내하고 있습니다.  
 - 애시당초 k8s가 언제든지 파드가 떨어지는 것을 감안하고 설계되었으니까...  
   k8s 도구인 kops도 그걸 담는 인스턴스를 언제든지 갈아낄 수 있게 만들지 않았을까? 란 당돌한 생각을 해봤습니다.
