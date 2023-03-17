@@ -55,19 +55,25 @@ CVE 취약점 관련을 확인해보고 싶어서 개인용을 해보았다.
 
 - 기본적으로 Ubuntu Pro는 최신으로 업데이트된 LTS 배포판이라면 설치되어있다
   - 16.04 이전 버전은 `ubuntu-advantage-tools` 패키지를 설치해야 한다. (최대한 20.04 이상의 LTS 버전을 사용하도록 하자)
-  ![first glance](./images/first-glance.png)
+
+![first glance](./images/first-glance.png)
+
 - [Ubuntu Pro 대시보드](https://ubuntu.com/pro/dashboard)에서 `Free Personal Token`을 발급받는다.  
-  ![free personal token](./images/free-personal-token.png)
+
+![free personal token](./images/free-personal-token.png)
 
 ### 2. Ubuntu Pro를 적용하기
 
 - 토큰을 적용하지 않으면 `pro security-status` 입력 시, 구독 상태가 아니라고 확인
-  ![before attach token](./images/before-attach-token.png)
+
+![before attach token](./images/before-attach-token.png)
+
 - 토큰을 적용해본다.
   - `sudo pro attach ${TOKEN_VALUE}` 명령어를 입력한다.
   - 그러면 서비스가 활성화된다. 필자의 구독의 경우 개인용이기에, esm-infra와 esm-apps가 활성화 되었다.
-- 음영처리한 부분이 필자가 Ubuntu Pro를 설치한 목적. 패키지 상태를 모니터링 할 수 있다.
-  ![attach token and check status](./images/attach-token-check-status.png)
+- 음영처리한 부분이 필자가 Ubuntu Pro를 설치한 목적. 패키지 상태를 모니터링 할 수 있다.  
+
+![attach token and check status](./images/attach-token-check-status.png)
 
 ### 3. 취약점 확인하기
 
