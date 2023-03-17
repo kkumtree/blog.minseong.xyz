@@ -5,7 +5,6 @@ tags:
  - Ubuntu
  - UbuntuPro
  - Security
- - Opensource
  - CVE
  - Tutorial
  - Subcription
@@ -56,7 +55,7 @@ CVE 취약점 관련을 확인해보고 싶어서 개인용을 해보았다.
 - 기본적으로 Ubuntu Pro는 최신으로 업데이트된 LTS 배포판이라면 설치되어있다
   - 16.04 이전 버전은 `ubuntu-advantage-tools` 패키지를 설치해야 한다. (최대한 20.04 이상의 LTS 버전을 사용하도록 하자)
   ![first glance](./images/first-glance.png)
-- [Ubuntu Pro 대시보드](https://ubuntu.com/pro/dashboard)에서 `Free Personal Token`을 발급받는다.
+- [Ubuntu Pro 대시보드](https://ubuntu.com/pro/dashboard)에서 `Free Personal Token`을 발급받는다.  
   ![free personal token](./images/free-personal-token.png)
 
 ### 2. Ubuntu Pro를 적용하기
