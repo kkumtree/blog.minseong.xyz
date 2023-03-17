@@ -36,7 +36,8 @@ https://canonical-ubuntu-pro-client.readthedocs-hosted.com/en/latest/index.html
 
 ## Ubuntu Pro란?  
 
-Ubuntu Pro는 Ubuntu의 구독 상품으로, 보안 등의 지원 기능을 추가한 서비스로 보면 될 것 같다.  
+Ubuntu Pro는 Ubuntu의 구독 상품으로, 보안 등의 지원 기능을 추가한 서비스로
+사전에 보안 취약점을 빠르게 보완해서 데이터를 보호하는게 여러모로 절감되지 않을 까 싶기에 인상 깊었던 프로덕트였다.  
 
 기존에는 Ubuntu Advantage라는 이름으로 제공되었으나, 21년 상반기에 Ubuntu Pro로 이름이 변경되었다.  
 위에서 언급했다시피, 이 상품은 LTS(Long Term Support) 버전에만 제공된다.  
