@@ -7,7 +7,7 @@ tags:
  - Security
  - CVE
  - Tutorial
- - Subcription
+ - Subscription
 authors:
     - name: kkumtree
       bio: plumber for infra
