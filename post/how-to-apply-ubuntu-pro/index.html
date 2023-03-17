@@ -153,26 +153,30 @@ CVE(Critical Vulnerability Exploit) 취약점 관련 지원 또한 제공된다.
 <ul>
 <li>기본적으로 Ubuntu Pro는 최신으로 업데이트된 LTS 배포판이라면 설치되어있다
 <ul>
-<li>16.04 이전 버전은 <code>ubuntu-advantage-tools</code> 패키지를 설치해야 한다. (최대한 20.04 이상의 LTS 버전을 사용하도록 하자)
-<img src="./images/first-glance.png" alt="first glance"></li>
+<li>16.04 이전 버전은 <code>ubuntu-advantage-tools</code> 패키지를 설치해야 한다. (최대한 20.04 이상의 LTS 버전을 사용하도록 하자)</li>
 </ul>
 </li>
-<li><a href="https://ubuntu.com/pro/dashboard">Ubuntu Pro 대시보드</a>에서 <code>Free Personal Token</code>을 발급받는다.<br>
-<img src="./images/free-personal-token.png" alt="free personal token"></li>
 </ul>
+<p><img src="./images/first-glance.png" alt="first glance"></p>
+<ul>
+<li><a href="https://ubuntu.com/pro/dashboard">Ubuntu Pro 대시보드</a>에서 <code>Free Personal Token</code>을 발급받는다.</li>
+</ul>
+<p><img src="./images/free-personal-token.png" alt="free personal token"></p>
 <h3 id="2-ubuntu-pro를-적용하기">2. Ubuntu Pro를 적용하기</h3>
 <ul>
-<li>토큰을 적용하지 않으면 <code>pro security-status</code> 입력 시, 구독 상태가 아니라고 확인
-<img src="./images/before-attach-token.png" alt="before attach token"></li>
+<li>토큰을 적용하지 않으면 <code>pro security-status</code> 입력 시, 구독 상태가 아니라고 확인</li>
+</ul>
+<p><img src="./images/before-attach-token.png" alt="before attach token"></p>
+<ul>
 <li>토큰을 적용해본다.
 <ul>
 <li><code>sudo pro attach ${TOKEN_VALUE}</code> 명령어를 입력한다.</li>
 <li>그러면 서비스가 활성화된다. 필자의 구독의 경우 개인용이기에, esm-infra와 esm-apps가 활성화 되었다.</li>
 </ul>
 </li>
-<li>음영처리한 부분이 필자가 Ubuntu Pro를 설치한 목적. 패키지 상태를 모니터링 할 수 있다.
-<img src="./images/attach-token-check-status.png" alt="attach token and check status"></li>
+<li>음영처리한 부분이 필자가 Ubuntu Pro를 설치한 목적. 패키지 상태를 모니터링 할 수 있다.</li>
 </ul>
+<p><img src="./images/attach-token-check-status.png" alt="attach token and check status"></p>
 <h3 id="3-취약점-확인하기">3. 취약점 확인하기</h3>
 <ul>
 <li>원래는 Bold 된 패키지가 나왔다면, 취약점을 가지고 있다는 뜻이므로 바로 적용하려 했으나 아직 취약점이 없는 것 같다.
