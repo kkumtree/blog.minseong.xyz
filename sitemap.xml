@@ -2,6 +2,39 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/cve/</loc>
+    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/opensource/</loc>
+    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/security/</loc>
+    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/subcription/</loc>
+    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/tutorial/</loc>
+    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/ubuntu/</loc>
+    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/how-to-apply-ubuntu-pro/</loc>
+    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/ubuntupro/</loc>
+    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/aws/</loc>
     <lastmod>2023-03-06T18:43:51+09:00</lastmod>
   </url><url>
@@ -11,19 +44,10 @@
     <loc>https://blog.minseong.xyz/tags/finops/</loc>
     <lastmod>2023-03-06T18:43:51+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2023-03-06T18:43:51+09:00</lastmod>
-  </url><url>
     <loc>https://blog.minseong.xyz/tags/kops/</loc>
     <lastmod>2023-03-06T18:43:51+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/how-to-request-spot-with-kops/</loc>
-    <lastmod>2023-03-06T18:43:51+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2023-03-06T18:43:51+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2023-03-06T18:43:51+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/basic-aws-troubleshooting/</loc>
