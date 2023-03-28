@@ -26,7 +26,7 @@ Cloudflare에서 SSL/TLS 정책을 `Full (Strict)` 대신
 
 ## Invalid SSL certificate
 
-![error](./images/error.png)  
+![error](./images/error.jpg)  
 
 그간 업무 인계도 있었고, 개인 일정을 소화하면서 블로그 들어갈 일이 없었다.  
 그러다 지난 주말에 있었던 [정기총회](https://discourse.ubuntu-kr.org/t/topic/48634)에서 만난 분으로부터  
@@ -55,7 +55,7 @@ GitHub pages에서 기본적으로 Let's Encrypt를 통해서 TLS를 제공하�
 Cloudflare에서 SSL/TLS 설정을 해놓고, Github Pages에서도 SSL을 켜놓았었다.  
 기존에는 인증서가 있었으니 Cloudflare 정책보다는 다른 정책이 우선시 되었었는데,  
 인증서가 만료되면서 Cloudflare의 정책이 적용되었다.  
-Cloudflare에서의 SSL/TLS의 설정 중 제일 높은 `Full (Strict)`를 사용하고 있었는데,  
+Cloudflare에서의 SSL/TLS의 설정 중 제일 높은 `Full(Strict)`를 사용하고 있었는데,  
 내 서버에 trusted CA 인증서 혹은 Cloudflare에서 발행한 CA 인증서를 발급해놓던지 CA 인증서를 발급해두면 좋은 설정이다.  
 물론 GitHub Pages에서는 앞서 말했듯이 자체서명 인증서 발급 이슈가 생기기도 하고,  
 Cloudflare issued CA 인증서를 탑재하는 건 말이 안된다고 생각했다.  
@@ -64,7 +64,7 @@ GitHub의 TLS 지원만 생각하고 만들어놔서 오류가 발생하였다.
 ## 에러 수정
 
 에러 해결이라고 하긴 뭐하고, 수정이라고 하자.  
-그냥 `Full (Strict)`를 `Full`로 바꿔주면 된다.  
+그냥 `Full(Strict)`를 `Full`로 바꿔주면 된다.  
 이래도 아예 TLS를 쓰지 않는 것보다는 나을 것이다.  
 
 아, 아래의 cloudflare blog를 참고하여 trouble shooting 하고자 한다면 Page Rules까지 관리하지 않아도 TLS가 제대로 적용된다.  
