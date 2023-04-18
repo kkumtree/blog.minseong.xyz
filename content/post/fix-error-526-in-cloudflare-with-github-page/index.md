@@ -67,6 +67,8 @@ GitHub의 TLS 지원만 생각하고 만들어놔서 오류가 발생하였다.
 그냥 `Full(Strict)`를 `Full`로 바꿔주면 된다.  
 이래도 아예 TLS를 쓰지 않는 것보다는 나을 것이다.  
 
+![tls setting for gh-pages](./images/cloudflare-tls-setting.png)
+
 아, 아래의 cloudflare blog를 참고하여 trouble shooting 하고자 한다면 Page Rules까지 관리하지 않아도 TLS가 제대로 적용된다.  
 굳이 적용하고자 한다면, 아래와 유사하게 적용하면 된다.  
 
