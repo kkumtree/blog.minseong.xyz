@@ -2,27 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://blog.minseong.xyz/tags/aws/</loc>
-    <lastmod>2023-04-28T12:25:37+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/aws-eks-study-week1/</loc>
-    <lastmod>2023-04-28T12:25:37+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/cloudnet@/</loc>
-    <lastmod>2023-04-28T12:25:37+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/eks/</loc>
-    <lastmod>2023-04-28T12:25:37+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2023-04-28T12:25:37+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2023-04-28T12:25:37+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
-    <lastmod>2023-04-28T12:25:37+09:00</lastmod>
-  </url><url>
     <loc>https://blog.minseong.xyz/tags/ca/</loc>
     <lastmod>2023-03-28T18:29:11+09:00</lastmod>
   </url><url>
@@ -36,6 +15,15 @@
     <lastmod>2023-03-28T18:29:11+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/fix-error-526-in-cloudflare-with-github-page/</loc>
+    <lastmod>2023-03-28T18:29:11+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2023-03-28T18:29:11+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2023-03-28T18:29:11+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2023-03-28T18:29:11+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/tls/</loc>
@@ -61,6 +49,12 @@
   </url><url>
     <loc>https://blog.minseong.xyz/tags/ubuntupro/</loc>
     <lastmod>2023-03-17T11:14:50+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/aws/</loc>
+    <lastmod>2023-03-06T18:43:51+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/cloudnet@/</loc>
+    <lastmod>2023-03-06T18:43:51+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/finops/</loc>
     <lastmod>2023-03-06T18:43:51+09:00</lastmod>
