@@ -7,13 +7,14 @@ tags:
  - CloudNet@
 authors:
     - name: # 이름
-      bio: # 자기소개
-      email: example@example.com # Email
-      launchpad: hello # Launchpad Username
-      github: hello # GitHub Username
-      profile: profile.jpg # 프로필 이미지 URL
+    - name: kkumtree
+      bio: plumber for infra
+      email: mscho@ubuntu-kr.org
+      launchpad: mscho7969
+      github: kkumtree
+      profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.png # 커버 이미지 URL
-draft: false # 글 초안 여부
+draft: true # 글 초안 여부
 ---
 
 Contents here...
