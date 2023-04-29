@@ -67,6 +67,7 @@ EKS는 관리형 서비스(managed service)이기에 아래와 같은 장점이 
 ```bash
 aws cloudformation deploy --template-file ~/Documents/aews/myeks-1week.yaml \
      --stack-name myeks --parameter-overrides KeyName=aews SgIngressSshCidr=$(curl -s ipinfo.io/ip)/32 --region ap-northeast-2
+```
 
 ![cloudformation](./images/1-cloudformation.png)
 
@@ -74,6 +75,7 @@ aws cloudformation deploy --template-file ~/Documents/aews/myeks-1week.yaml \
 
 ![console](./images/2-host_instance.png)
 
+```bash
 # EC2 IP 출력
 echo $(aws cloudformation describe-stacks --stack-name myeks --query 'Stacks[*].Outputs[*].OutputValue' --output text)
 
