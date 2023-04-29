@@ -200,14 +200,12 @@ EKS(Elastic Kubernetes Service)를 이번 기회에 살펴보기로 했습니다
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>aws cloudformation deploy --template-file ~/Documents/aews/myeks-1week.yaml <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     --stack-name myeks --parameter-overrides KeyName<span style="color:#f92672">=</span>aews SgIngressSshCidr<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span>/32 --region ap-northeast-2
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>!<span style="color:#f92672">[</span>cloudformation<span style="color:#f92672">](</span>./images/1-cloudformation.png<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>- 웹 콘솔에서도 확인 가능
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>!<span style="color:#f92672">[</span>console<span style="color:#f92672">](</span>./images/2-host_instance.png<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># EC2 IP 출력</span>
+</span></span></code></pre></div><p><img src="./images/1-cloudformation.png" alt="cloudformation"></p>
+<ul>
+<li>웹 콘솔에서도 확인 가능</li>
+</ul>
+<p><img src="./images/2-host_instance.png" alt="console"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># EC2 IP 출력</span>
 </span></span><span style="display:flex;"><span>echo <span style="color:#66d9ef">$(</span>aws cloudformation describe-stacks --stack-name myeks --query <span style="color:#e6db74">&#39;Stacks[*].Outputs[*].OutputValue&#39;</span> --output text<span style="color:#66d9ef">)</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># EC2 SSH 접속</span>
