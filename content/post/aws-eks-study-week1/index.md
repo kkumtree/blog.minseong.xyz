@@ -99,7 +99,7 @@ ls /root/.ssh/id_rsa*
 docker info
 ```
 
-- 아래와 같이 eks v1.25.7이 적용되었음을 알 수 있음
+- 아래와 같이 kubectl은 eks용 v1.25.7이 적용되었음을 알 수 있음
 
 ![host](./images/4-host_info.png)
 
