@@ -54,7 +54,7 @@ EKS는 관리형 서비스(managed service)이기에 아래와 같은 장점이 
 | Enabled | Enabled | k8s API 요청은 AWS VPC 엔드포인트 사용 |
 | Disabled | Enabled | 모든 트래픽이 AWS VPC 엔드포인트 사용 |  
 
-- 3번째 구성이 권장. kubectl 명령이 모든 트래픽이 EKS에서 관리되는 ENI을 타게 됨.  
+- 3번째 구성이 권장. kubectl 명령에 의한 모든 트래픽이 EKS에서 관리되는 ENI을 타게 됨.  
 
 ## EKS 배포해보기
 
