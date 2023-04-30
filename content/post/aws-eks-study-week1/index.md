@@ -6,7 +6,6 @@ tags:
  - EKS
  - CloudNet@
 authors:
-    - name: # 이름
     - name: kkumtree
       bio: plumber for infra
       email: mscho@ubuntu-kr.org
