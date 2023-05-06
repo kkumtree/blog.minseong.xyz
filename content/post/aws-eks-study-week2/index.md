@@ -37,7 +37,6 @@ draft: false # 글 초안 여부
 - 학습을 위해, 이번에도 [가시다](https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)님이 준비해주신 원클릭 배포 yaml을 활용하여 배포.
 - **완전 배포까지 대략 20분 가량 소요**
 - IAM에서 미리 발급해둔 액세스키/시크릿키를 알아두어야합니다.  
-- 스크린샷은 1주차로 갈음.  
 
 ```bash
 # 원클릭 셋업
@@ -46,6 +45,8 @@ aws cloudformation deploy --template-file ~/Documents/aews/eks-oneclick.yaml --s
 # 컨트롤 플레인(마스터노드) 접속 확인
 ssh -i ~/.ssh/aews.pem ec2-user@$(aws cloudformation describe-stacks --stack-name myeks --query 'Stacks[*].Outputs[0].OutputValue' --output text)
 ```
+
+![oneclick_templete](./images/01_oneclick.png)
 
 ## 2. AWS VPC CNI w/기본 셋업 (in Control Plane)
 
@@ -114,8 +115,6 @@ kubectl get pod -n kube-system -o=custom-columns=NAME:.metadata.name,IP:.status.
 
 kubectl describe cm -n kube-system kube-proxy-config | grep mode
 ```
-
-![oneclick_templete](./images/01_oneclick.png)
 
 ![oneclick-node-setup](./images/02_oneclick-node-setup.png)
 
