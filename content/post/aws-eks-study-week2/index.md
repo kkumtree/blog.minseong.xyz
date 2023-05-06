@@ -199,7 +199,7 @@ ssh ec2-user@$N2 sudo ip -c route
 
 ![veth-pair-console](./images/08_veth-pair-console.png)
 
-## 3-2. veth(v-eth, virtual ethernet interface)
+### 3-2. veth(v-eth, virtual ethernet interface)
 
 - 단어를 보고 단박에 가상eth 인건 알았지만, 자세한 건 아래의 글을 통해서 알 수 있음.  
   - [44bits-veth](https://www.44bits.io/ko/keyword/veth)
