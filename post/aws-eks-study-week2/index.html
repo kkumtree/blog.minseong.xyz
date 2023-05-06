@@ -769,7 +769,357 @@ the number of IP address per network interface</li>
 </span></span></code></pre></div><p><img src="./images/35_test-pod-create.png" alt="test-pod"></p>
 <p><img src="./images/36_get-nlb-information-and-enable-apachectl.png" alt="get-nlb-info-and-enable-apachectl"></p>
 <p><img src="./images/37_check-with-continous-connection.png" alt="check-with-connection"></p>
-<p><img src="./images" alt="1"></p>
+<h2 id="8-ingress">8. Ingress</h2>
+<ul>
+<li>
+<p>클러스터 내부의 서비스(ClusterIP, NodePort, Loadbalancer)를 외부로 노출(HTTP/HTTPS)</p>
+</li>
+<li>
+<p>Web Proxy 역할: 어라 그러면, ClusterIP를 써도&hellip;.(?)</p>
+</li>
+<li>
+<p><code>AWS VPC CNI</code> 에서 AWS LB 컨트롤러 + Ingress (ALB) IP 모드 동작</p>
+<ul>
+<li>바로 파드의 IP로 통신이 가능</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 게임 파드와 Service, Ingress 배포</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/3/ingress1.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f ingress1.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>watch -d kubectl get pod,ingress,svc,ep -n game-2048
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 생성 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get-all -n game-2048
+</span></span><span style="display:flex;"><span>kubectl get ingress,svc,ep,pod -n game-2048
+</span></span><span style="display:flex;"><span>kubectl get targetgroupbindings -n game-2048
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ingress 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl describe ingress -n game-2048 ingress-2048
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 게임 접속 : ALB 주소로 웹 접속</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get ingress -n game-2048 ingress-2048 -o jsonpath<span style="color:#f92672">={</span>.status.loadBalancer.ingress<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.hostname<span style="color:#f92672">}</span> | awk <span style="color:#e6db74">&#39;{ print &#34;Game URL = http://&#34;$1 }&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 IP 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get pod -n game-2048 -owide
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 스케일 모니터링</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>watch kubectl get pod -n game-2048
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 3개로 증가</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment -n game-2048 deployment-2048 --replicas <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 1개로 감소</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment -n game-2048 deployment-2048 --replicas <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 삭제</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl delete ingress ingress-2048 -n game-2048
+</span></span><span style="display:flex;"><span>kubectl delete svc service-2048 -n game-2048 <span style="color:#f92672">&amp;&amp;</span> kubectl delete deploy deployment-2048 -n game-2048 <span style="color:#f92672">&amp;&amp;</span> kubectl delete ns game-2048
+</span></span></code></pre></div><p><img src="./images/38_ingress-test-pod.png" alt="ingress-test"></p>
+<p><img src="./images/39_check-pod-ingress-and-Web-URL.png" alt="check-ingress-info"></p>
+<p><img src="./images/40_ingress-scaling-up.png" alt="ingress-scaling-up"></p>
+<p><img src="./images/41_ingress-scaling-down.png" alt="ingress-scaling-down"></p>
+<p><img src="./images/42_delete-ingress-test.png" alt="delete-ingress-test"></p>
+<h2 id="9-external-dns">9. External DNS</h2>
+<ul>
+<li>외부 DNS 서비스를 통해 도메인을 통해 접속 가능하도록 설정</li>
+<li>AWS Route53에 Public 도메인을 등록시켜놓았음</li>
+<li>ExternalDNS CTRL 권한 주는 방법 3가지:
+<ol>
+<li><strong>Node IAM Role</strong>: EKS 원클릭 배포 시 설정되어 있음
+<ul>
+<li>eksctl create cluster &hellip; <strong>&ndash;external-dns-access</strong> &hellip;</li>
+</ul>
+</li>
+<li>Static credentials</li>
+<li>IRSA</li>
+</ol>
+</li>
+</ul>
+<h3 id="9-1-route53-정보-확인-및-변수-지정">9-1. Route53 정보 확인 및 변수 지정</h3>
+<ul>
+<li>중간에 명령어가 잘못되었는지, 제대로 값이 뜨지 않는 것이 있었음</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 도메인 변수 지정</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># MyDomain=&lt;소유한 도메인&gt;</span>
+</span></span><span style="display:flex;"><span>MyDomain<span style="color:#f92672">=</span>awskops.click
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Route 53 도메인 ID 조회 및 변수 지정 </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws route53 list-hosted-zones-by-name --dns-name <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDomain<span style="color:#e6db74">}</span><span style="color:#e6db74">.&#34;</span> | jq
+</span></span><span style="display:flex;"><span>MyDnzHostedZoneId<span style="color:#f92672">=</span><span style="color:#e6db74">`</span>aws route53 list-hosted-zones-by-name --dns-name <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDomain<span style="color:#e6db74">}</span><span style="color:#e6db74">.&#34;</span> --query <span style="color:#e6db74">&#34;HostedZones[0].Id&#34;</span> --output text<span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>echo $MyDnzHostedZoneId
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># A 레코드 타입 조회: 정상적으로 조회되지 않음</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws route53 list-resource-record-sets --hosted-zone-id <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDnzHostedZoneId<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> --query <span style="color:#e6db74">&#34;ResourceRecordSets[?Type == &#39;A&#39;].Name&#34;</span> --output text
+</span></span></code></pre></div><h3 id="9-2-externaldns-설치">9-2. ExternalDNS 설치</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Route53 변수 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo $MyDomain, $MyDnzHostedZoneId
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ExternalDNS 배포</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/aews/externaldns.yaml
+</span></span><span style="display:flex;"><span>MyDomain<span style="color:#f92672">=</span>$MyDomain MyDnzHostedZoneId<span style="color:#f92672">=</span>$MyDnzHostedZoneId envsubst &lt; externaldns.yaml | kubectl apply -f -
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인 및 로그 모니터링</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get pod -l app.kubernetes.io/name<span style="color:#f92672">=</span>external-dns -n kube-system
+</span></span><span style="display:flex;"><span>kubectl logs deploy/external-dns -n kube-system -f
+</span></span></code></pre></div><p><img src="./images/43_set-route53-as-variable.png" alt="set-route53-as-variable"></p>
+<h3 id="9-3-servicenlb--도메인-연동externaldns">9-3. Service(NLB) + 도메인 연동(ExternalDNS)</h3>
+<ul>
+<li>리소스 삭제 시, ExternalDNS에 의해 A레코드도 함께 제거됨을 확인</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 모니터링 준비 및 로그 조회</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#39;kubectl get pod,svc&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl logs deploy/external-dns -n kube-system -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 테트리스 디플로이먼트 배포</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: bsord/tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: &#34;true&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: &#34;http&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    #service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: &#34;80&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    protocol: TCP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    targetPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: LoadBalancer
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  loadBalancerClass: service.k8s.aws/nlb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포 확인 : CLB 배포 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get deploy,svc,ep tetris
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NLB에 ExternanDNS 로 도메인 연결</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl annotate service tetris <span style="color:#e6db74">&#34;external-dns.alpha.kubernetes.io/hostname=tetris.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Route53에 A레코드 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># jq 까지 하는 경우 정상적으로 조회되지 않음;;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws route53 list-resource-record-sets --hosted-zone-id <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDnzHostedZoneId<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> --query <span style="color:#e6db74">&#34;ResourceRecordSets[?Type == &#39;A&#39;]&#34;</span> | jq
+</span></span><span style="display:flex;"><span>aws route53 list-resource-record-sets --hosted-zone-id <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDnzHostedZoneId<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> --query <span style="color:#e6db74">&#34;ResourceRecordSets[?Type == &#39;A&#39;].Name&#34;</span> | jq .<span style="color:#f92672">[]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Public IP(도메인 DNS) 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>dig +short tetris.$MyDomain @8.8.8.8
+</span></span><span style="display:flex;"><span>dig +short tetris.$MyDomain
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 도메인 체크</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;My Domain Checker = https://www.whatsmydns.net/#A/tetris.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 웹 접속 주소 확인 및 접속</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Tetris Game URL = http://tetris.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 리소스 삭제</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl delete deploy,svc tetris
+</span></span></code></pre></div><p><img src="./images/44_tetris-pod-create.png" alt="create-tetris-pod"></p>
+<p><img src="./images/45_annotate(connect)-with-domain.png" alt="annotate-domain"></p>
+<p><img src="./images/46_tetris-pod-with-external-dns.png" alt="tetris-pod-with-dns"></p>
+<h2 id="10-envoy-반쪽-실습">10. Envoy (반쪽 실습)</h2>
+<ul>
+<li>istio를 위해 설치는 했으나, istio가 제대로 안되서 Envoy만 기재</li>
+<li>Envoy: L7 Proxy, istio의 Sidecar proxy
+<ul>
+<li>istiod: 컨트롤플레인</li>
+<li>Envoy: 데이터플레인 (istio-proxy &gt; envoy)
+<ul>
+<li>istio-proxy 안에 Envoy가 들어있다는 것</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에 Envoy 설치</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo rpm --import <span style="color:#e6db74">&#39;https://rpm.dl.getenvoy.io/public/gpg.CF716AF503183491.key&#39;</span>
+</span></span><span style="display:flex;"><span>curl -sL <span style="color:#e6db74">&#39;https://rpm.dl.getenvoy.io/public/config.rpm.txt?distro=el&amp;codename=7&#39;</span> &gt; /tmp/tetrate-getenvoy-rpm-stable.repo
+</span></span><span style="display:flex;"><span>sudo yum-config-manager --add-repo <span style="color:#e6db74">&#39;/tmp/tetrate-getenvoy-rpm-stable.repo&#39;</span>
+</span></span><span style="display:flex;"><span>sudo yum makecache --disablerepo<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;*&#39;</span> --enablerepo<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;tetrate-getenvoy-rpm-stable&#39;</span> -y
+</span></span><span style="display:flex;"><span>sudo yum install getenvoy-envoy -y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>envoy --version
+</span></span></code></pre></div><p><img src="./images/47_install-envoy.png" alt="install-Envoy"></p>
+<h3 id="10-1-envoy-proxy-실습-wenvoy-demo">10-1. Envoy proxy 실습 w.Envoy-demo</h3>
+<ul>
+<li>Envoy 상에서 웹서버 구동을 위한 <code>myhome.yaml</code> 생성 방법을 이해하지 못함
+<ul>
+<li>직전까지 하여, 데모 페이지 및 어드민 페이지 확인</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 데모 config 적용하여 실행</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># `connect_timeout` missing 에러 출력되면서 실행 실패</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/92dcb9714fb6bc288d042029b34c0de4/envoy-demo.yaml
+</span></span><span style="display:flex;"><span>envoy -c envoy-demo.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># connect_timeout 추가 후 다시 실행</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sed -i<span style="color:#e6db74">&#39;&#39;</span> -r -e <span style="color:#e6db74">&#34;/dns_lookup_family/a\    connect_timeout: 5s&#34;</span> envoy-demo.yaml
+</span></span><span style="display:flex;"><span>envoy -c envoy-demo.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 정보 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ... 0.0.0.0:10000  0.0.0.0:*  users:((&#34;envoy&#34; ...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ss -tnlp
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 접속 테스트</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s http://127.0.0.1:10000 | grep -o <span style="color:#e6db74">&#34;&lt;title&gt;.*&lt;/title&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>&lt;title&gt;Envoy Proxy - Home&lt;/title&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># envoy 데모 페이지 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Envoy Proxy Demo = http://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:10000&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 연결 정보 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ss -tnp
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 기존 envoy 실행 취소 후 (관리자페이지) 설정 덮어쓰기</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT&gt; envoy-override.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">admin:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  address:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    socket_address:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      address: 0.0.0.0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port_value: 9902
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>envoy -c envoy-demo.yaml --config-yaml <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>cat envoy-override.yaml<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 웹브라우저에서 http://192.168.10.254:9902 접속 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 어드민 페이지 접속 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Envoy Proxy Demo = http://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:9902&#34;</span>
+</span></span></code></pre></div><p><img src="./images/48_error-with-timeout.png" alt="error-with-timeout-missing-in-envoy"></p>
+<p><img src="./images/49_mod-timeout-and-reinstall-envoy.png" alt="modify-envoy-config"></p>
+<p><img src="./images/50_envoy-install-success-and-get-information.png" alt="envoy-installation-success"></p>
+<p><img src="./images/51_envoy-connection-test.png" alt="envoy-connection-test"></p>
+<p><img src="./images/52_envoy-demo-page-at-10000-port.png" alt="envoy-demo-page"></p>
+<p><img src="./images/53_envoy-admin-page-at-9902-port.png" alt="envoy-admin-page"></p>
+<h2 id="11-파드간-속도-측정">11. 파드간 속도 측정</h2>
+<ul>
+<li>iperf3:
+<ul>
+<li>서버 모드로 동작하는 단말과 클라이언트 모드로 동작하는 단말로 구성해서 최대 네트워크 대역폭 측정</li>
+<li>TCP, UDP, SCTP 지원</li>
+</ul>
+</li>
+</ul>
+<h3 id="11-1-iperf3-배포">11-1. iperf3 배포</h3>
+<ul>
+<li>서버 모드와 클라이언트 모드가 각각 다른 데이터플레인에 배포되어야 함
+<ul>
+<li>실제 실습의 경우에는 $N1에 서버 모드, $N3에 클라이언트 모드 배포 확인</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 배포</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/aews/k8s-iperf3.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f k8s-iperf3.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인 : 서버와 클라이언트가 다른 데이터플레인에 배포되었는지 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get deploy,svc,pod -owide
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 서버 파드 로그 확인 : 기본 5201 포트 Listen</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl logs -l app<span style="color:#f92672">=</span>iperf3-server -f
+</span></span></code></pre></div><h3 id="11-2-iperf3-테스트">11-2. iperf3 테스트</h3>
+<ol>
+<li>TCP 5201, 측정시간 5초</li>
+<li>UDP 사용, 역방향 모드(-R)</li>
+<li>TCP, 쌍방향 모드(-R)
+<ul>
+<li>해당사항 실습 누락함</li>
+</ul>
+</li>
+<li>TCP 다중 스트림(30개), -P(number of parallel client streams to run)</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 공통 모니터링</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 서버 파드 로그 확인 : 기본 5201 포트 Listen</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl logs -l app<span style="color:#f92672">=</span>iperf3-server -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1. TCP 5201, 측정시간 5초 </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -t <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. UDP 사용, 역방향 모드(-R)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -u -b 20G
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. TCP, 쌍방향 모드(-R)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -t <span style="color:#ae81ff">5</span> --bidir
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4. TCP 다중 스트림(30개), -P(number of parallel client streams to run)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -t <span style="color:#ae81ff">10</span> -P <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 실습 리소스 삭제</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl delete -f k8s-iperf3.yaml
+</span></span></code></pre></div><p><img src="./images/54_tcp-5201-sec-5.png" alt="iperf3-tcp-5201"></p>
+<p><img src="./images/55_udp-reverse-mode.png" alt="iperf3-udp-reverse"></p>
+<p><img src="./images/56_tcp-parallel-streams.png" alt="iperf3-tcp-parallel-streams"></p>
+<h2 id="reference">reference</h2>
+<ul>
+<li>23년 5월 7일 내로 보완 예정</li>
+</ul>
 
   </div>
   </section>
