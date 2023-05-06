@@ -175,7 +175,7 @@ ssh ec2-user@$N2 sudo iptables -t nat -L -n -v
 ![gasida-network](./images/gasida-network.png)
 
 - (coredns Pod 기준)AWS 웹콘솔에서 확인해보면, 2가지 IP가 있음.
-  - 프라이빗 주소 IP: 컨트롤플레인의 IP주소
+  - 프라이빗 주소 IP: ~~컨트롤~~데이터플레인의 IP주소
   - 보조 프라이빗 주소 IP:  
     - 데이터플레인에 Pod가 생성되면 바로 IP를 붙이기 위해 예약된 IP
     - L(ocal)-IPAM Warm **IP Pool**
