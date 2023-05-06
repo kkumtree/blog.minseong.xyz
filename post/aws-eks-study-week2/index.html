@@ -199,7 +199,7 @@ Calico CNI와 달리 데이터플레인(노드)의 AWS ENI(Elastic Network Inter
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># vpc-cni  v1.12.6-eksbuild.1 ACTIVE </span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS VPC CNI 관련</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 각각 노드(컨트롤플레인)IP 와 Pod IP 확인하는 명령어</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 각각 노드(데이터플레인)IP 와 Pod IP 확인하는 명령어</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>aws ec2 describe-instances --query <span style="color:#e6db74">&#34;Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key==&#39;Name&#39;]|[0].Value,Status:State.Name}&#34;</span> --filters Name<span style="color:#f92672">=</span>instance-state-name,Values<span style="color:#f92672">=</span>running --output table
 </span></span><span style="display:flex;"><span>kubectl get pod -n kube-system -o<span style="color:#f92672">=</span>custom-columns<span style="color:#f92672">=</span>NAME:.metadata.name,IP:.status.podIP,STATUS:.status.phase
@@ -326,7 +326,7 @@ Calico CNI와 달리 데이터플레인(노드)의 AWS ENI(Elastic Network Inter
 </span></span><span style="display:flex;"><span>ssh ec2-user@$N3
 </span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#34;ip link | egrep &#39;eth|eni&#39; ;echo;echo &#34;</span><span style="color:#f92672">[</span>ROUTE TABLE<span style="color:#f92672">]</span><span style="color:#e6db74">&#34;; route -n | grep eni&#34;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 netshoot 파드 생성</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 netshoot 파드 생성 명령</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 그러면 각 데이터플레인에서 변화가 생기는데 </span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 이번 경우에는 $N3에서 eth1이 생성됨을 확인할 수 있음</span>
 </span></span><span style="display:flex;"><span>
@@ -398,11 +398,11 @@ Calico CNI와 달리 데이터플레인(노드)의 AWS ENI(Elastic Network Inter
 </ul>
 </li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 외부 ping 테스트</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인의 파드에서 외부 ping 테스트</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>kubectl exec -it $PODNAME1 -- ping -c <span style="color:#ae81ff">1</span> www.google.com
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인 EC2 : TCPDUMP 확인 ($N3) 및 iptables 규칙 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인: TCPDUMP 확인 ($N3) 및 iptables 규칙 확인</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sudo tcpdump -i any -nn icmp
 </span></span><span style="display:flex;"><span>sudo tcpdump -i eth0 -nn icmp
@@ -426,7 +426,7 @@ Calico CNI와 달리 데이터플레인(노드)의 AWS ENI(Elastic Network Inter
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#39;sudo iptables -v --numeric --table nat --list AWS-SNAT-CHAIN-0; echo ; sudo iptables -v --numeric --table nat --list AWS-SNAT-CHAIN-1; echo ; sudo iptables -v --numeric --table nat --list KUBE-POSTROUTING&#39;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 외부 ping 테스트 </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인의 파드에서 외부 ping 테스트 </span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>kubectl exec -it $PODNAME1 -- ping -i 0.1 www.google.com
 </span></span></code></pre></div><p><img src="./images/14_external-ping-test.png" alt="external_ping"></p>
@@ -496,12 +496,12 @@ the number of IP address per network interface</li>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#39;kubectl get pods -o wide&#39;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 파드 생성</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 파드 생성 명령</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/2/nginx-dp.yaml
 </span></span><span style="display:flex;"><span>kubectl apply -f nginx-dp.yaml
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 파드 증가 테스트(50개) 및 살패 확인: Too many pods</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 파드 증가 테스트(50개) 및 실패 확인: Too many pods</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>kubectl scale deployment nginx-deployment --replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">50</span>
 </span></span><span style="display:flex;"><span>kubectl get pods | grep Pending
