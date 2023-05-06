@@ -129,14 +129,14 @@
 <li>학습을 위해, 이번에도 <a href="https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">가시다</a>님이 준비해주신 원클릭 배포 yaml을 활용하여 배포.</li>
 <li><strong>완전 배포까지 대략 20분 가량 소요</strong></li>
 <li>IAM에서 미리 발급해둔 액세스키/시크릿키를 알아두어야합니다.</li>
-<li>스크린샷은 1주차로 갈음.</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 원클릭 셋업</span>
 </span></span><span style="display:flex;"><span>aws cloudformation deploy --template-file ~/Documents/aews/eks-oneclick.yaml --stack-name myeks --parameter-overrides KeyName<span style="color:#f92672">=</span>aews SgIngressSshCidr<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span>/32 MyIamUserAccessKeyID<span style="color:#f92672">={</span>ACSSKEY|AKIA..<span style="color:#f92672">}</span>  MyIamUserSecretAccessKey<span style="color:#f92672">={</span>SECUKEY|7ob..<span style="color:#f92672">}</span> ClusterBaseName<span style="color:#f92672">=</span>myeks --region ap-northeast-2
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤 플레인(마스터노드) 접속 확인</span>
 </span></span><span style="display:flex;"><span>ssh -i ~/.ssh/aews.pem ec2-user@<span style="color:#66d9ef">$(</span>aws cloudformation describe-stacks --stack-name myeks --query <span style="color:#e6db74">&#39;Stacks[*].Outputs[0].OutputValue&#39;</span> --output text<span style="color:#66d9ef">)</span>
-</span></span></code></pre></div><h2 id="2-aws-vpc-cni-w기본-셋업-in-control-plane">2. AWS VPC CNI w/기본 셋업 (in Control Plane)</h2>
+</span></span></code></pre></div><p><img src="./images/01_oneclick.png" alt="oneclick_templete"></p>
+<h2 id="2-aws-vpc-cni-w기본-셋업-in-control-plane">2. AWS VPC CNI w/기본 셋업 (in Control Plane)</h2>
 <ul>
 <li>네임스페이스는 미리 default로 설정.<br>
 이걸 깜박해서, 지난 스터디 때 헛된 시행착오를 반복했던 이력이 있음.</li>
@@ -207,8 +207,7 @@ Calico CNI와 달리 데이터플레인(노드)의 AWS ENI(Elastic Network Inter
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-proxy config 확인 (mode: “iptables” 사용)</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>kubectl describe cm -n kube-system kube-proxy-config | grep mode
-</span></span></code></pre></div><p><img src="./images/01_oneclick.png" alt="oneclick_templete"></p>
-<p><img src="./images/02_oneclick-node-setup.png" alt="oneclick-node-setup"></p>
+</span></span></code></pre></div><p><img src="./images/02_oneclick-node-setup.png" alt="oneclick-node-setup"></p>
 <p><img src="./images/03_eks-addon.png" alt="eksctl_addon"></p>
 <p><img src="./images/04_kube-proxy-config.png" alt="kube-proxy-config"></p>
 <h3 id="2-1-kube-proxy에서-ipvs-대신-iptables를-사용하는-이유">2-1. kube-proxy에서 ipvs 대신 iptables를 사용하는 이유?</h3>
