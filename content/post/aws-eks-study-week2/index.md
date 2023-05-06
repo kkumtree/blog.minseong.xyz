@@ -106,7 +106,7 @@ eksctl get addon --cluster $CLUSTER_NAME
 # vpc-cni  v1.12.6-eksbuild.1 ACTIVE 
 
 # AWS VPC CNI 관련
-# 각각 노드(컨트롤플레인)IP 와 Pod IP 확인하는 명령어
+# 각각 노드(데이터플레인)IP 와 Pod IP 확인하는 명령어
 
 aws ec2 describe-instances --query "Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --filters Name=instance-state-name,Values=running --output table
 kubectl get pod -n kube-system -o=custom-columns=NAME:.metadata.name,IP:.status.podIP,STATUS:.status.phase
@@ -226,7 +226,7 @@ watch -d "ip link | egrep 'eth|eni' ;echo;echo "[ROUTE TABLE]"; route -n | grep 
 ssh ec2-user@$N3
 watch -d "ip link | egrep 'eth|eni' ;echo;echo "[ROUTE TABLE]"; route -n | grep eni"
 
-# 컨트롤플레인에서 netshoot 파드 생성
+# 컨트롤플레인에서 netshoot 파드 생성 명령
 # 그러면 각 데이터플레인에서 변화가 생기는데 
 # 이번 경우에는 $N3에서 eth1이 생성됨을 확인할 수 있음
 
@@ -306,11 +306,11 @@ sudo tcpdump -i eth1 -nn icmp
   - 데이터플레인에서 정보(tcpdump, iptables) 확인
 
 ```bash
-# 컨트롤플레인에서 외부 ping 테스트
+# 데이터플레인의 파드에서 외부 ping 테스트
 
 kubectl exec -it $PODNAME1 -- ping -c 1 www.google.com
 
-# 데이터플레인 EC2 : TCPDUMP 확인 ($N3) 및 iptables 규칙 확인
+# 데이터플레인: TCPDUMP 확인 ($N3) 및 iptables 규칙 확인
 
 sudo tcpdump -i any -nn icmp
 sudo tcpdump -i eth0 -nn icmp
@@ -334,7 +334,7 @@ sudo conntrack -L -n |grep -v '169.254.169'
 
 watch -d 'sudo iptables -v --numeric --table nat --list AWS-SNAT-CHAIN-0; echo ; sudo iptables -v --numeric --table nat --list AWS-SNAT-CHAIN-1; echo ; sudo iptables -v --numeric --table nat --list KUBE-POSTROUTING'
 
-# 컨트롤플레인에서 외부 ping 테스트 
+# 데이터플레인의 파드에서 외부 ping 테스트 
 
 kubectl exec -it $PODNAME1 -- ping -i 0.1 www.google.com
 ```
@@ -391,12 +391,12 @@ while true; do ip -br -c addr show && echo "--------------" ; date "+%Y-%m-%d %H
 
 watch -d 'kubectl get pods -o wide'
 
-# 컨트롤플레인에서 파드 생성
+# 컨트롤플레인에서 파드 생성 명령
 
 curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/2/nginx-dp.yaml
 kubectl apply -f nginx-dp.yaml
 
-# 컨트롤플레인에서 파드 증가 테스트(50개) 및 살패 확인: Too many pods
+# 컨트롤플레인에서 파드 증가 테스트(50개) 및 실패 확인: Too many pods
 
 kubectl scale deployment nginx-deployment --replicas=50
 kubectl get pods | grep Pending
