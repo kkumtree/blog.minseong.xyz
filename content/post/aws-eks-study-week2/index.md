@@ -667,4 +667,366 @@ kubectl delete deploy gasida-web; kubectl delete svc svc-nlb-ip-type-pp
 
 ![check-with-connection](./images/37_check-with-continous-connection.png)
 
-![1](./images)
+## 8. Ingress
+
+- 클러스터 내부의 서비스(ClusterIP, NodePort, Loadbalancer)를 외부로 노출(HTTP/HTTPS)
+- Web Proxy 역할: 어라 그러면, ClusterIP를 써도....(?)
+
+- `AWS VPC CNI` 에서 AWS LB 컨트롤러 + Ingress (ALB) IP 모드 동작  
+  - 바로 파드의 IP로 통신이 가능
+
+```bash
+# 게임 파드와 Service, Ingress 배포
+
+curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/3/ingress1.yaml
+kubectl apply -f ingress1.yaml
+
+# 모니터링
+
+watch -d kubectl get pod,ingress,svc,ep -n game-2048
+
+# 생성 확인
+
+kubectl get-all -n game-2048
+kubectl get ingress,svc,ep,pod -n game-2048
+kubectl get targetgroupbindings -n game-2048
+
+# Ingress 확인
+
+kubectl describe ingress -n game-2048 ingress-2048
+
+# 게임 접속 : ALB 주소로 웹 접속
+
+kubectl get ingress -n game-2048 ingress-2048 -o jsonpath={.status.loadBalancer.ingress[0].hostname} | awk '{ print "Game URL = http://"$1 }'
+
+# 파드 IP 확인
+
+kubectl get pod -n game-2048 -owide
+
+# 파드 스케일 모니터링
+
+watch kubectl get pod -n game-2048
+
+# 파드 3개로 증가
+
+kubectl scale deployment -n game-2048 deployment-2048 --replicas 3
+
+# 파드 1개로 감소
+
+kubectl scale deployment -n game-2048 deployment-2048 --replicas 1
+
+# 삭제
+
+kubectl delete ingress ingress-2048 -n game-2048
+kubectl delete svc service-2048 -n game-2048 && kubectl delete deploy deployment-2048 -n game-2048 && kubectl delete ns game-2048
+```
+
+![ingress-test](./images/38_ingress-test-pod.png)
+
+![check-ingress-info](./images/39_check-pod-ingress-and-Web-URL.png)
+
+![ingress-scaling-up](./images/40_ingress-scaling-up.png)
+
+![ingress-scaling-down](./images/41_ingress-scaling-down.png)
+
+![delete-ingress-test](./images/42_delete-ingress-test.png)
+
+## 9. External DNS
+
+- 외부 DNS 서비스를 통해 도메인을 통해 접속 가능하도록 설정
+- AWS Route53에 Public 도메인을 등록시켜놓았음
+- ExternalDNS CTRL 권한 주는 방법 3가지:  
+  1. **Node IAM Role**: EKS 원클릭 배포 시 설정되어 있음
+     - eksctl create cluster ... **--external-dns-access** ...
+  2. Static credentials
+  3. IRSA
+
+### 9-1. Route53 정보 확인 및 변수 지정
+
+- 중간에 명령어가 잘못되었는지, 제대로 값이 뜨지 않는 것이 있었음
+
+```bash
+# 도메인 변수 지정
+
+# MyDomain=<소유한 도메인>
+MyDomain=awskops.click
+
+# Route 53 도메인 ID 조회 및 변수 지정 
+
+aws route53 list-hosted-zones-by-name --dns-name "${MyDomain}." | jq
+MyDnzHostedZoneId=`aws route53 list-hosted-zones-by-name --dns-name "${MyDomain}." --query "HostedZones[0].Id" --output text`
+echo $MyDnzHostedZoneId
+
+# A 레코드 타입 조회: 정상적으로 조회되지 않음
+
+aws route53 list-resource-record-sets --hosted-zone-id "${MyDnzHostedZoneId}" --query "ResourceRecordSets[?Type == 'A'].Name" --output text
+```
+
+### 9-2. ExternalDNS 설치
+
+```bash
+# Route53 변수 확인
+
+echo $MyDomain, $MyDnzHostedZoneId
+
+# ExternalDNS 배포
+
+curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/aews/externaldns.yaml
+MyDomain=$MyDomain MyDnzHostedZoneId=$MyDnzHostedZoneId envsubst < externaldns.yaml | kubectl apply -f -
+
+# 확인 및 로그 모니터링
+
+kubectl get pod -l app.kubernetes.io/name=external-dns -n kube-system
+kubectl logs deploy/external-dns -n kube-system -f
+```
+
+![set-route53-as-variable](./images/43_set-route53-as-variable.png)
+
+### 9-3. Service(NLB) + 도메인 연동(ExternalDNS)
+
+- 리소스 삭제 시, ExternalDNS에 의해 A레코드도 함께 제거됨을 확인
+
+```bash
+# 모니터링 준비 및 로그 조회
+
+watch -d 'kubectl get pod,svc'
+kubectl logs deploy/external-dns -n kube-system -f
+
+# 테트리스 디플로이먼트 배포
+
+cat <<EOF | kubectl create -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tetris
+  labels:
+    app: tetris
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tetris
+  template:
+    metadata:
+      labels:
+        app: tetris
+    spec:
+      containers:
+      - name: tetris
+        image: bsord/tetris
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tetris
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+    #service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "80"
+spec:
+  selector:
+    app: tetris
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  type: LoadBalancer
+  loadBalancerClass: service.k8s.aws/nlb
+EOF
+
+# 배포 확인 : CLB 배포 확인
+
+kubectl get deploy,svc,ep tetris
+
+# NLB에 ExternanDNS 로 도메인 연결
+
+kubectl annotate service tetris "external-dns.alpha.kubernetes.io/hostname=tetris.$MyDomain"
+
+# Route53에 A레코드 확인
+# jq 까지 하는 경우 정상적으로 조회되지 않음;;
+
+aws route53 list-resource-record-sets --hosted-zone-id "${MyDnzHostedZoneId}" --query "ResourceRecordSets[?Type == 'A']" | jq
+aws route53 list-resource-record-sets --hosted-zone-id "${MyDnzHostedZoneId}" --query "ResourceRecordSets[?Type == 'A'].Name" | jq .[]
+
+# Public IP(도메인 DNS) 확인
+
+dig +short tetris.$MyDomain @8.8.8.8
+dig +short tetris.$MyDomain
+
+# 도메인 체크
+
+echo -e "My Domain Checker = https://www.whatsmydns.net/#A/tetris.$MyDomain"
+
+# 웹 접속 주소 확인 및 접속
+
+echo -e "Tetris Game URL = http://tetris.$MyDomain"
+
+# 리소스 삭제
+
+kubectl delete deploy,svc tetris
+```
+
+![create-tetris-pod](./images/44_tetris-pod-create.png)
+
+![annotate-domain](./images/45_annotate(connect)-with-domain.png)
+
+![tetris-pod-with-dns](./images/46_tetris-pod-with-external-dns.png)
+
+## 10. Envoy (반쪽 실습)
+
+- istio를 위해 설치는 했으나, istio가 제대로 안되서 Envoy만 기재
+- Envoy: L7 Proxy, istio의 Sidecar proxy
+  - istiod: 컨트롤플레인
+  - Envoy: 데이터플레인 (istio-proxy > envoy)
+    - istio-proxy 안에 Envoy가 들어있다는 것
+
+```bash
+# 컨트롤플레인에 Envoy 설치
+
+sudo rpm --import 'https://rpm.dl.getenvoy.io/public/gpg.CF716AF503183491.key'
+curl -sL 'https://rpm.dl.getenvoy.io/public/config.rpm.txt?distro=el&codename=7' > /tmp/tetrate-getenvoy-rpm-stable.repo
+sudo yum-config-manager --add-repo '/tmp/tetrate-getenvoy-rpm-stable.repo'
+sudo yum makecache --disablerepo='*' --enablerepo='tetrate-getenvoy-rpm-stable' -y
+sudo yum install getenvoy-envoy -y
+
+envoy --version
+```
+
+![install-Envoy](./images/47_install-envoy.png)
+
+### 10-1. Envoy proxy 실습 w.Envoy-demo
+
+- Envoy 상에서 웹서버 구동을 위한 `myhome.yaml` 생성 방법을 이해하지 못함
+  - 직전까지 하여, 데모 페이지 및 어드민 페이지 확인
+
+```bash
+# 데모 config 적용하여 실행
+# `connect_timeout` missing 에러 출력되면서 실행 실패
+
+curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/92dcb9714fb6bc288d042029b34c0de4/envoy-demo.yaml
+envoy -c envoy-demo.yaml
+
+# connect_timeout 추가 후 다시 실행
+
+sed -i'' -r -e "/dns_lookup_family/a\    connect_timeout: 5s" envoy-demo.yaml
+envoy -c envoy-demo.yaml
+
+# 정보 확인
+# ... 0.0.0.0:10000  0.0.0.0:*  users:(("envoy" ...
+
+ss -tnlp
+
+# 접속 테스트
+
+curl -s http://127.0.0.1:10000 | grep -o "<title>.*</title>"
+<title>Envoy Proxy - Home</title>
+
+# envoy 데모 페이지 확인
+
+echo -e "Envoy Proxy Demo = http://$(curl -s ipinfo.io/ip):10000"
+
+# 연결 정보 확인
+
+ss -tnp
+
+# 기존 envoy 실행 취소 후 (관리자페이지) 설정 덮어쓰기
+
+cat <<EOT> envoy-override.yaml
+admin:
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 9902
+EOT
+envoy -c envoy-demo.yaml --config-yaml "$(cat envoy-override.yaml)"
+
+# 웹브라우저에서 http://192.168.10.254:9902 접속 확인
+# 어드민 페이지 접속 확인
+
+echo -e "Envoy Proxy Demo = http://$(curl -s ipinfo.io/ip):9902"
+```
+
+![error-with-timeout-missing-in-envoy](./images/48_error-with-timeout.png)
+
+![modify-envoy-config](./images/49_mod-timeout-and-reinstall-envoy.png)
+
+![envoy-installation-success](./images/50_envoy-install-success-and-get-information.png)
+
+![envoy-connection-test](./images/51_envoy-connection-test.png)
+
+![envoy-demo-page](./images/52_envoy-demo-page-at-10000-port.png)
+
+![envoy-admin-page](./images/53_envoy-admin-page-at-9902-port.png)
+
+## 11. 파드간 속도 측정
+
+- iperf3:
+  - 서버 모드로 동작하는 단말과 클라이언트 모드로 동작하는 단말로 구성해서 최대 네트워크 대역폭 측정  
+  - TCP, UDP, SCTP 지원
+
+### 11-1. iperf3 배포
+
+- 서버 모드와 클라이언트 모드가 각각 다른 데이터플레인에 배포되어야 함
+  - 실제 실습의 경우에는 $N1에 서버 모드, $N3에 클라이언트 모드 배포 확인
+
+```bash
+# 배포
+
+curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/aews/k8s-iperf3.yaml
+kubectl apply -f k8s-iperf3.yaml
+
+# 확인 : 서버와 클라이언트가 다른 데이터플레인에 배포되었는지 확인
+
+kubectl get deploy,svc,pod -owide
+
+# 서버 파드 로그 확인 : 기본 5201 포트 Listen
+
+kubectl logs -l app=iperf3-server -f
+```
+
+### 11-2. iperf3 테스트
+
+1. TCP 5201, 측정시간 5초
+2. UDP 사용, 역방향 모드(-R)
+3. TCP, 쌍방향 모드(-R)  
+   - 해당사항 실습 누락함
+4. TCP 다중 스트림(30개), -P(number of parallel client streams to run)
+
+```bash
+# 공통 모니터링
+# 서버 파드 로그 확인 : 기본 5201 포트 Listen
+
+kubectl logs -l app=iperf3-server -f
+
+# 1. TCP 5201, 측정시간 5초 
+
+kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -t 5
+
+# 2. UDP 사용, 역방향 모드(-R)
+
+kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -u -b 20G
+
+# 3. TCP, 쌍방향 모드(-R)
+
+kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -t 5 --bidir
+
+# 4. TCP 다중 스트림(30개), -P(number of parallel client streams to run)
+
+kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -t 10 -P 2
+
+# 실습 리소스 삭제
+
+kubectl delete -f k8s-iperf3.yaml
+```
+
+![iperf3-tcp-5201](./images/54_tcp-5201-sec-5.png)
+
+![iperf3-udp-reverse](./images/55_udp-reverse-mode.png)
+
+![iperf3-tcp-parallel-streams](./images/56_tcp-parallel-streams.png)
+
+## reference
+
+- 23년 5월 7일 내로 보완 예정
