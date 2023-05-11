@@ -119,6 +119,8 @@ MyDomain=$MyDomain MyDnzHostedZoneId=$MyDnzHostedZoneId envsubst < externaldns.y
 - 시각적으로 현재 k8s의 상태를 볼 수 있는 툴
 - 안되는 줄 알았는데, 뷰어가 뜰 때까지 시간이 걸리는 것이었음.  
 
+![1-kube-ops-view](./images/1-kube-ops-view.png)
+
 ```bash
 # kube-ops-view
 helm repo add geek-cookbook https://geek-cookbook.github.io/charts/
@@ -194,12 +196,18 @@ kubectl exec busybox -- tail -f /home/pod-out.txt
 kubectl delete pod busybox
 ```
 
+![EmptyDir-test](./images/2-emptydir.png)
+
 ### 2-2. local-path-provisioner 스토리지 클래스 배포 (PV/PVC)
 
 - hostPath 사용
-- Node Affinity: Pod를 배치할 위치 지정하는 힌트를 제공하는 스케쥴러에 제공
+- nodeAffinity: Pod를 배치할 위치 지정하는 힌트를 제공하는 스케쥴러에 제공
   - 수동으로 정의를 하지 않았으나, 해당 워커노드의 주소를 확인할 수 있음  
     예) kubernetes.io/hostname in [ip-192-168-2-xxx.ap-northeast-2.compute.internal]
+
+![nodeAffinity_in_pv_yaml](./images/12-node_affinity_in_pv_yaml.png)
+
+![nodeAffinity_int_node_label](./images/13-node_affinity_in_node_label.png)
 
 ```bash
 # 배포
@@ -264,7 +272,15 @@ kubectl get pv
 ssh ec2-user@$N1 tree /opt/local-path-provisioner
 ```
 
-### 2-3. (참고) kubestar 모니터링 및 성능 측정 (NVMe SSD)
+![local-path-provisioner](./images/3-local-path-provisioner.png)
+
+![pvc_pending_before_pod](./images/4-pvc_pending_before_app.png)
+
+![pvc_bound_with_node_affinity](./images/5-pvc_bound_with_node_affinity.png)
+
+![volume_lost_data_after_delete_pod](./images/6-volume_lost_data_after_delete_pod.png)
+
+### 2-3. (참고) kubestr 모니터링 및 성능 측정 (NVMe SSD)
 
 - 디스크 I/O 성능을 측정
 
@@ -293,6 +309,8 @@ sed -i '/directory/d' fio-write.fio
 kubestr fio -f fio-write.fio -s local-path --size 10G
 ```
 
+![7-kubestr-io-test](./images/7-kubestr-io-test.png)
+
 ## 3. AWS EBS Controller
 
 - EBS CSI driver: EBS 볼륨을 생성하고 Pod에 이를 연결
@@ -300,6 +318,8 @@ kubestr fio -f fio-write.fio -s local-path --size 10G
 - 특징: ISRA 정책 설정시 **AWS Managed Policy**(AWS 관리형 정책)인 AmazonEBSCSIDriverPolicy 사용
   - AWS LB, ExternalDNS의 경우, Customer Policy(고객 관리형 정책)
 - (참고) k8s v1.22+ 에서는 ReadWriteOncePod를 지원하므로, 민감한 데이터를 다룰때 활용할 수 있음. [(출처: k8s blog)](https://kubernetes.io/blog/2021/09/13/read-write-once-pod-access-mode-alpha/)
+
+![IRSA_AWS_managed_policy_in_AWS_EBS_Controller](./images/8-isra_aws_managed_policy_in_aws_ebs_controller.png)
 
 ### 3-1. (설치) Amazon EBS CSI driver as an Amazon EKS add-on
 
@@ -356,6 +376,8 @@ kubectl apply -f gp3-sc.yaml
 kubectl get sc
 kubectl describe sc gp3 | grep Parameters
 ```
+
+![9-AWS_EBS_controller_installation](./images/9-aws_ebs_controller_installation.png)
 
 ### 3-2. PVC/PV 파드 테스트
 
@@ -436,7 +458,11 @@ kubectl exec -it app -- sh -c 'df -hT --type=overlay'
 kubectl exec -it app -- sh -c 'df -hT --type=ext4'
 ```
 
-### 3-2. 볼륨 증가 테스트
+![check_EBS_volume_before_pod](./images/10-check_ebs_volume_before_pod.png)
+
+![check_EBS_bound_with_pvc](./images/11-check_ebs_bound_with_pvc.png)
+
+### 3-3. 볼륨 증가 테스트
 
 - 당연한 이야기지만, 줄이는 건 안됨: 새로 작은거 만들어서 옮기면 된다.
   - 하드디스크 조각 모음을 생각해보자
@@ -455,6 +481,8 @@ aws ec2 describe-volumes --volume-ids $(kubectl get pv -o jsonpath="{.items[0].s
 # 자원 삭제
 kubectl delete pod app & kubectl delete pvc ebs-claim
 ```
+
+![resizing_EBS_volume](./images/14-resizing_ebs_volume.png)
 
 ## 4. AWS Volume SnapShots Controller
 
@@ -483,6 +511,8 @@ curl -s -O https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/
 kubectl apply -f snapshotclass.yaml
 kubectl get vsclass # volumesnapshotclasses
 ```
+
+![15-volumesnapshots_controller](./images/15-volumesnapshots_controller.png)
 
 ### 4-2. Volumesnapshots Controller 테스트
 
@@ -520,6 +550,8 @@ aws ec2 describe-snapshots --owner-ids self --query 'Snapshots[]' --output table
 # app & pvc 제거 : 강제로 장애 재현
 kubectl delete pod app && kubectl delete pvc ebs-claim
 ```
+
+![EBS_volume_snapshot_creation](./images/16-ebs_vol_snapshot_creation.png)
 
 - 스냅샷 복원 테스트
 
@@ -561,12 +593,16 @@ kubectl exec app -- cat /data/out.txt
 kubectl delete pod app && kubectl delete pvc ebs-snapshot-restored-claim && kubectl delete volumesnapshots ebs-volume-snapshot
 ```
 
+![EBS_snapshot_restored_claim](./images/17-ebs_snapshot_restored_claim.png)
+
 ## 5. AWS EFS Controller
 
 - GiB(기비바이트) 단위 기준으로 볼륨을 입력했는데 단위 8.0E(엑사바이트)가 뜨는 이유?
   - AWS EFS는 전체 용량 제한이 없음(볼륨 크기 프로비저닝 불필요) [(출처: GS Neotek blog)](https://www.wisen.co.kr/pages/blog/blog-detail.html?idx=6883)
   - 자동으로 확장되는 '페타바이트급' 데이터를 저장할 수 있다고 하기 때문에 자신감으로 표현한 것으로 보임
     - 탄력적으로 자동으로 증가하고 줄어들 수 있다고 함 [(출처: AWS EFS FAQ)](https://aws.amazon.com/ko/efs/faq/)
+
+![AWS_EFS_almost_unlimited_storage](./images/18-aws_efs_almost_unlimited_storage.png)
 
 ### 5-1. AWS EFS Controller 설치
 
@@ -575,20 +611,20 @@ kubectl delete pod app && kubectl delete pvc ebs-snapshot-restored-claim && kube
 aws efs describe-file-systems --query "FileSystems[*].FileSystemId" --output text
 
 # IAM 정책 생성
-curl -s -O https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/master/docs/**iam-policy-example.json**
-aws iam create-policy --policy-name **AmazonEKS_EFS_CSI_Driver_Policy** --policy-document file://iam-policy-example.json
+curl -s -O https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/master/docs/iam-policy-example.json
+aws iam create-policy --policy-name AmazonEKS_EFS_CSI_Driver_Policy --policy-document file://iam-policy-example.json
 
 # ISRA 설정 : 고객관리형 정책 AmazonEKS_EFS_CSI_Driver_Policy 사용
-eksctl create **iamserviceaccount** \
-  --name **efs-csi-controller-sa** \
+eksctl create iamserviceaccount \
+  --name efs-csi-controller-sa \
   --namespace kube-system \
   --cluster ${CLUSTER_NAME} \
   --attach-policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/AmazonEKS_EFS_CSI_Driver_Policy \
   --approve
 
-****# ISRA 확인
+# ISRA 확인
 kubectl get sa -n kube-system efs-csi-controller-sa -o yaml | head -5
-****eksctl get iamserviceaccount --cluster myeks
+eksctl get iamserviceaccount --cluster myeks
 
 # EFS Controller 설치
 helm repo add aws-efs-csi-driver https://kubernetes-sigs.github.io/aws-efs-csi-driver/
@@ -603,6 +639,8 @@ helm upgrade -i aws-efs-csi-driver aws-efs-csi-driver/aws-efs-csi-driver \
 helm list -n kube-system
 kubectl get pod -n kube-system -l "app.kubernetes.io/name=aws-efs-csi-driver,app.kubernetes.io/instance=aws-efs-csi-driver"
 ```
+
+![EFS_controller_install_with_customer_managed_policy](./images/19-efs_controller_installation_with_customer_managed_policy.png)
 
 ### 5-2. (Static provisioning) EFS 파일시스템을 다수의 파드가 사용하게 설정
 
@@ -671,6 +709,8 @@ kubectl delete pod app1 app2
 kubectl delete pvc efs-claim && kubectl delete pv efs-pv && kubectl delete sc efs-sc
 ```
 
+![EFS_static_provisioning_with_rwm_mode](./images/20-efs_static_provisioning_with_rwm_mode.png)
+
 ### 5-3. (Dynamic provisioning) EFS 파일시스템을 다수의 파드가 사용하게 설정
 
 - 5-2처럼 하면, 매 순간 사람의 손이 더 많이 가므로 동적 프로비저닝을 실습
@@ -711,10 +751,14 @@ kubectl delete -f pod.yaml
 kubectl delete -f storageclass.yaml
 ```
 
+![EFS_dynamic_provisioning_in_efs-ap_mode](./images/21-efs_dynamic_provisioning_in_efs-ap_mode.png)
+
+![check_shared_EFS_&_storageclass_efs-sc_defined_in_pvc](./images/22-check_shared_efs_and_storageclass_efs-sc_defined_in_pvc.png)
+
 ## 6. EKS PVs for Instance Store & Add NodeGroup
 
 - EC2의 인스턴스 스토어는...
-  - ephemeral-storage
+  - [ephemeral-storage(임시 볼륨)](https://kubernetes.io/ko/docs/concepts/storage/ephemeral-volumes/)
   - 웹 콘솔의 EC2 스토리(EBS)정보에 출력되지 않음. 터미널에서 확인.
 - 인스턴스 스토리지의 데이터 손실의 주요한 유형은 아래와 같음.
   1. 기본 디스크 드라이브 오류
@@ -785,7 +829,13 @@ kubectl describe node -l disk=nvme | grep Allocatable: -A7
 ssh ec2-user@$N4 sudo ps -ef | grep kubelet
 ```
 
-### 6-2. 스토리지 클래스 재생성
+![create_new_node_group_with_preBootstrapCommands](./images/23-create_new_node_group_with_preBootstrapCommands.png)
+
+![confirm_new_node_ip](./images/24-confirm_new_node_ip.png)
+
+![overrided_max-pods_parameter](./images/25-overrided_max-pods_parameter.png)
+
+### 6-2. 스토리지 클래스 재생성 및 I/O 테스트
 
 ```bash
 # 기존 삭제 (2-2에서 실습한 내용 초기화)
@@ -807,3 +857,5 @@ kubestr fio -f fio-read.fio -s local-path --size 10G --nodeselector disk=nvme
 kubectl delete -f local-path-storage.yaml
 eksctl delete nodegroup -c $CLUSTER_NAME -n ng2
 ```
+
+![read_test_on_new_node_nvme](./images/26-read_test_on_new_node_nvme.png)
