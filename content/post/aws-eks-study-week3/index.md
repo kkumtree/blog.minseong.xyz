@@ -859,3 +859,15 @@ eksctl delete nodegroup -c $CLUSTER_NAME -n ng2
 ```
 
 ![read_test_on_new_node_nvme](./images/26-read_test_on_new_node_nvme.png)
+
+## reference
+
+- [CloudNet@](https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion 및 Slack 채널
+- [aws-cli filter @AWS Docs](https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/cli-usage-filter.html)
+- [k8s volume @조대협님의 블로그](https://bcho.tistory.com/1259)
+- [AWS EBS Controller @악분일상님의 블로그](https://malwareanalysis.tistory.com/598)
+- [ReadWriteOncePod(RWOP) access mode @k8s Blog](https://kubernetes.io/blog/2021/09/13/read-write-once-pod-access-mode-alpha/)
+- [AWS EFS ap-northeast-2 region @GS Neotek Blog](https://www.wisen.co.kr/pages/blog/blog-detail.html?idx=6883)
+- [EFS FAQ @AWS](https://aws.amazon.com/ko/efs/faq/)
+- [ephemeral-storage @k8s Docs](https://kubernetes.io/ko/docs/concepts/storage/ephemeral-volumes/)
+- [EC2 Instance Store @AWS Docs](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/InstanceStorage.html)
