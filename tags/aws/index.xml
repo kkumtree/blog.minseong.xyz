@@ -6,7 +6,21 @@
     <description>Recent content in AWS on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Fri, 12 May 2023 05:36:38 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 18 May 2023 21:36:19 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>aws-cli를 이용한 bastion CIDR 변경</title>
+      <link>https://blog.minseong.xyz/post/modify-bastion-cidr-with-aws-cli/</link>
+      <pubDate>Thu, 18 May 2023 21:36:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/modify-bastion-cidr-with-aws-cli/</guid>
+      <description>0. 요약 Docs 1 Docs 2 aws ec2 describe-security-groups aws ec2 modify-security-group-rules 1. 배경 2주 전에 문득 이런 질문을 올렸던 적이 있었다.
+물론 바꾸면 안될 일은 없었는데 이렇게 하는게 맞나 확신이 모자라서 의견을 여쭤봤었고,
+이게 맞다는 확신을 받았다.
+그리고 오늘&amp;hellip; 카페를 두 곳이나 들리면서 하느라 약간의 번거로움도 있고 AWS 웹 콘솔에서 하려 했다.
+그런데, 유독 SG에서만 페이지 로딩이 timeout 걸려서,
+도저히 수정은 커녕 해당 ID도 파악을 하기 힘든 상황이 되었다.</description>
+    </item>
+    
     <item>
       <title>AWS EKS 스터디 3주차</title>
       <link>https://blog.minseong.xyz/post/aws-eks-study-week3/</link>
