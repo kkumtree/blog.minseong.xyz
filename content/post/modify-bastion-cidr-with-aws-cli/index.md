@@ -13,7 +13,7 @@ authors:
       launchpad: mscho7969
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
-image: cover.jpg # 커버 이미지 URL
+image: cover.png # 커버 이미지 URL
 draft: false # 글 초안 여부
 ---
 
@@ -28,6 +28,8 @@ aws ec2 modify-security-group-rules
 ```
 
 ## 1. 배경
+
+![intro](./images/What_I_asked_in_Slack.png)
 
 2주 전에 문득 이런 질문을 올렸던 적이 있었다.  
 물론 바꾸면 안될 일은 없었는데 이렇게 하는게 맞나 확신이 모자라서 의견을 여쭤봤었고,  
