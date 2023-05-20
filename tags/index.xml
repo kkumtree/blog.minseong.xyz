@@ -6,13 +6,40 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Thu, 18 May 2023 21:36:19 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 21 May 2023 06:13:52 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>AWS</title>
       <link>https://blog.minseong.xyz/tags/aws/</link>
-      <pubDate>Thu, 18 May 2023 21:36:19 +0900</pubDate>
+      <pubDate>Sun, 21 May 2023 06:13:52 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/aws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CloudNet@</title>
+      <link>https://blog.minseong.xyz/tags/cloudnet@/</link>
+      <pubDate>Sun, 21 May 2023 06:13:52 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/cloudnet@/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>EKS</title>
+      <link>https://blog.minseong.xyz/tags/eks/</link>
+      <pubDate>Sun, 21 May 2023 06:13:52 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/eks/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>observability</title>
+      <link>https://blog.minseong.xyz/tags/observability/</link>
+      <pubDate>Sun, 21 May 2023 06:13:52 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/observability/</guid>
       <description></description>
     </item>
     
@@ -40,24 +67,6 @@
       <pubDate>Thu, 18 May 2023 21:36:19 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/cidr/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>CloudNet@</title>
-      <link>https://blog.minseong.xyz/tags/cloudnet@/</link>
-      <pubDate>Fri, 12 May 2023 05:36:38 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/cloudnet@/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>EKS</title>
-      <link>https://blog.minseong.xyz/tags/eks/</link>
-      <pubDate>Fri, 12 May 2023 05:36:38 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/eks/</guid>
       <description></description>
     </item>
     

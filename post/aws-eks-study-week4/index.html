@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>AWS EKS 스터디 4주차 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="AWS EKS 스터디 4주차" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/aws-eks-study-week4/cover.jpg' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/aws-eks-study-week4/cover.jpg' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/aws-eks-study-week4/cover.jpg' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.8c1fb07f2dee90a6523f7317a7d023e3c1b14bd4706bff237c94e366d59facf9.css">
+</head><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.jpg'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>AWS EKS 스터디 4주차</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-21T06:13:52&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">AWS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/eks" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">EKS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/observability" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">observability</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>이번 주차에는 Observability에 대해 스터디가 진행되었습니다.<br>
+자원 모니터링 툴들의 적용 및 사용이 중심입니다.</p>
+<p>그나저나 k8s 1.26에서 metrics의 일부 명칭이 바뀌는 걸 보고 식겁했습니다.<br>
+(<code>etcd_db_total_size_bytes</code> 대신, <code>apiserver_storage_db_total_size_in_bytes</code> 으로 변경)<br>
+또한 kubecost의 경우, cloudformation 스택 제거 후에도 볼륨 데이터가 남아있어서 별도로 삭제해야 했습니다.</p>
+<h2 id="1-실습환경-배포">1. 실습환경 배포</h2>
+<ul>
+<li>NAT게이트웨이, EBS addon, IAM role, ISRA for LB/EFS, PreCommand 포함</li>
+<li>노드: t3.xlarge
+<ul>
+<li>t3<strong>a</strong>.xlarge(AMD)는 서울 리전 b AZ(ap-northeast-2b)에서 미지원</li>
+</ul>
+</li>
+<li>더 많은 값들이 입력되어서, 생성 완료까지 더 많은 시간이 소요 (약 20여분 이내)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/eks-oneclick3.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이하 생략, 3주차 참고</span>
+</span></span></code></pre></div><p><img src="./images/cloudformation.png" alt="cloudformation"></p>
+<h2 id="2-eks-console">2. EKS Console</h2>
+<ul>
+<li>쿠버네티스 API를 통해서 리소스 및 정보 확인</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get ClusterRole | grep eks
+</span></span></code></pre></div><ul>
+<li>
+<p>EKS Cluster에 대한 IAM Role 정보 확인: 연결 정책</p>
+</li>
+<li>
+<p>웹 콘솔에서 다음과 같은 정보 확인 가능 <a href="https://www.eksworkshop.com/docs/observability/resource-view/">(출처: EKS Workshop)</a></p>
+<ul>
+<li>Workloads, Cluster, Service&amp;Networking, Config&amp;Secret, Storage, Authentication, Authoriztion, Policy, Extensions</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-logging-in-eks">3. Logging in EKS</h2>
+<ul>
+<li>로깅 대상 구분
+<ol>
+<li>Control Plane</li>
+<li>Node</li>
+<li>Application</li>
+</ol>
+</li>
+</ul>
+<h3 id="3-1-control-plane-logging">3-1. Control Plane Logging</h3>
+<ul>
+<li>출처: <a href="https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/control-plane-logs.html">EKS Docs</a></li>
+<li>로그 그룹 이름: <code>/aws/eks/&lt;cluster-name&gt;/cluster</code></li>
+<li>로깅은 5가지가 지원
+<ul>
+<li><code>api</code> : k8s API server component logs</li>
+<li><code>audit</code></li>
+<li><code>authenticator</code></li>
+<li><code>controllerManager</code></li>
+<li><code>scheduler</code></li>
+</ul>
+</li>
+<li>로깅을 활성화 한 후에 확인
+<ul>
+<li>아래에서는 kube-controller-manager를 대상으로 coredns 레플리카 수를 조정하면서 로그를 확인</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 모든 로깅 활성화</span>
+</span></span><span style="display:flex;"><span>aws eks update-cluster-config --region $AWS_DEFAULT_REGION --name $CLUSTER_NAME <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --logging <span style="color:#e6db74">&#39;{&#34;clusterLogging&#34;:[{&#34;types&#34;:[&#34;api&#34;,&#34;audit&#34;,&#34;authenticator&#34;,&#34;controllerManager&#34;,&#34;scheduler&#34;],&#34;enabled&#34;:true}]}&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 로그 그룹 확인</span>
+</span></span><span style="display:flex;"><span>aws logs describe-log-groups | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 로그 tail 확인</span>
+</span></span><span style="display:flex;"><span>aws logs tail /aws/eks/$CLUSTER_NAME/cluster | more
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 시간 지정: 1초(s) 1분(m) 1시간(h) 하루(d) 한주(w) / 짧게 출력</span>
+</span></span><span style="display:flex;"><span>aws logs tail /aws/eks/$CLUSTER_NAME/cluster --since 1h30m --format short
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 로그 스트림</span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment -n kube-system coredns --replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment -n kube-system coredns --replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>
+</span></span></code></pre></div><p><img src="./images/control-plane-logs.png" alt="control-plane-logs-with-coredns-replica"></p>
+<h3 id="3-2-cloudwatch이하-cw-log-insights">3-2. CloudWatch(이하, CW) Log Insights</h3>
+<ul>
+<li>웹 콘솔에서 로그 그룹을 대상으로 쿼리를 수행</li>
+</ul>
+<pre tabindex="0"><code class="language-query" data-lang="query"># EC2 Instance가 NodeNotReady 상태인 로그 검색, 정상적인 경우 뜨지 않음
+fields @timestamp, @message
+| filter @message like /NodeNotReady/
+| sort @timestamp desc
+
+# kube-apiserver-audit 로그에서 userAgent 정렬하여 확인
+# 앞서 활성화한 다른 로그(kube-scheduler, authenticator, kube-controller-Manager)도 확인 가능
+fields userAgent, requestURI, @timestamp, @message
+| filter @logStream ~= &#34;kube-apiserver-audit&#34;
+| stats count(userAgent) as count by userAgent
+| sort count desc
+</code></pre><p><img src="./images/cw-log-insights-audit.png" alt="cw-log-insights-audit"></p>
+<p><img src="./images/cw-log-insights-scheduler.png" alt="cw-log-insights-scheduler"></p>
+<p><img src="./images/cw-log-insights-authenticator.png" alt="cw-log-insights-authenticator"></p>
+<p><img src="./images/cw-log-insights-controller-manager.png" alt="cw-log-insights-controller-manager"></p>
+<h3 id="3-3-cw-log-insights-query-with-aws-cli">3-3. CW Log Insights Query with aws-cli</h3>
+<ul>
+<li>아래와 같이 cli로도 쿼리 가능</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># CloudWatch Log Insight Query</span>
+</span></span><span style="display:flex;"><span>aws logs get-query-results --query-id <span style="color:#66d9ef">$(</span>aws logs start-query <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--log-group-name <span style="color:#e6db74">&#39;/aws/eks/myeks/cluster&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--start-time <span style="color:#e6db74">`</span>date -d <span style="color:#e6db74">&#34;-1 hours&#34;</span> +%s<span style="color:#e6db74">`</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--end-time <span style="color:#e6db74">`</span>date +%s<span style="color:#e6db74">`</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--query-string <span style="color:#e6db74">&#39;fields @timestamp, @message | filter @logStream ~= &#34;kube-scheduler&#34; | sort @timestamp desc&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>| jq --raw-output <span style="color:#e6db74">&#39;.queryId&#39;</span><span style="color:#66d9ef">)</span>
+</span></span></code></pre></div><p><img src="./images/cw-log-insights-aws-cli.png" alt="cw-log-insights-aws-cli"></p>
+<h3 id="3-4-control-plane-raw-metrics-with-cw-logs-insight">3-4. Control Plane raw metrics with CW Logs Insight</h3>
+<ul>
+<li>출처: <a href="https://docs.aws.amazon.com/eks/latest/userguide/prometheus.html">EKS Docs</a></li>
+<li>
+<dl>
+<dt>아래의 쿼리는 Prometheus 포맷으로 raw metrics 출력</dt>
+<dd><code>metric_name{&quot;tag&quot;=&quot;value&quot;[,...]} value</code></dd>
+</dl>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get --raw /metrics | more
+</span></span></code></pre></div><h3 id="3-5-managing-etcd-database-size-on-eks-clusters">3-5. Managing etcd database size on EKS clusters</h3>
+<ul>
+<li>출처: <a href="https://aws.amazon.com/ko/blogs/containers/managing-etcd-database-size-on-amazon-eks-clusters/">AWS Blog</a></li>
+<li>아래와 같이 입력하면 etcd의 데이터베이스 사이즈를 확인 가능</li>
+<li>이때 옆에 뜨는 엔드포인트는 etcd 서버의 엔드포인트. (참조: <a href="https://github.com/kubernetes/apiserver/blob/master/pkg/storage/storagebackend/factory/etcd3.go#L404">Github</a>)
+참고로, EKS에서는 etcd가 AWS-managed</li>
+<li>k8s v1.26 부터는 <code>etcd_db_total_size_bytes</code> 대신,<br>
+<code>apiserver_storage_db_total_size_in_bytes</code> 으로 변경 (참조: <a href="https://sysdig.com/blog/kubernetes-1-26-whats-new/">sysdig</a>)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get --raw /metrics | grep <span style="color:#e6db74">&#34;etcd_db_total_size_in_bytes&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># etcd_db_total_size_in_bytes{endpoint=&#34;http://10.0.160.16:2379&#34;} 4.665344e+06</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># etcd_db_total_size_in_bytes{endpoint=&#34;http://10.0.32.16:2379&#34;} 4.636672e+06</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># etcd_db_total_size_in_bytes{endpoint=&#34;http://10.0.96.16:2379&#34;} 4.640768e+06</span>
+</span></span></code></pre></div><ul>
+<li>CW Logs Insights Query for exceeded etcd database space</li>
+</ul>
+<pre tabindex="0"><code class="language-query" data-lang="query">fields @timestamp, @message, @logStream
+| filter @logStream like /kube-apiserver-audit/
+| filter @message like /mvcc: database space exceeded/
+| limit 10
+</code></pre><ul>
+<li>Identify what is consuming etcd database space</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get --raw<span style="color:#f92672">=</span>/metrics | grep apiserver_storage_objects |awk <span style="color:#e6db74">&#39;$2&gt;50&#39;</span> |sort -g -k <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># apiserver_storage_objects{resource=&#34;clusterrolebindings.rbac.authorization.k8s.io&#34;} 78</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># apiserver_storage_objects{resource=&#34;clusterroles.rbac.authorization.k8s.io&#34;} 92</span>
+</span></span></code></pre></div><ul>
+<li>CW Logs Insights Query for Request volume</li>
+</ul>
+<pre tabindex="0"><code class="language-query" data-lang="query"># By userAgents
+fields userAgent, requestURI, @timestamp, @message
+| filter @logStream like /kube-apiserver-audit/
+| stats count(*) as count by userAgent
+| sort count desc
+
+# By Requests by Universal Resource Identifier (URI)/Verb:
+filter @logStream like /kube-apiserver-audit/
+| stats count(*) as count by requestURI, verb, user.username
+| sort count desc
+
+# Object revision updates
+fields requestURI
+| filter @logStream like /kube-apiserver-audit/
+| filter requestURI like /pods/
+| filter verb like /patch/
+| filter count &gt; 8
+| stats count(*) as count by requestURI, responseStatus.code
+| filter responseStatus.code not like /500/
+| sort count desc
+</code></pre><p><img src="./images/cw-log-insights-request-volume-by-useragents.png" alt="cw-log-insights-request-volume-by-useragents"></p>
+<p><img src="./images/cw-log-insights-request-volume-by-uri-verb.png" alt="cw-log-insights-request-volume-by-uri-verb"></p>
+<p><img src="./images/cw-log-insights-request-volume-by-object-revision-updates.png" alt="cw-log-insights-request-volume-by-object-revision-updates"></p>
+<ul>
+<li>정확한 내용은 도입부의 AWS Blog 참고</li>
+</ul>
+<h3 id="3-6-컨테이너pod-로깅-with-nginx">3-6. 컨테이너(Pod) 로깅 with Nginx</h3>
+<ul>
+<li>아래와 같이 nginx를 배포하고, 반복 접속. 이어질 Prometheus와 Grafana 실습에서도 metric 자료로 활용</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># NGINX 웹서버 배포</span>
+</span></span><span style="display:flex;"><span>helm repo add bitnami https://charts.bitnami.com/bitnami
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 사용 리전의 인증서 ARN 확인</span>
+</span></span><span style="display:flex;"><span>CERT_ARN<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws acm list-certificates --query <span style="color:#e6db74">&#39;CertificateSummaryList[].CertificateArn[]&#39;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $CERT_ARN
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 도메인 확인</span>
+</span></span><span style="display:flex;"><span>echo $MyDomain
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파라미터 파일 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; nginx-values.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">service:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    type: NodePort
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingressClassName: alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  hostname: nginx.$MyDomain
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  path: /*
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  annotations: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/scheme: internet-facing
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/target-type: ip
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/listen-ports: &#39;[{&#34;HTTPS&#34;:443}, {&#34;HTTP&#34;:80}]&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/certificate-arn: $CERT_ARN
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/success-codes: 200-399
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/load-balancer-name: $CLUSTER_NAME-ingress-alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/group.name: study
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/ssl-redirect: &#39;443&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>cat nginx-values.yaml | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포</span>
+</span></span><span style="display:flex;"><span>helm install nginx bitnami/nginx --version 14.1.0 -f nginx-values.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get ingress,deploy,svc,ep nginx
+</span></span><span style="display:flex;"><span>kubectl get targetgroupbindings
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 접속 주소 확인 및 접속</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Nginx WebServer URL = https://nginx.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>curl -s https://nginx.$MyDomain
+</span></span><span style="display:flex;"><span>kubectl logs deploy/nginx -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 반복 접속</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true; <span style="color:#66d9ef">do</span> curl -s https://nginx.$MyDomain -I | head -n 1; date; sleep 1; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (참고) 삭제 시</span>
+</span></span><span style="display:flex;"><span>helm uninstall nginx
+</span></span></code></pre></div><p><img src="./images/nginx-ingress.png" alt="nginx-ingress"></p>
+<p><img src="./images/nginx-test-for-logs.png" alt="nginx-test-for-logs"></p>
+<ul>
+<li>로그 모니터링 및 컨테이너 로그 파일 위치 확인
+<ul>
+<li>컨테이너의 로그는 표준 출력(stdout)과 표준 에러(stderr)로 나뉘어서 보내는 것이 권고사항 (참조: <a href="https://kubernetes.io/ko/docs/concepts/cluster-administration/logging/">k8s Docs</a>)</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 로그 모니터링</span>
+</span></span><span style="display:flex;"><span>kubectl logs deploy/nginx -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># nginx 웹 접속 시도 시 위의 모니터링에 실시간으로 확인 가능</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨테이너 로그 파일 위치 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it deploy/nginx -- ls -l /opt/bitnami/nginx/logs/
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># total 0</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># lrwxrwxrwx 1 root root 11 Feb 18 13:35 access.log -&gt; /dev/stdout</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># lrwxrwxrwx 1 root root 11 Feb 18 13:35 error.log -&gt; /dev/stderr</span>
+</span></span></code></pre></div><p><img src="./images/container-logs-stdout-stderr.png" alt="container-logs-stdout-stderr"></p>
+<h2 id="4-fluent-bit-integration-in-ccicw-container-insights-for-eks">4. Fluent Bit integration in CCI(CW Container Insights) for EKS</h2>
+<ul>
+<li>출처: <a href="https://aws.amazon.com/ko/blogs/containers/fluent-bit-integration-in-cloudwatch-container-insights-for-eks/">AWS Docs</a></li>
+<li>노드에 CW Agent(Pod)는 Metrics 수집, Fluent Bit Pod는 Logs 수집을 위하여 데몬 셋으로 동작</li>
+<li>Fluent Bit은 Fluentd의 경량화 버전. config 설정에 차이가 있음 (참조: <a href="https://docs.aws.amazon.com/ko_kr/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-logs-FluentBit.html">AWS Docs</a>)</li>
+</ul>
+<h3 id="4-1-application-및-host-로그-소스-확인">4-1. application 및 host 로그 소스 확인</h3>
+<ul>
+<li>application 로그 소스: 각 컨테이너/파드 로그
+<ul>
+<li><code>/var/log/containers</code> → 심볼릭 링크 <code>/var/log/pods/&lt;컨테이너&gt;</code></li>
+</ul>
+</li>
+<li>host 로그 소스: 노드(호스트) 로그
+<ul>
+<li><code>/var/log/dmesg</code>, <code>/var/log/secure</code>, <code>/var/log/messages</code></li>
+</ul>
+</li>
+<li>dataplane 로그 소스: 쿠버네티스 데이터플레인 로그
+<ul>
+<li><code>/var/log/journal</code> for kubelet.service/kubeproxy.service/docker.service</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># application 로그 위치 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node in $N1 $N2 $N3; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt;&gt;&gt;&gt; </span>$node<span style="color:#e6db74"> &lt;&lt;&lt;&lt;&lt;&#34;</span>; ssh ec2-user@$node sudo tree /var/log/containers; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node in $N1 $N2 $N3; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt;&gt;&gt;&gt; </span>$node<span style="color:#e6db74"> &lt;&lt;&lt;&lt;&lt;&#34;</span>; ssh ec2-user@$node sudo ls -al /var/log/containers; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 개별 파드 로그 확인</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 sudo tail -f /var/log/pods/default_nginx-&lt;파드 고유 이름&gt;/nginx/0.log
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># host 로그 위치 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node in $N1 $N2 $N3; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt;&gt;&gt;&gt; </span>$node<span style="color:#e6db74"> &lt;&lt;&lt;&lt;&lt;&#34;</span>; ssh ec2-user@$node sudo tree /var/log/ -L 1; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node in $N1 $N2 $N3; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt;&gt;&gt;&gt; </span>$node<span style="color:#e6db74"> &lt;&lt;&lt;&lt;&lt;&#34;</span>; ssh ec2-user@$node sudo ls -la /var/log/; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># host 로그 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> log in dmesg secure messages; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt;&gt;&gt;&gt; Node1: /var/log/</span>$log<span style="color:#e6db74"> &lt;&lt;&lt;&lt;&lt;&#34;</span>; ssh ec2-user@$N1 sudo tail /var/log/$log; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> log in dmesg secure messages; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt;&gt;&gt;&gt; Node2: /var/log/</span>$log<span style="color:#e6db74"> &lt;&lt;&lt;&lt;&lt;&#34;</span>; ssh ec2-user@$N2 sudo tail /var/log/$log; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> log in dmesg secure messages; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt;&gt;&gt;&gt; Node3: /var/log/</span>$log<span style="color:#e6db74"> &lt;&lt;&lt;&lt;&lt;&#34;</span>; ssh ec2-user@$N3 sudo tail /var/log/$log; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># dataplane 로그 위치 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node in $N1 $N2 $N3; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt;&gt;&gt;&gt; </span>$node<span style="color:#e6db74"> &lt;&lt;&lt;&lt;&lt;&#34;</span>; ssh ec2-user@$node sudo tree /var/log/journal -L 1; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 저널 로그 확인 - 링크</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N3 sudo journalctl -x -n <span style="color:#ae81ff">200</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N3 sudo journalctl -f
+</span></span></code></pre></div><p><img src="./images/logs-source-check.png" alt="logs-source-check"></p>
+<h3 id="4-2-ccicw-agent-및-fluent-bit-설치-및-fluent-bit-설정">4-2. CCI(CW-agent 및 fluent-bit) 설치 및 Fluent Bit 설정</h3>
+<ul>
+<li>출처: <a href="https://docs.aws.amazon.com/ko_kr/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-logs-FluentBit.html#Container-Insights-FluentBit-setup">AWS Docs</a></li>
+<li>CW-agent나 fluent-bit이나 <code>HostPath</code>에 수집된 정보를 저장하고 있음을 확인</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 설치</span>
+</span></span><span style="display:flex;"><span>FluentBitHttpServer<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;On&#39;</span>
+</span></span><span style="display:flex;"><span>FluentBitHttpPort<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;2020&#39;</span>
+</span></span><span style="display:flex;"><span>FluentBitReadFromHead<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Off&#39;</span>
+</span></span><span style="display:flex;"><span>FluentBitReadFromTail<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;On&#39;</span>
+</span></span><span style="display:flex;"><span>curl -s https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluent-bit-quickstart.yaml | sed <span style="color:#e6db74">&#39;s/{{cluster_name}}/&#39;</span><span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;/;s/{{region_name}}/&#39;</span><span style="color:#e6db74">${</span>AWS_DEFAULT_REGION<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;/;s/{{http_server_toggle}}/&#34;&#39;</span><span style="color:#e6db74">${</span>FluentBitHttpServer<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;&#34;/;s/{{http_server_port}}/&#34;&#39;</span><span style="color:#e6db74">${</span>FluentBitHttpPort<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;&#34;/;s/{{read_from_head}}/&#34;&#39;</span><span style="color:#e6db74">${</span>FluentBitReadFromHead<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;&#34;/;s/{{read_from_tail}}/&#34;&#39;</span><span style="color:#e6db74">${</span>FluentBitReadFromTail<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;&#34;/&#39;</span> | kubectl apply -f -
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 설치 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get-all -n amazon-cloudwatch
+</span></span><span style="display:flex;"><span>kubectl get ds,pod,cm,sa -n amazon-cloudwatch
+</span></span><span style="display:flex;"><span>kubectl describe clusterrole cloudwatch-agent-role fluent-bit-role                          <span style="color:#75715e"># 클러스터롤 확인</span>
+</span></span><span style="display:flex;"><span>kubectl describe clusterrolebindings cloudwatch-agent-role-binding fluent-bit-role-binding  <span style="color:#75715e"># 클러스터롤 바인딩 확인</span>
+</span></span><span style="display:flex;"><span>kubectl -n amazon-cloudwatch logs -l name<span style="color:#f92672">=</span>cloudwatch-agent -f <span style="color:#75715e"># 파드 로그 확인</span>
+</span></span><span style="display:flex;"><span>kubectl -n amazon-cloudwatch logs -l k8s-app<span style="color:#f92672">=</span>fluent-bit -f    <span style="color:#75715e"># 파드 로그 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node in $N1 $N2 $N3; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt;&gt;&gt;&gt; </span>$node<span style="color:#e6db74"> &lt;&lt;&lt;&lt;&lt;&#34;</span>; ssh ec2-user@$node sudo ss -tnlp | grep fluent-bit; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cloudwatch-agent 설정 확인</span>
+</span></span><span style="display:flex;"><span>kubectl describe cm cwagentconfig -n amazon-cloudwatch
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;agent&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;region&#34;</span>: <span style="color:#e6db74">&#34;ap-northeast-2&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;logs&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;metrics_collected&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;kubernetes&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;cluster_name&#34;</span>: <span style="color:#e6db74">&#34;myeks&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;metrics_collection_interval&#34;</span>: <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;force_flush_interval&#34;</span>: <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CW 파드가 수집하는 방법 : Volumes -&gt; HostPath</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ssh ec2-user@$N1 sudo tree /dev/disk</span>
+</span></span><span style="display:flex;"><span>kubectl describe -n amazon-cloudwatch ds cloudwatch-agent
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Fluent Bit Cluster Info 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get cm -n amazon-cloudwatch fluent-bit-cluster-info -o yaml | yh
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>data:
+</span></span><span style="display:flex;"><span>  cluster.name: myeks
+</span></span><span style="display:flex;"><span>  http.port: <span style="color:#e6db74">&#34;2020&#34;</span>
+</span></span><span style="display:flex;"><span>  http.server: <span style="color:#e6db74">&#34;On&#34;</span>
+</span></span><span style="display:flex;"><span>  logs.region: ap-northeast-2
+</span></span><span style="display:flex;"><span>  read.head: <span style="color:#e6db74">&#34;Off&#34;</span>
+</span></span><span style="display:flex;"><span>  read.tail: <span style="color:#e6db74">&#34;On&#34;</span>
+</span></span><span style="display:flex;"><span>kind: ConfigMap
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Fluent Bit 로그 INPUT/FILTER/OUTPUT 설정 확인 - 링크</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 설정 부분 구성 : application-log.conf , dataplane-log.conf , fluent-bit.conf , host-log.conf , parsers.conf</span>
+</span></span><span style="display:flex;"><span>kubectl describe cm fluent-bit-config -n amazon-cloudwatch
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>application-log.conf:
+</span></span><span style="display:flex;"><span>----
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>INPUT<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    Name                tail
+</span></span><span style="display:flex;"><span>    Tag                 application.*
+</span></span><span style="display:flex;"><span>    Exclude_Path        /var/log/containers/cloudwatch-agent*, /var/log/containers/fluent-bit*, /var/log/containers/aws-node*, /var/log/containers/kube-proxy*
+</span></span><span style="display:flex;"><span>    Path                /var/log/containers/*.log
+</span></span><span style="display:flex;"><span>    multiline.parser    docker, cri
+</span></span><span style="display:flex;"><span>    DB                  /var/fluent-bit/state/flb_container.db
+</span></span><span style="display:flex;"><span>    Mem_Buf_Limit       50MB
+</span></span><span style="display:flex;"><span>    Skip_Long_Lines     On
+</span></span><span style="display:flex;"><span>    Refresh_Interval    <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>    Rotate_Wait         <span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>    storage.type        filesystem
+</span></span><span style="display:flex;"><span>    Read_from_Head      <span style="color:#e6db74">${</span>READ_FROM_HEAD<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>FILTER<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    Name                kubernetes
+</span></span><span style="display:flex;"><span>    Match               application.*
+</span></span><span style="display:flex;"><span>    Kube_URL            https://kubernetes.default.svc:443
+</span></span><span style="display:flex;"><span>    Kube_Tag_Prefix     application.var.log.containers.
+</span></span><span style="display:flex;"><span>    Merge_Log           On
+</span></span><span style="display:flex;"><span>    Merge_Log_Key       log_processed
+</span></span><span style="display:flex;"><span>    K8S-Logging.Parser  On
+</span></span><span style="display:flex;"><span>    K8S-Logging.Exclude Off
+</span></span><span style="display:flex;"><span>    Labels              Off
+</span></span><span style="display:flex;"><span>    Annotations         Off
+</span></span><span style="display:flex;"><span>    Use_Kubelet         On
+</span></span><span style="display:flex;"><span>    Kubelet_Port        <span style="color:#ae81ff">10250</span>
+</span></span><span style="display:flex;"><span>    Buffer_Size         <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>OUTPUT<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>    Name                cloudwatch_logs
+</span></span><span style="display:flex;"><span>    Match               application.*
+</span></span><span style="display:flex;"><span>    region              <span style="color:#e6db74">${</span>AWS_REGION<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>    log_group_name      /aws/containerinsights/<span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span>/application
+</span></span><span style="display:flex;"><span>    log_stream_prefix   <span style="color:#e6db74">${</span>HOST_NAME<span style="color:#e6db74">}</span>-
+</span></span><span style="display:flex;"><span>    auto_create_group   true
+</span></span><span style="display:flex;"><span>    extra_user_agent    container-insights
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Fluent Bit 파드가 수집하는 방법 : Volumes -&gt; HostPath</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ssh ec2-user@$N1 sudo tree /var/log</span>
+</span></span><span style="display:flex;"><span>kubectl describe -n amazon-cloudwatch ds fluent-bit
+</span></span></code></pre></div><p><img src="./images/cw-agent-fluent-bit.png" alt="cw-agent-fluent-bit"></p>
+<p><img src="./images/cw-agent-fluent-bit-hostpath.png" alt="cw-agent-fluent-bit-hostpath"></p>
+<p><img src="./images/cw-agent-fluent-bit-hostpath-ssh.png" alt="cw-agent-fluent-bit-hostpath-ssh"></p>
+<ul>
+<li>웹 콘솔에서도 Logs/Metrics 확인 가능
+<ul>
+<li>Logs : CW -&gt; Logs -&gt; Log groups -&gt; /aws/containerinsights/myeks/application
+<ul>
+<li>NGINX 웹서버 부하 발생을 통한 로그 확인: Logs를 대상으로 <code>nginx</code> 검색</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 부하 발생</span>
+</span></span><span style="display:flex;"><span>curl -s https://nginx.$MyDomain
+</span></span><span style="display:flex;"><span>yum install -y httpd
+</span></span><span style="display:flex;"><span>ab -c <span style="color:#ae81ff">500</span> -n <span style="color:#ae81ff">30000</span> https://nginx.$MyDomain/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 직접 로그 모니터링</span>
+</span></span><span style="display:flex;"><span>kubectl logs deploy/nginx -f
+</span></span></code></pre></div><p><img src="./images/cw-web-console-nginx-logs.png" alt="cw-web-console-nginx-logs"></p>
+<ul>
+<li>Metrics : CloudWatch -&gt; Insights -&gt; ContainerInsights -&gt; myeks
+<ul>
+<li>Container map을 통한 시각화가 가능한데, 간격이 너무 벌어져서 있어 한번에 보기 불편</li>
+<li>이외에도, 리소스 및 성능 모니터링을 지원</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/cw-web-console-container-insights-container-map.png" alt="cw-web-console-container-insights-container-map"></p>
+<p><img src="./images/cw-web-console-container-insights-performance-monitoring.png" alt="cw-web-console-container-insights-performance-monitoring"></p>
+<p><img src="./images/cw-web-console-container-insights-application-stderr-query.png" alt="cw-web-console-container-insights-application-stderr-query"></p>
+<h2 id="5-metric-server--kwatch--botkube-addon-tools">5. Metric-server / kwatch / botkube (addon tools)</h2>
+<ul>
+<li>Metric-server: kubelet으로부터 수집한 리소스 metrics를 수집-집계하는 cluster addon</li>
+<li>kwatch: k8s 클러스터의 변화를 모니터링하여, Slack/Discord 등으로 알림을 보내주는 도구
+<ul>
+<li>Slack 등에서 사용을 위해 Webhook 토큰 필요</li>
+</ul>
+</li>
+<li>botkube: Slack/Discord 환경에서 Bot을 통해, 간단하게 k8s 명령어를 사용할 수 있는 도구
+<ul>
+<li>실습에서는 Slack API Bot/App 토큰 사용</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">################</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Metric-server</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">################</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 메트릭 서버 확인 : 메트릭은 15초 간격으로 cAdvisor를 통하여 가져옴</span>
+</span></span><span style="display:flex;"><span>kubectl get pod -n kube-system -l k8s-app<span style="color:#f92672">=</span>metrics-server
+</span></span><span style="display:flex;"><span>kubectl api-resources | grep metrics
+</span></span><span style="display:flex;"><span>kubectl get apiservices |egrep <span style="color:#e6db74">&#39;(AVAILABLE|metrics)&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 메트릭 확인</span>
+</span></span><span style="display:flex;"><span>kubectl top node
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 메트릭 확인</span>
+</span></span><span style="display:flex;"><span>kubectl top pod -A
+</span></span><span style="display:flex;"><span>kubectl top pod -n kube-system --sort-by<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;cpu&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl top pod -n kube-system --sort-by<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;memory&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#########</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## kwatch</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#########</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># configmap 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; ~/kwatch-config.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Namespace
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: kwatch
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ConfigMap
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: kwatch
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: kwatch
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">data:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  config.yaml: |
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alert:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      slack:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        webhook: &#39;https://hooks.slack.com/services/&lt;Webhook 토큰&gt;&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        title: $NICK-EKS
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        #text:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    pvcMonitor:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      interval: 5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      threshold: 70
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f kwatch-config.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f https://raw.githubusercontent.com/abahmed/kwatch/v0.8.3/deploy/deploy.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## (장애 재현)잘못된 이미지를 배포하여, kwatch가 알림을 보내는지 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링 준비</span>
+</span></span><span style="display:flex;"><span>watch kubectl get pod
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 잘못된 이미지 정보의 파드 배포</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f https://raw.githubusercontent.com/junghoon2/kube-books/main/ch05/nginx-error-pod.yml
+</span></span><span style="display:flex;"><span>kubectl get events -w
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이미지 업데이트 방안 : set 사용 - image 등 일부 리소스 값을 변경 가능!</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 업데이트 하였을 시, 에러 알림이 오지 않음</span>
+</span></span><span style="display:flex;"><span>kubectl set 
+</span></span><span style="display:flex;"><span>kubectl set image pod nginx-19 nginx-pod<span style="color:#f92672">=</span>nginx:1.19
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod nginx-19
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">##########</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## botkube</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">##########</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># repo 추가</span>
+</span></span><span style="display:flex;"><span>helm repo add botkube https://charts.botkube.io
+</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 변수 지정</span>
+</span></span><span style="display:flex;"><span>export SLACK_API_BOT_TOKEN<span style="color:#f92672">=</span>&lt;Bot 토큰&gt;
+</span></span><span style="display:flex;"><span>export SLACK_API_APP_TOKEN<span style="color:#f92672">=</span>&lt;App 토큰&gt;
+</span></span><span style="display:flex;"><span>export ALLOW_KUBECTL<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>export ALLOW_HELM<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>export SLACK_CHANNEL_NAME<span style="color:#f92672">=</span>webhook3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; botkube-values.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">actions:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#39;describe-created-resource&#39;: # kubectl describe
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#39;show-logs-on-error&#39;: # kubectl logs
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">executors:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  k8s-default-tools:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    botkube/helm:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    botkube/kubectl:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 설치</span>
+</span></span><span style="display:flex;"><span>helm install --version v1.0.0 botkube --namespace botkube --create-namespace <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set communications.default-group.socketSlack.enabled<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set communications.default-group.socketSlack.channels.default.name<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>SLACK_CHANNEL_NAME<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set communications.default-group.socketSlack.appToken<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>SLACK_API_APP_TOKEN<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set communications.default-group.socketSlack.botToken<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>SLACK_API_BOT_TOKEN<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set settings.clusterName<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set <span style="color:#e6db74">&#39;executors.k8s-default-tools.botkube/kubectl.enabled&#39;</span><span style="color:#f92672">=</span><span style="color:#e6db74">${</span>ALLOW_KUBECTL<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set <span style="color:#e6db74">&#39;executors.k8s-default-tools.botkube/helm.enabled&#39;</span><span style="color:#f92672">=</span><span style="color:#e6db74">${</span>ALLOW_HELM<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>-f botkube-values.yaml botkube/botkube
+</span></span></code></pre></div><p><img src="./images/metrics-server.png" alt="metrics-server"></p>
+<p><img src="./images/kwatch-installation-and-make-wrong-pod.png" alt="kwatch-installation-and-make-wrong-pod"></p>
+<p><img src="./images/kwatch-webhook-slack-with-error.png" alt="kwatch-webhook-slack-with-error"></p>
+<pre tabindex="0"><code class="language-slack" data-lang="slack"># Slack에서 botkube 앱을 추가하고, 채널에 초대
+
+# 연결 상태, notifications 상태 확인
+@Botkube ping
+@Botkube status notifications
+
+# 잘못된 이미지 정보의 파드 배포 후 파드 정보 조회
+# kubectl apply -f https://raw.githubusercontent.com/junghoon2/kube-books/main/ch05/nginx-error-pod.yml
+# kubectl get events -w
+@Botkube k get pod
+@Botkube kc get pod --namespace kube-system
+@Botkube kubectl get pod --namespace kube-system -o wide
+
+# Actionable notifications: 드롭다운을 통해 명령어 선택 가능
+@Botkube kubectl
+</code></pre><p><img src="./images/botkube-webhook-slack.png" alt="botkube-webhook-slack"></p>
+<h2 id="6-prometheus-스택">6. Prometheus 스택</h2>
+<ul>
+<li>Prometheus 및 Grafana를 단일 스택으로 설치</li>
+<li>실습에서는 ACM, Route53, ALB를 연동하여 HTTPS 리디렉션을 적용</li>
+</ul>
+<p><img src="./images/alb-with-acm-route53.png" alt="alb-with-acm-route53"></p>
+<p><img src="./images/alb-https-redirection.png" alt="alb-https-redirection"></p>
+<h3 id="6-1-prometheus-스택-설치">6-1. Prometheus 스택 설치</h3>
+<ul>
+<li><del>alertmanager-0</del>:
+<ul>
+<li>고질적인 firing 에러(?)로 이번 실습에서는 skip</li>
+<li>사전에 정의한 정책 기반(예: 노드 다운, 파드 Pending 등)으로 시스템 경고 메시지를 생성 후 경보 채널(슬랙 등)로 전송</li>
+</ul>
+</li>
+<li>grafana:<br>
+프로메테우스는 메트릭 정보를 저장하는 용도로 사용하며, 그라파나로 시각화 처리</li>
+<li>prometheus-0:<br>
+모니터링 대상이 되는 파드는 ‘exporter’라는 별도의 사이드카 형식의 파드에서 모니터링 메트릭을 노출, pull 방식으로 가져와 내부의 시계열 데이터베이스에 저장</li>
+<li>node-exporter:<br>
+노드익스포터는 물리 노드에 대한 자원 사용량(네트워크, 스토리지 등 전체) 정보를 메트릭 형태로 변경하여 노출</li>
+<li>operator:<br>
+시스템 경고 메시지 정책(prometheus rule), 애플리케이션 모니터링 대상 추가 등의 작업을 편리하게 할수 있게 CRD 지원</li>
+<li>kube-state-metrics:<br>
+쿠버네티스의 클러스터의 상태(kube-state)를 메트릭으로 변환하는 파드</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 모니터링</span>
+</span></span><span style="display:flex;"><span>kubectl create ns monitoring
+</span></span><span style="display:flex;"><span>watch kubectl get pod,pvc,svc,ingress -n monitoring
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 사용 리전의 인증서 ARN 확인</span>
+</span></span><span style="display:flex;"><span>CERT_ARN<span style="color:#f92672">=</span><span style="color:#e6db74">`</span>aws acm list-certificates --query <span style="color:#e6db74">&#39;CertificateSummaryList[].CertificateArn[]&#39;</span> --output text<span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>echo $CERT_ARN
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># repo 추가</span>
+</span></span><span style="display:flex;"><span>helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파라미터 파일 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; monitor-values.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">prometheus:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  prometheusSpec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    podMonitorSelectorNilUsesHelmValues: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    serviceMonitorSelectorNilUsesHelmValues: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    retention: 5d
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    retentionSize: &#34;10GiB&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ingressClassName: alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hosts: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - prometheus.$MyDomain
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    paths: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - /*
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/scheme: internet-facing
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/target-type: ip
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/listen-ports: &#39;[{&#34;HTTPS&#34;:443}, {&#34;HTTP&#34;:80}]&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/certificate-arn: $CERT_ARN
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/success-codes: 200-399
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/load-balancer-name: myeks-ingress-alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/group.name: study
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/ssl-redirect: &#39;443&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">grafana:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  defaultDashboardsTimezone: Asia/Seoul
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  adminPassword: prom-operator
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ingressClassName: alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hosts: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - grafana.$MyDomain
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    paths: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - /*
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/scheme: internet-facing
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/target-type: ip
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/listen-ports: &#39;[{&#34;HTTPS&#34;:443}, {&#34;HTTP&#34;:80}]&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/certificate-arn: $CERT_ARN
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/success-codes: 200-399
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/load-balancer-name: myeks-ingress-alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/group.name: study
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/ssl-redirect: &#39;443&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">defaultRules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  create: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kubeControllerManager:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kubeEtcd:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kubeScheduler:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">alertmanager:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># alertmanager:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#   ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#     enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#     ingressClassName: alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#     hosts: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#       - alertmanager.$MyDomain
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#     paths: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#       - /*
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#     annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#       alb.ingress.kubernetes.io/scheme: internet-facing
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#       alb.ingress.kubernetes.io/target-type: ip
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#       alb.ingress.kubernetes.io/listen-ports: &#39;[{&#34;HTTPS&#34;:443}, {&#34;HTTP&#34;:80}]&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#       alb.ingress.kubernetes.io/certificate-arn: $CERT_ARN
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#       alb.ingress.kubernetes.io/success-codes: 200-399
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#       alb.ingress.kubernetes.io/load-balancer-name: myeks-ingress-alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#       alb.ingress.kubernetes.io/group.name: study
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#       alb.ingress.kubernetes.io/ssl-redirect: &#39;443&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>cat monitor-values.yaml | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포</span>
+</span></span><span style="display:flex;"><span>helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 45.27.2 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set prometheus.prometheusSpec.scrapeInterval<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;15s&#39;</span> --set prometheus.prometheusSpec.evaluationInterval<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;15s&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>-f monitor-values.yaml --namespace monitoring
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>helm list -n monitoring
+</span></span><span style="display:flex;"><span>kubectl get pod,svc,ingress -n monitoring
+</span></span><span style="display:flex;"><span>kubectl get-all -n monitoring
+</span></span><span style="display:flex;"><span>kubectl get prometheus,servicemonitors -n monitoring
+</span></span><span style="display:flex;"><span>kubectl get crd | grep monitoring
+</span></span></code></pre></div><p><img src="./images/prometheus-stack-installation.png" alt="prometheus-stack-installation"></p>
+<h3 id="6-2-prometheus-기본적-사용">6-2. Prometheus 기본적 사용</h3>
+<ul>
+<li>모니터링 대상인 서비스는 3에서 다루었듯이 /metrics 엔드포인트가 노출되어있음
+<ul>
+<li>p8s는 http get 방식으로 metrics를 가져와 TSDB 형식으로 저장</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 아래 처럼 프로메테우스가 각 서비스의 9100 접속하여 메트릭 정보를 수집</span>
+</span></span><span style="display:flex;"><span>kubectl get node -owide
+</span></span><span style="display:flex;"><span>kubectl get svc,ep -n monitoring kube-prometheus-stack-prometheus-node-exporter
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드의 9100번의 /metrics 접속 시 다양한 메트릭 정보를 확인할수 있음 : 마스터 이외에 워커노드도 확인 가능</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 curl -s localhost:9100/metrics
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ingress 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get ingress -n monitoring kube-prometheus-stack-prometheus
+</span></span><span style="display:flex;"><span>kubectl describe ingress -n monitoring kube-prometheus-stack-prometheus
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 프로메테우스 ingress 도메인으로 웹 접속</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Prometheus Web URL = https://prometheus.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><p><img src="./images/prometheus-metrics-with-ssh.png" alt="prometheus-metrics-with-ssh"></p>
+<ul>
+<li>프로메테우스 ingress 도메인으로 웹 접속
+<ol>
+<li>경고(Alert) : 사전에 정의한 시스템 경고 정책(Prometheus Rules)에 대한 상황</li>
+<li>그래프(Graph) : 프로메테우스 자체 검색 언어 PromQL을 이용하여 메트릭 정보를 조회 -&gt; 단순한 그래프 형태 조회</li>
+<li>상태(Status) : 경고 메시지 정책(Rules), 모니터링 대상(Targets) 등 다양한 프로메테우스 설정 내역을 확인 &gt; 버전(2.42.0)</li>
+<li>도움말(Help)</li>
+</ol>
+</li>
+<li>프로메테우스 설정(Configuration) 확인:
+<ol>
+<li>Status → Runtime &amp; Build Information ⇒ Storage retention
+<ul>
+<li>5d or 10GiB: 메트릭 저장 기간이 5일 경과 혹은 10GiB 이상 시 삭제</li>
+<li>helm 파라미터에서 수정 후 적용 가능</li>
+<li>Status → Command-Line Flags 에서도 확인 가능
+<ul>
+<li>&ndash;storage.tsdb.retention.time=5d</li>
+<li>&ndash;storage.tsdb.retention.size=10GB</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Status → Configuration ⇒ “node-exporter” 검색
+<ul>
+<li><code>metrics_path: /metrics, scheme: http</code>, <code>role: endpoints</code> 를 확인</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>전체 metrics targets(대상) 확인:
+<ul>
+<li>Status → Targets</li>
+<li>각 엔드포인트 확인 가능</li>
+</ul>
+</li>
+<li>메트릭을 그래프(Graph)로 조회:
+<ul>
+<li>Graph</li>
+<li>아래 PromQL 쿼리(전체 클러스터 노드의 CPU 사용량 합계)입력 후 조회 → Graph 확인</li>
+<li><code>1- avg(rate(node_cpu_seconds_total{mode=&quot;idle&quot;}[1m]))</code> 입력</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/prometheus-storage-retention.png" alt="prometheus-storage-retention"></p>
+<p><img src="./images/prometheus-storage-retention-flags.png" alt="prometheus-storage-retention-flags"></p>
+<p><img src="./images/prometheus-service-discovery-endpoints.png" alt="prometheus-service-discovery-endpoints"></p>
+<p><img src="./images/prometheus-targets-with-endpoints.png" alt="prometheus-targets-with-endpoints"></p>
+<p><img src="./images/promql-query-node-cpu-total.png" alt="promql-query-node-cpu-total"></p>
+<h3 id="6-3-grafana">6-3. Grafana</h3>
+<ul>
+<li>TSDB 데이터를 시각화하는 대시보드 제공</li>
+<li>접속 정보 확인 및 로그인: 초기 계정 - admin / prom-operator</li>
+<li>설치한 스택에서는 자동으로 프로메테우스를 데이터 소스로 추가해둠
+<ul>
+<li><code>http://kube-prometheus-stack-prometheus.monitoring:9090/</code></li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/prometheus-stack-auto-data-source.png" alt="prometheus-stack-auto-data-source"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 그라파나 버전 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it -n monitoring deploy/kube-prometheus-stack-grafana -- grafana-cli --version
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ingress 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get ingress -n monitoring kube-prometheus-stack-grafana
+</span></span><span style="display:flex;"><span>kubectl describe ingress -n monitoring kube-prometheus-stack-grafana
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ingress 도메인으로 웹 접속 : 기본 계정 - admin / prom-operator</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Grafana Web URL = https://grafana.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 데이터 소스 접속 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 테스트용 파드 배포</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: netshoot-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: netshoot-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: nicolaka/netshoot
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command: [&#34;tail&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    args: [&#34;-f&#34;, &#34;/dev/null&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>kubectl get pod netshoot-pod
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 접속 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it netshoot-pod -- nslookup kube-prometheus-stack-prometheus.monitoring
+</span></span><span style="display:flex;"><span>kubectl exec -it netshoot-pod -- curl -s kube-prometheus-stack-prometheus.monitoring:9090/graph -v ; echo
+</span></span></code></pre></div><p><img src="./images/prometheus-stack-auto-data-source-in-cli.png" alt="prometheus-stack-auto-data-source-in-cli"></p>
+<h3 id="6-4-grafana-대시보드-import">6-4. Grafana 대시보드 import</h3>
+<ul>
+<li>Kubernetes All-in-one Cluster Monitoring KR( 13770 )</li>
+</ul>
+<p><img src="./images/k8s-cluster-monitoring-kr-13770.png" alt="k8s-cluster-monitoring-kr-13770"></p>
+<ul>
+<li>AWS EKS CNI Metrics( 16032 ): 이 대시보드를 쓰려면 아래의 작업이 선행조건</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># PodMonitor 배포</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: monitoring.coreos.com/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: PodMonitor
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: aws-cni-metrics
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: kube-system
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  jobLabel: k8s-app
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespaceSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchNames:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - kube-system
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  podMetricsEndpoints:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - interval: 30s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    path: /metrics
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    port: metrics
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      k8s-app: aws-node
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># PodMonitor 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get podmonitor -n kube-system
+</span></span></code></pre></div><p><img src="./images/aws-cni-metrics-16032.png" alt="aws-cni-metrics-16032"></p>
+<ul>
+<li>NGINX application 모니터링( 12708 ):
+<ul>
+<li>6-5에서 부하 진행</li>
+<li>반복 접속(부하)하여 metrics 변화 확인</li>
+<li><strong>helm으로 설치시, <code>nginx-exporter</code> 옵션을 걸면, p8s 모니터링에 자동 등록</strong></li>
+<li>서비스 모니터 방식으로 nginx 모니터링 대상 등록을 위한 실습 파라미터
+<ul>
+<li>export 는 9113 포트 사용</li>
+<li>nginx 웹서버 노출은 AWS CLB 기본 사용</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 모니터링</span>
+</span></span><span style="display:flex;"><span>watch -d kubectl get pod
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파라미터 파일 생성 : </span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; ~/nginx_metric-values.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metrics:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  service:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    port: 9113
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceMonitor:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    namespace: monitoring
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    interval: 10s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포</span>
+</span></span><span style="display:flex;"><span>helm upgrade nginx bitnami/nginx --reuse-values -f nginx_metric-values.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pod,svc,ep
+</span></span><span style="display:flex;"><span>kubectl get servicemonitor -n monitoring nginx
+</span></span><span style="display:flex;"><span>kubectl get servicemonitor -n monitoring nginx -o json | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 메트릭 확인 &gt;&gt; 프로메테우스에서 Target 확인</span>
+</span></span><span style="display:flex;"><span>NGINXIP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app.kubernetes.io/instance<span style="color:#f92672">=</span>nginx -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.podIP<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>curl -s http://$NGINXIP:9113/metrics <span style="color:#75715e"># nginx_connections_active Y 값 확인해보기</span>
+</span></span><span style="display:flex;"><span>curl -s http://$NGINXIP:9113/metrics | grep ^nginx_connections_active
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># nginx 파드내에 컨테이너 갯수 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pod -l app.kubernetes.io/instance<span style="color:#f92672">=</span>nginx
+</span></span><span style="display:flex;"><span>kubectl describe pod -l app.kubernetes.io/instance<span style="color:#f92672">=</span>nginx
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 접속 주소 확인 및 접속</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Nginx WebServer URL = https://nginx.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>curl -s https://nginx.$MyDomain
+</span></span><span style="display:flex;"><span>kubectl logs deploy/nginx -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 반복 접속</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true; <span style="color:#66d9ef">do</span> curl -s https://nginx.$MyDomain -I | head -n 1; date; sleep 1; <span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><p><img src="./images/nginx-exporter-for-prometheus.png" alt="nginx-exporter-for-prometheus"></p>
+<p><img src="./images/target-added-in-prometheus.png" alt="target-added-in-prometheus"></p>
+<h3 id="6-5-grafana-alert">6-5. Grafana Alert</h3>
+<ul>
+<li>Alert rules 및 Contact point 설정하여 테스트
+<ul>
+<li>Alert rules : Alert 발생 조건 설정</li>
+<li>Contact point : Alert 발생시 알림을 받을 대상 설정 (Slack 웹훅 활용)</li>
+</ul>
+</li>
+<li>Slack용으로 Notification policies의 기본 정책도 Slack으로 변경</li>
+<li>이후에 NGINX 반복 접속으로 슬랙 채널 알람 확인
+<ul>
+<li><code>while true; do curl -s https://nginx.$MyDomain -I | head -n 1; date; sleep 1; done</code></li>
+</ul>
+</li>
+<li>Contact point 설정 시, 지정 대상에게 제대로 멘션이 걸리지 않음을 확인.</li>
+</ul>
+<p><img src="./images/alert-rules-set-in-grafana.png" alt="alert-rules-set-in-grafana"></p>
+<p><img src="./images/grafana-dashboard-after-making-alert-situation.png" alt="grafana-dashboard-after-making-alert-situation"></p>
+<p><img src="./images/grafana-alert-in-slack.png" alt="grafana-alert-in-slack"></p>
+<h2 id="7-kubecost">7. kubecost</h2>
+<ul>
+<li>k8s 리소스별 비용 분류 대시보드, 처음 띄운 후 15분 정도 기다려야 데이터 표출</li>
+<li>kubecost의 경우, cloudformation 제거 후에도 데이터(dynamic-pvc)가 남아있어서 완전히 없애고자 웹 콘솔에서 볼륨 삭제를 진행</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; cost-values.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">global:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  grafana:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    proxy: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">priority:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">networkPolicy:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">podSecurityPolicy:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">persistentVolume:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    storageClass: &#34;gp3&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">prometheus:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  kube-state-metrics:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    disabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  nodeExporter:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">reporting:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  productAnalytics: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubecost chart 에 프로메테우스가 포함되어 있으니, 기존 프로메테우스-스택은 삭제</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># node-export 포트 충돌 발생</span>
+</span></span><span style="display:flex;"><span>helm uninstall -n monitoring kube-prometheus-stack
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포</span>
+</span></span><span style="display:flex;"><span>kubectl create ns kubecost
+</span></span><span style="display:flex;"><span>helm install kubecost oci://public.ecr.aws/kubecost/cost-analyzer --version 1.103.2 --namespace kubecost -f cost-values.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get-all -n kubecost
+</span></span><span style="display:flex;"><span>kubectl get all -n kubecost
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubecost-cost-analyzer 파드 IP변수 지정 및 접속 확인</span>
+</span></span><span style="display:flex;"><span>CAIP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get pod -n kubecost -l app<span style="color:#f92672">=</span>cost-analyzer -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.podIP<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>curl -s $CAIP:9090
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 외부에서 bastion EC2 접속하여 특정 파드 접속 방법 : socat(SOcket CAT) 활용</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 웹 브라우저에서 bastion EC2 IP로 접속</span>
+</span></span><span style="display:flex;"><span>yum -y install socat
+</span></span><span style="display:flex;"><span>socat TCP-LISTEN:80,fork TCP:$CAIP:9090
+</span></span></code></pre></div><p><img src="./images/kubecost-installation.png" alt="kubecost-installation"></p>
+<p><img src="./images/kubecost-dashboard-after-about-15-minutes.png" alt="kubecost-dashboard-after-about-15-minutes"></p>
+<p><img src="./images/kubecost-dynamic-pvc-after-delete-cloudformation-stack.png" alt="kubecost-dynamic-pvc-after-delete-cloudformation-stack"></p>
+
+  </div>
+  </section>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/modify-bastion-cidr-with-aws-cli/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">aws-cli를 이용한 bastion CIDR 변경</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

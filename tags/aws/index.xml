@@ -6,7 +6,21 @@
     <description>Recent content in AWS on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Thu, 18 May 2023 21:36:19 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 21 May 2023 06:13:52 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AWS EKS 스터디 4주차</title>
+      <link>https://blog.minseong.xyz/post/aws-eks-study-week4/</link>
+      <pubDate>Sun, 21 May 2023 06:13:52 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/aws-eks-study-week4/</guid>
+      <description>이번 주차에는 Observability에 대해 스터디가 진행되었습니다.
+자원 모니터링 툴들의 적용 및 사용이 중심입니다.
+그나저나 k8s 1.26에서 metrics의 일부 명칭이 바뀌는 걸 보고 식겁했습니다.
+(etcd_db_total_size_bytes 대신, apiserver_storage_db_total_size_in_bytes 으로 변경)
+또한 kubecost의 경우, cloudformation 스택 제거 후에도 볼륨 데이터가 남아있어서 별도로 삭제해야 했습니다.
+1. 실습환경 배포 NAT게이트웨이, EBS addon, IAM role, ISRA for LB/EFS, PreCommand 포함 노드: t3.xlarge t3a.xlarge(AMD)는 서울 리전 b AZ(ap-northeast-2b)에서 미지원 더 많은 값들이 입력되어서, 생성 완료까지 더 많은 시간이 소요 (약 20여분 이내) curl -O https://s3.</description>
+    </item>
+    
     <item>
       <title>aws-cli를 이용한 bastion CIDR 변경</title>
       <link>https://blog.minseong.xyz/post/modify-bastion-cidr-with-aws-cli/</link>
