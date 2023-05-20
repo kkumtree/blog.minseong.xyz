@@ -18,13 +18,17 @@ draft: true # 글 초안 여부
 ---
 
 이번 주차에는 Observability에 대해 스터디를 진행했습니다.
-자원 모니터링 툴들의 적용이 중심입니다.
+자원 모니터링 툴들의 적용 및 사용이 중심입니다.
+
+그나저나 k8s 1.26에서 metrics의 일부 명칭이 바뀌는 걸 보고 식겁했습니다.
+(`etcd_db_total_size_bytes` 대신, `apiserver_storage_db_total_size_in_bytes` 으로 변경)
+또한 kubecost의 경우, cloudformation 스택 제거 후에도 볼륨 데이터가 남아있어서 별도로 삭제해야 했습니다.
 
 ## 1. 실습환경 배포
 
 - NAT게이트웨이, EBS addon, IAM role, ISRA for LB/EFS, PreCommand 포함
 - 노드: t3.xlarge  
-  - t3**a**.xlarge(AMD)는 서울 리전 2b AZ에서 미지원
+  - t3**a**.xlarge(AMD)는 서울 리전 b AZ(ap-northeast-2b)에서 미지원
 - 더 많은 값들이 입력되어서, 생성 완료까지 더 많은 시간이 소요
 
 ```bash
@@ -846,6 +850,7 @@ while true; do curl -s https://nginx.$MyDomain -I | head -n 1; date; sleep 1; do
 ## 7. kubecost
 
 - k8s 리소스별 비용 분류 대시보드, 처음 띄운 후 15분 정도 기다려야 데이터 표출
+- kubecost의 경우, cloudformation 제거 후에도 데이터가 남아있어서 완전히 없애고자 웹 콘솔에서 볼륨 삭제를 진행
 
 ```bash
 cat <<EOT > cost-values.yaml
