@@ -1,5 +1,5 @@
 ---
-date: 2023-05-15T23:46:25+09:00
+date: 2023-05-21T06:13:52+09:00
 title: "AWS EKS 스터디 4주차"
 tags:
  - AWS
@@ -14,14 +14,14 @@ authors:
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.jpg # 커버 이미지 URL
-draft: true # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
-이번 주차에는 Observability에 대해 스터디를 진행했습니다.
-자원 모니터링 툴들의 적용 및 사용이 중심입니다.
+이번 주차에는 Observability에 대해 스터디가 진행되었습니다.  
+자원 모니터링 툴들의 적용 및 사용이 중심입니다.  
 
-그나저나 k8s 1.26에서 metrics의 일부 명칭이 바뀌는 걸 보고 식겁했습니다.
-(`etcd_db_total_size_bytes` 대신, `apiserver_storage_db_total_size_in_bytes` 으로 변경)
+그나저나 k8s 1.26에서 metrics의 일부 명칭이 바뀌는 걸 보고 식겁했습니다.  
+(`etcd_db_total_size_bytes` 대신, `apiserver_storage_db_total_size_in_bytes` 으로 변경)  
 또한 kubecost의 경우, cloudformation 스택 제거 후에도 볼륨 데이터가 남아있어서 별도로 삭제해야 했습니다.
 
 ## 1. 실습환경 배포
@@ -29,13 +29,15 @@ draft: true # 글 초안 여부
 - NAT게이트웨이, EBS addon, IAM role, ISRA for LB/EFS, PreCommand 포함
 - 노드: t3.xlarge  
   - t3**a**.xlarge(AMD)는 서울 리전 b AZ(ap-northeast-2b)에서 미지원
-- 더 많은 값들이 입력되어서, 생성 완료까지 더 많은 시간이 소요
+- 더 많은 값들이 입력되어서, 생성 완료까지 더 많은 시간이 소요 (약 20여분 이내)
 
 ```bash
 curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/eks-oneclick3.yaml
 
 # 이하 생략, 3주차 참고
 ```
+
+![cloudformation](./images/cloudformation.png)
 
 ## 2. EKS Console
 
@@ -89,6 +91,8 @@ kubectl scale deployment -n kube-system coredns --replicas=1
 kubectl scale deployment -n kube-system coredns --replicas=2
 ```
 
+![control-plane-logs-with-coredns-replica](./images/control-plane-logs.png)
+
 ### 3-2. CloudWatch(이하, CW) Log Insights
 
 - 웹 콘솔에서 로그 그룹을 대상으로 쿼리를 수행
@@ -107,6 +111,14 @@ fields userAgent, requestURI, @timestamp, @message
 | sort count desc
 ```
 
+![cw-log-insights-audit](./images/cw-log-insights-audit.png)
+
+![cw-log-insights-scheduler](./images/cw-log-insights-scheduler.png)
+
+![cw-log-insights-authenticator](./images/cw-log-insights-authenticator.png)
+
+![cw-log-insights-controller-manager](./images/cw-log-insights-controller-manager.png)
+
 ### 3-3. CW Log Insights Query with aws-cli
 
 - 아래와 같이 cli로도 쿼리 가능
@@ -120,6 +132,8 @@ aws logs get-query-results --query-id $(aws logs start-query \
 --query-string 'fields @timestamp, @message | filter @logStream ~= "kube-scheduler" | sort @timestamp desc' \
 | jq --raw-output '.queryId')
 ```
+
+![cw-log-insights-aws-cli](./images/cw-log-insights-aws-cli.png)
 
 ### 3-4. Control Plane raw metrics with CW Logs Insight
 
@@ -177,7 +191,23 @@ fields userAgent, requestURI, @timestamp, @message
 filter @logStream like /kube-apiserver-audit/
 | stats count(*) as count by requestURI, verb, user.username
 | sort count desc
+
+# Object revision updates
+fields requestURI
+| filter @logStream like /kube-apiserver-audit/
+| filter requestURI like /pods/
+| filter verb like /patch/
+| filter count > 8
+| stats count(*) as count by requestURI, responseStatus.code
+| filter responseStatus.code not like /500/
+| sort count desc
 ```
+
+![cw-log-insights-request-volume-by-useragents](./images/cw-log-insights-request-volume-by-useragents.png)
+
+![cw-log-insights-request-volume-by-uri-verb](./images/cw-log-insights-request-volume-by-uri-verb.png)
+
+![cw-log-insights-request-volume-by-object-revision-updates](./images/cw-log-insights-request-volume-by-object-revision-updates.png)
 
 - 정확한 내용은 도입부의 AWS Blog 참고
 
@@ -237,6 +267,10 @@ while true; do curl -s https://nginx.$MyDomain -I | head -n 1; date; sleep 1; do
 helm uninstall nginx
 ```
 
+![nginx-ingress](./images/nginx-ingress.png)
+
+![nginx-test-for-logs](./images/nginx-test-for-logs.png)
+
 - 로그 모니터링 및 컨테이너 로그 파일 위치 확인
   - 컨테이너의 로그는 표준 출력(stdout)과 표준 에러(stderr)로 나뉘어서 보내는 것이 권고사항 (참조: [k8s Docs](https://kubernetes.io/ko/docs/concepts/cluster-administration/logging/))
 
@@ -248,10 +282,12 @@ kubectl logs deploy/nginx -f
 
 # 컨테이너 로그 파일 위치 확인
 kubectl exec -it deploy/nginx -- ls -l /opt/bitnami/nginx/logs/
-total 0
+# total 0
 # lrwxrwxrwx 1 root root 11 Feb 18 13:35 access.log -> /dev/stdout
 # lrwxrwxrwx 1 root root 11 Feb 18 13:35 error.log -> /dev/stderr
 ```
+
+![container-logs-stdout-stderr](./images/container-logs-stdout-stderr.png)
 
 ## 4. Fluent Bit integration in CCI(CW Container Insights) for EKS
 
@@ -292,6 +328,8 @@ for node in $N1 $N2 $N3; do echo ">>>>> $node <<<<<"; ssh ec2-user@$node sudo tr
 ssh ec2-user@$N3 sudo journalctl -x -n 200
 ssh ec2-user@$N3 sudo journalctl -f
 ```
+
+![logs-source-check](./images/logs-source-check.png)
 
 ### 4-2. CCI(CW-agent 및 fluent-bit) 설치 및 Fluent Bit 설정
 
@@ -399,23 +437,37 @@ application-log.conf:
 kubectl describe -n amazon-cloudwatch ds fluent-bit
 ```
 
+![cw-agent-fluent-bit](./images/cw-agent-fluent-bit.png)
+
+![cw-agent-fluent-bit-hostpath](./images/cw-agent-fluent-bit-hostpath.png)
+
+![cw-agent-fluent-bit-hostpath-ssh](./images/cw-agent-fluent-bit-hostpath-ssh.png)
+
 - 웹 콘솔에서도 Logs/Metrics 확인 가능
   - Logs : CW -> Logs -> Log groups -> /aws/containerinsights/myeks/application
     - NGINX 웹서버 부하 발생을 통한 로그 확인: Logs를 대상으로 `nginx` 검색
 
-  ```bash
-  # 부하 발생
-  curl -s https://nginx.$MyDomain
-  yum install -y httpd
-  ab -c 500 -n 30000 https://nginx.$MyDomain/
+```bash
+# 부하 발생
+curl -s https://nginx.$MyDomain
+yum install -y httpd
+ab -c 500 -n 30000 https://nginx.$MyDomain/
 
-  # 파드 직접 로그 모니터링
-  kubectl logs deploy/nginx -f
-  ```
+# 파드 직접 로그 모니터링
+kubectl logs deploy/nginx -f
+```
 
-  - Metrics : CloudWatch -> Insights -> ContainerInsights -> myeks
-    - Container map을 통한 시각화가 가능한데, 간격이 너무 벌어져서 있어 한번에 보기 불편
-    - 이외에도, 리소스 및 성능 모니터링을 지원
+![cw-web-console-nginx-logs](./images/cw-web-console-nginx-logs.png)
+
+- Metrics : CloudWatch -> Insights -> ContainerInsights -> myeks
+  - Container map을 통한 시각화가 가능한데, 간격이 너무 벌어져서 있어 한번에 보기 불편
+  - 이외에도, 리소스 및 성능 모니터링을 지원
+
+![cw-web-console-container-insights-container-map](./images/cw-web-console-container-insights-container-map.png)
+
+![cw-web-console-container-insights-performance-monitoring](./images/cw-web-console-container-insights-performance-monitoring.png)
+
+![cw-web-console-container-insights-application-stderr-query](./images/cw-web-console-container-insights-application-stderr-query.png)
 
 ## 5. Metric-server / kwatch / botkube (addon tools)
 
@@ -539,6 +591,12 @@ helm install --version v1.0.0 botkube --namespace botkube --create-namespace \
 -f botkube-values.yaml botkube/botkube
 ```
 
+![metrics-server](./images/metrics-server.png)
+
+![kwatch-installation-and-make-wrong-pod](./images/kwatch-installation-and-make-wrong-pod.png)
+
+![kwatch-webhook-slack-with-error](./images/kwatch-webhook-slack-with-error.png)
+
 ```slack
 # Slack에서 botkube 앱을 추가하고, 채널에 초대
 
@@ -557,10 +615,16 @@ helm install --version v1.0.0 botkube --namespace botkube --create-namespace \
 @Botkube kubectl
 ```
 
+![botkube-webhook-slack](./images/botkube-webhook-slack.png)
+
 ## 6. Prometheus 스택
 
 - Prometheus 및 Grafana를 단일 스택으로 설치
 - 실습에서는 ACM, Route53, ALB를 연동하여 HTTPS 리디렉션을 적용
+
+![alb-with-acm-route53](./images/alb-with-acm-route53.png)
+
+![alb-https-redirection](./images/alb-https-redirection.png)
 
 ### 6-1. Prometheus 스택 설치
 
@@ -681,6 +745,8 @@ kubectl get prometheus,servicemonitors -n monitoring
 kubectl get crd | grep monitoring
 ```
 
+![prometheus-stack-installation](./images/prometheus-stack-installation.png)
+
 ### 6-2. Prometheus 기본적 사용
 
 - 모니터링 대상인 서비스는 3에서 다루었듯이 /metrics 엔드포인트가 노출되어있음
@@ -702,14 +768,22 @@ kubectl describe ingress -n monitoring kube-prometheus-stack-prometheus
 echo -e "Prometheus Web URL = https://prometheus.$MyDomain"
 ```
 
+![prometheus-metrics-with-ssh](./images/prometheus-metrics-with-ssh.png)
+
 - 프로메테우스 ingress 도메인으로 웹 접속
   1. 경고(Alert) : 사전에 정의한 시스템 경고 정책(Prometheus Rules)에 대한 상황
   2. 그래프(Graph) : 프로메테우스 자체 검색 언어 PromQL을 이용하여 메트릭 정보를 조회 -> 단순한 그래프 형태 조회
   3. 상태(Status) : 경고 메시지 정책(Rules), 모니터링 대상(Targets) 등 다양한 프로메테우스 설정 내역을 확인 > 버전(2.42.0)
   4. 도움말(Help)
 - 프로메테우스 설정(Configuration) 확인:  
-  - Status → Configuration ⇒ “node-exporter” 검색
-  - `metrics_path: /metrics, scheme: http`, `role: endpoints` 를 확인
+  1. Status → Runtime & Build Information ⇒ Storage retention
+     - 5d or 10GiB: 메트릭 저장 기간이 5일 경과 혹은 10GiB 이상 시 삭제
+     - helm 파라미터에서 수정 후 적용 가능
+     - Status → Command-Line Flags 에서도 확인 가능
+       - --storage.tsdb.retention.time=5d
+       - --storage.tsdb.retention.size=10GB
+  2. Status → Configuration ⇒ “node-exporter” 검색
+     - `metrics_path: /metrics, scheme: http`, `role: endpoints` 를 확인
 - 전체 metrics targets(대상) 확인:  
   - Status → Targets
   - 각 엔드포인트 확인 가능
@@ -718,12 +792,24 @@ echo -e "Prometheus Web URL = https://prometheus.$MyDomain"
   - 아래 PromQL 쿼리(전체 클러스터 노드의 CPU 사용량 합계)입력 후 조회 → Graph 확인
   - `1- avg(rate(node_cpu_seconds_total{mode="idle"}[1m]))` 입력
 
+![prometheus-storage-retention](./images/prometheus-storage-retention.png)
+
+![prometheus-storage-retention-flags](./images/prometheus-storage-retention-flags.png)
+
+![prometheus-service-discovery-endpoints](./images/prometheus-service-discovery-endpoints.png)
+
+![prometheus-targets-with-endpoints](./images/prometheus-targets-with-endpoints.png)
+
+![promql-query-node-cpu-total](./images/promql-query-node-cpu-total.png)
+
 ### 6-3. Grafana
 
 - TSDB 데이터를 시각화하는 대시보드 제공
 - 접속 정보 확인 및 로그인: 초기 계정 - admin / prom-operator
 - 설치한 스택에서는 자동으로 프로메테우스를 데이터 소스로 추가해둠
   - `http://kube-prometheus-stack-prometheus.monitoring:9090/`
+
+![prometheus-stack-auto-data-source](./images/prometheus-stack-auto-data-source.png)
 
 ```bash
 # 그라파나 버전 확인
@@ -758,7 +844,13 @@ kubectl exec -it netshoot-pod -- nslookup kube-prometheus-stack-prometheus.monit
 kubectl exec -it netshoot-pod -- curl -s kube-prometheus-stack-prometheus.monitoring:9090/graph -v ; echo
 ```
 
+![prometheus-stack-auto-data-source-in-cli](./images/prometheus-stack-auto-data-source-in-cli.png)
+
 ### 6-4. Grafana 대시보드 import
+
+- Kubernetes All-in-one Cluster Monitoring KR( 13770 )
+
+![k8s-cluster-monitoring-kr-13770](./images/k8s-cluster-monitoring-kr-13770.png)
 
 - AWS EKS CNI Metrics( 16032 ): 이 대시보드를 쓰려면 아래의 작업이 선행조건
 
@@ -788,8 +880,12 @@ EOF
 kubectl get podmonitor -n kube-system
 ```
 
+![aws-cni-metrics-16032](./images/aws-cni-metrics-16032.png)
+
 - NGINX application 모니터링( 12708 ):  
+  - 6-5에서 부하 진행
   - 반복 접속(부하)하여 metrics 변화 확인
+  - **helm으로 설치시, `nginx-exporter` 옵션을 걸면, p8s 모니터링에 자동 등록**
   - 서비스 모니터 방식으로 nginx 모니터링 대상 등록을 위한 실습 파라미터
     - export 는 9113 포트 사용
     - nginx 웹서버 노출은 AWS CLB 기본 사용
@@ -838,6 +934,10 @@ kubectl logs deploy/nginx -f
 while true; do curl -s https://nginx.$MyDomain -I | head -n 1; date; sleep 1; done
 ```
 
+![nginx-exporter-for-prometheus](./images/nginx-exporter-for-prometheus.png)
+
+![target-added-in-prometheus](./images/target-added-in-prometheus.png)
+
 ### 6-5. Grafana Alert
 
 - Alert rules 및 Contact point 설정하여 테스트
@@ -846,11 +946,18 @@ while true; do curl -s https://nginx.$MyDomain -I | head -n 1; date; sleep 1; do
 - Slack용으로 Notification policies의 기본 정책도 Slack으로 변경
 - 이후에 NGINX 반복 접속으로 슬랙 채널 알람 확인
   - `while true; do curl -s https://nginx.$MyDomain -I | head -n 1; date; sleep 1; done`
+- Contact point 설정 시, 지정 대상에게 제대로 멘션이 걸리지 않음을 확인.
+
+![alert-rules-set-in-grafana](./images/alert-rules-set-in-grafana.png)
+
+![grafana-dashboard-after-making-alert-situation](./images/grafana-dashboard-after-making-alert-situation.png)
+
+![grafana-alert-in-slack](./images/grafana-alert-in-slack.png)
 
 ## 7. kubecost
 
 - k8s 리소스별 비용 분류 대시보드, 처음 띄운 후 15분 정도 기다려야 데이터 표출
-- kubecost의 경우, cloudformation 제거 후에도 데이터가 남아있어서 완전히 없애고자 웹 콘솔에서 볼륨 삭제를 진행
+- kubecost의 경우, cloudformation 제거 후에도 데이터(dynamic-pvc)가 남아있어서 완전히 없애고자 웹 콘솔에서 볼륨 삭제를 진행
 
 ```bash
 cat <<EOT > cost-values.yaml
@@ -900,3 +1007,9 @@ curl -s $CAIP:9090
 yum -y install socat
 socat TCP-LISTEN:80,fork TCP:$CAIP:9090
 ```
+
+![kubecost-installation](./images/kubecost-installation.png)
+
+![kubecost-dashboard-after-about-15-minutes](./images/kubecost-dashboard-after-about-15-minutes.png)
+
+![kubecost-dynamic-pvc-after-delete-cloudformation-stack](./images/kubecost-dynamic-pvc-after-delete-cloudformation-stack.png)
