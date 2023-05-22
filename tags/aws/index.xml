@@ -8,7 +8,7 @@
     <language>ko-kr</language>
     <lastBuildDate>Sun, 21 May 2023 06:13:52 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/aws/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>AWS EKS 스터디 4주차</title>
+      <title>AWS EKS 스터디 4주차 - Observability</title>
       <link>https://blog.minseong.xyz/post/aws-eks-study-week4/</link>
       <pubDate>Sun, 21 May 2023 06:13:52 +0900</pubDate>
       
@@ -36,7 +36,7 @@
     </item>
     
     <item>
-      <title>AWS EKS 스터디 3주차</title>
+      <title>AWS EKS 스터디 3주차 - Storage</title>
       <link>https://blog.minseong.xyz/post/aws-eks-study-week3/</link>
       <pubDate>Fri, 12 May 2023 05:36:38 +0900</pubDate>
       
@@ -48,7 +48,7 @@ NodeAffinity를 이용한 라벨링 AWS EBS controller의 경우, AWS managed po
     </item>
     
     <item>
-      <title>AWS EKS 스터디 2주차</title>
+      <title>AWS EKS 스터디 2주차 - Network</title>
       <link>https://blog.minseong.xyz/post/aws-eks-study-week2/</link>
       <pubDate>Sun, 07 May 2023 07:30:52 +0900</pubDate>
       
