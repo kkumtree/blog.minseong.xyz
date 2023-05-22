@@ -1,6 +1,6 @@
 ---
 date: 2023-05-12T05:36:38+09:00
-title: "AWS EKS 스터디 3주차"
+title: "AWS EKS 스터디 3주차 - Storage"
 tags:
  - AWS
  - EKS

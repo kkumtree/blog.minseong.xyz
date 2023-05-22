@@ -1,6 +1,6 @@
 ---
 date: 2023-05-21T06:13:52+09:00
-title: "AWS EKS 스터디 4주차"
+title: "AWS EKS 스터디 4주차 - Observability"
 tags:
  - AWS
  - EKS

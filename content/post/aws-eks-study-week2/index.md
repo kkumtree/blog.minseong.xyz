@@ -1,6 +1,6 @@
 ---
 date: 2023-05-07T07:30:52+09:00
-title: "AWS EKS 스터디 2주차"
+title: "AWS EKS 스터디 2주차 - Network"
 tags:
  - AWS
  - EKS
