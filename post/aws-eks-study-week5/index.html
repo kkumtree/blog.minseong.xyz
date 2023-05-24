@@ -313,7 +313,7 @@ HPA 조건이 CPU 50% 이기 때문에, 6~7개에서 유지됨</li>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># 바로 밑의 실습 이후에 관련 오브젝트 삭제</span>
 </span></span><span style="display:flex;"><span>kubectl delete deploy,svc,hpa,pod --all
-</span></span></code></pre></div><p><img src="./images/stress-test-for-autoscailing-with-hpa.png" alt="stress-test-for-autoscailing-with-hpa"></p>
+</span></span></code></pre></div><p><img src="./images/stress-test-for-autoscaling-with-hpa.png" alt="stress-test-for-autoscaling-with-hpa"></p>
 <p><img src="./images/stress-test-ended-with-7-replicas-in-grafana.png" alt="stress-test-ended-with-7-replicas-in-grafana"></p>
 <h3 id="2-1-hpa-w-multiple--custom-metrics">2-1. HPA w/ multiple &amp; custom metrics</h3>
 <ul>
@@ -361,7 +361,7 @@ HPA 조건이 CPU 50% 이기 때문에, 6~7개에서 유지됨</li>
 </span></span></code></pre></div><p><img src="./images/use-custom-metrics-by-editor.png" alt="use-custom-metrics-by-editor"></p>
 <p><img src="./images/max-10-replicas-in-grafana.png" alt="max-10-replicas-in-grafana"></p>
 <p><img src="./images/custom-metrics-in-described-hpa.png" alt="custom-metrics-in-described-hpa"></p>
-<h2 id="3-k8s-based-event-driven-autoscailing---keda">3. k8s based Event Driven Autoscailing - KEDA</h2>
+<h2 id="3-k8s-based-event-driven-autoscaling---keda">3. k8s based Event Driven Autoscaling - KEDA</h2>
 <ul>
 <li>
 <p>HPA, KEDA 비교</p>
@@ -390,7 +390,7 @@ HPA 조건이 CPU 50% 이기 때문에, 6~7개에서 유지됨</li>
 <td>keda-metrics-api-server</td>
 </tr>
 <tr>
-<td>scailing job</td>
+<td>scaling job</td>
 <td>O</td>
 <td><strong>X</strong></td>
 </tr>
