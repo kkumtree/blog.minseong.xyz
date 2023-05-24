@@ -6,7 +6,21 @@
     <description>Recent content in AWS on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sun, 21 May 2023 06:13:52 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 22 May 2023 19:23:37 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AWS EKS 스터디 5주차</title>
+      <link>https://blog.minseong.xyz/post/aws-eks-study-week5/</link>
+      <pubDate>Mon, 22 May 2023 19:23:37 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/aws-eks-study-week5/</guid>
+      <description>이번 주차는 오토스케일링을 메인으로 하여, 수평/수직 프로비저닝을 학습해보았습니다.
+마지막에는 고성능 오토스케일러인 Karpenter를 별도로 실습해보았습니다. 특히..
+HPA custom metrics(사용자 정의 메트릭) 적용
+YAML 설정값을 CPU로 맞춘 것을 잊고, 프로비저닝을 잘못 예측한 것도 함께 공유합니다.
+AutoScaling
+HPA: Horizontal Pod Autoscaler VPA: Vertical Pod Autoscaler CA: Cluster Autoscaler 각 CSP 의존적, 워커 노드 레벨에서의 오토스케일링 1. 실습 환경 배포 4주차의 초기 배포 내용에 p8s 및 Grafana를 추가하여 배포 verticalPodAutoscaler 활성화 추천 대시보드: 15757, 17900, 15172 curl -O https://s3.</description>
+    </item>
+    
     <item>
       <title>AWS EKS 스터디 4주차 - Observability</title>
       <link>https://blog.minseong.xyz/post/aws-eks-study-week4/</link>
