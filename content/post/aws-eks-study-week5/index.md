@@ -1,6 +1,6 @@
 ---
 date: 2023-05-22T19:23:37+09:00
-title: "AWS EKS 스터디 5주차"
+title: "AWS EKS 스터디 5주차 - Autoscaling"
 tags:
  - AWS
  - EKS
