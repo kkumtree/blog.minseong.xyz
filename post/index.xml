@@ -8,7 +8,7 @@
     <language>ko-kr</language>
     <lastBuildDate>Mon, 22 May 2023 19:23:37 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>AWS EKS 스터디 5주차</title>
+      <title>AWS EKS 스터디 5주차 - Autoscaling</title>
       <link>https://blog.minseong.xyz/post/aws-eks-study-week5/</link>
       <pubDate>Mon, 22 May 2023 19:23:37 +0900</pubDate>
       
