@@ -20,6 +20,10 @@ draft: true # 글 초안 여부
 
 이번 주차는 오토스케일링을 메인으로 하여, 수평/수직 프로비저닝을 학습해보았습니다.  
 마지막에는 고성능 오토스케일러인 Karpenter를 별도로 실습해보았습니다.
+특히..
+
+- HPA custom metrics(사용자 정의 메트릭) 적용
+- YAML 설정값을 CPU로 맞춘 것을 잊고, 프로비저닝을 잘못 예측한 것도 함께 공유합니다.
 
 - AutoScaling
   - HPA: Horizontal Pod Autoscaler
@@ -706,7 +710,7 @@ go install github.com/awslabs/eks-node-viewer/cmd/eks-node-viewer@latest
     - 30초 이후 미사용 노드 삭제: 데몬셋 제외, 이 값을 없애면, 사용률이 낮아도 노드가 축소되지 않음!
       - `ttlSecondsAfterEmpty: 30` (참조: [AWS Blog](https://aws.amazon.com/ko/blogs/korea/introducing-karpenter-an-open-source-high-performance-kubernetes-cluster-autoscaler/))
 
-![a-lots-of-time-for-reading-books-with-cloudformation](./images/a-lots-of-time-for-reading-books-with-cloudformation.png)
+![lots-of-time-for-reading-books-with-cloudformation](./images/lots-of-time-for-reading-books-with-cloudformation.png)
 
 ```bash
 # 환경변수 정보 확인
