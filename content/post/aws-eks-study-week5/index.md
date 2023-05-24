@@ -202,7 +202,7 @@ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never --
 kubectl delete deploy,svc,hpa,pod --all
 ```
 
-![stress-test-for-autoscailing-with-hpa](./images/stress-test-for-autoscailing-with-hpa.png)
+![stress-test-for-autoscaling-with-hpa](./images/stress-test-for-autoscaling-with-hpa.png)
 
 ![stress-test-ended-with-7-replicas-in-grafana](./images/stress-test-ended-with-7-replicas-in-grafana.png)
 
@@ -261,7 +261,7 @@ kubectl edit horizontalpodautoscaler.autoscaling
 
 ![custom-metrics-in-described-hpa](./images/custom-metrics-in-described-hpa.png)
 
-## 3. k8s based Event Driven Autoscailing - KEDA
+## 3. k8s based Event Driven Autoscaling - KEDA
 
 - HPA, KEDA 비교
   | 구분 | HPA | KEDA |
@@ -269,7 +269,7 @@ kubectl edit horizontalpodautoscaler.autoscaling
   | resource metrics | O | X |
   | event driven | X | O |
   | metrics reference | metrics-server | keda-metrics-api-server |
-  | scailing job | O | **X** |
+  | scaling job | O | **X** |
 
 - KEDA는 HPA 대체가 아닌, 확장 보조 도구.
 - 실습에서는 helm 차트를 통해 설치하고, Grafana 대시보드를 통해서 확인
