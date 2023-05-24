@@ -153,12 +153,18 @@ node-selector=karpenter.sh/provisioner-name
 resources=cpu,memory
 ```
 
+![EKS node viewer](./images/eks-node-viewer.png)
+
 ## 2. Horizontal Pod Autoscaler - HPA
 
 - kube-ops-view 및 Grafana(17125)에서 모니터링 병행
 - php-apache 데모를 배포하여 진행
   - 마지막 부하 방법으로 해도, 워커노드가 10개까지 늘어나지 않음  
     HPA 조건이 CPU 50% 이기 때문에, 6~7개에서 유지됨
+
+![CPU-metrics-in-described-hpa](./images/CPU-metrics-in-described-hpa.png)
+
+![target-CPU-utilization-with-neat](./images/target-CPU-utilization-with-neat.png)
 
 ```bash
 # CPU: 0.2코어 ~ 0.5코어(50%, 500m) 하한/상한 조건 설정
@@ -192,6 +198,12 @@ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never --
 kubectl delete deploy,svc,hpa,pod --all
 ```
 
+![stress-test-for-autoscailing-with-hpa](./images/stress-test-for-autoscailing-with-hpa.png)
+
+![stress-test-ended-with-7-replicas](./images/stress-test-ended-with-7-replicas.png)
+
+![hpa-status-in-grafana](./images/hpa-status-in-grafana.png)
+
 ### 2-1. HPA w/ multiple & custom metrics
 
 - 위에서 워커노드 10개까지 scale-up 되지 않았기 때문에,
@@ -203,10 +215,13 @@ kubectl delete deploy,svc,hpa,pod --all
 kubectl edit horizontalpodautoscaler.autoscaling
 ```
 
+![edit-hpa-setup](./images/edit-hpa-setup.png)
+
 - 편집기에서 아래와 같이 `metrics:` 하위를 수정 후,  
   부하를 계속 발생하면, CPU 50% 이상을 충족하지 않았어도, 워커노드가 10개까지 늘어남
 - describedObject: apiVersion, kind, name 을 지정하여,  
   해당 오브젝트의 메트릭을 **사용자 정의**로 지정할 수 있음
+- 다만, 사용자 정의 메트릭이기 때문에, eks-node-viewer에서 제대로 조건을 확인할 수 없음
 
 ```yaml
 # 전략
@@ -237,6 +252,12 @@ kubectl edit horizontalpodautoscaler.autoscaling
         value: 10k
 # 후략
 ```
+
+![use-custom-metrics-by-editor](./images/use-custom-metrics-by-editor.png)
+
+![max-10-replicas-in-grafana](./images/max-10-replicas-in-grafana.png)
+
+![custom-metrics-in-described-hpa](./images/custom-metrics-in-described-hpa.png)
 
 ## 3. k8s based Event Driven Autoscailing - KEDA
 
@@ -343,6 +364,10 @@ kubectl delete -f keda-cron.yaml -n keda && kubectl delete deploy php-apache -n 
 kubectl delete namespace keda
 ```
 
+![labals-for-receiving-events](./images/labals-for-receiving-events.png)
+
+![keda-status-in-grafana](./images/keda-status-in-grafana.png)
+
 ## 4. Vertical Pod Autoscaler - VPA
 
 - 수직 스케일링: 파드의 CPU, 메모리 최적화를 통한 노드 자원 효율화
@@ -354,18 +379,16 @@ kubectl delete namespace keda
 
 ```bash
 # 코드 다운로드
-it clone https://github.com/kubernetes/autoscaler.git
+git clone https://github.com/kubernetes/autoscaler.git
 cd ~/autoscaler/vertical-pod-autoscaler/
 tree hack
 
 # openssl 버전 확인
 openssl version
-OpenSSL 1.0.2k-fips  26 Jan 2017
 
 # openssl 1.1.1 이상 버전 확인
 yum install openssl11 -y
 openssl11 version
-OpenSSL 1.1.1g FIPS  21 Apr 2020
 
 # 스크립트파일내에 openssl11 수정
 sed -i 's/openssl/openssl11/g' ~/autoscaler/vertical-pod-autoscaler/pkg/admission-controller/gencerts.sh
@@ -395,6 +418,16 @@ kubectl describe pod | grep Requests: -A2
 kubectl get events --sort-by=".metadata.creationTimestamp" | grep VPA
 ```
 
+![VPA-setup](./images/vpa-setup.png)
+
+![check-CPU-100m-requests-from-initial-pods](./images/check-CPU-100m-requests-from-initial-pods.png)
+
+![initial-pod-will-be-changed-by-new-pod](./images/initial-pod-will-be-changed-by-new-pod.png)
+
+![new-pod-with-more-requested-CPU-resource-by-VPA](./images/new-pod-with-more-requested-CPU-resource-by-VPA.png)
+
+![new-pods-creation-events-by-cli](./images/new-pods-creation-events-by-cli.png)
+
 ## 5. Cluster Autoscaler - CA
 
 - AWS CSP로 실습을 진행하므로, CA도 적용해볼 수 있음
@@ -403,7 +436,9 @@ kubectl get events --sort-by=".metadata.creationTimestamp" | grep VPA
 - EKS에서 기 적용된 태그 확인
   - k8s.io/cluster-autoscaler/enabled : 'true'
   - k8s.io/cluster-autoscaler/myeks : owned
-- 동작: 주기적으로 사용률을 확인하여, 스케일 인/아웃을 수행
+- CA 동작: 주기적으로 사용률을 확인하여, 스케일 인/아웃을 수행
+
+![check-tagged-already-in-EKS](./images/check-tagged-already-in-EKS.png)
 
 ```bash
 # EKS 노드에서 태그 확인
@@ -434,6 +469,10 @@ kubectl describe deployments.apps -n kube-system cluster-autoscaler
 # 이번 실습에 적용하지 않음 
 kubectl -n kube-system annotate deployment.apps/cluster-autoscaler cluster-autoscaler.kubernetes.io/safe-to-evict="false"
 ```
+
+![asg-maxsize-before-edit](./images/asg-maxsize-before-edit.png)
+
+![asg-maxsize-after-edit](./images/asg-maxsize-after-edit.png)
 
 ### 5-1. CA 테스트
 
@@ -503,12 +542,24 @@ watch -d kubectl get node
 # 예시: --scale-down-delay-after-add=5m
 ```
 
+![replicaset-scaled-out-to-15](./images/replicaset-scaled-out-to-15.png)
+
+![node-increased-automatically](./images/node-increased-automatically.png)
+
+![new-nodes-created-for-replicaset](./images/new-nodes-created-for-replicaset.png)
+
+![scale-down-automatically](./images/scale-down-automatically.png)
+
+![scale-down-in-kubeopsview-1](./images/scale-down-in-kubeopsview-1.png)
+
+![scale-down-in-kubeopsview-2](./images/scale-down-in-kubeopsview-2.png)
+
 - 리소스 삭제
 
 ```bash
 kubectl delete -f nginx.yaml
 
-# CA 설정 원복: 3 / 3 / 3
+# ASG 설정 원복: 3 / 3 / 3
 aws autoscaling update-auto-scaling-group --auto-scaling-group-name ${ASG_NAME} --min-size 3 --desired-capacity 3 --max-size 3
 aws autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[? Tags[? (Key=='eks:cluster-name') && Value=='myeks']].[AutoScalingGroupName, MinSize, MaxSize,DesiredCapacity]" --output table
 
@@ -516,10 +567,19 @@ aws autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[? Tags[?
 kubectl delete -f cluster-autoscaler-autodiscover.yaml
 ```
 
+![reset-asg-after-ca-test](./images/reset-asg-after-ca-test.png)
+
 ## 6. Cluster Propotional Autoscaler - CPA
 
 - 5와 같이 노드 수 증가에 비례하여 성능 처리가 필요한 app(컨테이너/파드)를 수평으로 자동확장
-  - 실습의 경우, nginx
+  - 실습의 경우, nginx 사용
+- CPA는 CPA rule을 먼저 설정해야 함
+
+![error-befroe-cpa-rule-creation](./images/error-befroe-cpa-rule-creation.png)
+
+![set-cpa-rule](./images/set-cpa-rule.png)
+
+![error-before-cpa-rule-creation](./images/error-before-cpa-rule-creation.png)
 
 ```bash
 # helm 차트를 통한 릴리즈 시도 -> 실패해야 정상
@@ -593,8 +653,20 @@ aws autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[? Tags[?
 helm uninstall cluster-proportional-autoscaler && kubectl delete -f cpa-nginx.yaml
 ```
 
+![start-to-increase-replicaset-for-increasing-nodes](./images/start-to-increase-replicaset-for-increasing-nodes.png)
+
+![increase-nodes-and-replicaset-in-kubeopsview](./images/increase-nodes-and-replicaset-in-kubeopsview.png)
+
+![terminating-and-initializing-replicasets-when-nodes-decrease](./images/terminating-and-initializing-replicasets-when-nodes-decrease.png)
+
+![decreasing-in-kubeopsview](./images/decreasing-in-kubeopsview.png)
+
 ## 7. Karpenter: k8s Native AutoScaler
 
+- 단시간(n초)만에 컴퓨팅 리소스를 제공하는 노드 수명 주기 관리 솔루션
+  - 스케줄러가 unschedulable로 태깅한 pods를 포착하여 JIT(Just-In-Time)으로 노드를 생성
+  - 반대로 노드가 필요없어지면, 삭제
+  - CA와 ASG를 둘다 거쳐야하는 방식에 비해, 더 빠르고 효율적인 리소스 제공 가능
 - 다른 노드 그룹에서 진행하므로 앞서 진행했던 모든 EKS 실습환경을 삭제
 
 ```bash
@@ -624,6 +696,8 @@ ip -br -c addr
 go install github.com/awslabs/eks-node-viewer/cmd/eks-node-viewer@latest
 ```
 
+![check-ip-address-range-with-VPC](./images/check-ip-address-range-with-VPC.png)
+
 - EKS 배포 및 Karpenter 프로비저너 설치
   - 클러스터 생성 시, 20여분 소요 (차 한잔 혹은 책을 읽도록 하자)
   - helm을 통한 Karpenter 설치 시, 환경변수 중 하나라도 확인 안되면 설치 오류가 발생
@@ -631,6 +705,8 @@ go install github.com/awslabs/eks-node-viewer/cmd/eks-node-viewer@latest
     - 관리 대상 지정: securityGroupSelector, subnetSelector를 사용, $CLUSTER_NAME 대상
     - 30초 이후 미사용 노드 삭제: 데몬셋 제외, 이 값을 없애면, 사용률이 낮아도 노드가 축소되지 않음!
       - `ttlSecondsAfterEmpty: 30` (참조: [AWS Blog](https://aws.amazon.com/ko/blogs/korea/introducing-karpenter-an-open-source-high-performance-kubernetes-cluster-autoscaler/))
+
+![a-lots-of-time-for-reading-books-with-cloudformation](./images/a-lots-of-time-for-reading-books-with-cloudformation.png)
 
 ```bash
 # 환경변수 정보 확인
@@ -781,6 +857,12 @@ EOF
 kubectl get awsnodetemplates,provisioners
 ```
 
+![check-auth-mapping-with-aws-auth](./images/check-auth-mapping-with-aws-auth.png)
+
+![karpenter-installation-with-variables](./images/karpenter-installation-with-variables.png)
+
+![check-karpenter-set-up-after-applying-provisioner](./images/check-karpenter-set-up-after-applying-provisioner.png)
+
 - (옵션)ExternalDNS, kube-ops-view, grafana
   - 실습 시, Grafana만 제대로 구동이 되지 않음 (To-Do)
 
@@ -821,11 +903,14 @@ kubectl annotate service grafana -n monitoring "external-dns.alpha.kubernetes.io
 echo -e "grafana URL = http://grafana.$MyDomain"
 ```
 
+![trying-to-enable-grafana](./images/trying-to-enable-grafana.png)
+
 ### 7-1. Karpenter 테스트 셋업
 
 - `terminationGracePeriodSeconds: 0`
   - 정상 종료 동작이 수행되는 시간(Grace Period) 설정, 0으로 설정 시 바로 강제 종료
   - Docs에서는 **강력하게 권장하지 않지만** 실습의 빠른 진행을 위해 설정 (참조: [k8s Docs](https://kubernetes.io/ko/docs/tasks/run-application/force-delete-stateful-set-pod/))
+- 초기 셋업의 레플리카셋 요청 수는 5개
 
 ```bash
 # pause 파드 1개에 CPU 1개 최소 보장 할당
@@ -861,6 +946,12 @@ kubectl get node -l karpenter.sh/capacity-type=spot -o jsonpath='{.items[0].meta
 kubectl get node --label-columns=eks.amazonaws.com/capacityType,karpenter.sh/capacity-type,node.kubernetes.io/instance-type
 ```
 
+![check-spot-instance-creation-for-karpenter-test](./images/check-spot-instance-creation-for-karpenter-test.png)
+
+![karpenter-monitoring-unschedulable-and-also-provisionable-pods](./images/karpenter-monitoring-unschedulable-and-also-provisionable-pods.png)
+
+![new-spot-instance-in-eks-node-viewer](./images/new-spot-instance-in-eks-node-viewer.png)
+
 ### 7-2. Scale down 테스트
 
 - Deployment를 지우면, 30초 이후 '비어있는' 노드(스팟 인스턴스)를 삭제
@@ -872,15 +963,29 @@ kubectl delete deployment inflate
 kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
 ```
 
+![karpenter-terminates-spot-instance-ttlSecondsAfterEmpty](./images/karpenter-terminates-spot-instance-ttlSecondsAfterEmpty.png)
+
 ### 7-3. Consolidation 테스트
 
 - Consolidation이 생소한 단어라 따로 검색
   - 노드의 리소스 활용도를 높이고 비용을 절감하기 위해 작업 부하를 다른 노드로 이동시키는 기능
   - 위에서 지정했던 ttlSecondsAfterEmpty과 동시 사용 불가 (참조: [아이엠 !나이롱맨 Blog](https://kingofbackend.tistory.com/252))
 - 실습에서는 12개의 레플리카셋을 생성하여 12Gi의 메모리 요청을 발생
+- **원래 예상한 것**
   - Karpenter가 m5.large 인스턴스 2개에 분산 배치 (m5.large: 8Gi)
-  - (8Gi - 약 600Mi) * 2 = 14.8Gi: kubelet에서 예약한 600Mi 제외
-  - 5개로 줄이면 인스턴스 하나를 삭제, 다시 1개로 줄이면 인스턴스를 c5.large로 변경하여 최적화를 진행
+    - (8Gi - 약 600Mi) * 2 = 14.8Gi: kubelet에서 예약한 600Mi 제외
+  - 5개로 줄이면 인스턴스 하나를 삭제, 레플리카셋을 위한 m5.large 인스턴스 1개만 남음
+  - 다시 1개로 줄이면 인스턴스를 c5.large로 변경하여 최적화를 진행
+- **실제**
+  - CPU 하나당 Pod 하나, 즉 1:1 리소스 매칭
+    - `resources.requests.cpu: 1`
+  - Karpenter가 m5.xlarge 인스턴스 3개에 배치 (m5.xlarge.vCPU: 4)
+    - 4 * 3 = 12: 각 노드 당, Pod 4개 씩 배치
+    - 기존 spot 인스턴스는 제거됨
+  - 레플리카셋을 5개로 줄이면 필요없어진 2개의 m5.xlarge 노드만 삭제
+    - log 확인 시, 한 번에 노드 2개 삭제가 아닌 **1개 삭제 후 재확인다음, 추가 삭제 진행**
+    - 레플리카셋을 위한 m5.large 인스턴스는 2개 남음
+  - **(예상과 동일)** 다시 1개로 줄이면 c5.large로 변경하여 최적화 진행
 
 - (참고) condon: 통제, 차단 (출처: [Cambrige Dictionary](https://dictionary.cambridge.org/ko/%EC%82%AC%EC%A0%84/%EC%98%81%EC%96%B4/cordon))
 
@@ -946,7 +1051,7 @@ kubectl scale deployment inflate --replicas 12
 kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
 
 # 인스턴스 확인
-# m5.large 2개 생성 확인
+# m5.xlarge 노드 4개 생성 확인
 kubectl get node -l type=karpenter
 kubectl get node --label-columns=eks.amazonaws.com/capacityType,karpenter.sh/capacity-type
 kubectl get node --label-columns=node.kubernetes.io/instance-type,topology.kubernetes.io/zone
@@ -972,3 +1077,15 @@ kubectl get node --label-columns=eks.amazonaws.com/capacityType,karpenter.sh/cap
 kubectl get node --label-columns=node.kubernetes.io/instance-type,topology.kubernetes.io/zone
 kubectl delete deployment inflate
 ```
+
+![karpenter-creates-4-m5-xlarge-nodes-in-logs](./images/karpenter-creates-4-m5-xlarge-nodes-in-logs.png)
+
+![karpenter-creates-4-m5-xlarge-nodes-in-eks-node-viewer](./images/karpenter-creates-4-m5-xlarge-nodes-in-eks-node-viewer.png)
+
+![karpenter-monitoring-changing-deprovisioning-in-logs](./images/karpenter-monitoring-changing-deprovisioning-in-logs.png)
+
+![karpenter-node-deprovisioning-consequently-in-kubeopsview-1](./images/karpenter-node-deprovisioning-consequently-in-kubeopsview-1.png)
+
+![karpenter-node-deprovisioning-consequently-in-kubeopsview-2](./images/karpenter-node-deprovisioning-consequently-in-kubeopsview-2.png)
+
+![karpenter-replace-node-to-c5-large-in-logs](./images/karpenter-replace-node-to-c5-large-in-logs.png)
