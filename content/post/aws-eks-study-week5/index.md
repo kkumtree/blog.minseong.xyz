@@ -15,7 +15,7 @@ authors:
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.jpg # 커버 이미지 URL
-draft: true # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
 이번 주차는 오토스케일링을 메인으로 하여, 수평/수직 프로비저닝을 학습해보았습니다.  
@@ -204,9 +204,7 @@ kubectl delete deploy,svc,hpa,pod --all
 
 ![stress-test-for-autoscailing-with-hpa](./images/stress-test-for-autoscailing-with-hpa.png)
 
-![stress-test-ended-with-7-replicas](./images/stress-test-ended-with-7-replicas.png)
-
-![hpa-status-in-grafana](./images/hpa-status-in-grafana.png)
+![stress-test-ended-with-7-replicas-in-grafana](./images/stress-test-ended-with-7-replicas-in-grafana.png)
 
 ### 2-1. HPA w/ multiple & custom metrics
 
@@ -579,7 +577,7 @@ kubectl delete -f cluster-autoscaler-autodiscover.yaml
   - 실습의 경우, nginx 사용
 - CPA는 CPA rule을 먼저 설정해야 함
 
-![error-befroe-cpa-rule-creation](./images/error-befroe-cpa-rule-creation.png)
+![error-before-cpa-rule-creation](./images/error-before-cpa-rule-creation.png)
 
 ![set-cpa-rule](./images/set-cpa-rule.png)
 
