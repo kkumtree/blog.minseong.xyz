@@ -966,7 +966,7 @@ kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
 kubectl scale deployment inflate --replicas 1
 kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
 
-# 인스턴스 확인 후 삭제x
+# 인스턴스 확인 후 삭제
 kubectl get node -l type=karpenter
 kubectl get node --label-columns=eks.amazonaws.com/capacityType,karpenter.sh/capacity-type
 kubectl get node --label-columns=node.kubernetes.io/instance-type,topology.kubernetes.io/zone
