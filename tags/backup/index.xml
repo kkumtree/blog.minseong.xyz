@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>backup on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/backup/</link>
+    <description>Recent content in backup on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Sat, 27 May 2023 18:29:18 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/backup/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>GnuPG 키 백업하기</title>
+      <link>https://blog.minseong.xyz/post/how-to-backup-gpg-key-to-personal-media/</link>
+      <pubDate>Sat, 27 May 2023 18:29:18 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/how-to-backup-gpg-key-to-personal-media/</guid>
+      <description>망가진 PC 메인보드를 교체하고, 서둘러 GPG key를 백업하였습니다.
+용량이 그리 큰편은 아니니, 왠만한 USB 메모리에도 충분히 백업이 가능합니다.
+(어째서 안했었을꼬&amp;hellip;)
+# tree로 ~/.gnupg 확인 tree ~/.gnupg # 현재 사용중인 키 확인 gpg --list-secret-keys --keyid-format LONG # 키 백업 ## public 키 백업 gpg --export --export-options backup --output ~/public_mscho.gpg ## private 키 백업 gpg --export-secret-keys --export-options backup --output ~/private-mscho.gpg ## trust(신뢰관게) 백업 gpg --export-ownertrust &amp;gt; trust_mscho.gpg # 백업한 키 확인 ls -al ~/*.</description>
+    </item>
+    
+  </channel>
+</rss>
