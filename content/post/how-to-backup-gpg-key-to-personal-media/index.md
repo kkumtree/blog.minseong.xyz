@@ -19,6 +19,10 @@ draft: false
 용량이 그리 큰편은 아니니, 왠만한 USB 메모리에도 충분히 백업이 가능합니다.  
 (어째서 안했었을꼬...)
 
+출처는 마지막 referenece를 참조해주시기 바랍니다.
+
+## 1. Backup
+
 ```bash
 # tree로 ~/.gnupg 확인
 tree ~/.gnupg
@@ -31,8 +35,8 @@ gpg --list-secret-keys --keyid-format LONG
 ## public 키 백업
 gpg --export --export-options backup --output ~/public_mscho.gpg
 
-## private 키 백업
-gpg --export-secret-keys --export-options backup --output ~/private-mscho.gpg
+## private 키 백업 (암호 입력 필요)
+gpg --export-secret-keys --export-options backup --output ~/private_mscho.gpg
 
 ## trust(신뢰관게) 백업
 gpg --export-ownertrust > trust_mscho.gpg
@@ -56,3 +60,28 @@ ls -al /media/kkumtree/KEYS/GnuPG/*.gpg
 ```
 
 ![backup](./images/backup.png)
+
+## 2. Restore
+
+- 메인보드가 고장나서 패닉이 걸렸고, 일단 키부터 다른 디바이스에 복원해놓기로 했습니다.  
+
+```bash
+# 복원 대상의 PC에 USB를 꽂고, 해당 디렉토리로 위치
+cd /media/kkumtree/KEYS/GnuPG
+
+# public 키 복원
+gpg --import public_mscho.gpg
+
+# private 키 복원 (암호 입력 필요)
+gpg --import private_mscho.gpg
+
+# trust(신뢰관계) 복원
+gpg --import-ownertrust trust_mscho.gpg
+
+# 복원된 키 확인
+gpg --list-secret-keys --keyid-format LONG
+```
+
+## Reference
+
+- [How-To Geek](https://www.howtogeek.com/816878/how-to-back-up-and-restore-gpg-keys-on-linux/)
