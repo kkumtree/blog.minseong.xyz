@@ -15,7 +15,7 @@ authors:
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.jpg # 커버 이미지 URL
-draft: true # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
 이번에는 인증 및 인가, 그리고 IRSA를 중심으로 EKS의 보안에 대해 학습해보았습니다.
