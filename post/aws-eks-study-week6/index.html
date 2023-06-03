@@ -140,7 +140,9 @@ Security는 복기하다가 이론적으로는 간단(과연 ?)해보여도,<br>
 (필요한 경우 ssh키도 포함)</li>
 <li>AWS Public AMI에서 제공되는 Ubuntu AMI의 경우,<br>
 ubuntu@{Public IP}로 접속가능</li>
-<li>추정: 공유된 머신에 다른 설정이 이슈가 되는 것으로 추정됩니다.</li>
+<li>추정: 공유된 머신에 다른 설정이 이슈가 되는 것으로 추정됩니다.
+<img src="./images/ssh-failure-1.png" alt="ssh failure 1">
+<img src="./images/ssh-failure-2.png" alt="ssh failure 2"></li>
 </ul>
 </li>
 <li>IAM User(testuser)는 웹콘솔에서 삭제하는 것이 편리합니다.
@@ -149,7 +151,8 @@ ubuntu@{Public IP}로 접속가능</li>
 <ul>
 <li>list-attached-role-policies &amp;&amp; detach-role-policy</li>
 <li>list-access-keys &amp;&amp; delete-access-key</li>
-<li>delete-user</li>
+<li>delete-user
+<img src="./images/delete-user-with-cli.png" alt="delete user with cli"></li>
 </ul>
 </li>
 </ul>
@@ -160,15 +163,14 @@ ubuntu@{Public IP}로 접속가능</li>
 <li>결론: 하드코어한 파싱..
 <ul>
 <li><code>jq -r '.[].status.roleARN' | rev | cut -d '/' -f1 | rev</code></li>
+<li>chatGPT에게 아래와 같이 교정 받았지만, 탐탁치 않음..<br>
+<code>jq -r '.[].status.roleARN' | grep -oE '[^/]+$'</code><br>
+<img src="./images/iam-trust-relationship-with-cli.png" alt="iam trust relationship with cli"></li>
 </ul>
 </li>
 </ul>
 </li>
 </ol>
-<p><img src="./images/ssh-failure-1.png" alt="ssh failure 1"></p>
-<p><img src="./images/ssh-failure-2.png" alt="ssh failure 2"></p>
-<p><img src="./images/delete-user-with-cli.png" alt="delete user with cli"></p>
-<p><img src="./images/iam-trust-relationship-with-cli.png" alt="iam trust relationship with cli"></p>
 <h2 id="1-실습-환경-배포">1. 실습 환경 배포</h2>
 <ul>
 <li>모의공격(?) 테스트를 위해 2개의 bastion 서버가 구성된 환경 배포</li>
