@@ -32,8 +32,8 @@ Security는 복기하다가 이론적으로는 간단(과연?)해보여도,
 
 ## 1. 실습 환경 배포
 
-- 모의공격(?) 테스트를 위해 2개의 bastion 서버가 구성된 환경을 배포하였습니다.
-- p8s 및 grafana의 경우, 선택적으로 배포해도 되서 기술은 생략합니다.
+- 모의공격(?) 테스트를 위해 2개의 bastion 서버가 구성된 환경 배포
+- p8s 및 grafana의 경우, 선택적으로 배포해도 되서 기술 생략
 
 ```bash
 curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/eks-oneclick5.yaml
@@ -41,7 +41,7 @@ curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S
 # 이하 중략
 
 # CERT_ARN(ACM)의 경우에는 /etc/profile에 환경변수 저장을 안해둬서  
-# 세션이 만료되면, 다시 재설정해야합니다.
+# 세션이 만료되면, 다시 재설정 필요
 
 CERT_ARN=`aws acm list-certificates --query 'CertificateSummaryList[].CertificateArn[]' --output text`
 echo $CERT_ARN
@@ -828,6 +828,8 @@ kubectl delete pod eks-iam-test3
 ## 5. OWAPS k8s Top 10
 
 - 실습에서는 세 가지 시나리오로 k8s 보안위협 체감을 목표로 진행
+- 마지막 5-3 실습의 경우 기존 kubeconfig를 삭제하기 때문에  
+  cloudformation stack 삭제 시, 수동 작업 필요할 수 있음
 
 ### 5-1. 실습1: EKS pod가 IMDS API를 악용하는 시나리오
 
