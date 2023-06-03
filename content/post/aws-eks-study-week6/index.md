@@ -38,23 +38,21 @@ Security는 복기하다가 이론적으로는 간단(과연 ?)해보여도,
    - AWS Public AMI에서 제공되는 Ubuntu AMI의 경우,  
    ubuntu@{Public IP}로 접속가능
    - 추정: 공유된 머신에 다른 설정이 이슈가 되는 것으로 추정됩니다.
+   ![ssh failure 1](./images/ssh-failure-1.png)
+   ![ssh failure 2](./images/ssh-failure-2.png)
 2. IAM User(testuser)는 웹콘솔에서 삭제하는 것이 편리합니다.  
    - 아니면, 아래처럼 detach 한다는 느낌으로 순차적 실행합니다.  
      - list-attached-role-policies && detach-role-policy
      - list-access-keys && delete-access-key
      - delete-user
+   ![delete user with cli](./images/delete-user-with-cli.png)
 3. CLI로 IAM Trust Relationship 조회
    - 웹 콘솔에 굳이 들어가야하나 하고, 문득 해본 시도하다가 시간이 날아갔습니다.  
    - 결론: 하드코어한 파싱..  
       - `jq -r '.[].status.roleARN' | rev | cut -d '/' -f1 | rev`
-
-![ssh failure 1](./images/ssh-failure-1.png)
-
-![ssh failure 2](./images/ssh-failure-2.png)
-
-![delete user with cli](./images/delete-user-with-cli.png)
-
-![iam trust relationship with cli](./images/iam-trust-relationship-with-cli.png)
+      - chatGPT에게 아래와 같이 교정 받았지만, 탐탁치 않음..  
+      `jq -r '.[].status.roleARN' | grep -oE '[^/]+$'`  
+   ![iam trust relationship with cli](./images/iam-trust-relationship-with-cli.png)
 
 ## 1. 실습 환경 배포
 
