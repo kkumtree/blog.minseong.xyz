@@ -101,19 +101,5 @@ EKS 사용에 있어 고려사항 EKS는 관리형 서비스(managed service)이
 아무리 클라우드 서비스가 합리적이어도 On-demand 인스턴스를 학습용으로 사용하기엔 살짝 비효율적이라는 생각이 들었습니다.</description>
     </item>
     
-    <item>
-      <title>AWS 트러블 슈팅 - 7주 간의 k8s 실무 스터디를 마치며</title>
-      <link>https://blog.minseong.xyz/post/basic-aws-troubleshooting/</link>
-      <pubDate>Sat, 25 Feb 2023 22:07:23 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/post/basic-aws-troubleshooting/</guid>
-      <description>최근 CloudNet@에서 진행하고 있는 Production Kubernetes Online Study(이하, PKOS)도 마지막 주차가 끝났습니다.
-남은 계획은 4월부터 시작되는 휴식기간(a.k.a. 계약만료 후)중 복습 겸, 포스팅을 해보는 것입니다.
-오늘은 아래와 같이 실패를 거듭하여 추가로 알게된 소소한 트러블슈팅을 정리해보려고 합니다.
-(물론, 새벽에 겨우겨우 주차별 과제 제출하고 기절하는 바람에, 맛점하다 깨닫고 소스라치게 휴대폰으로 수동 삭제한게 비용의 주 요인이긴 하네요;)
-불필요한 Try &amp;amp; Fail을 줄이고, 즐거운 k8s 학습되시기 바랍니다.
-1. AWS 계정 잠금 해제 상황 처음 1주차 안내가 끝나고 Route53 Hostname을 구매하려고 하니, 자꾸 결제가 실패하는 문제가 발생했습니다.</description>
-    </item>
-    
   </channel>
 </rss>
