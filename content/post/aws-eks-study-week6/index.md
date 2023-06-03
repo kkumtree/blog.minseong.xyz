@@ -74,6 +74,8 @@ echo $DevToken
   - [https://jwt.io/](https://jwt.io/)
   - Credential도 있기 때문에 취급주의
 
+- SA 지정하여 파드 생성 후 권한 테스트
+
 ```bash
 cat <<EOF | kubectl create -f -
 apiVersion: v1
@@ -108,5 +110,144 @@ spec:
 EOF
 
 # 확인
-kubectl get pod -n dev-team
+kubectl get pod -o dev-kubectl -n dev-team -o yaml | grep serviceAccount
+kubectl get pod -o infra-kubectl -n infra-team -o yaml | grep serviceAccount
+
+# 파드에 기본 적용되는 SA 정보(토큰) 확인
+kubectl exec -it dev-kubectl -n dev-team -- ls /run/secrets/kubernetes.io/serviceaccount
+kubectl exec -it dev-kubectl -n dev-team -- cat /run/secrets/kubernetes.io/serviceaccount/token
+kubectl exec -it dev-kubectl -n dev-team -- cat /run/secrets/kubernetes.io/serviceaccount/namespace
+kubectl exec -it dev-kubectl -n dev-team -- cat /run/secrets/kubernetes.io/serviceaccount/ca.crt
+
+# 각 파드 접속하여, 정보 확인 with alias
+alias k1='kubectl exec -it dev-kubectl -n dev-team -- kubectl'
+alias k2='kubectl exec -it infra-kubectl -n infra-team -- kubectl'
+
+# 권한 테스트
+k1 get pods # kubectl exec -it dev-kubectl -n dev-team -- kubectl get pods 와 동일한 실행 명령이다!
+k1 run nginx --image nginx:1.20-alpine
+k1 get pods -n kube-system
+
+# (옵션) kubectl 실행 사용자(host 기준)가 특정 권한을 가지고 있는지 확인 [결과: no]
+k1 auth can-i get pods
+```
+
+- 당연히 되지 않음. 단지 SA를 만들어서 파드에 적어넣었을 뿐
+  1. Role의 부재
+  2. SA와 Role의 매핑(RoleBinding)의 부재
+- 아래에서 위의 두 가지를 생성
+
+```bash
+# 각 NS에 Role 생성 후 확인
+cat <<EOF | kubectl create -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: role-dev-team
+  namespace: dev-team
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+EOF
+
+cat <<EOF | kubectl create -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: role-infra-team
+  namespace: infra-team
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+EOF
+
+kubectl describe roles role-dev-team -n dev-team
+
+# 각 NS에 SA와 Role 매핑(RoleBinding) 생성 후 확인
+cat <<EOF | kubectl create -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: roleB-dev-team
+  namespace: dev-team
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: role-dev-team
+subjects:
+- kind: ServiceAccount
+  name: dev-k8s
+  namespace: dev-team
+EOF
+
+cat <<EOF | kubectl create -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: roleB-infra-team
+  namespace: infra-team
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: role-infra-team
+subjects:
+- kind: ServiceAccount
+  name: infra-k8s
+  namespace: infra-team
+EOF
+
+kubectl describe rolebindings roleB-dev-team -n dev-team
+
+# 권한 테스트 성공
+alias k1='kubectl exec -it dev-kubectl -n dev-team -- kubectl'
+alias k2='kubectl exec -it infra-kubectl -n infra-team -- kubectl'
+
+k1 get pods 
+k1 run nginx --image nginx:1.20-alpine
+k1 get pods
+k1 delete pods nginx
+k1 get pods -n kube-system
+k1 get nodes
+
+k1 auth can-i get pods # yes
+```
+
+## 3. EKS 인증/인가
+
+- 앞에서 k8s 인증/인가를 했다면 이제는 AWS IAM 서비스와 결합
+  - 인증: AWS IAM
+  - 인가: k8s RBAC
+- 원활한 진행을 위해 RBAC용 krew 플러그인 설치
+
+```bash
+kubectl krew install access-matrix rbac-tool rbac-view rolesum
+
+# 실습 NS인 default에서 액세스 매트릭스 확인
+kubectl access-matrix --namespace default
+
+# USER/GROUP/SA 단위의 RBAC 조회
+# system:nodes == eks:node-bootstrapper
+# system:bootstrappers == eks:node-bootstrapper
+kubectl rbac-tool lookup system:masters
+
+# USER/GROUP/SA 단위의 RBAC 정책 규칙 확인
+kubectl rbac-tool policy-rules
+kubectl rbac-tool policy-rules
+
+# 해당 클러스터에서 사용 가능한 클러스터롤 조회
+kubectl rbac-tool show
+
+# 클러스터에 인증된 현재 컨텍스트의 사용자 확인
+kubectl rbac-tool whoami
+
+# USER/GROUP/SA 단위의 RBAC 역할 조회
+kubectl rolesum aws-node -n kube-system
+kubectl rolesum -k User system:kube-proxy
+kubectl rolesum -k Group system:masters
+
+# (새로운 쉘) 현재 접속한 본인의 RBAC 권한을 시각적으로 확인
+echo -e "RBAC View Web http://$(curl -s ipinfo.io/ip):8800"
+kubectl rbac-view
 ```
