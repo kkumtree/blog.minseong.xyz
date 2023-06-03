@@ -47,7 +47,7 @@ Security는 복기하다가 이론적으로는 간단(과연 ?)해보여도,
      - delete-user
    ![delete user with cli](./images/delete-user-with-cli.png)
 3. CLI로 IAM Trust Relationship 조회
-   - 웹 콘솔에 굳이 들어가야하나 하고, 문득 해본 시도하다가 시간이 날아갔습니다.  
+   - 웹 콘솔에 굳이 들어가야하나 하고, 문득 호기심에 시도하다가 시간이 날아갔습니다.  
    - 결론: 하드코어한 파싱..  
       - `jq -r '.[].status.roleARN' | rev | cut -d '/' -f1 | rev`
       - chatGPT에게 아래와 같이 교정 받았지만, 탐탁치 않음..  
