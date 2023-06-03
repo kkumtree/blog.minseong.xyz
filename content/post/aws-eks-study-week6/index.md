@@ -20,15 +20,41 @@ draft: true # 글 초안 여부
 
 이번에는 인증 및 인가, 그리고 IRSA를 중심으로 EKS의 보안에 대해 학습해보았습니다.
 
-kops 스터디 때에는 잘 몰랐는데, 복기하다보니...
+kops 스터디 때에는 잘 몰랐는데, 복기하다보니 RBAC은 기본으로 깔고..
 
 - [4-1] pro**j**ected Volume
 - [4-2] AWS Load Balancer Controller IRSA 및 LB Pod mutating
 
 위의 두 가지가 꽤나 중요한 파트를 차지하고 있었음을 알 수 있었습니다.  
 Network(2주차)가 매번 뭔가 일부가 아리송하였다면  
-Security는 복기하다가 이론적으로는 간단(과연?)해보여도,  
+Security는 복기하다가 이론적으로는 간단(과연 ?)해보여도,  
 실제 구동방식 이해 자체가 초반에 안되서 더 어려웠던 것 같습니다.
+
+## 그 외
+
+1. myeks-bastion-2에 접속 시, 함께 진행할 때는 `ssh {Public IP}`로 잘 접속되는 걸 봤는데 정작 혼자 할 땐 접속이 되지않았습니다.  
+   - Amazon Linux에서는 ssh ec2-user@{Public IP}로 접속해야함  
+   (필요한 경우 ssh키도 포함)
+   - AWS Public AMI에서 제공되는 Ubuntu AMI의 경우,  
+   ubuntu@{Public IP}로 접속가능
+   - 추정: 공유된 머신에 다른 설정이 이슈가 되는 것으로 추정됩니다.
+2. IAM User(testuser)는 웹콘솔에서 삭제하는 것이 편리합니다.  
+   - 아니면, 아래처럼 detach 한다는 느낌으로 순차적 실행합니다.  
+     - list-attached-role-policies && detach-role-policy
+     - list-access-keys && delete-access-key
+     - delete-user
+3. CLI로 IAM Trust Relationship 조회
+   - 웹 콘솔에 굳이 들어가야하나 하고, 문득 해본 시도하다가 시간이 날아갔습니다.  
+   - 결론: 하드코어한 파싱..  
+      - `jq -r '.[].status.roleARN' | rev | cut -d '/' -f1 | rev`
+
+![ssh failure 1](./images/ssh-failure-1.png)
+
+![ssh failure 2](./images/ssh-failure-2.png)
+
+![delete user with cli](./images/delete-user-with-cli.png)
+
+![iam trust relationship with cli](./images/iam-trust-relationship-with-cli.png)
 
 ## 1. 실습 환경 배포
 
@@ -53,6 +79,8 @@ echo $CERT_ARN
   - cluster: k8s API 서버 접속정보
   - users: API 서버에 접속하기 위한 유저 인증정보 목록
   - contexts: cluster및 user를 매핑(조합)한 정보
+
+![kubeconfig](./images/kubeconfig.png)
 
 ### 2-1. 인증/인가 실습
 
@@ -80,9 +108,13 @@ DevToken=$(kubectl get secret -n dev-team $DevTokenName -o jsonpath="{.data.toke
 echo $DevToken
 ```
 
+![service account](./images/service-account.png)
+
 - 각각의 YAML파일에 토큰이 있는데 이는 JWT(Bearer)토큰으로 아래에서 확인가능
   - [https://jwt.io/](https://jwt.io/)
-  - Credential도 있기 때문에 취급주의
+  - 경우에 따라, Credential도 있기 때문에 취급주의
+
+![jwt](./images/jwt.png)
 
 - SA 지정하여 파드 생성 후 권한 테스트
 
@@ -141,6 +173,10 @@ k1 get pods -n kube-system
 # (옵션) kubectl 실행 사용자(host 기준)가 특정 권한을 가지고 있는지 확인 [결과: no]
 k1 auth can-i get pods
 ```
+
+![test pod creation for sa](./images/test-pod-creation-for-sa.png)
+
+![sa failure without RoleBinding](./images/sa-failure-without-rolebinding.png)
 
 - 당연히 되지 않음. 단지 SA를 만들어서 파드에 적어넣었을 뿐
   1. Role의 부재
@@ -224,6 +260,10 @@ k1 get nodes
 k1 auth can-i get pods # yes
 ```
 
+![creation role for sa](./images/creation-role-for-sa.png)
+
+![sa success with RoleBinding](./images/sa-success-with-rolebinding.png)
+
 ## 3. EKS 인증/인가
 
 - 앞에서 k8s 인증/인가를 했다면 이제는 AWS IAM 서비스와 결합
@@ -262,6 +302,16 @@ echo -e "RBAC View Web http://$(curl -s ipinfo.io/ip):8800"
 kubectl rbac-view
 ```
 
+![access-matrix](./images/access-matrix.png)
+
+![lookup RBAC](./images/lookup-rbac.png)
+
+![whoami RBAC](./images/whoami-rbac.png)
+
+![rolesum RBAC](./images/rolesum-rbac.png)
+
+![rbac-view](./images/rbac-view.png)
+
 ### 3-1. EKS 인증/인가 살펴보기
 
 - STS(Security Token Service)를 기반  
@@ -276,6 +326,10 @@ kubectl rbac-view
   - `kubectl rbac-tool whoami`으로 조회 가능
 - (kubeconfig)v1beta1을 쓰고 있는데, 실습을 하다보면 간혹 token값 앞부분이 깨져나옴  
   - To-Do: v1(GA) 이후로 해서 테스트해봐야 함
+
+![throttling when using v1beta1](./images/throttling-when-using-v1beta1.png)
+
+![token broken when using v1beta1](./images/token-broken-when-using-v1beta1.png)
 
 ```bash
 # sts caller id의 ARN
@@ -318,6 +372,12 @@ kubectl describe ClusterRole system:basic-user
 kubectl describe ClusterRole eks:podsecuritypolicy:privileged
 ```
 
+![TokenReview, MutatingWebhookConfiguration, ValidatingWebhookConfiguration](./images/tokenreview-mutatingwebhookconfiguration-validatingwebhookconfiguration.png)
+
+![RBAC lookup and rolesum](./images/rbac-lookup-and-rolesum.png)
+
+![clusterrolebindings and clusterrole](./images/clusterrolebindings-and-clusterrole.png)
+
 ### 3-2. 신규 인프라 관리자용 myeks-bastion-2에 EKS 인증/인가 설정
 
 - 기존 쉘(myeks-bastion)과 교차하여 진행: testuser 생성 및 권한 수정
@@ -339,6 +399,10 @@ aws sts get-caller-identity --query Arn
 # testuser가 접속할 myeks-bastion-2 PublicIP 확인
 aws ec2 describe-instances --query "Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --filters Name=instance-state-name,Values=running --output table
 ```
+
+![create testuser](./images/create-testuser.png)
+
+![create testuser access key](./images/create-testuser-access-key.png)
 
 - 현재 상태에서 testuser는 접속은 가능하지만, kubectl 불가
   - 당연하게도, 관리자 그룹(`system:masters`)과 매핑이 되지 않았기에 불가
@@ -362,6 +426,8 @@ kubectl get node -v6
 ls ~/.kube
 ```
 
+![testuser cannot use kubectl without group mapping](./images/testuser-cannot-use-kubectl-without-group-mapping.png)
+
 - 다시, 원래 쉘에서 그룹 부여를 하여 권한 설정: EKS 관리자 레벨
 
 ```bash
@@ -375,6 +441,8 @@ eksctl create iamidentitymapping --cluster $CLUSTER_NAME --username testuser --g
 kubectl get cm -n kube-system aws-auth -o yaml | kubectl neat | yh
 eksctl get iamidentitymapping --cluster $CLUSTER_NAME
 ```
+
+![testuser after iamidentitymapping](./images/testuser-after-iamidentitymapping.png)
 
 - 다시, testuser에서 kubectl 명령어 실행: 권한 있음
   - 실행 전, kubeconfig 업데이트 필요
@@ -411,8 +479,11 @@ kubectl edit cm -n kube-system aws-auth
 eksctl get iamidentitymapping --cluster $CLUSTER_NAME
 ```
 
-- testuser에서 kubectl 명령어 실행 **시도**: 일부 권한 없음
+![edit testuser with authenticated not admin](./images/edit-testuser-with-authenticated-not-admin.png)
+
+- testuser에서 kubectl 명령어 실행 **시도**: 일부 권한 없음 확인
   - config 업데이트를 하지 않아도, 적용되어 있음
+  - pods 조회는 가능하지만, nodes 조회는 불가
 
 ```bash
 ##
@@ -422,6 +493,10 @@ eksctl get iamidentitymapping --cluster $CLUSTER_NAME
 kubectl get node -v6
 kubectl api-resources -v5
 ```
+
+![testuser cannot use kubectl with authenticated not admin](./images/testuser-cannot-use-kubectl-with-authenticated-not-admin.png)
+
+![only pods can be listed with authenticated](./images/only-pods-can-be-listed-with-authenticated.png)
 
 - 물론 testuser IAM 매핑을 삭제하면, 아예 권한이 없음
 
@@ -446,6 +521,8 @@ kubectl get node -v6
 kubectl api-resources -v5
 ```
 
+![testuser cannot use kubectl without iamidentitymapping](./images/testuser-cannot-use-kubectl-without-iamidentitymapping.png)
+
 ### 3-3. (옵션) EC2 Instance Profile(IAM Role)에 맵핑된 k8s RBAC 확인
 
 - 3-2에서 `NodeInstanceRole`을 중간에 확인
@@ -453,6 +530,10 @@ kubectl api-resources -v5
   - username: `system:node:{{EC2PrivateDNSName}}`
 - 추가 IAM 증명이 없어도, 노드에 생성된 파드에서 IMDS로 EC2 IAM Role 사용  
   - Token 만료 전까지 이용 가능. 권한 유의
+
+![NodeInstanceRole Keypair](./images/NodeInstanceRole-Keypair.png)
+
+![NodeInstanceRole IAM Role mapRoles](./images/NodeInstanceRole-IAM-Role-mapRoles.png)
 
 ```bash
 # 노드 별 hostname, sts ARN
@@ -505,7 +586,7 @@ kubectl exec -it $APODNAME2 -- aws sts get-caller-identity --query Arn
 # 추가 IAM 증명이 없어도, IMDS로 EC2 IAM Role 사용: 권한 유의
 kubectl exec -it $APODNAME1 -- aws ec2 describe-instances --region ap-northeast-2 --output table --no-cli-pager
 kubectl exec -it $APODNAME2 -- aws ec2 describe-vpcs --region ap-northeast-2 --output table --no-cli-pager
- 
+
 # aws-cli 파드에 쉘 접속 후, EC2 메타데이터 확인
 kubectl exec -it $APODNAME1 -- bash
 curl -s http://169.254.169.254/ -v
@@ -528,6 +609,10 @@ curl -s -H "X-aws-ec2-metadata-token: $TOKEN" –v http://169.254.169.254/latest
 exit
 ```
 
+![IMDS vulnerability 1](./images/IMDS-vulnerability-1.png)
+
+![IMDS vulnerability 2](./images/IMDS-vulnerability-2.png)
+
 - aws-cli 파드에 kubeconfig를 통한 mapRoles 정보 생성
 
 ```bash
@@ -543,6 +628,10 @@ kubectl exec -it $APODNAME1 -- cat /root/.kube/config | yh
 kubectl exec -it $APODNAME2 -- aws eks update-kubeconfig --name $CLUSTER_NAME --role-arn $NODE_ROLE
 kubectl exec -it $APODNAME2 -- cat /root/.kube/config | yh
 ```
+
+![NodeInstanceRole IAM Permission policies](./images/NodeInstanceRole-IAM-Permission-policies.png)
+
+![kubeconfig with NodeInstanceRole role](./images/kubeconfig-with-NodeInstanceRole-role.png)
 
 - (보너스)노드에 SSH 접속, kubeconfig 파일 생성 후 kubectl 실행  
   - 중간에 안되서 중단 했었지만, 복기하고 나니 어디가 문제인지 파악: To-Do
@@ -647,6 +736,8 @@ kubectl exec -it test-projected-volume -- cat /projected-volume/password.txt ;ec
 kubectl delete pod test-projected-volume && kubectl delete secret user pass
 ```
 
+![projected Volume](./images/projected-Volume.png)
+
 ### 4-2. IRSA 실습
 
 - 개념  
@@ -686,6 +777,10 @@ kubectl logs eks-iam-test1
 kubectl delete pod eks-iam-test1
 ```
 
+![failure cause of IRSA](./images/irsa-failure.png)
+
+![AccessDenied in ListBucket](./images/irsa-access-denied.png)
+
 - 실습2. k8s SA & JWT token
   - SA 생성 시, k8s secret에 JWT token이 자동 생성
   - EKS IdP(OpentID Connect Provider) 주소: k8s가 발급한 Token 유효 검증
@@ -722,6 +817,8 @@ jwt decode $SA_TOKEN --json --iso8601
 kubectl delete pod eks-iam-test2
 ```
 
+![EKS IdP address - iss](./images/eks-idp.png)
+
 - 실습3. amazon-eks-pod-identity-webhook을 통한 파드 IAM access 주입(mutating pods)
   - 아래의 예제에서는 EKS 상의 **LB Controller**가 AWS 서비스에 접근하여 LB를 제어  
     - 따라서 LB Controller가 이용하는 SA에도 관련 IAM Role을 주입  
@@ -730,6 +827,8 @@ kubectl delete pod eks-iam-test2
   - 해당 Trust Relationship에서는 인증방법(`sts:AssumeRoleWithWebIdentity`)이 기재  
     - JWT Token 내 포함되야하는 Claim 조건1: `aud`는 `sts.amazonaws.com`
     - JWT Token 내 포함되야하는 Claim 조건2: `sub`는 `system:serviceaccount:kube-system:aws-load-balancer-controller`
+  - OIDC Discovery end-point?  
+    - OpenID Connect Discovery RFC is the specification that defines the structure and content of the OIDC .well-known end-point. [OPEN BANKING](https://directory.openbanking.org.uk/obieservicedesk/s/article/OIDC-Discovery)
   - 참고: [Ssup2 Blog](https://ssup2.github.io/theory_analysis/AWS_EKS_Service_Account_IAM_Role/)
 
 ```bash
@@ -768,7 +867,7 @@ EOF
 kubectl get mutatingwebhookconfigurations pod-identity-webhook -o yaml | kubectl neat | yh
 
 ## 파드 생성 yaml에 새로운 내용 추가 확인
-# Pod Identity Webhook은 mutating webhook을 통해 Environt 및 1개의 Projected 볼륨 추가
+# Pod Identity Webhook은 mutating webhook을 통해 Environment 및 1개의 Projected 볼륨 추가
 # Environment.{AWS_ROLE_ARN | AWS_WEB_IDENTITY_TOKEN_FILE}
 # Volume.aws-iam-token
 kubectl get pod eks-iam-test3
@@ -802,11 +901,22 @@ echo $IAM_TOKEN
 # Discovery Endpoint 접근
 IDP=$(aws eks describe-cluster --name myeks --query cluster.identity.oidc.issuer --output text)
 curl -s $IDP/.well-known/openid-configuration | jq -r '.'
-curl -s $IDP/keys | jq -r '.' # 공개기가 포함된 JWKS 필드
+curl -s $IDP/keys | jq -r '.' # 공개키가 포함된 JWKS 필드
 ```
 
+![Trust Relationships with oidc-provider](./images/trust-relationships-with-oidc-provider.png)
+
+![Pod with Environment & projected Volume](./images/pod-with-env-and-volume.png)
+
+![check 2 volumeMounts & aws-iam-token](./images/check-2-volumemounts-and-aws-iam-token.png)
+
+![configurated Mutaing and Validating Webhook](./images/configurated-mutating-and-validating-webhook.png)
+
+![Discovery endpoint with OIDP](./images/discovery-endpoint-with-oidp.png)
+
 - 실습 4. IRSA를 가장 취약하게 사용하는 방법
-  - 정보 탈취 시 키/토큰 발급 악용 가능. (라이브로는 하지마라)
+  - 정보 탈취 시 키/토큰 발급 악용 가능.  
+    - 라이브 서비스로는 시도 금물
   - 위의 실습 3에 바로 이어서 진행
 
 ```bash
@@ -835,6 +945,8 @@ kubectl delete pod eks-iam-test3
 
 - DVWA 활용: mysql, dvwa, ingress  
   - 배포 후 웹에서 확인까지 대기 시간 소요
+
+![DVWA login page](./images/dvwa-login-page.png)
 
 ```bash
 # mysql 배포
@@ -1079,6 +1191,14 @@ eksctl-myeks-nodegroup-ng1-NodeInstanceRole-1H30SEASKL5M1
 8.8.8.8; rm -rf /tmp/*
 ```
 
+![DVWA Command Injection 1](./images/dvwa-command-injection-1.png)
+
+![DVWA Command Injection 2](./images/dvwa-command-injection-2.png)
+
+![DVWA Command Injection 3](./images/dvwa-command-injection-3.png)
+
+![Get EC2 IAM Role success in DVWA Low Command Injection with IMDSv2](./images/get-ec2-iam-role-success-in-dvwa-low-command-injection-with-imdsv2.png)
+
 ### 5-2. 실습2: Web OpenSSH 컨테이너
 
 - HTTPS 동작이라 보안장비가 검출하기 어려움
@@ -1153,6 +1273,8 @@ kubectl exec -it myawscli -- aws ec2 describe-instances --region ap-northeast-2 
 kubectl exec -it myawscli -- aws ec2 describe-vpcs --region ap-northeast-2 --output table --no-cli-pager
 ```
 
+![s3 access denied with default kubelet config](images/s3-access-denied-with-default-kubelet-config.png)
+
 - [my-eks-bastion-2]
 
 ```bash
@@ -1191,6 +1313,8 @@ systemctl restart kubelet
 systemctl status kubelet
 ```
 
+![edit kubelet-config with vulnerability](images/edit-kubelet-config-with-vulnerability.png)
+
 - [myeks-bastion-2] kubelet 사용
 
 ```bash
@@ -1228,6 +1352,8 @@ exit
 # Return resource usage metrics (such as container CPU, memory usage, etc.)
 kubeletctl -s $N1 metrics
 ```
+
+![vulnerable pods to RCE](images/vulnerable-pods-to-rce.png)
 
 ## 6. 실습 못해본 것
 
