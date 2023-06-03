@@ -14,7 +14,7 @@ authors:
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.jpg # 커버 이미지 URL
-draft: true # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
 이번 주차에는 스토리지에 대해 실습을 진행해보았습니다.

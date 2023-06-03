@@ -12,7 +12,7 @@ authors:
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.png
-draft: true # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
 ## 새로 구축한 Dockerfile
