@@ -159,7 +159,7 @@ ubuntu@{Public IP}로 접속가능</li>
 </li>
 <li>CLI로 IAM Trust Relationship 조회
 <ul>
-<li>웹 콘솔에 굳이 들어가야하나 하고, 문득 해본 시도하다가 시간이 날아갔습니다.</li>
+<li>웹 콘솔에 굳이 들어가야하나 하고, 문득 호기심에 시도하다가 시간이 날아갔습니다.</li>
 <li>결론: 하드코어한 파싱..
 <ul>
 <li><code>jq -r '.[].status.roleARN' | rev | cut -d '/' -f1 | rev</code></li>
