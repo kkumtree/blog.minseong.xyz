@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>AWS EKS 스터디 5주차 - Autoscaling | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="AWS EKS 스터디 5주차 - Autoscaling" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/aws-eks-study-week5/cover.jpg' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/aws-eks-study-week5/cover.jpg' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/aws-eks-study-week5/cover.jpg' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.8c1fb07f2dee90a6523f7317a7d023e3c1b14bd4706bff237c94e366d59facf9.css">
+</head><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.jpg'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>AWS EKS 스터디 5주차 - Autoscaling</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-22T19:23:37&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">AWS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/eks" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">EKS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/autoscaling" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">autoscaling</span>
+              </div>
+            </a>
+            
+            <a href="/tags/karpenter" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">karpenter</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>이번 주차는 오토스케일링을 메인으로 하여, 수평/수직 프로비저닝을 학습해보았습니다.<br>
+마지막에는 고성능 오토스케일러인 Karpenter를 별도로 실습해보았습니다.
+특히..</p>
+<ul>
+<li>
+<p>HPA custom metrics(사용자 정의 메트릭) 적용</p>
+</li>
+<li>
+<p>YAML 설정값을 CPU로 맞춘 것을 잊고, 프로비저닝을 잘못 예측한 것도 함께 공유합니다.</p>
+</li>
+<li>
+<p>AutoScaling</p>
+<ul>
+<li>HPA: Horizontal Pod Autoscaler</li>
+<li>VPA: Vertical Pod Autoscaler</li>
+<li>CA: Cluster Autoscaler
+<ul>
+<li>각 CSP 의존적, 워커 노드 레벨에서의 오토스케일링</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-실습-환경-배포">1. 실습 환경 배포</h2>
+<ul>
+<li>4주차의 초기 배포 내용에 p8s 및 Grafana를 추가하여 배포
+<ul>
+<li><strong>verticalPodAutoscaler 활성화</strong></li>
+<li>추천 대시보드: 15757, 17900, 15172</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/eks-oneclick4.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이하 중략</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Prometheus &amp; Grafana 설치</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 인증서 ARN</span>
+</span></span><span style="display:flex;"><span>CERT_ARN<span style="color:#f92672">=</span><span style="color:#e6db74">`</span>aws acm list-certificates --query <span style="color:#e6db74">&#39;CertificateSummaryList[].CertificateArn[]&#39;</span> --output text<span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>echo $CERT_ARN
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파라미터 파일 생성 및 배포</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; monitor-values.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">prometheus:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  prometheusSpec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    podMonitorSelectorNilUsesHelmValues: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    serviceMonitorSelectorNilUsesHelmValues: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    retention: 5d
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    retentionSize: &#34;10GiB&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  verticalPodAutoscaler:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ingressClassName: alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hosts: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - prometheus.$MyDomain
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    paths: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - /*
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/scheme: internet-facing
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/target-type: ip
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/listen-ports: &#39;[{&#34;HTTPS&#34;:443}, {&#34;HTTP&#34;:80}]&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/certificate-arn: $CERT_ARN
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/success-codes: 200-399
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/load-balancer-name: myeks-ingress-alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/group.name: study
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/ssl-redirect: &#39;443&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">grafana:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  defaultDashboardsTimezone: Asia/Seoul
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  adminPassword: prom-operator
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ingressClassName: alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hosts: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - grafana.$MyDomain
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    paths: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - /*
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/scheme: internet-facing
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/target-type: ip
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/listen-ports: &#39;[{&#34;HTTPS&#34;:443}, {&#34;HTTP&#34;:80}]&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/certificate-arn: $CERT_ARN
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/success-codes: 200-399
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/load-balancer-name: myeks-ingress-alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/group.name: study
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      alb.ingress.kubernetes.io/ssl-redirect: &#39;443&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">defaultRules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  create: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kubeControllerManager:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kubeEtcd:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kubeScheduler:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">alertmanager:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl create ns monitoring
+</span></span><span style="display:flex;"><span>helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --version 45.27.2 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set prometheus.prometheusSpec.scrapeInterval<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;15s&#39;</span> --set prometheus.prometheusSpec.evaluationInterval<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;15s&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>-f monitor-values.yaml --namespace monitoring
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># metrics-server 배포</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+</span></span></code></pre></div><h3 id="1-1-eks-node-viewer-설치">1-1. EKS Node Viewer 설치</h3>
+<ul>
+<li>파드 리소스에 대한 요청 정보를 확인할 수 있는 대시보드
+<ul>
+<li>해당 노드에 할당 가능한 용량을 시각적으로 표시</li>
+</ul>
+</li>
+<li>실제 사용량이 아니라, 요청된 리소스(CPU, Memory)에 대한 표시</li>
+<li>실습 스책 상에서 go 설치 및 뷰어 설치시 다소 시간이 소요 (약 5분)</li>
+<li>Karpenter 실습 시에도 언급되겠지만, EKS가 구축된 뒤에 사용이 가능하다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># go 및 EKS Node Viewer 설치</span>
+</span></span><span style="display:flex;"><span>yum install -y go
+</span></span><span style="display:flex;"><span>go install github.com/awslabs/eks-node-viewer/cmd/eks-node-viewer@latest
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EKS Node Viewer 실행</span>
+</span></span><span style="display:flex;"><span>tree ~/go/bin
+</span></span><span style="display:flex;"><span>cd ~/go/bin <span style="color:#f92672">&amp;&amp;</span> ./eks-node-viewer
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## EKS Node Viewer 명령 샘플</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Display both CPU and Memory Usage</span>
+</span></span><span style="display:flex;"><span>./eks-node-viewer --resources cpu,memory
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Karenter nodes only</span>
+</span></span><span style="display:flex;"><span>./eks-node-viewer --node-selector <span style="color:#e6db74">&#34;karpenter.sh/provisioner-name&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Display extra labels, i.e. AZ</span>
+</span></span><span style="display:flex;"><span>./eks-node-viewer --extra-labels topology.kubernetes.io/zone
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Specify a particular AWS profile and region</span>
+</span></span><span style="display:flex;"><span>AWS_PROFILE<span style="color:#f92672">=</span>myprofile AWS_REGION<span style="color:#f92672">=</span>ap-northeast-2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 기본 옵션 환경 변수</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># select only Karpenter managed nodes</span>
+</span></span><span style="display:flex;"><span>node-selector<span style="color:#f92672">=</span>karpenter.sh/provisioner-name
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># display both CPU and memory</span>
+</span></span><span style="display:flex;"><span>resources<span style="color:#f92672">=</span>cpu,memory
+</span></span></code></pre></div><p><img src="./images/eks-node-viewer.png" alt="EKS node viewer"></p>
+<h2 id="2-horizontal-pod-autoscaler---hpa">2. Horizontal Pod Autoscaler - HPA</h2>
+<ul>
+<li>kube-ops-view 및 Grafana(17125)에서 모니터링 병행</li>
+<li>php-apache 데모를 배포하여 진행
+<ul>
+<li>마지막 부하 방법으로 해도, 워커노드가 10개까지 늘어나지 않음<br>
+HPA 조건이 CPU 50% 이기 때문에, 6~7개에서 유지됨</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/CPU-metrics-in-described-hpa.png" alt="CPU-metrics-in-described-hpa"></p>
+<p><img src="./images/target-CPU-utilization-with-neat.png" alt="target-CPU-utilization-with-neat"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># CPU: 0.2코어 ~ 0.5코어(50%, 500m) 하한/상한 조건 설정</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/kubernetes/website/main/content/en/examples/application/php-apache.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f php-apache.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Pod 배포 후에 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it deploy/php-apache -- cat /var/www/html/index.php
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링 준비</span>
+</span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#39;kubectl get hpa,pod;echo;kubectl top pod;echo;kubectl top node&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it deploy/php-apache -- top
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 특정 후 접속 테스트</span>
+</span></span><span style="display:flex;"><span>PODIP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get pod -l run<span style="color:#f92672">=</span>php-apache -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.podIP<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span> <span style="color:#f92672">&amp;&amp;</span> curl -s $PODIP; echo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 셋업 설정 후 부하 발생</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># HPA: requests.cpu=200m</span>
+</span></span><span style="display:flex;"><span>kubectl autoscale deployment php-apache --cpu-percent<span style="color:#f92672">=</span><span style="color:#ae81ff">50</span> --min<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> --max<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>kubectl describe hpa
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 셋업 설정 확인: CPU 사용률 50%, Replicas 범위 1~10개</span>
+</span></span><span style="display:flex;"><span>kubectl krew install neat
+</span></span><span style="display:flex;"><span>kubectl get hpa php-apache -o yaml | kubectl neat | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 부하 발생, 두번째 방법이 더 부하가 많이 걸림</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true;<span style="color:#66d9ef">do</span> curl -s $PODIP; sleep 0.5; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>kubectl run -i --tty load-generator --rm --image<span style="color:#f92672">=</span>busybox:1.28 --restart<span style="color:#f92672">=</span>Never -- /bin/sh -c <span style="color:#e6db74">&#34;while sleep 0.01; do wget -q -O- http://php-apache; done&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 바로 밑의 실습 이후에 관련 오브젝트 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete deploy,svc,hpa,pod --all
+</span></span></code></pre></div><p><img src="./images/stress-test-for-autoscaling-with-hpa.png" alt="stress-test-for-autoscaling-with-hpa"></p>
+<p><img src="./images/stress-test-ended-with-7-replicas-in-grafana.png" alt="stress-test-ended-with-7-replicas-in-grafana"></p>
+<h3 id="2-1-hpa-w-multiple--custom-metrics">2-1. HPA w/ multiple &amp; custom metrics</h3>
+<ul>
+<li>위에서 워커노드 10개까지 scale-up 되지 않았기 때문에,
+추가로 메트릭을 넣고, 사용자 정의된 메트릭으로 부하 조건 충족을 목표</li>
+<li>바로 위의 실습에서 이어서, 진행</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 위에서 정의된 HPA 오토스케일링 수정 작업을 진행</span>
+</span></span><span style="display:flex;"><span>kubectl edit horizontalpodautoscaler.autoscaling
+</span></span></code></pre></div><p><img src="./images/edit-hpa-setup.png" alt="edit-hpa-setup"></p>
+<ul>
+<li>편집기에서 아래와 같이 <code>metrics:</code> 하위를 수정 후,<br>
+부하를 계속 발생하면, CPU 50% 이상을 충족하지 않았어도, 워커노드가 10개까지 늘어남</li>
+<li>describedObject: apiVersion, kind, name 을 지정하여,<br>
+해당 오브젝트의 메트릭을 <strong>사용자 정의</strong>로 지정할 수 있음</li>
+<li>다만, 사용자 정의 메트릭이기 때문에, eks-node-viewer에서 제대로 조건을 확인할 수 없음</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># 전략</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">metrics</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">type</span>: <span style="color:#ae81ff">Resource</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resource</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cpu</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">target</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">type</span>: <span style="color:#ae81ff">Utilization</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">averageUtilization</span>: <span style="color:#ae81ff">50</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">type</span>: <span style="color:#ae81ff">Pods</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">pods</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">metric</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">packets-per-second</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">target</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">type</span>: <span style="color:#ae81ff">AverageValue</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">averageValue</span>: <span style="color:#ae81ff">1k</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">type</span>: <span style="color:#ae81ff">Object</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">object</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">metric</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">requests-per-second</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">describedObject</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">main-route</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">target</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">type</span>: <span style="color:#ae81ff">Value</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">value</span>: <span style="color:#ae81ff">10k</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 후략</span>
+</span></span></code></pre></div><p><img src="./images/use-custom-metrics-by-editor.png" alt="use-custom-metrics-by-editor"></p>
+<p><img src="./images/max-10-replicas-in-grafana.png" alt="max-10-replicas-in-grafana"></p>
+<p><img src="./images/custom-metrics-in-described-hpa.png" alt="custom-metrics-in-described-hpa"></p>
+<h2 id="3-k8s-based-event-driven-autoscaling---keda">3. k8s based Event Driven Autoscaling - KEDA</h2>
+<ul>
+<li>
+<p>HPA, KEDA 비교</p>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>HPA</th>
+<th>KEDA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>resource metrics</td>
+<td>O</td>
+<td>X</td>
+</tr>
+<tr>
+<td>event driven</td>
+<td>X</td>
+<td>O</td>
+</tr>
+<tr>
+<td>metrics reference</td>
+<td>metrics-server</td>
+<td>keda-metrics-api-server</td>
+</tr>
+<tr>
+<td>scaling job</td>
+<td>O</td>
+<td><strong>X</strong></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>KEDA는 HPA 대체가 아닌, 확장 보조 도구.</p>
+</li>
+<li>
+<p>실습에서는 helm 차트를 통해 설치하고, Grafana 대시보드를 통해서 확인</p>
+<ul>
+<li>그라파나 대시보드의 경우, 템플릿으로 검색되는 것은 에러가 나서, <a href="https://raw.githubusercontent.com/kedacore/keda/main/config/grafana/keda-dashboard.json">JSON</a>을 사용</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># KEDA 설치</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; keda-values.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metricsServer:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  useHostNetwork: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">prometheus:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  metricServer:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    port: 9022
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    portName: metrics
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    path: /metrics
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    serviceMonitor:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # Enables ServiceMonitor creation for the Prometheus Operator
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    podMonitor:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # Enables PodMonitor creation for the Prometheus Operator
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  operator:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    port: 8080
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    serviceMonitor:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # Enables ServiceMonitor creation for the Prometheus Operator
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    podMonitor:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # Enables PodMonitor creation for the Prometheus Operator
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  webhooks:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    port: 8080
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    serviceMonitor:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # Enables ServiceMonitor creation for the Prometheus webhooks
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl create namespace keda
+</span></span><span style="display:flex;"><span>helm repo add kedacore https://kedacore.github.io/charts
+</span></span><span style="display:flex;"><span>helm install keda kedacore/keda --version 2.10.2 --namespace keda -f keda-values.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># KEDA 설치 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get-all -n keda
+</span></span><span style="display:flex;"><span>kubectl get all -n keda
+</span></span><span style="display:flex;"><span>kubectl get crd | grep keda
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># keda 네임스페이스에 디플로이먼트 생성</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f php-apache.yaml -n keda
+</span></span><span style="display:flex;"><span>kubectl get pod -n keda
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ScaledObject 정책 생성 : cron</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; keda-cron.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: keda.sh/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ScaledObject
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: php-apache-cron-scaled
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  minReplicaCount: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  maxReplicaCount: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  pollingInterval: 30
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  cooldownPeriod: 300
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  scaleTargetRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: php-apache
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  triggers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - type: cron
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      timezone: Asia/Seoul
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      start: 00,15,30,45 * * * *
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      end: 05,20,35,50 * * * *
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      desiredReplicas: &#34;1&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f keda-cron.yaml -n keda
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 그라파나 대시보드 추가 후 아래 진행</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 그라파나 템플릿으로는 에러가 나서, JSON을 사용</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링 준비</span>
+</span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#39;kubectl get ScaledObject,hpa,pod -n keda&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl get ScaledObject -w
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &#34;scaledobject.keda.sh/name&#34;: &#34;php-apache-cron-scaled&#34; 라벨 대상 이벤트 수집</span>
+</span></span><span style="display:flex;"><span>kubectl get ScaledObject,hpa,pod -n keda
+</span></span><span style="display:flex;"><span>kubectl get hpa -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.spec<span style="color:#f92672">}</span> -n keda | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># KEDA 및 deployment 등 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete -f keda-cron.yaml -n keda <span style="color:#f92672">&amp;&amp;</span> kubectl delete deploy php-apache -n keda <span style="color:#f92672">&amp;&amp;</span> helm uninstall keda -n keda
+</span></span><span style="display:flex;"><span>kubectl delete namespace keda
+</span></span></code></pre></div><p><img src="./images/labals-for-receiving-events.png" alt="labals-for-receiving-events"></p>
+<p><img src="./images/keda-status-in-grafana.png" alt="keda-status-in-grafana"></p>
+<h2 id="4-vertical-pod-autoscaler---vpa">4. Vertical Pod Autoscaler - VPA</h2>
+<ul>
+<li>수직 스케일링: 파드의 CPU, 메모리 최적화를 통한 노드 자원 효율화</li>
+<li>그대로 배포하면 OpenSSL CA 에러가 발생.<br>
+OpenSSL을 1.1.1 이상으로 버전 업데이트 진행</li>
+<li>Grafana 대시보드의 경우, 템플릿(<del>14588, 16294</del>)에서 에러 발생</li>
+<li>단점: AWS 기준, 하나의 자원에 대해 ASG와 EKS에서 각각의 방식으로 관리
+-&gt; 관리정보가 동기화되지 않고, 스케일링 속도가 느림</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 코드 다운로드</span>
+</span></span><span style="display:flex;"><span>git clone https://github.com/kubernetes/autoscaler.git
+</span></span><span style="display:flex;"><span>cd ~/autoscaler/vertical-pod-autoscaler/
+</span></span><span style="display:flex;"><span>tree hack
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># openssl 버전 확인</span>
+</span></span><span style="display:flex;"><span>openssl version
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># openssl 1.1.1 이상 버전 확인</span>
+</span></span><span style="display:flex;"><span>yum install openssl11 -y
+</span></span><span style="display:flex;"><span>openssl11 version
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 스크립트파일내에 openssl11 수정</span>
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;s/openssl/openssl11/g&#39;</span> ~/autoscaler/vertical-pod-autoscaler/pkg/admission-controller/gencerts.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># VPA 배포</span>
+</span></span><span style="display:flex;"><span>watch -d kubectl get pod -n kube-system
+</span></span><span style="display:flex;"><span>cat hack/vpa-up.sh
+</span></span><span style="display:flex;"><span>./hack/vpa-up.sh
+</span></span><span style="display:flex;"><span>kubectl get crd | grep autoscaling
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 예제 </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## pod 실행 수 분 뒤에 pod resource.request가 VPA에 의해 수정</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링 준비</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링</span>
+</span></span><span style="display:flex;"><span>watch -d kubectl top pod
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 공식 예제 배포</span>
+</span></span><span style="display:flex;"><span>cd ~/autoscaler/vertical-pod-autoscaler/
+</span></span><span style="display:flex;"><span>cat examples/hamster.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f examples/hamster.yaml <span style="color:#f92672">&amp;&amp;</span> kubectl get vpa -w
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 리소스 Requests 확인</span>
+</span></span><span style="display:flex;"><span>kubectl describe pod | grep Requests: -A2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># VPA에 의해 기존 파드 삭제되고 신규 파드가 생성됨</span>
+</span></span><span style="display:flex;"><span>kubectl get events --sort-by<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;.metadata.creationTimestamp&#34;</span> | grep VPA
+</span></span></code></pre></div><p><img src="./images/vpa-setup.png" alt="VPA-setup"></p>
+<p><img src="./images/check-CPU-100m-requests-from-initial-pods.png" alt="check-CPU-100m-requests-from-initial-pods"></p>
+<p><img src="./images/initial-pod-will-be-changed-by-new-pod.png" alt="initial-pod-will-be-changed-by-new-pod"></p>
+<p><img src="./images/new-pod-with-more-requested-CPU-resource-by-VPA.png" alt="new-pod-with-more-requested-CPU-resource-by-VPA"></p>
+<p><img src="./images/new-pods-creation-events-by-cli.png" alt="new-pods-creation-events-by-cli"></p>
+<h2 id="5-cluster-autoscaler---ca">5. Cluster Autoscaler - CA</h2>
+<ul>
+<li>AWS CSP로 실습을 진행하므로, CA도 적용해볼 수 있음
+<ul>
+<li>cluster-autoscaler 파드를 배포하여 CA 동작 가능</li>
+<li>AWS의 경우 ASG를 사용하여 CA 적용</li>
+</ul>
+</li>
+<li>EKS에서 기 적용된 태그 확인
+<ul>
+<li>k8s.io/cluster-autoscaler/enabled : &rsquo;true'</li>
+<li>k8s.io/cluster-autoscaler/myeks : owned</li>
+</ul>
+</li>
+<li>CA 동작: 주기적으로 사용률을 확인하여, 스케일 인/아웃을 수행</li>
+</ul>
+<p><img src="./images/check-tagged-already-in-EKS.png" alt="check-tagged-already-in-EKS"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># EKS 노드에서 태그 확인</span>
+</span></span><span style="display:flex;"><span>aws ec2 describe-instances  --filters Name<span style="color:#f92672">=</span>tag:Name,Values<span style="color:#f92672">=</span>$CLUSTER_NAME-ng1-Node --query <span style="color:#e6db74">&#34;Reservations[*].Instances[*].Tags[*]&#34;</span> --output yaml | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 현재 ASG 확인: 3 / 3 / 3</span>
+</span></span><span style="display:flex;"><span>aws autoscaling describe-auto-scaling-groups <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --query <span style="color:#e6db74">&#34;AutoScalingGroups[? Tags[? (Key==&#39;eks:cluster-name&#39;) &amp;&amp; Value==&#39;myeks&#39;]].[AutoScalingGroupName, MinSize, MaxSize,DesiredCapacity]&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --output table
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Maxsize 수정: 3 -&gt; 6</span>
+</span></span><span style="display:flex;"><span>export ASG_NAME<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws autoscaling describe-auto-scaling-groups --query <span style="color:#e6db74">&#34;AutoScalingGroups[? Tags[? (Key==&#39;eks:cluster-name&#39;) &amp;&amp; Value==&#39;myeks&#39;]].AutoScalingGroupName&#34;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>aws autoscaling update-auto-scaling-group --auto-scaling-group-name <span style="color:#e6db74">${</span>ASG_NAME<span style="color:#e6db74">}</span> --min-size <span style="color:#ae81ff">3</span> --desired-capacity <span style="color:#ae81ff">3</span> --max-size <span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 변경된 ASG 확인: 3 / 6 / 3</span>
+</span></span><span style="display:flex;"><span>aws autoscaling describe-auto-scaling-groups --query <span style="color:#e6db74">&#34;AutoScalingGroups[? Tags[? (Key==&#39;eks:cluster-name&#39;) &amp;&amp; Value==&#39;myeks&#39;]].[AutoScalingGroupName, MinSize, MaxSize,DesiredCapacity]&#34;</span> --output table
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CA 배포</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#34;s/&lt;YOUR CLUSTER NAME&gt;/</span>$CLUSTER_NAME<span style="color:#e6db74">/g&#34;</span> cluster-autoscaler-autodiscover.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f cluster-autoscaler-autodiscover.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pod -n kube-system | grep cluster-autoscaler
+</span></span><span style="display:flex;"><span>kubectl describe deployments.apps -n kube-system cluster-autoscaler
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (옵션) cluster-autoscaler 파드가 동작하는 워커 노드가 퇴출(evict) 되지 않게 설정</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이번 실습에 적용하지 않음 </span>
+</span></span><span style="display:flex;"><span>kubectl -n kube-system annotate deployment.apps/cluster-autoscaler cluster-autoscaler.kubernetes.io/safe-to-evict<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;false&#34;</span>
+</span></span></code></pre></div><p><img src="./images/asg-maxsize-before-edit.png" alt="asg-maxsize-before-edit"></p>
+<p><img src="./images/asg-maxsize-after-edit.png" alt="asg-maxsize-after-edit"></p>
+<h3 id="5-1-ca-테스트">5-1. CA 테스트</h3>
+<ul>
+<li>nginx 파드 배포 후 레플리카셋 scale out 하여 확인: 1 -&gt; 15
+<ul>
+<li>이후 노드도 자동 증가함을 확인</li>
+</ul>
+</li>
+<li>다시, 해당 파드를 삭제하면, scale down 됨을 확인할 수 있음</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 모니터링 준비</span>
+</span></span><span style="display:flex;"><span>kubectl get nodes -w
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true; <span style="color:#66d9ef">do</span> kubectl get node; echo <span style="color:#e6db74">&#34;------------------------------&#34;</span> ; date ; sleep 1; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true; <span style="color:#66d9ef">do</span> aws ec2 describe-instances --query <span style="color:#e6db74">&#34;Reservations[*].Instances[*].{PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key==&#39;Name&#39;]|[0].Value,Status:State.Name}&#34;</span> --filters Name<span style="color:#f92672">=</span>instance-state-name,Values<span style="color:#f92672">=</span>running --output text ; echo <span style="color:#e6db74">&#34;------------------------------&#34;</span>; date; sleep 1; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># nginx 파드 배포: 레플리카셋 1</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EoF&gt; nginx.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: nginx-to-scaleout
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        service: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - image: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        name: nginx-to-scaleout
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          limits:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            cpu: 500m
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            memory: 512Mi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            cpu: 500m
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            memory: 512Mi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EoF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f nginx.yaml
+</span></span><span style="display:flex;"><span>kubectl get deployment/nginx-to-scaleout
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 레플리카셋 15로 scale out</span>
+</span></span><span style="display:flex;"><span>kubectl scale --replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">15</span> deployment/nginx-to-scaleout <span style="color:#f92672">&amp;&amp;</span> date
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pods -l app<span style="color:#f92672">=</span>nginx -o wide --watch
+</span></span><span style="display:flex;"><span>kubectl -n kube-system logs -f deployment/cluster-autoscaler
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 자동 증가 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 앞서 설치했던 eks-node-viewer로도 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get nodes
+</span></span><span style="display:flex;"><span>aws autoscaling describe-auto-scaling-groups <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --query <span style="color:#e6db74">&#34;AutoScalingGroups[? Tags[? (Key==&#39;eks:cluster-name&#39;) &amp;&amp; Value==&#39;myeks&#39;]].[AutoScalingGroupName, MinSize, MaxSize,DesiredCapacity]&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --output table
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>./eks-node-viewer
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포 삭제 및 (10여분 이후) 노드 갯수 축소 확인</span>
+</span></span><span style="display:flex;"><span>kubectl delete -f nginx.yaml <span style="color:#f92672">&amp;&amp;</span> date
+</span></span><span style="display:flex;"><span>watch -d kubectl get node
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (옵션) 아래 flag를 통해, scale down 시간을 조정 가능</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 예시: --scale-down-delay-after-add=5m</span>
+</span></span></code></pre></div><p><img src="./images/replicaset-scaled-out-to-15.png" alt="replicaset-scaled-out-to-15"></p>
+<p><img src="./images/node-increased-automatically.png" alt="node-increased-automatically"></p>
+<p><img src="./images/new-nodes-created-for-replicaset.png" alt="new-nodes-created-for-replicaset"></p>
+<p><img src="./images/scale-down-automatically.png" alt="scale-down-automatically"></p>
+<p><img src="./images/scale-down-in-kubeopsview-1.png" alt="scale-down-in-kubeopsview-1"></p>
+<p><img src="./images/scale-down-in-kubeopsview-2.png" alt="scale-down-in-kubeopsview-2"></p>
+<ul>
+<li>리소스 삭제</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl delete -f nginx.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ASG 설정 원복: 3 / 3 / 3</span>
+</span></span><span style="display:flex;"><span>aws autoscaling update-auto-scaling-group --auto-scaling-group-name <span style="color:#e6db74">${</span>ASG_NAME<span style="color:#e6db74">}</span> --min-size <span style="color:#ae81ff">3</span> --desired-capacity <span style="color:#ae81ff">3</span> --max-size <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>aws autoscaling describe-auto-scaling-groups --query <span style="color:#e6db74">&#34;AutoScalingGroups[? Tags[? (Key==&#39;eks:cluster-name&#39;) &amp;&amp; Value==&#39;myeks&#39;]].[AutoScalingGroupName, MinSize, MaxSize,DesiredCapacity]&#34;</span> --output table
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Cluster Autoscaler 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete -f cluster-autoscaler-autodiscover.yaml
+</span></span></code></pre></div><p><img src="./images/reset-asg-after-ca-test.png" alt="reset-asg-after-ca-test"></p>
+<h2 id="6-cluster-propotional-autoscaler---cpa">6. Cluster Propotional Autoscaler - CPA</h2>
+<ul>
+<li>5와 같이 노드 수 증가에 비례하여 성능 처리가 필요한 app(컨테이너/파드)를 수평으로 자동확장
+<ul>
+<li>실습의 경우, nginx 사용</li>
+</ul>
+</li>
+<li>CPA는 CPA rule을 먼저 설정해야 함</li>
+</ul>
+<p><img src="./images/error-before-cpa-rule-creation.png" alt="error-before-cpa-rule-creation"></p>
+<p><img src="./images/set-cpa-rule.png" alt="set-cpa-rule"></p>
+<p><img src="./images/error-before-cpa-rule-creation.png" alt="error-before-cpa-rule-creation"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># helm 차트를 통한 릴리즈 시도 -&gt; 실패해야 정상</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (이유) CPA rule을 설정하고 helm차트를 릴리즈 필요</span>
+</span></span><span style="display:flex;"><span>helm repo add cluster-proportional-autoscaler https://kubernetes-sigs.github.io/cluster-proportional-autoscaler
+</span></span><span style="display:flex;"><span>helm upgrade --install cluster-proportional-autoscaler cluster-proportional-autoscaler/cluster-proportional-autoscaler
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 먼저 nginx 배포</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; cpa-nginx.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: nginx-deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: nginx:latest
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          limits:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            cpu: &#34;100m&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            memory: &#34;64Mi&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            cpu: &#34;100m&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            memory: &#34;64Mi&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - containerPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f cpa-nginx.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CPA rule 설정</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># config.ladder.nodesToReplicas: [노드수, 레플리카수] 에서 규칙 확인</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; cpa-values.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">config:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ladder:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    nodesToReplicas:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - [1, 1]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - [2, 2]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - [3, 3]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - [4, 3]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - [5, 5]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">options:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  target: &#34;deployment/nginx-deployment&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링 준비</span>
+</span></span><span style="display:flex;"><span>watch -d kubectl get pod
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># helm 업그레이드 -&gt; 성공</span>
+</span></span><span style="display:flex;"><span>helm upgrade --install cluster-proportional-autoscaler -f cpa-values.yaml cluster-proportional-autoscaler/cluster-proportional-autoscaler
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 5개로 증가: rule에 따라 nginx 레플리카셋 5개 배포</span>
+</span></span><span style="display:flex;"><span>export ASG_NAME<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws autoscaling describe-auto-scaling-groups --query <span style="color:#e6db74">&#34;AutoScalingGroups[? Tags[? (Key==&#39;eks:cluster-name&#39;) &amp;&amp; Value==&#39;myeks&#39;]].AutoScalingGroupName&#34;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>aws autoscaling update-auto-scaling-group --auto-scaling-group-name <span style="color:#e6db74">${</span>ASG_NAME<span style="color:#e6db74">}</span> --min-size <span style="color:#ae81ff">5</span> --desired-capacity <span style="color:#ae81ff">5</span> --max-size <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>aws autoscaling describe-auto-scaling-groups --query <span style="color:#e6db74">&#34;AutoScalingGroups[? Tags[? (Key==&#39;eks:cluster-name&#39;) &amp;&amp; Value==&#39;myeks&#39;]].[AutoScalingGroupName, MinSize, MaxSize,DesiredCapacity]&#34;</span> --output table
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 4개로 축소: rule에 따라 nginx 레플리카셋 3개 배포</span>
+</span></span><span style="display:flex;"><span>aws autoscaling update-auto-scaling-group --auto-scaling-group-name <span style="color:#e6db74">${</span>ASG_NAME<span style="color:#e6db74">}</span> --min-size <span style="color:#ae81ff">4</span> --desired-capacity <span style="color:#ae81ff">4</span> --max-size <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>aws autoscaling describe-auto-scaling-groups --query <span style="color:#e6db74">&#34;AutoScalingGroups[? Tags[? (Key==&#39;eks:cluster-name&#39;) &amp;&amp; Value==&#39;myeks&#39;]].[AutoScalingGroupName, MinSize, MaxSize,DesiredCapacity]&#34;</span> --output table
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 삭제</span>
+</span></span><span style="display:flex;"><span>helm uninstall cluster-proportional-autoscaler <span style="color:#f92672">&amp;&amp;</span> kubectl delete -f cpa-nginx.yaml
+</span></span></code></pre></div><p><img src="./images/start-to-increase-replicaset-for-increasing-nodes.png" alt="start-to-increase-replicaset-for-increasing-nodes"></p>
+<p><img src="./images/increase-nodes-and-replicaset-in-kubeopsview.png" alt="increase-nodes-and-replicaset-in-kubeopsview"></p>
+<p><img src="./images/terminating-and-initializing-replicasets-when-nodes-decrease.png" alt="terminating-and-initializing-replicasets-when-nodes-decrease"></p>
+<p><img src="./images/decreasing-in-kubeopsview.png" alt="decreasing-in-kubeopsview"></p>
+<h2 id="7-karpenter-k8s-native-autoscaler">7. Karpenter: k8s Native AutoScaler</h2>
+<ul>
+<li>단시간(n초)만에 컴퓨팅 리소스를 제공하는 노드 수명 주기 관리 솔루션
+<ul>
+<li>스케줄러가 unschedulable로 태깅한 pods를 포착하여 JIT(Just-In-Time)으로 노드를 생성</li>
+<li>반대로 노드가 필요없어지면, 삭제</li>
+<li>CA와 ASG를 둘다 거쳐야하는 방식에 비해, 더 빠르고 효율적인 리소스 제공 가능</li>
+</ul>
+</li>
+<li>다른 노드 그룹에서 진행하므로 앞서 진행했던 모든 EKS 실습환경을 삭제</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm uninstall -n kube-system kube-ops-view
+</span></span><span style="display:flex;"><span>helm uninstall -n monitoring kube-prometheus-stack
+</span></span><span style="display:flex;"><span>eksctl delete cluster --name $CLUSTER_NAME <span style="color:#f92672">&amp;&amp;</span> aws cloudformation delete-stack --stack-name $CLUSTER_NAME
+</span></span></code></pre></div><ul>
+<li>새로운 환경으로 재배포: 맨 처음에 했던 실습환경 배포와 동일(cloudformation)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/karpenter-preconfig.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이하 생략</span>
+</span></span></code></pre></div><ul>
+<li>배포 완료 후 접속한 뒤, 확인 요소
+<ul>
+<li>IP 주소 확인: 172.30.0.0/16 VPC 대역에서 172.30.1.0/24 대역을 사용</li>
+<li>eks-node-viewer 재설치</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># IP 주소 확인</span>
+</span></span><span style="display:flex;"><span>ip -br -c addr
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># eks-node-viewer 재설치 </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EKS 배포 후에 실행하여 모니터링</span>
+</span></span><span style="display:flex;"><span>go install github.com/awslabs/eks-node-viewer/cmd/eks-node-viewer@latest
+</span></span></code></pre></div><p><img src="./images/check-ip-address-range-with-VPC.png" alt="check-ip-address-range-with-VPC"></p>
+<ul>
+<li>EKS 배포 및 Karpenter 프로비저너 설치
+<ul>
+<li>클러스터 생성 시, 20여분 소요 (차 한잔 혹은 책을 읽도록 하자)</li>
+<li>helm을 통한 Karpenter 설치 시, 환경변수 중 하나라도 확인 안되면 설치 오류가 발생</li>
+<li>타겟 지정을 위한, Provisioner 생성
+<ul>
+<li>관리 대상 지정: securityGroupSelector, subnetSelector를 사용, $CLUSTER_NAME 대상</li>
+<li>30초 이후 미사용 노드 삭제: 데몬셋 제외, 이 값을 없애면, 사용률이 낮아도 노드가 축소되지 않음!
+<ul>
+<li><code>ttlSecondsAfterEmpty: 30</code> (참조: <a href="https://aws.amazon.com/ko/blogs/korea/introducing-karpenter-an-open-source-high-performance-kubernetes-cluster-autoscaler/">AWS Blog</a>)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/lots-of-time-for-reading-books-with-cloudformation.png" alt="lots-of-time-for-reading-books-with-cloudformation"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 환경변수 정보 확인</span>
+</span></span><span style="display:flex;"><span>export | egrep <span style="color:#e6db74">&#39;ACCOUNT|AWS_|CLUSTER&#39;</span> | egrep -v <span style="color:#e6db74">&#39;SECRET|KEY&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 환경변수 설정</span>
+</span></span><span style="display:flex;"><span>export KARPENTER_VERSION<span style="color:#f92672">=</span>v0.27.5
+</span></span><span style="display:flex;"><span>export TEMPOUT<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>mktemp<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $KARPENTER_VERSION $CLUSTER_NAME $AWS_DEFAULT_REGION $AWS_ACCOUNT_ID $TEMPOUT
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CloudFormation으로 IAM Policy, Role, EC2 Instance Profile 생성</span>
+</span></span><span style="display:flex;"><span>curl -fsSL https://karpenter.sh/<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>KARPENTER_VERSION<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>/getting-started/getting-started-with-karpenter/cloudformation.yaml  &gt; $TEMPOUT <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span><span style="color:#f92672">&amp;&amp;</span> aws cloudformation deploy <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --stack-name <span style="color:#e6db74">&#34;Karpenter-</span><span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --template-file <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>TEMPOUT<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --capabilities CAPABILITY_NAMED_IAM <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --parameter-overrides <span style="color:#e6db74">&#34;ClusterName=</span><span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 클러스터 생성 : myeks2 EKS 클러스터 생성</span>
+</span></span><span style="display:flex;"><span>eksctl create cluster -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: eksctl.io/v1alpha5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ClusterConfig
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: ${CLUSTER_NAME}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  region: ${AWS_DEFAULT_REGION}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  version: &#34;1.24&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tags:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    karpenter.sh/discovery: ${CLUSTER_NAME}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">iam:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  withOIDC: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceAccounts:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: karpenter
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      namespace: karpenter
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    roleName: ${CLUSTER_NAME}-karpenter
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    attachPolicyARNs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - arn:aws:iam::${AWS_ACCOUNT_ID}:policy/KarpenterControllerPolicy-${CLUSTER_NAME}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    roleOnly: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">iamIdentityMappings:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- arn: &#34;arn:aws:iam::${AWS_ACCOUNT_ID}:role/KarpenterNodeRole-${CLUSTER_NAME}&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  username: system:node:{{EC2PrivateDNSName}}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  groups:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - system:bootstrappers
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - system:nodes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">managedNodeGroups:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- instanceType: m5.large
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  amiFamily: AmazonLinux2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: ${CLUSTER_NAME}-ng
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  desiredCapacity: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  minSize: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  maxSize: 10
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  iam:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    withAddonPolicies:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      externalDNS: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">## Optionally run on fargate
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># fargateProfiles:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># - name: karpenter
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#  selectors:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#  - namespace: karpenter
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EKS 배포 확인</span>
+</span></span><span style="display:flex;"><span>eksctl get cluster
+</span></span><span style="display:flex;"><span>eksctl get nodegroup --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>eksctl get iamidentitymapping --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>eksctl get iamserviceaccount --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>eksctl get addon --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링 준비: eks-node-viewer</span>
+</span></span><span style="display:flex;"><span>cd ~/go/bin <span style="color:#f92672">&amp;&amp;</span> ./eks-node-viewer
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># k8s 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># aws-auth에서 권한 매핑을 확인</span>
+</span></span><span style="display:flex;"><span>kubectl cluster-info
+</span></span><span style="display:flex;"><span>kubectl get node --label-columns<span style="color:#f92672">=</span>node.kubernetes.io/instance-type,eks.amazonaws.com/capacityType,topology.kubernetes.io/zone
+</span></span><span style="display:flex;"><span>kubectl get pod -n kube-system -owide
+</span></span><span style="display:flex;"><span>kubectl describe cm -n kube-system aws-auth
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 카펜터 설치를 위한 환경 변수 설정 및 확인</span>
+</span></span><span style="display:flex;"><span>export CLUSTER_ENDPOINT<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>aws eks describe-cluster --name <span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span> --query <span style="color:#e6db74">&#34;cluster.endpoint&#34;</span> --output text<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>export KARPENTER_IAM_ROLE_ARN<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;arn:aws:iam::</span><span style="color:#e6db74">${</span>AWS_ACCOUNT_ID<span style="color:#e6db74">}</span><span style="color:#e6db74">:role/</span><span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span><span style="color:#e6db74">-karpenter&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EC2 Spot Fleet 사용을 위한 service-linked-role 생성 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 제대로 생성된 것을 확인하는 거라 아래 에러 출력이 정상!</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># An error occurred (InvalidInput) when calling the CreateServiceLinkedRole operation: Service role name AWSServiceRoleForEC2Spot has been taken in this account, please try a different suffix.</span>
+</span></span><span style="display:flex;"><span>aws iam create-service-linked-role --aws-service-name spot.amazonaws.com <span style="color:#f92672">||</span> true
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># public ECR에서 인증되지 않은 pull 수행을 위해, 미리 로그아웃</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 실제 프로젝트에 적용할 때는, 로그아웃 안한 상태에서 시행해보고 어떤 현상이 일어나는지 볼 예정 (To-Do)</span>
+</span></span><span style="display:flex;"><span>docker logout public.ecr.aws
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 원활한 설치를 위한 인자값 확인</span>
+</span></span><span style="display:flex;"><span>echo $KARPENTER_VERSION $KARPENTER_IAM_ROLE_ARN $CLUSTER_NAME $CLUSTER_ENDPOINT 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># karpenter 설치</span>
+</span></span><span style="display:flex;"><span>helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter --version <span style="color:#e6db74">${</span>KARPENTER_VERSION<span style="color:#e6db74">}</span> --namespace karpenter --create-namespace <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set serviceAccount.annotations.<span style="color:#e6db74">&#34;eks\.amazonaws\.com/role-arn&#34;</span><span style="color:#f92672">=</span><span style="color:#e6db74">${</span>KARPENTER_IAM_ROLE_ARN<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set settings.aws.clusterName<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set settings.aws.defaultInstanceProfile<span style="color:#f92672">=</span>KarpenterNodeInstanceProfile-<span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set settings.aws.interruptionQueueName<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set controller.resources.requests.cpu<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set controller.resources.requests.memory<span style="color:#f92672">=</span>1Gi <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set controller.resources.limits.cpu<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set controller.resources.limits.memory<span style="color:#f92672">=</span>1Gi <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --wait
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get-all -n karpenter
+</span></span><span style="display:flex;"><span>kubectl get all -n karpenter
+</span></span><span style="display:flex;"><span>kubectl get cm -n karpenter karpenter-global-settings -o jsonpath<span style="color:#f92672">={</span>.data<span style="color:#f92672">}</span> | jq
+</span></span><span style="display:flex;"><span>kubectl get crd | grep karpenter
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 프로비저너 설치</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl apply -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: karpenter.sh/v1alpha5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Provisioner
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  requirements:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - key: karpenter.sh/capacity-type
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      operator: In
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      values: [&#34;spot&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  limits:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      cpu: 1000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  providerRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ttlSecondsAfterEmpty: 30
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: karpenter.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: AWSNodeTemplate
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  subnetSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    karpenter.sh/discovery: ${CLUSTER_NAME}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  securityGroupSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    karpenter.sh/discovery: ${CLUSTER_NAME}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get awsnodetemplates,provisioners
+</span></span></code></pre></div><p><img src="./images/check-auth-mapping-with-aws-auth.png" alt="check-auth-mapping-with-aws-auth"></p>
+<p><img src="./images/karpenter-installation-with-variables.png" alt="karpenter-installation-with-variables"></p>
+<p><img src="./images/check-karpenter-set-up-after-applying-provisioner.png" alt="check-karpenter-set-up-after-applying-provisioner"></p>
+<ul>
+<li>(옵션)ExternalDNS, kube-ops-view, grafana
+<ul>
+<li>실습 시, Grafana만 제대로 구동이 되지 않음 (To-Do)</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>MyDomain<span style="color:#f92672">=</span>awskops.click
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;export MyDomain=awskops.click&#34;</span> &gt;&gt; /etc/profile
+</span></span><span style="display:flex;"><span>MyDnzHostedZoneId<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws route53 list-hosted-zones-by-name --dns-name <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDomain<span style="color:#e6db74">}</span><span style="color:#e6db74">.&#34;</span> --query <span style="color:#e6db74">&#34;HostedZones[0].Id&#34;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $MyDomain, $MyDnzHostedZoneId
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/aews/externaldns.yaml
+</span></span><span style="display:flex;"><span>MyDomain<span style="color:#f92672">=</span>$MyDomain MyDnzHostedZoneId<span style="color:#f92672">=</span>$MyDnzHostedZoneId envsubst &lt; externaldns.yaml | kubectl apply -f -
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-ops-view</span>
+</span></span><span style="display:flex;"><span>helm repo add geek-cookbook https://geek-cookbook.github.io/charts/
+</span></span><span style="display:flex;"><span>helm install kube-ops-view geek-cookbook/kube-ops-view --version 1.2.2 --set env.TZ<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Asia/Seoul&#34;</span> --namespace kube-system
+</span></span><span style="display:flex;"><span>kubectl patch svc -n kube-system kube-ops-view -p <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;type&#34;:&#34;LoadBalancer&#34;}}&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl annotate service kube-ops-view -n kube-system <span style="color:#e6db74">&#34;external-dns.alpha.kubernetes.io/hostname=kubeopsview.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Kube Ops View URL = http://kubeopsview.</span>$MyDomain<span style="color:#e6db74">:8080/#scale=1.5&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>helm repo add grafana-charts https://grafana.github.io/helm-charts
+</span></span><span style="display:flex;"><span>helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl create namespace monitoring
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 프로메테우스 설치</span>
+</span></span><span style="display:flex;"><span>curl -fsSL https://karpenter.sh/<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>KARPENTER_VERSION<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>/getting-started/getting-started-with-karpenter/prometheus-values.yaml | tee prometheus-values.yaml
+</span></span><span style="display:flex;"><span>helm install --namespace monitoring prometheus prometheus-community/prometheus --values prometheus-values.yaml --set alertmanager.enabled<span style="color:#f92672">=</span>false
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 그라파나 설치</span>
+</span></span><span style="display:flex;"><span>curl -fsSL https://karpenter.sh/<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>KARPENTER_VERSION<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>/getting-started/getting-started-with-karpenter/grafana-values.yaml | tee grafana-values.yaml
+</span></span><span style="display:flex;"><span>helm install --namespace monitoring grafana grafana-charts/grafana --values grafana-values.yaml --set service.type<span style="color:#f92672">=</span>LoadBalancer
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># admin 암호</span>
+</span></span><span style="display:flex;"><span>kubectl get secret --namespace monitoring grafana -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.data.admin-password}&#34;</span> | base64 --decode ; echo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 그라파나 접속</span>
+</span></span><span style="display:flex;"><span>kubectl annotate service grafana -n monitoring <span style="color:#e6db74">&#34;external-dns.alpha.kubernetes.io/hostname=grafana.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;grafana URL = http://grafana.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><p><img src="./images/trying-to-enable-grafana.png" alt="trying-to-enable-grafana"></p>
+<h3 id="7-1-karpenter-테스트-셋업">7-1. Karpenter 테스트 셋업</h3>
+<ul>
+<li><code>terminationGracePeriodSeconds: 0</code>
+<ul>
+<li>정상 종료 동작이 수행되는 시간(Grace Period) 설정, 0으로 설정 시 바로 강제 종료</li>
+<li>Docs에서는 <strong>강력하게 권장하지 않지만</strong> 실습의 빠른 진행을 위해 설정 (참조: <a href="https://kubernetes.io/ko/docs/tasks/run-application/force-delete-stateful-set-pod/">k8s Docs</a>)</li>
+</ul>
+</li>
+<li>초기 셋업의 레플리카셋 요청 수는 5개</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># pause 파드 1개에 CPU 1개 최소 보장 할당</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl apply -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: inflate
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: inflate
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: inflate
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - name: inflate
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              cpu: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment inflate --replicas <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>kubectl logs -f -n karpenter -l app.kubernetes.io/name<span style="color:#f92672">=</span>karpenter -c controller
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 스팟 인스턴스 1개 생성이 확인 되어야 함.</span>
+</span></span><span style="display:flex;"><span>aws ec2 describe-spot-instance-requests --filters <span style="color:#e6db74">&#34;Name=state,Values=active&#34;</span> --output table
+</span></span><span style="display:flex;"><span>kubectl get node -l karpenter.sh/capacity-type<span style="color:#f92672">=</span>spot -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.items[0].metadata.labels}&#39;</span> | jq
+</span></span><span style="display:flex;"><span>kubectl get node --label-columns<span style="color:#f92672">=</span>eks.amazonaws.com/capacityType,karpenter.sh/capacity-type,node.kubernetes.io/instance-type
+</span></span></code></pre></div><p><img src="./images/check-spot-instance-creation-for-karpenter-test.png" alt="check-spot-instance-creation-for-karpenter-test"></p>
+<p><img src="./images/karpenter-monitoring-unschedulable-and-also-provisionable-pods.png" alt="karpenter-monitoring-unschedulable-and-also-provisionable-pods"></p>
+<p><img src="./images/new-spot-instance-in-eks-node-viewer.png" alt="new-spot-instance-in-eks-node-viewer"></p>
+<h3 id="7-2-scale-down-테스트">7-2. Scale down 테스트</h3>
+<ul>
+<li>Deployment를 지우면, 30초 이후 &lsquo;비어있는&rsquo; 노드(스팟 인스턴스)를 삭제
+<ul>
+<li><code>ttlSecondsAfterEmpty: 30</code> 지정하였기 때문</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Now, delete the deployment. After 30 seconds (ttlSecondsAfterEmpty), Karpenter should terminate the now empty nodes.</span>
+</span></span><span style="display:flex;"><span>kubectl delete deployment inflate
+</span></span><span style="display:flex;"><span>kubectl logs -f -n karpenter -l app.kubernetes.io/name<span style="color:#f92672">=</span>karpenter -c controller
+</span></span></code></pre></div><p><img src="./images/karpenter-terminates-spot-instance-ttlSecondsAfterEmpty.png" alt="karpenter-terminates-spot-instance-ttlSecondsAfterEmpty"></p>
+<h3 id="7-3-consolidation-테스트">7-3. Consolidation 테스트</h3>
+<ul>
+<li>
+<p>Consolidation이 생소한 단어라 따로 검색</p>
+<ul>
+<li>노드의 리소스 활용도를 높이고 비용을 절감하기 위해 작업 부하를 다른 노드로 이동시키는 기능</li>
+<li>위에서 지정했던 ttlSecondsAfterEmpty과 동시 사용 불가 (참조: <a href="https://kingofbackend.tistory.com/252">아이엠 !나이롱맨 Blog</a>)</li>
+</ul>
+</li>
+<li>
+<p>실습에서는 12개의 레플리카셋을 생성하여 12Gi의 메모리 요청을 발생</p>
+</li>
+<li>
+<p><strong>원래 예상한 것</strong></p>
+<ul>
+<li>Karpenter가 m5.large 인스턴스 2개에 분산 배치 (m5.large: 8Gi)
+<ul>
+<li>(8Gi - 약 600Mi) * 2 = 14.8Gi: kubelet에서 예약한 600Mi 제외</li>
+</ul>
+</li>
+<li>5개로 줄이면 인스턴스 하나를 삭제, 레플리카셋을 위한 m5.large 인스턴스 1개만 남음</li>
+<li>다시 1개로 줄이면 인스턴스를 c5.large로 변경하여 최적화를 진행</li>
+</ul>
+</li>
+<li>
+<p><strong>실제</strong></p>
+<ul>
+<li>CPU 하나당 Pod 하나, 즉 1:1 리소스 매칭
+<ul>
+<li><code>resources.requests.cpu: 1</code></li>
+</ul>
+</li>
+<li>Karpenter가 m5.xlarge 인스턴스 3개에 배치 (m5.xlarge.vCPU: 4)
+<ul>
+<li>4 * 3 = 12: 각 노드 당, Pod 4개 씩 배치</li>
+<li>기존 spot 인스턴스는 제거됨</li>
+</ul>
+</li>
+<li>레플리카셋을 5개로 줄이면 필요없어진 2개의 m5.xlarge 노드만 삭제
+<ul>
+<li>log 확인 시, 한 번에 노드 2개 삭제가 아닌 <strong>1개 삭제 후 재확인다음, 추가 삭제 진행</strong></li>
+<li>레플리카셋을 위한 m5.large 인스턴스는 2개 남음</li>
+</ul>
+</li>
+<li><strong>(예상과 동일)</strong> 다시 1개로 줄이면 c5.large로 변경하여 최적화 진행</li>
+</ul>
+</li>
+<li>
+<p>(참고) condon: 통제, 차단 (출처: <a href="https://dictionary.cambridge.org/ko/%EC%82%AC%EC%A0%84/%EC%98%81%EC%96%B4/cordon">Cambrige Dictionary</a>)</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 기존의 프로비저너 삭제(ttySecondsAfterEmpty 충돌) 후 새 프로비저너 적용</span>
+</span></span><span style="display:flex;"><span>kubectl delete provisioners default
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl apply -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: karpenter.sh/v1alpha5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Provisioner
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  consolidation:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    type: karpenter
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  limits:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      cpu: 1000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      memory: 1000Gi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  providerRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  requirements:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - key: karpenter.sh/capacity-type
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      operator: In
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      values:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - on-demand
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - key: node.kubernetes.io/instance-type
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      operator: In
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      values:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - c5.large
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - m5.large
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - m5.xlarge
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 앞에서 했던 테스트와 동일한 deployment 적용</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl apply -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: inflate
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: inflate
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: inflate
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - name: inflate
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              cpu: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 레플리카셋 12개 생성</span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment inflate --replicas <span style="color:#ae81ff">12</span>
+</span></span><span style="display:flex;"><span>kubectl logs -f -n karpenter -l app.kubernetes.io/name<span style="color:#f92672">=</span>karpenter -c controller
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 인스턴스 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># m5.xlarge 노드 4개 생성 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get node -l type<span style="color:#f92672">=</span>karpenter
+</span></span><span style="display:flex;"><span>kubectl get node --label-columns<span style="color:#f92672">=</span>eks.amazonaws.com/capacityType,karpenter.sh/capacity-type
+</span></span><span style="display:flex;"><span>kubectl get node --label-columns<span style="color:#f92672">=</span>node.kubernetes.io/instance-type,topology.kubernetes.io/zone
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 레플리카셋 5개로 축소</span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment inflate --replicas <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 로그를 통해 확인하면, 필요없는 노드를 차단(통제)하고 drain을 수행을 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># INFO controller.deprovisioning deprovisioning via consolidation delete, terminating 1 machines ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># INFO controller.termination cordoned node ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># INFO controller.termination deleted node ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># DEBUG controller deleted launch template ...</span>
+</span></span><span style="display:flex;"><span>kubectl logs -f -n karpenter -l app.kubernetes.io/name<span style="color:#f92672">=</span>karpenter -c controller
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 레플리카셋 1개로 축소 후 로그 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># INFO controller.consolidation Launching node with 1 pods requesting ... from types c5.large</span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment inflate --replicas <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>kubectl logs -f -n karpenter -l app.kubernetes.io/name<span style="color:#f92672">=</span>karpenter -c controller
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 인스턴스 확인 후 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl get node -l type<span style="color:#f92672">=</span>karpenter
+</span></span><span style="display:flex;"><span>kubectl get node --label-columns<span style="color:#f92672">=</span>eks.amazonaws.com/capacityType,karpenter.sh/capacity-type
+</span></span><span style="display:flex;"><span>kubectl get node --label-columns<span style="color:#f92672">=</span>node.kubernetes.io/instance-type,topology.kubernetes.io/zone
+</span></span><span style="display:flex;"><span>kubectl delete deployment inflate
+</span></span></code></pre></div><p><img src="./images/karpenter-creates-4-m5-xlarge-nodes-in-logs.png" alt="karpenter-creates-4-m5-xlarge-nodes-in-logs"></p>
+<p><img src="./images/karpenter-creates-4-m5-xlarge-nodes-in-eks-node-viewer.png" alt="karpenter-creates-4-m5-xlarge-nodes-in-eks-node-viewer"></p>
+<p><img src="./images/karpenter-monitoring-changing-deprovisioning-in-logs.png" alt="karpenter-monitoring-changing-deprovisioning-in-logs"></p>
+<p><img src="./images/karpenter-node-deprovisioning-consequently-in-kubeopsview-1.png" alt="karpenter-node-deprovisioning-consequently-in-kubeopsview-1"></p>
+<p><img src="./images/karpenter-node-deprovisioning-consequently-in-kubeopsview-2.png" alt="karpenter-node-deprovisioning-consequently-in-kubeopsview-2"></p>
+<p><img src="./images/karpenter-replace-node-to-c5-large-in-logs.png" alt="karpenter-replace-node-to-c5-large-in-logs"></p>
+
+  </div>
+  </section>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/aws-eks-study-week4/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">AWS EKS 스터디 4주차 - Observability</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/post/how-to-backup-gpg-key-to-personal-media/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">GnuPG 키 백업하기</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html><head>
+	<meta name="generator" content="Hugo 0.110.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>kkumtree | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="kkumtree" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.8c1fb07f2dee90a6523f7317a7d023e3c1b14bd4706bff237c94e366d59facf9.css">
+</head><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+
+
+
+
+
+<main>
+  <section class="p-strip--suru main-slide main-strip">
+      <div class="row">
+        <div class="col-8 left-section">
+          <h1>kkumtree</h1>
+          <p></p>
+        </div>
+      </div>
+  </section>
+  <section class="p-strip">
+      <div class="row">
+        <div class="col-12">
+          <div class="p-list--divided">
+            
+            
+
+            
+            <div class="p-list__item">
+              <a href="/post/aws-eks-study-week2/"><h2>AWS EKS 스터디 2주차 - Network</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-07T07:30:52&#43;09:00</u></p>
+              <p># 아쉽게도 신규 항목인 istio, kube-ops-view는 실습 실패 - istio: `myhome.yaml` 을 어떻게 생성할지 몰라서 중단 - kube-ops-view: A레코드에 제대로 잡히지 않음 지난 1주차에 이어, 이번 주에는 EKS의 네트워크 구성에 대해 알아보는 시간이었습니다.
+직전 스터디에서도 바로 광탈당하나?하며 밤과 주말을 하얗게 불태웠을 정도로
+가장 고난도라고 생각했던 네트워크를 다시 만나니 이제 1% 친근감이 느껴지고 있네요.
+자 그럼 해보도록 합시다.
+1. cloudformation을 활용한 EKS 원클릭 구성 학습을 위해, 이번에도 가시다님이 준비해주신 원클릭 배포 yaml을 활용하여 배포.</p>
+            </div>
+            
+            <div class="p-list__item">
+              <a href="/post/aws-eks-study-week1/"><h2>AWS EKS 스터디 1주차</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-04-30T03:00:15&#43;09:00</u></p>
+              <p>최근 CloudNet@에서 진행하고 있는
+AWS EKS Workshop Study(이하, AEWS)에 참여하게 되었습니다.
+k8s가 워낙 인기가 많기도 하지만, 지난 kOps 스터디를 통해 관리요소가 참 많은 것을 느꼈었고,
+좀더 수월하게 이해를 해보고자 AWS 서비스인
+EKS(Elastic Kubernetes Service)를 이번 기회에 살펴보기로 했습니다.
+EKS 사용에 있어 고려사항 EKS는 관리형 서비스(managed service)이기에 아래와 같은 장점이 있습니다.
+클러스터링을 위한 Control Plane(일명, 마스터 노드)을 AWS에서 관리해줍니다. 워커노드는 사용자가 AMI를 구성하여 이를 사용 AWS에서 제공하는 Fargate로 VM을 할당하여 사용 kOps와도 유사하지만, 다른 AWS 서비스와의 연동이 용이합니다.</p>
+            </div>
+            
+            <div class="p-list__item">
+              <a href="/post/fix-error-526-in-cloudflare-with-github-page/"><h2>GitHub Pages가 고장났나? (Cloudflare 526 Error)</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-28T18:29:11&#43;09:00</u></p>
+              <p>`gh-pages &amp; Cloudflare DNS` 를 쓰고자 한다면, Cloudflare에서 SSL/TLS 정책을 `Full (Strict)` 대신 `Full`로 하는 쪽이 관리 요소를 줄일 수 있다. Invalid SSL certificate 그간 업무 인계도 있었고, 개인 일정을 소화하면서 블로그 들어갈 일이 없었다.
+그러다 지난 주말에 있었던 정기총회에서 만난 분으로부터
+블로그에 안 들어가진다는 말을 듣고, 그제서야 인지하게 되었다.
+대체 언제부터 이랬던걸까?
+GitHub Pages에서 블로그 관리를 하고있었고,
+Cloudflare로 Domain Registrar를 이전한 후에
+블로그를 올렸기 때문에 한동안 신경을 안 써도 잘 썼는데.</p>
+            </div>
+            
+            <div class="p-list__item">
+              <a href="/post/how-to-apply-ubuntu-pro/"><h2>Ubuntu Pro를 적용하고 사용해보기</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-17T11:14:50&#43;09:00</u></p>
+              <p>튜토리얼 레벨의 게시물입니다. 모든 정보는 https://ubuntu.com/pro/tutorial 에 기초합니다. 기타 초기 구성 중 이슈는 아래도 참고하시기 바랍니다. https://canonical-ubuntu-pro-client.readthedocs-hosted.com/en/latest/index.html 계기 필자가 개인 데스크탑으로 사용하는 Ubuntu 버전이 22.10 (Kinetic Kudu), 23.04 (Lunar Lobster) 이기에, Ubuntu Pro를 적용해볼 기회가 없었다.
+이번에 지인 분으로부터 제공받은 엑세스랩(XSLAB)사의 ARM 기반 Vraptor SQ nano를
+클린설치하고 나니 Ubuntu 20.04.6 LTS (Focal Fossa) 버전이었기에, Ubuntu Pro를 적용해보기로 했다.
+해당 제품은 보라몰/voramall에서도 만나볼 수 있다.
+Ubuntu Pro란? Ubuntu Pro는 Ubuntu의 구독 상품으로, 보안 등의 지원 기능을 추가한 서비스로 사전에 보안 취약점을 빠르게 보완해서 데이터를 보호하는게 여러모로 절감되지 않을 까 싶기에 인상 깊었던 프로덕트였다.</p>
+            </div>
+            
+            <div class="p-list__item">
+              <a href="/post/making-dockerfile-for-node/"><h2>Node.js를 위한 Dockerfile 만들기</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-08T20:43:43&#43;09:00</u></p>
+              <p>새로 구축한 Dockerfile FROM public.ecr.aws/lts/ubuntu:22.04_stable ENV DEBIAN_FRONTEND=noninteractive # Set Preferred Variables ARG TZ=Asia/Seoul \ NODE_VER=18.x \ UBUNTU_DIST=jammy \ NPM_PKGS=&#34;cross-env pm2&#34; \ ADD_USG=kkumtree \ ADD_USR=kkumtree \ ADD_USR_LANG=C.UTF-8 ARG NODE_REPO=node_${NODE_VER} # Apply essentials RUN set -ex \ &amp;&amp; ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \ &amp;&amp; apt-get update -y &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; apt-get install -y --no-install-recommends apt-utils &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; apt-get install -y --no-install-recommends \ tzdata \ wget curl \ ca-certificates openssl \ lsb-release gnupg \ gcc g++ make \ zip unzip \ vim \ git \ &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; echo date # Install env for runtime # nodejs RUN set -ex \ &amp;&amp; curl -sLf -o /dev/null \ &#34;https://deb.</p>
+            </div>
+            
+<ol class="p-pagination">
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--previous" 
+        href="/" title="Previous page">
+        <i class="p-icon--contextual-menu">First page</i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--previous " 
+        href="/" title="Previous page">
+        <i class="p-icon--contextual-menu">Previous page</i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link " href="/">1</a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link  is-active" href="/page/2/">2</a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link " href="/page/3/">3</a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--next "
+        href="/page/3/" title="Next page">
+        <i class="p-icon--contextual-menu">Next page</i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--next"
+        href="/page/3/" title="Last page">
+        <i class="p-icon--contextual-menu">Next page</i>
+    </a>
+  </li>
+</ol>
+</div>
+        </div>
+      </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

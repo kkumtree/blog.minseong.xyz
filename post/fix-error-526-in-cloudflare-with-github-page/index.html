@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>GitHub Pages가 고장났나? (Cloudflare 526 Error) | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="GitHub Pages가 고장났나? (Cloudflare 526 Error)" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/fix-error-526-in-cloudflare-with-github-page/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/fix-error-526-in-cloudflare-with-github-page/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/fix-error-526-in-cloudflare-with-github-page/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.8c1fb07f2dee90a6523f7317a7d023e3c1b14bd4706bff237c94e366d59facf9.css">
+</head><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>GitHub Pages가 고장났나? (Cloudflare 526 Error)</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-28T18:29:11&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/ca" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CA</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudflare" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">Cloudflare</span>
+              </div>
+            </a>
+            
+            <a href="/tags/github" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">GitHub</span>
+              </div>
+            </a>
+            
+            <a href="/tags/tls" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">TLS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/dns" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">DNS</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <pre tabindex="0"><code class="language-brief" data-lang="brief">`gh-pages &amp; Cloudflare DNS` 를 쓰고자 한다면, 
+Cloudflare에서 SSL/TLS 정책을 `Full (Strict)` 대신 
+`Full`로 하는 쪽이 관리 요소를 줄일 수 있다. 
+</code></pre><h2 id="invalid-ssl-certificate">Invalid SSL certificate</h2>
+<p><img src="./images/error.jpg" alt="error"></p>
+<p>그간 업무 인계도 있었고, 개인 일정을 소화하면서 블로그 들어갈 일이 없었다.<br>
+그러다 지난 주말에 있었던 <a href="https://discourse.ubuntu-kr.org/t/topic/48634">정기총회</a>에서 만난 분으로부터<br>
+블로그에 안 들어가진다는 말을 듣고, 그제서야 인지하게 되었다.<br>
+대체 언제부터 이랬던걸까?</p>
+<p>GitHub Pages에서 블로그 관리를 하고있었고,<br>
+Cloudflare로 Domain Registrar를 이전한 후에<br>
+블로그를 올렸기 때문에 한동안 신경을 안 써도 잘 썼는데.</p>
+<h2 id="원인-파악">원인 파악</h2>
+<p>크게 두 가지였다. 하나는 기존 인증서의 만료, 또 하나는 Cloudflare의 TLS/SSL 설정이다.</p>
+<h3 id="인증서-만료">인증서 만료</h3>
+<p>지금은 확인하기 좀 번거로운데, 기존에 사용한 인증서가 만료된 것으로 추정된다.<br>
+세어보니 6개월이 살짝 지났기에 최소 2주 가량 사이트가 작동을 안한 것 같다.<br>
+GitHub pages에서 기본적으로 Let&rsquo;s Encrypt를 통해서 TLS를 제공하는데 종종 생성이 안되었고,<br>
+실제로도 설정 페이지에서 발급에 에러가 발생하고 있었다.</p>
+<p><img src="./images/cert.png" alt="cert"></p>
+<h3 id="cloudflare의-ssltls-설정">Cloudflare의 SSL/TLS 설정</h3>
+<p>Cloudflare에서 SSL/TLS 설정을 해놓고, Github Pages에서도 SSL을 켜놓았었다.<br>
+기존에는 인증서가 있었으니 Cloudflare 정책보다는 다른 정책이 우선시 되었었는데,<br>
+인증서가 만료되면서 Cloudflare의 정책이 적용되었다.<br>
+Cloudflare에서의 SSL/TLS의 설정 중 제일 높은 <code>Full(Strict)</code>를 사용하고 있었는데,<br>
+내 서버에 trusted CA 인증서 혹은 Cloudflare에서 발행한 CA 인증서를 발급해놓던지 CA 인증서를 발급해두면 좋은 설정이다.<br>
+물론 GitHub Pages에서는 앞서 말했듯이 자체서명 인증서 발급 이슈가 생기기도 하고,<br>
+Cloudflare issued CA 인증서를 탑재하는 건 말이 안된다고 생각했다.<br>
+GitHub의 TLS 지원만 생각하고 만들어놔서 오류가 발생하였다.</p>
+<h2 id="에러-수정">에러 수정</h2>
+<p>에러 해결이라고 하긴 뭐하고, 수정이라고 하자.<br>
+그냥 <code>Full(Strict)</code>를 <code>Full</code>로 바꿔주면 된다. 
+이래도 아예 TLS를 쓰지 않는 것보다는 나을 것이다.</p>
+<p><img src="./images/cloudflare-tls-setting.png" alt="tls setting for gh-pages"></p>
+<p>아, 아래의 cloudflare blog를 참고하여 trouble shooting 하고자 한다면 Page Rules까지 관리하지 않아도 TLS가 제대로 적용된다.<br>
+굳이 적용하고자 한다면, 아래와 유사하게 적용하면 된다.</p>
+<p><img src="./images/page-rule.png" alt="page rule"></p>
+<h2 id="reference">reference</h2>
+<ul>
+<li><a href="https://github.com/orgs/community/discussions/22052">GitHub Community</a></li>
+<li><a href="https://community.cloudflare.com/t/community-tip-fixing-error-526-invalid-ssl-certificates/44273">Cloudflare Community</a></li>
+<li><a href="https://blog.cloudflare.com/secure-and-fast-github-pages-with-cloudflare">Cloudflare Blog</a></li>
+<li><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https#troubleshooting-certificate-provisioning-certificate-not-yet-created-error">GitHub Docs</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/how-to-apply-ubuntu-pro/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Ubuntu Pro를 적용하고 사용해보기</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/post/aws-eks-study-week1/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">AWS EKS 스터디 1주차</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

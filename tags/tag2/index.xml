@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tag2 on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/tag2/</link>
+    <description>Recent content in tag2 on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 08 Mar 2023 20:43:43 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/tag2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Node.js를 위한 Dockerfile 만들기</title>
+      <link>https://blog.minseong.xyz/post/making-dockerfile-for-node/</link>
+      <pubDate>Wed, 08 Mar 2023 20:43:43 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/making-dockerfile-for-node/</guid>
+      <description>새로 구축한 Dockerfile FROM public.ecr.aws/lts/ubuntu:22.04_stable ENV DEBIAN_FRONTEND=noninteractive # Set Preferred Variables ARG TZ=Asia/Seoul \ NODE_VER=18.x \ UBUNTU_DIST=jammy \ NPM_PKGS=&amp;#34;cross-env pm2&amp;#34; \ ADD_USG=kkumtree \ ADD_USR=kkumtree \ ADD_USR_LANG=C.UTF-8 ARG NODE_REPO=node_${NODE_VER} # Apply essentials RUN set -ex \ &amp;amp;&amp;amp; ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \ &amp;amp;&amp;amp; apt-get update -y &amp;gt; /dev/null 2&amp;gt;&amp;amp;1 \ &amp;amp;&amp;amp; apt-get install -y --no-install-recommends apt-utils &amp;gt; /dev/null 2&amp;gt;&amp;amp;1 \ &amp;amp;&amp;amp; apt-get install -y --no-install-recommends \ tzdata \ wget curl \ ca-certificates openssl \ lsb-release gnupg \ gcc g++ make \ zip unzip \ vim \ git \ &amp;gt; /dev/null 2&amp;gt;&amp;amp;1 \ &amp;amp;&amp;amp; echo date # Install env for runtime # nodejs RUN set -ex \ &amp;amp;&amp;amp; curl -sLf -o /dev/null \ &amp;#34;https://deb.</description>
+    </item>
+    
+  </channel>
+</rss>

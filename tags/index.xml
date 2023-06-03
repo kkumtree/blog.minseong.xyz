@@ -5,6 +5,295 @@
     <link>https://blog.minseong.xyz/tags/</link>
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>ko-kr</language><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <language>ko-kr</language>
+    <lastBuildDate>Sat, 27 May 2023 18:29:18 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>backup</title>
+      <link>https://blog.minseong.xyz/tags/backup/</link>
+      <pubDate>Sat, 27 May 2023 18:29:18 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/backup/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>GnuPG</title>
+      <link>https://blog.minseong.xyz/tags/gnupg/</link>
+      <pubDate>Sat, 27 May 2023 18:29:18 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/gnupg/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>autoscaling</title>
+      <link>https://blog.minseong.xyz/tags/autoscaling/</link>
+      <pubDate>Mon, 22 May 2023 19:23:37 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/autoscaling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>AWS</title>
+      <link>https://blog.minseong.xyz/tags/aws/</link>
+      <pubDate>Mon, 22 May 2023 19:23:37 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/aws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CloudNet@</title>
+      <link>https://blog.minseong.xyz/tags/cloudnet@/</link>
+      <pubDate>Mon, 22 May 2023 19:23:37 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/cloudnet@/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>EKS</title>
+      <link>https://blog.minseong.xyz/tags/eks/</link>
+      <pubDate>Mon, 22 May 2023 19:23:37 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/eks/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>karpenter</title>
+      <link>https://blog.minseong.xyz/tags/karpenter/</link>
+      <pubDate>Mon, 22 May 2023 19:23:37 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/karpenter/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>observability</title>
+      <link>https://blog.minseong.xyz/tags/observability/</link>
+      <pubDate>Sun, 21 May 2023 06:13:52 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/observability/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>aws-cli</title>
+      <link>https://blog.minseong.xyz/tags/aws-cli/</link>
+      <pubDate>Thu, 18 May 2023 21:36:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/aws-cli/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>bastion</title>
+      <link>https://blog.minseong.xyz/tags/bastion/</link>
+      <pubDate>Thu, 18 May 2023 21:36:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/bastion/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CIDR</title>
+      <link>https://blog.minseong.xyz/tags/cidr/</link>
+      <pubDate>Thu, 18 May 2023 21:36:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/cidr/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>storage</title>
+      <link>https://blog.minseong.xyz/tags/storage/</link>
+      <pubDate>Fri, 12 May 2023 05:36:38 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/storage/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>network</title>
+      <link>https://blog.minseong.xyz/tags/network/</link>
+      <pubDate>Sun, 07 May 2023 07:30:52 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/network/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CA</title>
+      <link>https://blog.minseong.xyz/tags/ca/</link>
+      <pubDate>Tue, 28 Mar 2023 18:29:11 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/ca/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Cloudflare</title>
+      <link>https://blog.minseong.xyz/tags/cloudflare/</link>
+      <pubDate>Tue, 28 Mar 2023 18:29:11 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/cloudflare/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>DNS</title>
+      <link>https://blog.minseong.xyz/tags/dns/</link>
+      <pubDate>Tue, 28 Mar 2023 18:29:11 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/dns/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>GitHub</title>
+      <link>https://blog.minseong.xyz/tags/github/</link>
+      <pubDate>Tue, 28 Mar 2023 18:29:11 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/github/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>TLS</title>
+      <link>https://blog.minseong.xyz/tags/tls/</link>
+      <pubDate>Tue, 28 Mar 2023 18:29:11 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/tls/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CVE</title>
+      <link>https://blog.minseong.xyz/tags/cve/</link>
+      <pubDate>Fri, 17 Mar 2023 11:14:50 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/cve/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Security</title>
+      <link>https://blog.minseong.xyz/tags/security/</link>
+      <pubDate>Fri, 17 Mar 2023 11:14:50 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/security/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Subscription</title>
+      <link>https://blog.minseong.xyz/tags/subscription/</link>
+      <pubDate>Fri, 17 Mar 2023 11:14:50 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/subscription/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Tutorial</title>
+      <link>https://blog.minseong.xyz/tags/tutorial/</link>
+      <pubDate>Fri, 17 Mar 2023 11:14:50 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/tutorial/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Ubuntu</title>
+      <link>https://blog.minseong.xyz/tags/ubuntu/</link>
+      <pubDate>Fri, 17 Mar 2023 11:14:50 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/ubuntu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>UbuntuPro</title>
+      <link>https://blog.minseong.xyz/tags/ubuntupro/</link>
+      <pubDate>Fri, 17 Mar 2023 11:14:50 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/ubuntupro/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tag1</title>
+      <link>https://blog.minseong.xyz/tags/tag1/</link>
+      <pubDate>Wed, 08 Mar 2023 20:43:43 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/tag1/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tag2</title>
+      <link>https://blog.minseong.xyz/tags/tag2/</link>
+      <pubDate>Wed, 08 Mar 2023 20:43:43 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/tag2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>FinOps</title>
+      <link>https://blog.minseong.xyz/tags/finops/</link>
+      <pubDate>Mon, 06 Mar 2023 18:43:51 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/finops/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kops</title>
+      <link>https://blog.minseong.xyz/tags/kops/</link>
+      <pubDate>Mon, 06 Mar 2023 18:43:51 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/kops/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>troubleshooting</title>
+      <link>https://blog.minseong.xyz/tags/troubleshooting/</link>
+      <pubDate>Sat, 25 Feb 2023 22:07:23 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/troubleshooting/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>M1</title>
+      <link>https://blog.minseong.xyz/tags/m1/</link>
+      <pubDate>Sun, 05 Feb 2023 04:54:06 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/m1/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>minikube</title>
+      <link>https://blog.minseong.xyz/tags/minikube/</link>
+      <pubDate>Sun, 05 Feb 2023 04:54:06 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/minikube/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Traefik</title>
+      <link>https://blog.minseong.xyz/tags/traefik/</link>
+      <pubDate>Sun, 05 Feb 2023 04:54:06 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/traefik/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>

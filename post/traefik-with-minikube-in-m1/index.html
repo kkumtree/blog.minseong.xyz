@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/traefik-with-minikube-in-m1/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/traefik-with-minikube-in-m1/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/traefik-with-minikube-in-m1/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.8c1fb07f2dee90a6523f7317a7d023e3c1b14bd4706bff237c94e366d59facf9.css">
+</head><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-02-05T04:54:06&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/minikube" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">minikube</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/m1" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">M1</span>
+              </div>
+            </a>
+            
+            <a href="/tags/traefik" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">Traefik</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <pre tabindex="0"><code class="language-deprecated" data-lang="deprecated">주변으로부터 피드백을 받은 내용이 있어 새로운 글로 보완예정입니다. 
+- colima는 containerd처럼 cri가 아닌, Docker engine과 containerd 사이의 물건으로 추정됩니다. 
+  - 도커 엔진은 현재 containerd를 통해 프로세스를 관리.
+  - colima도 docker shim 구조는 탈피했을 거라고 추측 중. 
+  - 도커 엔진과 containerd 사이의 컨테이너 엔진(관리도구?)로 보임
+- colima 시작 시, 특정 런타임을 선택할 수 있습니다. 문서를 잘 읽어봅시다.
+  `colima start --runtime containerd`
+- k8s를 위한 colima 시작 명령어는 별도로 있습니다. colima github를 참고해주세요.
+</code></pre><pre tabindex="0"><code class="language-notice" data-lang="notice">traefik v1.7에서는 예제 설명의 기준이
+k8s.io/v1beta1 API(deprecated)입니다   
+k8s.io/v1 API를 기준으로 작성되어 있으니, 참고바랍니다.
+</code></pre><p>로컬환경(minikube)에서 Traefik(^2) 예제를 구현해보겠습니다.</p>
+<h2 id="00-pre-requisite">00. Pre-requisite</h2>
+<ul>
+<li>Apple Silicon M1, macOS <strong>Monterey</strong>: ^12.6.3
+<ul>
+<li>macOS Ventura를 사용하신다면, Colima 옵션 설정 및 시작 부분의 명령어 주석을 참조.</li>
+</ul>
+</li>
+<li><a href="https://formulae.brew.sh/formula/colima">Colima</a>: ^0.5.2, <strong>Container Runtime</strong></li>
+<li><a href="https://formulae.brew.sh/formula/minikube">minikube</a>: ^1.29.0, 로컬환경에서의 k8s 클러스터 구성</li>
+<li><a href="https://formulae.brew.sh/formula/kubernetes-cli">kubectl</a>: ^v1.26.1
+<ul>
+<li>
+<p><a href="https://krew.sigs.k8s.io/docs/user-guide/setup/install/#bash">krew</a> 설치를 추천드립니다 (ctx 및 ns 설치된 환경에서 진행합니다)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl krew install ctx ns
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ul>
+<h2 id="01-krew-환경-설정">01. Krew 환경 설정</h2>
+<ul>
+<li>
+<p>Brew 기준, 설치 시 추가 안내가 있을 것입니다. oh-my-<strong>zsh</strong>을 사용하고 있기에, 아래와 같이 ~/.zshrc에 추가하였습니다.</p>
+</li>
+<li>
+<p>쉘 재실행이 번거롭다면, 설정 이후에 <code>source ~/.zshrc</code>를 실행해주시면 됩니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">:</span><span style="color:#e6db74">${</span>HOME<span style="color:#e6db74">}</span><span style="color:#e6db74">/.krew/bin&#34;</span>
+</span></span><span style="display:flex;"><span>source &lt;<span style="color:#f92672">(</span>kubectl completion zsh<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>alias k<span style="color:#f92672">=</span>kubectl
+</span></span><span style="display:flex;"><span>complete -F __start_kubectl k
+</span></span></code></pre></div></li>
+</ul>
+<h2 id="02-colima-옵션-설정-및-시작">02. Colima 옵션 설정 및 시작</h2>
+<ul>
+<li>
+<p>Colima를 설치하고, 아래와 같이 옵션을 설정합니다.</p>
+<ul>
+<li>cpu값이나 memory값, disk 값은 머신 환경이나 필요에 따라 조절하시면 됩니다.</li>
+<li>아래 예제는 4core, 8GB, 20GB의 환경을 기준으로 작성되었습니다.</li>
+</ul>
+</li>
+<li>
+<p>macOS Ventura를 사용하신다면, 두 번째 명령어를 사용하시기 바랍니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># if colima is running, stop it by `colima stop`</span>
+</span></span><span style="display:flex;"><span>colima start --cpu <span style="color:#ae81ff">4</span> --memory <span style="color:#ae81ff">8</span> --disk <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># if you are using macOS Ventura</span>
+</span></span><span style="display:flex;"><span>colima start --arch aarch64 --vm-type<span style="color:#f92672">=</span>vz --vz-rosetta --cpu <span style="color:#ae81ff">4</span> --memory <span style="color:#ae81ff">8</span> --disk <span style="color:#ae81ff">20</span>
+</span></span></code></pre></div><ul>
+<li>
+<p>prompt</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> starting colima
+</span></span><span style="display:flex;"><span>INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> runtime: docker
+</span></span><span style="display:flex;"><span>INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> preparing network ...                         context<span style="color:#f92672">=</span>vm
+</span></span><span style="display:flex;"><span>INFO<span style="color:#f92672">[</span>0000<span style="color:#f92672">]</span> starting ...                                  context<span style="color:#f92672">=</span>vm
+</span></span><span style="display:flex;"><span>INFO<span style="color:#f92672">[</span>0021<span style="color:#f92672">]</span> provisioning ...                              context<span style="color:#f92672">=</span>docker
+</span></span><span style="display:flex;"><span>INFO<span style="color:#f92672">[</span>0021<span style="color:#f92672">]</span> starting ...                                  context<span style="color:#f92672">=</span>docker
+</span></span><span style="display:flex;"><span>INFO<span style="color:#f92672">[</span>0026<span style="color:#f92672">]</span> <span style="color:#66d9ef">done</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ul>
+<h3 id="03-minikube-옵션-설정-및-시작">03. minikube 옵션 설정 및 시작</h3>
+<ul>
+<li>
+<p>다음의 옵션으로 시작합니다. 에러가 출력되면, 대개 자원 부족이기 때문에 옵션을 조절해주시면 됩니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>minikube config set cpus <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>minikube config set memory 8G <span style="color:#75715e"># 8GB, 8192로 설정해도 됩니다.</span>
+</span></span><span style="display:flex;"><span>minikube config set disk <span style="color:#ae81ff">20</span> <span style="color:#75715e"># 20GB, 20G로 설정해도 됩니다.</span>
+</span></span><span style="display:flex;"><span>minikube config set driver docker <span style="color:#75715e"># colima(docker driver로 인식)를 사용합니다. </span>
+</span></span><span style="display:flex;"><span>minikube start
+</span></span></code></pre></div><ul>
+<li>
+<p>prompt</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>😄  minikube v1.29.0 on Darwin 12.6.3 <span style="color:#f92672">(</span>arm64<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>✨  Using the docker driver based on user configuration
+</span></span><span style="display:flex;"><span>📌  Using Docker Desktop driver with root privileges
+</span></span><span style="display:flex;"><span>👍  Starting control plane node minikube in cluster minikube
+</span></span><span style="display:flex;"><span>🚜  Pulling base image ...
+</span></span><span style="display:flex;"><span>🔥  Creating docker container <span style="color:#f92672">(</span>CPUs<span style="color:#f92672">=</span>4, Memory<span style="color:#f92672">=</span>7938MB<span style="color:#f92672">)</span> ...
+</span></span><span style="display:flex;"><span>🐳  Preparing Kubernetes v1.26.1 on Docker 20.10.23 ...
+</span></span><span style="display:flex;"><span>    ▪ Generating certificates and keys ...
+</span></span><span style="display:flex;"><span>    ▪ Booting up control plane ...
+</span></span><span style="display:flex;"><span>    ▪ Configuring RBAC rules ...
+</span></span><span style="display:flex;"><span>🔗  Configuring bridge CNI <span style="color:#f92672">(</span>Container Networking Interface<span style="color:#f92672">)</span> ...
+</span></span><span style="display:flex;"><span>    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+</span></span><span style="display:flex;"><span>🌟  Enabled addons: storage-provisioner, default-storageclass
+</span></span><span style="display:flex;"><span>🔎  Verifying Kubernetes components...
+</span></span><span style="display:flex;"><span>🏄  Done! kubectl is now configured to use <span style="color:#e6db74">&#34;minikube&#34;</span> cluster and <span style="color:#e6db74">&#34;default&#34;</span> namespace by default
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>minikube가 정상적으로 시작되었는지 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get nodes
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME       STATUS   ROLES           AGE   VERSION</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># minikube   Ready    control-plane   10m   v1.26.1</span>
+</span></span></code></pre></div><ul>
+<li>
+<p>minikube 환경에서는 ingress 활성화를 해줘야 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>minikube addons enable ingress
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># After enabled</span>
+</span></span><span style="display:flex;"><span>sudo minikube tunnel
+</span></span></code></pre></div></li>
+<li>
+<p>prompt</p>
+<ul>
+<li>시작 전 새로운 터미널을 켜서 minikube tunnel을 실행해야 합니다. (실습 종료 시까지 유지해야 합니다.)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>💡  ingress is an addon maintained by Kubernetes. For any concerns contact minikube on GitHub.
+</span></span><span style="display:flex;"><span>You can view the list of minikube maintainers at: https://github.com/kubernetes/minikube/blob/master/OWNERS
+</span></span><span style="display:flex;"><span>💡  After the addon is enabled, please run <span style="color:#e6db74">&#34;minikube tunnel&#34;</span> and your ingress resources would be available at <span style="color:#e6db74">&#34;127.0.0.1&#34;</span>
+</span></span><span style="display:flex;"><span>    ▪ Using image registry.k8s.io/ingress-nginx/controller:v1.5.1
+</span></span><span style="display:flex;"><span>    ▪ Using image registry.k8s.io/ingress-nginx/kube-webhook-certgen:v20220916-gd32f8c343
+</span></span><span style="display:flex;"><span>    ▪ Using image registry.k8s.io/ingress-nginx/kube-webhook-certgen:v20220916-gd32f8c343
+</span></span><span style="display:flex;"><span>🔎  Verifying ingress addon...
+</span></span><span style="display:flex;"><span>🌟  The <span style="color:#e6db74">&#39;ingress&#39;</span> addon is enabled
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ul>
+<h2 id="04-예제-적용해보기">04. 예제 적용해보기</h2>
+<ul>
+<li>아래의 스크립트들은 다음 repository에서도 확인하실 수 있습니다.
+<ul>
+<li><a href="https://github.com/kkumtree/traefik-practice/tree/main/00_quickstart">github</a></li>
+</ul>
+</li>
+<li>해당 스크립트들은 <a href="https://doc.traefik.io/traefik/getting-started/quick-start/">Traefik 공식 문서</a>와 동일 내용입니다.</li>
+</ul>
+<h3 id="04-1-clusterrole-적용">04-1. ClusterRole 적용</h3>
+<ul>
+<li>
+<p>공식 문서가 제일 정확합니다.</p>
+<ul>
+<li>Traefik은 k8s API를 통해 svc를 검색합니다.</li>
+<li>클러스터 관리자가 역할을 정의해야하므로, ClusterRole을 적용합니다.</li>
+</ul>
+</li>
+<li>
+<p>script</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pwd
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ${HOME}/traefik-practice/00_quickstart</span>
+</span></span><span style="display:flex;"><span>apply -f 00-role.yml
+</span></span></code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRole</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">traefik-role</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">services</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">endpoints</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">secrets</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">extensions</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">networking.k8s.io</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">ingresses</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">ingressclasses</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">extensions</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">networking.k8s.io</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">ingresses/status</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">update</span>
+</span></span></code></pre></div><!-- raw HTML omitted -->
+</li>
+</ul>
+<h3 id="04-2-traefik-전용-serviceaccount-생성">04-2. Traefik 전용 ServiceAccount 생성</h3>
+<ul>
+<li>
+<p>위에서 정의한 ClusterRole을 적용할 서비스 계정을 생성합니다.</p>
+</li>
+<li>
+<p>IAM에 빗대면, IAM Role을 적용할 서비스 계정을 생성하는 것이라고 보면 되겠네요.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pwd
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ${HOME}/traefik-practice/00_quickstart</span>
+</span></span><span style="display:flex;"><span>apply -f 01-account.yml
+</span></span></code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">traefik-account</span>
+</span></span></code></pre></div><!-- raw HTML omitted -->
+</li>
+</ul>
+<h3 id="04-3-clusterrolebinding-적용">04-3. ClusterRoleBinding 적용</h3>
+<ul>
+<li>
+<p>당연한 이야기지만, ClusterRole과 ServiceAccount을 적용합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pwd
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ${HOME}/traefik-practice/00_quickstart</span>
+</span></span><span style="display:flex;"><span>apply -f 02-role-binding.yml
+</span></span></code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRoleBinding</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">traefik-role-binding</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">roleRef</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">apiGroup</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRole</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">traefik-role</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">subjects</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">traefik-account</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">default</span>
+</span></span></code></pre></div><!-- raw HTML omitted -->
+</li>
+</ul>
+<h3 id="04-4-traefik-servicesdashboard-lb-적용">04-4. traefik services(dashboard, LB) 적용</h3>
+<ul>
+<li>
+<p>traefik의 기능인 dashboard와 LoadBalancer를 서비스해봅시다.</p>
+<ul>
+<li>사실은 로드밸런싱을 통해 dashboard에 8080 포트포워딩 해주는 것이지요.</li>
+<li>80포트의 경우, 다음 스텝인 whoami 테스트를 위한 포트포워딩 작업입니다.</li>
+</ul>
+</li>
+<li>
+<p>ingress도 결국엔 pod 및 service를 통해 동작하는 것이므로,
+traefik <code>Deployment</code>를 구성하여 추가적으로 컨테이너를 확장하도록 구현하는 작업이라고 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pwd
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ${HOME}/traefik-practice/00_quickstart</span>
+</span></span><span style="display:flex;"><span>apply -f 03-traefik-services.yml
+</span></span></code></pre></div></li>
+<li>
+<p>kubectl tunneling 활성화</p>
+<ul>
+<li>
+<p>위의 명령어를 실행하면, 사전에 말씀드린 터미널 창에서 암호를 입력하라고 뜰 것입니다.</p>
+</li>
+<li>
+<p>아래 예제처럼, 중간에 뭔가 틀렸다 싶으면&hellip;<br>
+<code>kubectl delete -f 03-traefik-services.yml</code> 명령어를 통해<br>
+삭제하고 다시 적용을 해보면 됩니다.</p>
+</li>
+<li>
+<p>prompt in <code>kubectl tunneling</code> terminal</p>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ minikube tunnel
+</span></span><span style="display:flex;"><span>✅  Tunnel successfully started
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>📌  NOTE: Please <span style="color:#66d9ef">do</span> not close this terminal as this process must stay alive <span style="color:#66d9ef">for</span> the tunnel to be accessible ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>🏃  Starting tunnel <span style="color:#66d9ef">for</span> service traefik-dashboard-service.
+</span></span><span style="display:flex;"><span>❗  The service/ingress traefik-web-service requires privileged ports to be exposed: <span style="color:#f92672">[</span>80<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>🔑  sudo permission will be asked <span style="color:#66d9ef">for</span> it.
+</span></span><span style="display:flex;"><span>🏃  Starting tunnel <span style="color:#66d9ef">for</span> service traefik-web-service.
+</span></span><span style="display:flex;"><span>Password:
+</span></span><span style="display:flex;"><span>✋  Stopping tunnel <span style="color:#66d9ef">for</span> service traefik-dashboard-service.
+</span></span><span style="display:flex;"><span>✋  Stopping tunnel <span style="color:#66d9ef">for</span> service traefik-web-service.
+</span></span><span style="display:flex;"><span>E0204 22:51:14.129905   <span style="color:#ae81ff">25131</span> ssh_tunnel.go:183<span style="color:#f92672">]</span> error stopping ssh tunnel: operation not permitted
+</span></span><span style="display:flex;"><span>🏃  Starting tunnel <span style="color:#66d9ef">for</span> service traefik-dashboard-service.
+</span></span><span style="display:flex;"><span>❗  The service/ingress traefik-web-service requires privileged ports to be exposed: <span style="color:#f92672">[</span>80<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>🔑  sudo permission will be asked <span style="color:#66d9ef">for</span> it.
+</span></span><span style="display:flex;"><span>🏃  Starting tunnel <span style="color:#66d9ef">for</span> service traefik-web-service.
+</span></span></code></pre></div><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">traefik-deployment</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">traefik</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">traefik</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">traefik</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">serviceAccountName</span>: <span style="color:#ae81ff">traefik-account</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">traefik</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">image</span>: <span style="color:#ae81ff">traefik:v2.9</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">args</span>:
+</span></span><span style="display:flex;"><span>            - --<span style="color:#ae81ff">api.insecure</span>
+</span></span><span style="display:flex;"><span>            - --<span style="color:#ae81ff">providers.kubernetesingress</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">web</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">dashboard</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">traefik-dashboard-service</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">LoadBalancer</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">port</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">dashboard</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">traefik</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">traefik-web-service</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">LoadBalancer</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">web</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">traefik</span>
+</span></span></code></pre></div><!-- raw HTML omitted -->
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="04-5-whoami-서비스-적용">04-5. whoami 서비스 적용</h3>
+<ul>
+<li>
+<p>여기서부터는 whoami 서비스까지 제대로 도달하지 않아, 참고로만 하면 좋을 것 같습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pwd
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ${HOME}/traefik-practice/00_quickstart</span>
+</span></span><span style="display:flex;"><span>apply -f 04-whoami-service.yml
+</span></span><span style="display:flex;"><span>apply -f 05-whoami-ingress.yml
+</span></span></code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">whoami</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">whoami</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">whoami</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">whoami</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">whoami</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">image</span>: <span style="color:#ae81ff">traefik/whoami</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">web</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">whoami</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">web</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">web</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">whoami</span>
+</span></span></code></pre></div><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">whoami-ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/whoami</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">whoami</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">web</span>
+</span></span></code></pre></div><!-- raw HTML omitted -->
+</li>
+</ul>
+<h2 id="minikube-상태-및-traefik-대시보드-확인">minikube 상태 및 traefik 대시보드 확인</h2>
+<ul>
+<li>
+<p>minikube 상태 확인</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get svc,pod,ingress
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#NAME                                TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#service/kubernetes                  ClusterIP      10.96.0.1       &lt;none&gt;        443/TCP          51m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#service/traefik-dashboard-service   LoadBalancer   10.102.66.98    127.0.0.1     8080:30024/TCP   50m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#service/traefik-web-service         LoadBalancer   10.110.10.216   127.0.0.1     80:31761/TCP     50m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#service/whoami                      ClusterIP      10.99.168.47    &lt;none&gt;        80/TCP           33m</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#NAME                                    READY   STATUS    RESTARTS   AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#pod/traefik-deployment-bd6c9d49-rvzns   1/1     Running   0          32m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#pod/whoami-6d97bf7dcb-r744j             1/1     Running   0          9s</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#NAME                                       CLASS   HOSTS       ADDRESS        PORTS   AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#ingress.networking.k8s.io/whoami-ingress   nginx   localhost   192.168.49.2   80      10m</span>
+</span></span></code></pre></div></li>
+<li>
+<p>traefik 대시보드 확인</p>
+<p><img src="./images/traefik-dashboard.png" alt="traefik-dashboard"></p>
+</li>
+</ul>
+<h2 id="reference">reference</h2>
+<ul>
+<li><a href="https://doc.traefik.io/traefik/getting-started/quick-start-with-kubernetes/">Traefik Quick Start w/k8s</a></li>
+<li><a href="https://faun.pub/kubernetes-whoami-service-with-traefik-650d8311cf9b">faun.pub</a></li>
+<li><a href="https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a></li>
+<li><a href="https://www.reddit.com/r/kubernetes/comments/e5dzse/does_traefik_as_ingress_work_in_minikube/">Enable ingress 1</a></li>
+<li><a href="https://doc.traefik.io/traefik/v1.7/user-guide/kubernetes/#prerequisites">Enable ingress 2</a></li>
+<li><a href="https://medium.com/@Oskarr3/setting-up-ingress-on-minikube-6ae825e98f82">ingress minikube</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        
+        <a class="p-article-pagination__link--next" href="/post/basic-aws-troubleshooting/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">AWS 트러블 슈팅 - 7주 간의 k8s 실무 스터디를 마치며</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

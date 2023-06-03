@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>GnuPG 키 백업하기 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="GnuPG 키 백업하기" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/how-to-backup-gpg-key-to-personal-media/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/how-to-backup-gpg-key-to-personal-media/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/how-to-backup-gpg-key-to-personal-media/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.8c1fb07f2dee90a6523f7317a7d023e3c1b14bd4706bff237c94e366d59facf9.css">
+</head><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>GnuPG 키 백업하기</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-27T18:29:18&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/gnupg" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">GnuPG</span>
+              </div>
+            </a>
+            
+            <a href="/tags/backup" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">backup</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <pre tabindex="0"><code class="language-note" data-lang="note">23/05/30 GPG 키 복원방법 및 출처 추가
+</code></pre><p>망가진 PC 메인보드를 교체하고, 서둘러 GPG key를 백업하였습니다.<br>
+용량이 그리 큰편은 아니니, 왠만한 USB 메모리에도 충분히 백업이 가능합니다.<br>
+(어째서 안했었을꼬&hellip;)</p>
+<p>출처는 마지막 referenece를 참조해주시기 바랍니다.</p>
+<h2 id="1-backup">1. Backup</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># tree로 ~/.gnupg 확인</span>
+</span></span><span style="display:flex;"><span>tree ~/.gnupg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 현재 사용중인 키 확인</span>
+</span></span><span style="display:flex;"><span>gpg --list-secret-keys --keyid-format LONG
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 키 백업</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## public 키 백업</span>
+</span></span><span style="display:flex;"><span>gpg --export --export-options backup --output ~/public_mscho.gpg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## private 키 백업 (암호 입력 필요)</span>
+</span></span><span style="display:flex;"><span>gpg --export-secret-keys --export-options backup --output ~/private_mscho.gpg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## trust(신뢰관게) 백업</span>
+</span></span><span style="display:flex;"><span>gpg --export-ownertrust &gt; trust_mscho.gpg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 백업한 키 확인</span>
+</span></span><span style="display:flex;"><span>ls -al ~/*.gpg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 백업한 키를 USB로 복사</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 이미 마운트된 미디어 확인(볼륨이름 KEYS에 보관할 계획)</span>
+</span></span><span style="display:flex;"><span>tree /media
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## (옵션)하위 폴더 생성</span>
+</span></span><span style="display:flex;"><span>mkdir /media/KEYS/GnuPG
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 키 복사</span>
+</span></span><span style="display:flex;"><span>cp ~/*.gpg /media/KEYS/GnuPG
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 복사한 키 확인</span>
+</span></span><span style="display:flex;"><span>ls -al /media/kkumtree/KEYS/GnuPG/*.gpg
+</span></span></code></pre></div><p><img src="./images/backup.png" alt="backup"></p>
+<h2 id="2-restore">2. Restore</h2>
+<ul>
+<li>메인보드가 고장나서 패닉이 걸렸고, 일단 키부터 다른 디바이스에 복원해놓기로 했습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 복원 대상의 PC에 USB를 꽂고, 해당 디렉토리로 위치</span>
+</span></span><span style="display:flex;"><span>cd /media/kkumtree/KEYS/GnuPG
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># public 키 복원</span>
+</span></span><span style="display:flex;"><span>gpg --import public_mscho.gpg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># private 키 복원 (암호 입력 필요)</span>
+</span></span><span style="display:flex;"><span>gpg --import private_mscho.gpg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># trust(신뢰관계) 복원</span>
+</span></span><span style="display:flex;"><span>gpg --import-ownertrust trust_mscho.gpg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 복원된 키 확인</span>
+</span></span><span style="display:flex;"><span>gpg --list-secret-keys --keyid-format LONG
+</span></span></code></pre></div><h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://www.howtogeek.com/816878/how-to-back-up-and-restore-gpg-keys-on-linux/">How-To Geek</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/aws-eks-study-week5/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">AWS EKS 스터디 5주차 - Autoscaling</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
