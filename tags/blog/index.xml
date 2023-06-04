@@ -6,11 +6,11 @@
     <description>Recent content in blog on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sun, 04 Jun 2023 07:21:35 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 04 Jun 2023 09:15:14 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>gh-pages에 댓글 기능 추가하기(giscus/Hugo)</title>
       <link>https://blog.minseong.xyz/post/how-to-add-comment-section-in-gh-pages/</link>
-      <pubDate>Sun, 04 Jun 2023 07:21:35 +0900</pubDate>
+      <pubDate>Sun, 04 Jun 2023 09:15:14 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/post/how-to-add-comment-section-in-gh-pages/</guid>
       <description>요약 앞으로 가감없는 피드백 환영합니다. https://github.com/kkumtree/blog.minseong.xyz/commit/e17822e72e8d357dcdbda1025c5372161a7b93ff
