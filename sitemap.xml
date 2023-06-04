@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/blog/</loc>
+    <lastmod>2023-06-04T07:21:35+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/disqus/</loc>
+    <lastmod>2023-06-04T07:21:35+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/gh-pages/</loc>
+    <lastmod>2023-06-04T07:21:35+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/how-to-add-comment-section-in-gh-pages/</loc>
+    <lastmod>2023-06-04T07:21:35+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/giscus/</loc>
+    <lastmod>2023-06-04T07:21:35+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/hugo/</loc>
+    <lastmod>2023-06-04T07:21:35+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2023-06-04T07:21:35+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2023-06-04T07:21:35+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2023-06-04T07:21:35+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/aws/</loc>
     <lastmod>2023-06-04T06:56:52+09:00</lastmod>
   </url><url>
@@ -17,16 +44,7 @@
     <loc>https://blog.minseong.xyz/tags/irsa/</loc>
     <lastmod>2023-06-04T06:56:52+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2023-06-04T06:56:52+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2023-06-04T06:56:52+09:00</lastmod>
-  </url><url>
     <loc>https://blog.minseong.xyz/tags/security/</loc>
-    <lastmod>2023-06-04T06:56:52+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2023-06-04T06:56:52+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/backup/</loc>
