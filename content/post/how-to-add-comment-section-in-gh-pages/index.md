@@ -1,5 +1,5 @@
 ---
-date: 2023-06-04T07:21:35+09:00
+date: 2023-06-04T09:15:14+09:00
 title: "gh-pages에 댓글 기능 추가하기(giscus/Hugo)"
 tags:
  - gh-pages
