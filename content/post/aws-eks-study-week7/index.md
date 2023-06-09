@@ -48,7 +48,6 @@ echo $CERT_ARN
 - 순서: ACK 컨트롤러 설치 -> IRSA 설정 -> AWS 리소스 컨트롤  
   - 같은 패턴으로 이루어져있는데, Cloudformation을 쓰다보니 중간중간 대기 시간 발생
 - (23/05/29) GA: 17개 서비스, Preview: 10개 서비스
-- 진행하셨던 가시다님도, 본인이 실습하면서 봐도, 뭔가 신뢰있게 쓰기에는 살짝 부족하다고 생각하였음
 
 ### 2-1. S3
 
@@ -104,6 +103,10 @@ kubectl -n ack-system rollout restart deploy ack-$SERVICE-controller-$SERVICE-ch
 # IRSA 적용으로 Env, projected Volume 추가 확인
 kubectl describe pod -n ack-system -l k8s-app=$SERVICE-chart
 ```
+
+![ISRA with override](./images/ISRA-with-override.png)
+
+![check helm chart after applying IRSA](./images/check-helm-chart-after-applying-IRSA.png)
 
 - [리소스 조작] S3 버킷 생성, 업데이트, 삭제  
   - 새로운 쉘로 모니터링 준비: `watch -d aws s3 ls`
@@ -164,6 +167,8 @@ kubectl delete -f bucket.yaml
 kubectl get bucket/$BUCKET_NAME
 aws s3 ls | grep $BUCKET_NAME
 ```
+
+![applying s3 bucket manifest](./images/applying-s3-bucket-manifest.png)
 
 - [ACK S3 Controller 삭제] helm -> CRD -> IRSA
 
@@ -280,6 +285,12 @@ aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPCID" --query 'Subnets[
 kubectl delete -f subnet.yaml && kubectl delete -f vpc.yaml
 ```
 
+![creating VPC](images/creating-vpc.png)
+
+![creating subnet](images/creating-subnet.png)
+
+![subnet mapped with VPC](images/subnet-mapped-with-vpc.png)
+
 ### 2-4. VPC Workflow 실습  
 
 - 2-3의 ACK 및 IRSA는 그대로 활용
@@ -292,6 +303,12 @@ kubectl delete -f subnet.yaml && kubectl delete -f vpc.yaml
   - NATGW 생성 완료 후, 아래 요소들이 순차적으로 확인됨 (약 5분 소요)  
     - tutorial-private-route-table-az1: 라우팅 테이블 ID
     - tutorial-private-subnet1: 서브넷 ID
+
+![route table and subnet created consequently in private VPC 1](images/route-table-and-subnet-created-consequently-in-private-vpc-1.png)
+
+![route table and subnet created consequently in private VPC 2](images/route-table-and-subnet-created-consequently-in-private-vpc-2.png)
+
+![route table and subnet created consequently in private VPC 3](images/route-table-and-subnet-created-consequently-in-private-vpc-3.png)
 
 ```bash
 cat <<EOF > vpc-workflow.yaml
@@ -475,6 +492,8 @@ kubectl describe instance
 aws ec2 describe-instances --query "Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --filters Name=instance-state-name,Values=running --output table
 ```
 
+![Instance IP in Public IP](./images/instance-ip-in-public-ip.png)
+
 - Public Subnet의 인스턴스에 접속
   - ping test 실패해야 정상
 
@@ -484,6 +503,8 @@ ssh -i ${사용할 keypair} ec2-user@${앞에서 확인한 Public IP}
 
 ping -c 2 8.8.8.8
 ```
+
+![ping test failure without engress rule](./images/ping-test-failure-without-engress-rule.png)
 
 - 보안 그룹 정책 수정: egress 규칙 추가
 
@@ -518,17 +539,21 @@ kubectl apply -f modify-sg.yaml
 kubectl logs -n $ACK_SYSTEM_NAMESPACE -l k8s-app=ec2-chart -f
 ```
 
+![logs about addition of egress rule to security group](./images/logs-about-addition-of-egress-rule-to-security-group.png)
+
 - 다시, Public Subnet상 인스턴스 접속 상태에서, ping test: 정상  
-  - curl로 출력되는 IP는 NATGW 주소  
+  - curl로 출력되는 IP는 인스턴스 Public IP 주소  
 
 ```bash
 ## Client PC
 # ssh -i ${사용할 keypair} ec2-user@${앞에서 확인한 Public IP}
 
 ping -c 2 8.8.8.8
-curl ipinfo.io/ip ; echo # NATGW(공인IP)
+curl ipinfo.io/ip ; echo # 인스턴스 Public UP(공인IP)
 exit
 ```
+
+![ping test success with egress rule](./images/ping-test-success-with-egress-rule.png)
 
 - Private Subnet에 인스턴스 생성
   - 2-3 실습에서도 봤듯이 Private Subnet ID 확인까지 시간 소요
@@ -566,6 +591,8 @@ kubectl describe instance
 aws ec2 describe-instances --query "Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --filters Name=instance-state-name,Values=running --output table
 ```
 
+![launch instance in Private Subnet](./images/launch-instance-in-private-subnet.png)
+
 - Public Subnet 인스턴스에 SSH 터널링 설정
   - 터널링이므로, 접속 이후 그대로 두기
   - 실습에서는 임의 포트를 `9999`로 설정
@@ -586,6 +613,8 @@ ping -c 2 8.8.8.8
 curl ipinfo.io/ip ; echo # NATGW IP
 exit
 ```
+
+![connection success in Private instance and check NATGW IP](./images/connection-success-in-private-instance-and-check-natgw-ip.png)
 
 - 실습 후 리소스 삭제  
   - VPC 관련 모든 리소스 삭제 시, 다소 시간이 소요
