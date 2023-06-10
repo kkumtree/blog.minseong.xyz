@@ -62,24 +62,6 @@
     </item>
     
     <item>
-      <title>tag1</title>
-      <link>https://blog.minseong.xyz/tags/tag1/</link>
-      <pubDate>Sat, 10 Jun 2023 15:13:19 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/tag1/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>tag2</title>
-      <link>https://blog.minseong.xyz/tags/tag2/</link>
-      <pubDate>Sat, 10 Jun 2023 15:13:19 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/tag2/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>blog</title>
       <link>https://blog.minseong.xyz/tags/blog/</link>
       <pubDate>Sun, 04 Jun 2023 09:15:14 +0900</pubDate>
@@ -319,6 +301,24 @@
       <pubDate>Fri, 17 Mar 2023 11:14:50 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/ubuntupro/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tag1</title>
+      <link>https://blog.minseong.xyz/tags/tag1/</link>
+      <pubDate>Wed, 08 Mar 2023 20:43:43 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/tag1/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tag2</title>
+      <link>https://blog.minseong.xyz/tags/tag2/</link>
+      <pubDate>Wed, 08 Mar 2023 20:43:43 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/tag2/</guid>
       <description></description>
     </item>
     

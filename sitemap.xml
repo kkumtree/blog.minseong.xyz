@@ -29,16 +29,7 @@
     <loc>https://blog.minseong.xyz/post/</loc>
     <lastmod>2023-06-10T15:13:19+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/tags/tag1/</loc>
-    <lastmod>2023-06-10T15:13:19+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/tag2/</loc>
-    <lastmod>2023-06-10T15:13:19+09:00</lastmod>
-  </url><url>
     <loc>https://blog.minseong.xyz/tags/</loc>
-    <lastmod>2023-06-10T15:13:19+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/date/</loc>
     <lastmod>2023-06-10T15:13:19+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/blog/</loc>
@@ -156,6 +147,12 @@
     <lastmod>2023-03-17T11:14:50+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/making-dockerfile-for-node/</loc>
+    <lastmod>2023-03-08T20:43:43+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/tag1/</loc>
+    <lastmod>2023-03-08T20:43:43+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/tag2/</loc>
     <lastmod>2023-03-08T20:43:43+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/finops/</loc>

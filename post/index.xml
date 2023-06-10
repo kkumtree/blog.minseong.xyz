@@ -22,15 +22,6 @@ curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S
     </item>
     
     <item>
-      <title>제목</title>
-      <link>https://blog.minseong.xyz/post/date/</link>
-      <pubDate>Sat, 10 Jun 2023 15:13:19 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/post/date/</guid>
-      <description>Contents here&amp;hellip;</description>
-    </item>
-    
-    <item>
       <title>gh-pages에 댓글 기능 추가하기(giscus/Hugo)</title>
       <link>https://blog.minseong.xyz/post/how-to-add-comment-section-in-gh-pages/</link>
       <pubDate>Sun, 04 Jun 2023 09:15:14 +0900</pubDate>
