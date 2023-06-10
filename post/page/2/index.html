@@ -88,6 +88,42 @@
 
             
             <div class="p-list__item">
+              <a href="/post/aws-eks-study-week5/"><h2>AWS EKS 스터디 5주차 - Autoscaling</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-22T19:23:37&#43;09:00</u></p>
+              <p>이번 주차는 오토스케일링을 메인으로 하여, 수평/수직 프로비저닝을 학습해보았습니다.
+마지막에는 고성능 오토스케일러인 Karpenter를 별도로 실습해보았습니다. 특히..
+HPA custom metrics(사용자 정의 메트릭) 적용
+YAML 설정값을 CPU로 맞춘 것을 잊고, 프로비저닝을 잘못 예측한 것도 함께 공유합니다.
+AutoScaling
+HPA: Horizontal Pod Autoscaler VPA: Vertical Pod Autoscaler CA: Cluster Autoscaler 각 CSP 의존적, 워커 노드 레벨에서의 오토스케일링 1. 실습 환경 배포 4주차의 초기 배포 내용에 p8s 및 Grafana를 추가하여 배포 verticalPodAutoscaler 활성화 추천 대시보드: 15757, 17900, 15172 curl -O https://s3.</p>
+            </div>
+            
+            <div class="p-list__item">
+              <a href="/post/aws-eks-study-week4/"><h2>AWS EKS 스터디 4주차 - Observability</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-21T06:13:52&#43;09:00</u></p>
+              <p>이번 주차에는 Observability에 대해 스터디가 진행되었습니다.
+자원 모니터링 툴들의 적용 및 사용이 중심입니다.
+그나저나 k8s 1.26에서 metrics의 일부 명칭이 바뀌는 걸 보고 식겁했습니다.
+(etcd_db_total_size_bytes 대신, apiserver_storage_db_total_size_in_bytes 으로 변경)
+또한 kubecost의 경우, cloudformation 스택 제거 후에도 볼륨 데이터가 남아있어서 별도로 삭제해야 했습니다.
+1. 실습환경 배포 NAT게이트웨이, EBS addon, IAM role, ISRA for LB/EFS, PreCommand 포함 노드: t3.xlarge t3a.xlarge(AMD)는 서울 리전 b AZ(ap-northeast-2b)에서 미지원 더 많은 값들이 입력되어서, 생성 완료까지 더 많은 시간이 소요 (약 20여분 이내) curl -O https://s3.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/modify-bastion-cidr-with-aws-cli/"><h2>aws-cli를 이용한 bastion CIDR 변경</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -138,44 +174,6 @@ NodeAffinity를 이용한 라벨링 AWS EBS controller의 경우, AWS managed po
 1. cloudformation을 활용한 EKS 원클릭 구성 학습을 위해, 이번에도 가시다님이 준비해주신 원클릭 배포 yaml을 활용하여 배포.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/aws-eks-study-week1/"><h2>AWS EKS 스터디 1주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-04-30T03:00:15&#43;09:00</u></p>
-              <p>최근 CloudNet@에서 진행하고 있는
-AWS EKS Workshop Study(이하, AEWS)에 참여하게 되었습니다.
-k8s가 워낙 인기가 많기도 하지만, 지난 kOps 스터디를 통해 관리요소가 참 많은 것을 느꼈었고,
-좀더 수월하게 이해를 해보고자 AWS 서비스인
-EKS(Elastic Kubernetes Service)를 이번 기회에 살펴보기로 했습니다.
-EKS 사용에 있어 고려사항 EKS는 관리형 서비스(managed service)이기에 아래와 같은 장점이 있습니다.
-클러스터링을 위한 Control Plane(일명, 마스터 노드)을 AWS에서 관리해줍니다. 워커노드는 사용자가 AMI를 구성하여 이를 사용 AWS에서 제공하는 Fargate로 VM을 할당하여 사용 kOps와도 유사하지만, 다른 AWS 서비스와의 연동이 용이합니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/fix-error-526-in-cloudflare-with-github-page/"><h2>GitHub Pages가 고장났나? (Cloudflare 526 Error)</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-28T18:29:11&#43;09:00</u></p>
-              <p>`gh-pages &amp; Cloudflare DNS` 를 쓰고자 한다면, Cloudflare에서 SSL/TLS 정책을 `Full (Strict)` 대신 `Full`로 하는 쪽이 관리 요소를 줄일 수 있다. Invalid SSL certificate 그간 업무 인계도 있었고, 개인 일정을 소화하면서 블로그 들어갈 일이 없었다.
-그러다 지난 주말에 있었던 정기총회에서 만난 분으로부터
-블로그에 안 들어가진다는 말을 듣고, 그제서야 인지하게 되었다.
-대체 언제부터 이랬던걸까?
-GitHub Pages에서 블로그 관리를 하고있었고,
-Cloudflare로 Domain Registrar를 이전한 후에
-블로그를 올렸기 때문에 한동안 신경을 안 써도 잘 썼는데.</p>
-            </div>
-            
 <ol class="p-pagination">
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous" 
@@ -199,6 +197,9 @@ Cloudflare로 Domain Registrar를 이전한 후에
     <a class="p-pagination__link " href="/post/page/3/">3</a>
   </li>
   <li class="p-pagination__item">
+    <a class="p-pagination__link " href="/post/page/4/">4</a>
+  </li>
+  <li class="p-pagination__item">
     <a class="p-pagination__link--next "
         href="/post/page/3/" title="Next page">
         <i class="p-icon--contextual-menu">Next page</i>
@@ -206,7 +207,7 @@ Cloudflare로 Domain Registrar를 이전한 후에
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next"
-        href="/post/page/3/" title="Last page">
+        href="/post/page/4/" title="Last page">
         <i class="p-icon--contextual-menu">Next page</i>
     </a>
   </li>

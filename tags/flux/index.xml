@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>flux on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/flux/</link>
+    <description>Recent content in flux on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Sat, 10 Jun 2023 15:13:19 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/flux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AWS EKS 스터디 7주차 - Automation</title>
+      <link>https://blog.minseong.xyz/post/aws-eks-study-week7/</link>
+      <pubDate>Sat, 10 Jun 2023 15:13:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/aws-eks-study-week7/</guid>
+      <description>EKS 스터디도 마지막 7주차를 맞이했습니다.
+이번에는 AWS Controller for k8s(ACK)와 flux를 가볍게 실습해보고
+자동화에 대해 맛보기를 해보았습니다.
+앞서 학습해본 IRSA 개념 외에도 CRD(CustomResourceDefinition)을 활용합니다.
+1. 실습환경 배포 실습을 위한 YAML파일이 변경된거 말고는 6주차와 유사합니다.
+curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/eks-oneclick6.yaml # 이하 중략 # CERT_ARN(ACM)의 경우에는 /etc/profile에 환경변수 저장을 안해둬서 # 세션이 만료되면, 다시 재설정 필요 CERT_ARN=`aws acm list-certificates --query &amp;#39;CertificateSummaryList[].CertificateArn[]&amp;#39; --output text` echo $CERT_ARN 2. ACK(AWS Controller for k8s) 웹콘솔에 접근하지 않고도, AWS 서비스 리소스를 직접 k8s에서 정의 및 사용가능 순서: ACK 컨트롤러 설치 -&amp;gt; IRSA 설정 -&amp;gt; AWS 리소스 컨트롤 같은 패턴으로 이루어져있는데, Cloudformation을 쓰다보니 중간중간 대기 시간 발생 (23/05/29) GA: 17개 서비스, Preview: 10개 서비스 2-1.</description>
+    </item>
+    
+  </channel>
+</rss>

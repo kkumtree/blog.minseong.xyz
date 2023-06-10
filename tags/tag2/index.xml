@@ -6,7 +6,16 @@
     <description>Recent content in tag2 on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Wed, 08 Mar 2023 20:43:43 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/tag2/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 10 Jun 2023 15:13:19 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/tag2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>제목</title>
+      <link>https://blog.minseong.xyz/post/date/</link>
+      <pubDate>Sat, 10 Jun 2023 15:13:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/date/</guid>
+      <description>Contents here&amp;hellip;</description>
+    </item>
+    
     <item>
       <title>Node.js를 위한 Dockerfile 만들기</title>
       <link>https://blog.minseong.xyz/post/making-dockerfile-for-node/</link>
