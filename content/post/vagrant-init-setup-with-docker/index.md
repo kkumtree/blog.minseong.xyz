@@ -31,6 +31,8 @@ sudo apt-get install vagrant
 
 ![enable_svm_for_vbox](./images/enable_svm_for_vbox.png)
 
+![enable_svm_in_amd_bios](./images/enable_svm_in_amd_bios.jpg)
+
 - virtualbox-ext-pack(선택): USB 2.0/3.0 지원 등의 확장 기능을 사용하려면 설치  
   - 개인용도의 제한적 라이선스(동의를 위한 대화창 확인)  
   - 확장기능을 쓸 필요가 없기 때문에 설치하지 아니함  
