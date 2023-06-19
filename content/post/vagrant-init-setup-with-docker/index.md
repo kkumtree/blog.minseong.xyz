@@ -12,10 +12,10 @@ authors:
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.png # 커버 이미지 URL
-draft: true # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
-Ubuntu 23.04 (Host OS)에서 간단하게 Vagrant 사용을 해보고, VBox가 아닌 Docker를 Provider로 지정하여 사용해본다. 
+Ubuntu 23.04 (Host OS)에서 간단하게 Vagrant 사용을 해보고, VBox가 아닌 Docker를 Provider로 지정하여 사용해본다.
 
 ## Vagrant 설치
 
@@ -26,9 +26,14 @@ sudo apt-get install vagrant
 ```
 
 ## VBox 설치(사용 시)
-  - virtualbox-ext-pack(선택): USB 2.0/3.0 지원 등의 확장 기능을 사용하려면 설치  
-    - 개인용도의 제한적 라이선스(동의를 위한 대화창 확인)  
-    - 확장기능을 쓸 필요가 없기 때문에 설치하지 아니함  
+
+- CPU 가상화 기술 활성화 필요(BIOS단, AMD의 경우는 SVM, Intel의 경우는 VT-x)
+
+![enable_svm_for_vbox](./images/enable_svm_for_vbox.png)
+
+- virtualbox-ext-pack(선택): USB 2.0/3.0 지원 등의 확장 기능을 사용하려면 설치  
+  - 개인용도의 제한적 라이선스(동의를 위한 대화창 확인)  
+  - 확장기능을 쓸 필요가 없기 때문에 설치하지 아니함  
 
 ```bash
 sudo apt-get install virtualbox
@@ -96,6 +101,9 @@ end
 ### Docker 사용 시
 
 - Vagrantfile과 Dockerfile은 같은 폴더에 있음을 전제, 아닐 경우 d.build_dir 파라미터 수정.
+  - 아래처럼 다른 폴더를 지정하여 사용 가능
+
+![vagrant_dockerfile_path](./images/vagrant_with_exact_provider.png)
 
 - Snippet:  
   - [Gist-Vagrantfile](https://gist.github.com/kkumtree/317c450d38319cdd92f9213602c4465d)  
@@ -109,8 +117,6 @@ Vagrant.configure("2") do |config|
     ubuntu.vm.provider "docker" do |d|
       d.build_dir = "."
     end
-
-    # IF DO NOT NEET SYNCED FOLDER
 
     # ubuntu.vm.provision "shell", inline: <<-SCRIPT
     #   sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
@@ -157,6 +163,14 @@ CMD ["/usr/sbin/sshd", "-D"]
 - VBox 사용 시, private_network 값이 라우터 등에서 설정한 서브넷마스크와 충돌할 수 있음  
   - 기존 VBox Destroy 이후, 서브넷마스크에 맞게 IP 재 지정 후 실행.
 
+![set_proper_ip_address_in_allowed_range](./images/set_proper_ip_address_in_allowed_rannge.png)
+
+- Provider 지정 실행
+  - (Default) Win: VBox, Linux: Libvirt
+  - Docker의 경우는 provider 지정하여 실행하거나, 따로 기본값으로 설정해두어야함.
+
+![vagrant_with_exact_provider](./images/vagrant_with_exact_provider.png)
+  
 ```bash
 # VBox 사용시
 vagrant up
@@ -176,4 +190,3 @@ ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null kkumtree
 # sol.2-2) ssh 명령어 사용(Docker)
 ssh 
 ```
-
