@@ -163,7 +163,7 @@ CMD ["/usr/sbin/sshd", "-D"]
 - VBox 사용 시, private_network 값이 라우터 등에서 설정한 서브넷마스크와 충돌할 수 있음  
   - 기존 VBox Destroy 이후, 서브넷마스크에 맞게 IP 재 지정 후 실행.
 
-![set_proper_ip_address_in_allowed_range](./images/set_proper_ip_address_in_allowed_rannge.png)
+![set_proper_ip_address_in_allowed_range](./images/set_proper_ip_address_in_allowed_range.png)
 
 - Provider 지정 실행
   - (Default) Win: VBox, Linux: Libvirt
