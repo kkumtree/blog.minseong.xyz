@@ -6,17 +6,17 @@
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>Posts | kkumtree</title>
+    <title>Vagrant | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="Posts" />
+    <meta property="og:title" content="Vagrant" />
 
     
-    <meta property="og:image" content='https://blog.minseong.xyz/post/' />
-    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/' />
+    <meta property="og:image" content='https://blog.minseong.xyz/tags/vagrant/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/vagrant/' />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content='https://blog.minseong.xyz/post/' />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/vagrant/' />
 
     
     <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.8c1fb07f2dee90a6523f7317a7d023e3c1b14bd4706bff237c94e366d59facf9.css">
@@ -74,7 +74,7 @@
   <section class="p-strip--suru main-slide main-strip">
       <div class="row">
         <div class="col-8 left-section">
-          <h1>Posts</h1>
+          <h1>Vagrant</h1>
           <p></p>
         </div>
       </div>
@@ -88,7 +88,7 @@
 
             
             <div class="p-list__item">
-              <a href="/post/basic-aws-troubleshooting/"><h2>AWS 트러블 슈팅 - 7주 간의 k8s 실무 스터디를 마치며</h2></a>
+              <a href="/post/vagrant-init-setup-with-docker/"><h2>Vagrant 설치 및 Provider 지정</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
                 <li class="p-inline-list__item">
@@ -96,66 +96,11 @@
                 </li>
                 
               </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-02-25T22:07:23&#43;09:00</u></p>
-              <p>최근 CloudNet@에서 진행하고 있는 Production Kubernetes Online Study(이하, PKOS)도 마지막 주차가 끝났습니다.
-남은 계획은 4월부터 시작되는 휴식기간(a.k.a. 계약만료 후)중 복습 겸, 포스팅을 해보는 것입니다.
-오늘은 아래와 같이 실패를 거듭하여 추가로 알게된 소소한 트러블슈팅을 정리해보려고 합니다.
-(물론, 새벽에 겨우겨우 주차별 과제 제출하고 기절하는 바람에, 맛점하다 깨닫고 소스라치게 휴대폰으로 수동 삭제한게 비용의 주 요인이긴 하네요;)
-불필요한 Try &amp; Fail을 줄이고, 즐거운 k8s 학습되시기 바랍니다.
-1. AWS 계정 잠금 해제 상황 처음 1주차 안내가 끝나고 Route53 Hostname을 구매하려고 하니, 자꾸 결제가 실패하는 문제가 발생했습니다.</p>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-19T11:12:47&#43;09:00</u></p>
+              <p>Ubuntu 23.04 (Host OS)에서 간단하게 Vagrant 사용을 해보고, VBox가 아닌 Docker를 Provider로 지정하여 사용해본다.
+Vagrant 설치 Ubuntu 22.04 LTS 및 23.10 기준, APT repo를 통한 설치 지원 sudo apt-get install vagrant VBox 설치(사용 시) CPU 가상화 기술 활성화 필요(BIOS단, AMD의 경우는 SVM, Intel의 경우는 VT-x) virtualbox-ext-pack(선택): USB 2.0/3.0 지원 등의 확장 기능을 사용하려면 설치 개인용도의 제한적 라이선스(동의를 위한 대화창 확인) 확장기능을 쓸 필요가 없기 때문에 설치하지 아니함 sudo apt-get install virtualbox # sudo apt-get install virtualbox-ext-pack Docker 설치(사용 시) Ubuntu 기준, 아래 3가지 설치 방법이 있으므로, 친숙한 모드로 진행 sudo snap install docker # 최신버전 sudo apt-get install docker.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/traefik-with-minikube-in-m1/"><h2>Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-02-05T04:54:06&#43;09:00</u></p>
-              <p>주변으로부터 피드백을 받은 내용이 있어 새로운 글로 보완예정입니다. - colima는 containerd처럼 cri가 아닌, Docker engine과 containerd 사이의 물건으로 추정됩니다. - 도커 엔진은 현재 containerd를 통해 프로세스를 관리. - colima도 docker shim 구조는 탈피했을 거라고 추측 중. - 도커 엔진과 containerd 사이의 컨테이너 엔진(관리도구?)로 보임 - colima 시작 시, 특정 런타임을 선택할 수 있습니다. 문서를 잘 읽어봅시다. `colima start --runtime containerd` - k8s를 위한 colima 시작 명령어는 별도로 있습니다. colima github를 참고해주세요.</p>
-            </div>
-            
-<ol class="p-pagination">
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--previous" 
-        href="/post/" title="Previous page">
-        <i class="p-icon--contextual-menu">First page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--previous " 
-        href="/post/page/3/" title="Previous page">
-        <i class="p-icon--contextual-menu">Previous page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/">1</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/2/">2</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/3/">3</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link  is-active" href="/post/page/4/">4</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--next  is-disabled"
-         title="Next page">
-        <i class="p-icon--contextual-menu">Next page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--next"
-        href="/post/page/4/" title="Last page">
-        <i class="p-icon--contextual-menu">Next page</i>
-    </a>
-  </li>
-</ol>
 </div>
         </div>
       </div>

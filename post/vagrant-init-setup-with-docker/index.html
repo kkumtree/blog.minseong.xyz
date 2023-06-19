@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Vagrant 설치 및 Provider 지정 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Vagrant 설치 및 Provider 지정" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/vagrant-init-setup-with-docker/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/vagrant-init-setup-with-docker/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/vagrant-init-setup-with-docker/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.8c1fb07f2dee90a6523f7317a7d023e3c1b14bd4706bff237c94e366d59facf9.css">
+</head><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Vagrant 설치 및 Provider 지정</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-19T11:12:47&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/vagrant" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">Vagrant</span>
+              </div>
+            </a>
+            
+            <a href="/tags/bdia" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">BDIA</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>Ubuntu 23.04 (Host OS)에서 간단하게 Vagrant 사용을 해보고, VBox가 아닌 Docker를 Provider로 지정하여 사용해본다.</p>
+<h2 id="vagrant-설치">Vagrant 설치</h2>
+<ul>
+<li>Ubuntu 22.04 LTS 및 23.10 기준, APT repo를 통한 설치 지원</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install vagrant
+</span></span></code></pre></div><h2 id="vbox-설치사용-시">VBox 설치(사용 시)</h2>
+<ul>
+<li>CPU 가상화 기술 활성화 필요(BIOS단, AMD의 경우는 SVM, Intel의 경우는 VT-x)</li>
+</ul>
+<p><img src="./images/enable_svm_for_vbox.png" alt="enable_svm_for_vbox"></p>
+<ul>
+<li>virtualbox-ext-pack(선택): USB 2.0/3.0 지원 등의 확장 기능을 사용하려면 설치
+<ul>
+<li>개인용도의 제한적 라이선스(동의를 위한 대화창 확인)</li>
+<li>확장기능을 쓸 필요가 없기 때문에 설치하지 아니함</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install virtualbox
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># sudo apt-get install virtualbox-ext-pack</span>
+</span></span></code></pre></div><h2 id="docker-설치사용-시">Docker 설치(사용 시)</h2>
+<ul>
+<li>Ubuntu 기준, 아래 3가지 설치 방법이 있으므로, 친숙한 모드로 진행</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo snap install docker <span style="color:#75715e"># 최신버전</span>
+</span></span><span style="display:flex;"><span>sudo apt-get install docker.io
+</span></span><span style="display:flex;"><span>sudo apt-get install podman-docker
+</span></span></code></pre></div><ul>
+<li>Docker 권한 부여: 라이브 서비스 시 권한 유의 <a href="https://docs.docker.com/engine/security/#docker-daemon-attack-surface">(Docker Docs)</a>
+<ul>
+<li>Docker 그룹에 현재 사용자 추가</li>
+<li>Docker 그룹에 속한 사용자는 sudo 없이도 Docker 사용 가능</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo addgroup --system docker
+</span></span><span style="display:flex;"><span>sudo adduser $USER docker
+</span></span><span style="display:flex;"><span>newgrp docker
+</span></span></code></pre></div><ul>
+<li>(참고) Docker 공식 Docs에 서술된 Docker Engine 설치 방법
+<ul>
+<li>Docker Docs: <a href="https://docs.docker.com/engine/install/ubuntu/">Install Docker Engine on Ubuntu</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="vagrantfile-생성">Vagrantfile 생성</h2>
+<h3 id="vbox-사용-시">VBox 사용 시</h3>
+<ul>
+<li>Snippet: <a href="https://gist.github.com/kkumtree/74714c87d6b792cb9e3ff4ea8b281b26">Gist</a>
+<ul>
+<li>CPU: 1Core / RAM: 1024MB</li>
+</ul>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-Vagrantfile" data-lang="Vagrantfile"># -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(&#34;2&#34;) do |config|
+  config.vm.box = &#34;ubuntu/focal64&#34;
+
+  config.vm.define &#34;ubuntu&#34; do |ubuntu|
+    ubuntu.vm.hostname = &#34;kkumtree-server&#34;
+    ubuntu.vm.provider &#34;virtualbox&#34; do |vb|
+      vb.name = &#34;ubuntu-server&#34;
+      vb.cpus = 1
+      vb.memory = 1024
+    end
+    
+    ubuntu.vm.network &#34;private_network&#34;, ip: &#34;192.168.56.99&#34;
+
+    ubuntu.vm.provision &#34;shell&#34;, inline: &lt;&lt;-SCRIPT
+      sudo sed -i &#39;s/PasswordAuthentication no/PasswordAuthentication yes/g&#39; /etc/ssh/sshd_config
+      sudo useradd kkumtree -m -s /bin/bash
+      sudo usermod -a -G sudo kkumtree
+      echo kkumtree:kkumtree | sudo chpasswd
+      sudo systemctl restart sshd
+    SCRIPT
+  end
+end
+</code></pre><h3 id="docker-사용-시">Docker 사용 시</h3>
+<ul>
+<li>Vagrantfile과 Dockerfile은 같은 폴더에 있음을 전제, 아닐 경우 d.build_dir 파라미터 수정.
+<ul>
+<li>아래처럼 다른 폴더를 지정하여 사용 가능</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/vagrant_with_exact_provider.png" alt="vagrant_dockerfile_path"></p>
+<ul>
+<li>
+<p>Snippet:</p>
+<ul>
+<li><a href="https://gist.github.com/kkumtree/317c450d38319cdd92f9213602c4465d">Gist-Vagrantfile</a></li>
+<li><a href="https://gist.github.com/kkumtree/40c2c9925035190efc6f8cb4be55a4c3">Gist-Dockerfile</a></li>
+</ul>
+</li>
+<li>
+<p>Vagrant PUB key: <a href="https://github.com/hashicorp/vagrant/blob/main/keys/vagrant.pub">Github</a></p>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-Vagrantfile" data-lang="Vagrantfile">Vagrant.configure(&#34;2&#34;) do |config|
+  config.vm.define &#34;ubuntu&#34; do |ubuntu|
+    ubuntu.vm.provider &#34;docker&#34; do |d|
+      d.build_dir = &#34;.&#34;
+    end
+
+    # ubuntu.vm.provision &#34;shell&#34;, inline: &lt;&lt;-SCRIPT
+    #   sudo sed -i &#39;s/PasswordAuthentication no/PasswordAuthentication yes/g&#39; /etc/ssh/sshd_config
+    #   sudo useradd kkumtree -m -s /bin/bash
+    #   sudo usermod -a -G sudo kkumtree
+    #   echo kkumtree:kkumtree | sudo chpasswd
+    #   sudo systemctl restart sshd
+    # SCRIPT
+  end
+
+  config.vm.synced_folder &#34;.&#34;, &#34;/vagrant&#34;, disabled: true
+end
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Dockerfile" data-lang="Dockerfile"><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> public.ecr.aws/ubuntu/ubuntu:20.04_stable</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apt-get update -y<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apt-get install -y --no-install-recommends ssh sudo<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> useradd --create-home -s /bin/bash vagrant<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> echo -n <span style="color:#e6db74">&#39;vagrant:vagrant&#39;</span> | chpasswd<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> echo <span style="color:#e6db74">&#39;vagrant ALL = NOPASSWD: ALL&#39;</span> &gt; /etc/sudoers.d/vagrant<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> chmod <span style="color:#ae81ff">440</span> /etc/sudoers.d/vagrant<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> mkdir -p /home/vagrant/.ssh<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> chmod <span style="color:#ae81ff">700</span> /home/vagrant/.ssh<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> echo <span style="color:#e6db74">&#34;ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ==&#34;</span> &gt; /home/vagrant/.ssh/authorized_keys<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> chmod <span style="color:#ae81ff">600</span> /home/vagrant/.ssh/authorized_keys<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> chown -R vagrant:vagrant /home/vagrant/.ssh<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> sed -i -e <span style="color:#e6db74">&#39;s/Defaults.*requiretty/#&amp;/&#39;</span> /etc/sudoers<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> sed -i -e <span style="color:#e6db74">&#39;s/\(UsePAM \)yes/\1 no/&#39;</span> /etc/ssh/sshd_config<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> mkdir /var/run/sshd<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apt-get -y install openssh-client<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">EXPOSE</span><span style="color:#e6db74"> 22</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;/usr/sbin/sshd&#34;</span>, <span style="color:#e6db74">&#34;-D&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h2 id="vagrant-실행">Vagrant 실행</h2>
+<ul>
+<li>VBox 사용 시, private_network 값이 라우터 등에서 설정한 서브넷마스크와 충돌할 수 있음
+<ul>
+<li>기존 VBox Destroy 이후, 서브넷마스크에 맞게 IP 재 지정 후 실행.</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/set_proper_ip_address_in_allowed_rannge.png" alt="set_proper_ip_address_in_allowed_range"></p>
+<ul>
+<li>Provider 지정 실행
+<ul>
+<li>(Default) Win: VBox, Linux: Libvirt</li>
+<li>Docker의 경우는 provider 지정하여 실행하거나, 따로 기본값으로 설정해두어야함.</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/vagrant_with_exact_provider.png" alt="vagrant_with_exact_provider"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># VBox 사용시</span>
+</span></span><span style="display:flex;"><span>vagrant up
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Docker 사용시</span>
+</span></span><span style="display:flex;"><span>vagrant up --provider<span style="color:#f92672">=</span>docker
+</span></span></code></pre></div><h2 id="vagrant-접속">Vagrant 접속</h2>
+<ul>
+<li>SSH 접속</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># sol.1) vagrant에서 지원</span>
+</span></span><span style="display:flex;"><span>vagrant ssh
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># sol.2-1) ssh 명령어 사용(VBox)</span>
+</span></span><span style="display:flex;"><span>ssh -p <span style="color:#ae81ff">2222</span> -o StrictHostKeyChecking<span style="color:#f92672">=</span>no -o UserKnownHostsFile<span style="color:#f92672">=</span>/dev/null kkumtree@localhost
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># sol.2-2) ssh 명령어 사용(Docker)</span>
+</span></span><span style="display:flex;"><span>ssh 
+</span></span></code></pre></div>
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/aws-eks-study-week7/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">AWS EKS 스터디 7주차 - Automation</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

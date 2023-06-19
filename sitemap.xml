@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/bdia/</loc>
+    <lastmod>2023-06-19T11:12:47+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2023-06-19T11:12:47+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2023-06-19T11:12:47+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2023-06-19T11:12:47+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/vagrant/</loc>
+    <lastmod>2023-06-19T11:12:47+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/vagrant-init-setup-with-docker/</loc>
+    <lastmod>2023-06-19T11:12:47+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/ack/</loc>
     <lastmod>2023-06-10T15:13:19+09:00</lastmod>
   </url><url>
@@ -21,15 +39,6 @@
     <lastmod>2023-06-10T15:13:19+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/flux/</loc>
-    <lastmod>2023-06-10T15:13:19+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2023-06-10T15:13:19+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2023-06-10T15:13:19+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2023-06-10T15:13:19+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/blog/</loc>
