@@ -108,7 +108,7 @@ end
 - Vagrantfile과 Dockerfile은 같은 폴더에 있음을 전제, 아닐 경우 d.build_dir 파라미터 수정.
   - 아래처럼 다른 폴더를 지정하여 사용 가능
 
-![vagrant_dockerfile_path](./images/vagrant_with_exact_provider.png)
+![vagrant_dockerfile_path](./images/example_dockerfile_in_other_folders.png)
 
 - Snippet:  
   - [Gist-Vagrantfile](https://gist.github.com/kkumtree/317c450d38319cdd92f9213602c4465d)  
