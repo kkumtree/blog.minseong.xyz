@@ -1,0 +1,33 @@
+<div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{.Site.Params.adsense.client}}"
+          crossorigin="anonymous"></script>
+      <!-- 포스트 하단 광고 -->
+      <ins class="adsbygoogle" style="display:block" data-ad-client="{{.Site.Params.adsense.client}}"
+          data-ad-slot="{{.Site.Params.adsense.adslot_footer}}" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  <!-- <div class="card-body" id="adfallback">
+      <p>광고 차단 소프트웨어를 사용하고 계신 것 같습니다. 혹시 글이 마음에 들었다면, 광고 차단을 해제해 주시거나 후원을 해 주시는 것은 어떤가요?</p>
+      <p>It seems like you're using ad block software, If you like the post, Would you like to disable that or donate
+          me a bit?</p>
+      <div class="card-actions justify-end">
+          <a href="https://minseong.xyz/donate">
+              <button class="btn btn-primary">후원하기 Donate</button>
+          </a>
+      </div>
+  </div> -->
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>

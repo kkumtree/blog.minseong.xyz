@@ -16,6 +16,10 @@ permalinks = [
   source_repo = "https://github.com/kkumtree/blog.minseong.xyz"
   defaultContentLanguage = "ko"
 
+[params.adsense]
+  client = "ca-pub-1254864146899485"
+  adslot_footer = "3556422150"
+
 [params.giscus]
   repo = "kkumtree/blog.minseong.xyz"
   repoId = "R_kgDOIv-sqA"
