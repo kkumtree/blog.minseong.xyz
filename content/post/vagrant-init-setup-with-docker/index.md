@@ -17,6 +17,9 @@ draft: false # 글 초안 여부
 
 Ubuntu 23.04 (Host OS)에서 간단하게 Vagrant 사용을 해보고, VBox가 아닌 Docker를 Provider로 지정하여 사용해본다.
 
+- WSL2 환경에서는 Vagrant가 의도한대로 작동하지 않으므로 유의: 별도의 설정 필요
+  - [Hashicorp Docs](https://developer.hashicorp.com/vagrant/docs/other/wsl)
+
 ## Vagrant 설치
 
 - Ubuntu 22.04 LTS 및 23.10 기준, APT repo를 통한 설치 지원
@@ -111,7 +114,8 @@ end
   - [Gist-Vagrantfile](https://gist.github.com/kkumtree/317c450d38319cdd92f9213602c4465d)  
   - [Gist-Dockerfile](https://gist.github.com/kkumtree/40c2c9925035190efc6f8cb4be55a4c3)
 
-- Vagrant PUB key: [Github](https://github.com/hashicorp/vagrant/blob/main/keys/vagrant.pub)
+- Vagrant PUB key 사용: [Github](https://github.com/hashicorp/vagrant/blob/main/keys/vagrant.pub)
+  - Vagrant에서 키를 인지하고, 키 교체 작업 진행
 
 ```Vagrantfile
 Vagrant.configure("2") do |config|
@@ -185,10 +189,13 @@ vagrant up --provider=docker
 - SSH 접속
 
 ```bash
-# sol.1) vagrant에서 지원
+# Docker) vagrant 지원 명령어 사용
 vagrant ssh
-# sol.2-1) ssh 명령어 사용(VBox)
+# VBox) ssh 명령어 사용
 ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null kkumtree@localhost
-# sol.2-2) ssh 명령어 사용(Docker)
-ssh 
 ```
+
+## Reference
+
+- [phoenixNAP](https://phoenixnap.com/kb/install-virtualbox-on-ubuntu)
+- [HashiCorp](https://developer.hashicorp.com/vagrant/docs/providers/docker/basics)
