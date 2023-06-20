@@ -14,7 +14,7 @@
       
       <guid>https://blog.minseong.xyz/post/vagrant-init-setup-with-docker/</guid>
       <description>Ubuntu 23.04 (Host OS)에서 간단하게 Vagrant 사용을 해보고, VBox가 아닌 Docker를 Provider로 지정하여 사용해본다.
-Vagrant 설치 Ubuntu 22.04 LTS 및 23.10 기준, APT repo를 통한 설치 지원 sudo apt-get install vagrant VBox 설치(사용 시) CPU 가상화 기술 활성화 필요(BIOS단, AMD의 경우는 SVM, Intel의 경우는 VT-x) virtualbox-ext-pack(선택): USB 2.0/3.0 지원 등의 확장 기능을 사용하려면 설치 개인용도의 제한적 라이선스(동의를 위한 대화창 확인) 확장기능을 쓸 필요가 없기 때문에 설치하지 아니함 sudo apt-get install virtualbox # sudo apt-get install virtualbox-ext-pack Docker 설치(사용 시) Ubuntu 기준, 아래 3가지 설치 방법이 있으므로, 친숙한 모드로 진행 sudo snap install docker # 최신버전 sudo apt-get install docker.</description>
+WSL2 환경에서는 Vagrant가 의도한대로 작동하지 않으므로 유의: 별도의 설정 필요 Hashicorp Docs Vagrant 설치 Ubuntu 22.04 LTS 및 23.10 기준, APT repo를 통한 설치 지원 sudo apt-get install vagrant VBox 설치(사용 시) CPU 가상화 기술 활성화 필요(BIOS단, AMD의 경우는 SVM, Intel의 경우는 VT-x) virtualbox-ext-pack(선택): USB 2.0/3.0 지원 등의 확장 기능을 사용하려면 설치 개인용도의 제한적 라이선스(동의를 위한 대화창 확인) 확장기능을 쓸 필요가 없기 때문에 설치하지 아니함 sudo apt-get install virtualbox # sudo apt-get install virtualbox-ext-pack Docker 설치(사용 시) Ubuntu 기준, 아래 3가지 설치 방법이 있으므로, 친숙한 모드로 진행 sudo snap install docker # 최신버전 sudo apt-get install docker.</description>
     </item>
     
     <item>

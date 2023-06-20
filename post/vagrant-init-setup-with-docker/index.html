@@ -105,6 +105,13 @@
   <section class="p-strip">
   <div class="row">
   <p>Ubuntu 23.04 (Host OS)에서 간단하게 Vagrant 사용을 해보고, VBox가 아닌 Docker를 Provider로 지정하여 사용해본다.</p>
+<ul>
+<li>WSL2 환경에서는 Vagrant가 의도한대로 작동하지 않으므로 유의: 별도의 설정 필요
+<ul>
+<li><a href="https://developer.hashicorp.com/vagrant/docs/other/wsl">Hashicorp Docs</a></li>
+</ul>
+</li>
+</ul>
 <h2 id="vagrant-설치">Vagrant 설치</h2>
 <ul>
 <li>Ubuntu 22.04 LTS 및 23.10 기준, APT repo를 통한 설치 지원</li>
@@ -203,7 +210,10 @@ end
 </ul>
 </li>
 <li>
-<p>Vagrant PUB key: <a href="https://github.com/hashicorp/vagrant/blob/main/keys/vagrant.pub">Github</a></p>
+<p>Vagrant PUB key 사용: <a href="https://github.com/hashicorp/vagrant/blob/main/keys/vagrant.pub">Github</a></p>
+<ul>
+<li>Vagrant에서 키를 인지하고, 키 교체 작업 진행</li>
+</ul>
 </li>
 </ul>
 <pre tabindex="0"><code class="language-Vagrantfile" data-lang="Vagrantfile">Vagrant.configure(&#34;2&#34;) do |config|
@@ -273,13 +283,16 @@ end
 <ul>
 <li>SSH 접속</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># sol.1) vagrant에서 지원</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Docker) vagrant 지원 명령어 사용</span>
 </span></span><span style="display:flex;"><span>vagrant ssh
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># sol.2-1) ssh 명령어 사용(VBox)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># VBox) ssh 명령어 사용</span>
 </span></span><span style="display:flex;"><span>ssh -p <span style="color:#ae81ff">2222</span> -o StrictHostKeyChecking<span style="color:#f92672">=</span>no -o UserKnownHostsFile<span style="color:#f92672">=</span>/dev/null kkumtree@localhost
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># sol.2-2) ssh 명령어 사용(Docker)</span>
-</span></span><span style="display:flex;"><span>ssh 
-</span></span></code></pre></div>
+</span></span></code></pre></div><h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://phoenixnap.com/kb/install-virtualbox-on-ubuntu">phoenixNAP</a></li>
+<li><a href="https://developer.hashicorp.com/vagrant/docs/providers/docker/basics">HashiCorp</a></li>
+</ul>
+
   </div>
   </section>
   <section class="p-strip">
