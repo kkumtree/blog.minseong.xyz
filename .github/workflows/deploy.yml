@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
-          check-latest: false # Check for the latest version of Go available for download.
+          # check-latest: false # Check for the latest version of Go available for download.
           # cache: true # Enable caching
 
       - uses: actions/setup-node@v3
