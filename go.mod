@@ -1,3 +1,3 @@
-module github.com/kkumtree/blog.minseong.xyz
+module github.com/kkumtree
 
 go 1.19.5
