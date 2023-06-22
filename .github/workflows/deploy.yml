@@ -17,6 +17,14 @@ jobs:
         name: Checkout src repo
         with:
           ref: main
+          
+      - name: Restore Go modules cache
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
       
       - uses: actions/setup-go@v4
         with:
@@ -46,6 +54,12 @@ jobs:
          
       - name: Build website with hugo
         run: hugo
+        
+      - name: Cache Go modules
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 
       # Checkout destination branch
       - uses: actions/checkout@v3
