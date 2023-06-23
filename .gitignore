@@ -19,3 +19,7 @@ $RECYCLE.BIN/
 # NPM
 
 node_modules
+
+# dart-sass-embedded
+
+sass_embedded/

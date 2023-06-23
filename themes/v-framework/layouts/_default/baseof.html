@@ -7,7 +7,7 @@
         <div id="content">
         {{- block "main" . }}{{- end }}
         </div>
-        {{- partial "footer.html" . -}}
+        {{- partialCached "footer.html" . -}}
         {{- partial "scripts.html" . -}}
     </body>
 </html>
