@@ -6,7 +6,21 @@
     <description>Recent content in Posts on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 19 Jun 2023 11:12:47 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 22 Jun 2023 16:07:05 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux Runlevel - 런레벨/부트레벨</title>
+      <link>https://blog.minseong.xyz/post/runlevel-in-linux/</link>
+      <pubDate>Thu, 22 Jun 2023 16:07:05 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/runlevel-in-linux/</guid>
+      <description>CPU를 1600X에서 5700X로 업그레이드를 진행하기에 앞서,
+RunLevel(런레벨/부트레벨)에 대해 한번 메모하고자 함.
+Runlevel 7가지 레벨이 존재
+man runlevel 참고 Level 5을 제외하고는, cli 환경에서만 구동
+Linux Standard Base 기준
+ls -l /lib/systemd/system/runlevel?.target 명령어로 확인 가능 RunLevel EN 설명 비고 0 Power Off 시스템 종료(중단/Halt) 1 Rescue 시스템 복구 단일 사용자 모드 2 Multi-User 다중 사용자(텍스트 모드, 네트워크 서비스 X) 사용 X (사용자 정의 가능) 3 Multi-User 다중 사용자(텍스트 모드) 4 Multi-User 상동 사용 X (사용자 정의 가능) 5 Graphical 다중 사용자 모드 (그래픽 모드) X-window 기반 6 Reboot 시스템 리부팅 운영체제(Ubuntu 22.</description>
+    </item>
+    
     <item>
       <title>Vagrant 설치 및 Provider 지정</title>
       <link>https://blog.minseong.xyz/post/vagrant-init-setup-with-docker/</link>

@@ -6,13 +6,22 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 19 Jun 2023 11:12:47 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 22 Jun 2023 16:07:05 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>BDIA</title>
       <link>https://blog.minseong.xyz/tags/bdia/</link>
-      <pubDate>Mon, 19 Jun 2023 11:12:47 +0900</pubDate>
+      <pubDate>Thu, 22 Jun 2023 16:07:05 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/bdia/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Ubuntu</title>
+      <link>https://blog.minseong.xyz/tags/ubuntu/</link>
+      <pubDate>Thu, 22 Jun 2023 16:07:05 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/ubuntu/</guid>
       <description></description>
     </item>
     
@@ -301,15 +310,6 @@
       <pubDate>Fri, 17 Mar 2023 11:14:50 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/tutorial/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Ubuntu</title>
-      <link>https://blog.minseong.xyz/tags/ubuntu/</link>
-      <pubDate>Fri, 17 Mar 2023 11:14:50 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/ubuntu/</guid>
       <description></description>
     </item>
     

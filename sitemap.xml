@@ -3,16 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://blog.minseong.xyz/tags/bdia/</loc>
-    <lastmod>2023-06-19T11:12:47+09:00</lastmod>
+    <lastmod>2023-06-22T16:07:05+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2023-06-19T11:12:47+09:00</lastmod>
+    <lastmod>2023-06-22T16:07:05+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/runlevel-in-linux/</loc>
+    <lastmod>2023-06-22T16:07:05+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2023-06-19T11:12:47+09:00</lastmod>
+    <lastmod>2023-06-22T16:07:05+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/</loc>
-    <lastmod>2023-06-19T11:12:47+09:00</lastmod>
+    <lastmod>2023-06-22T16:07:05+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/ubuntu/</loc>
+    <lastmod>2023-06-22T16:07:05+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/vagrant/</loc>
     <lastmod>2023-06-19T11:12:47+09:00</lastmod>
@@ -144,9 +150,6 @@
     <lastmod>2023-03-17T11:14:50+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/tutorial/</loc>
-    <lastmod>2023-03-17T11:14:50+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/ubuntu/</loc>
     <lastmod>2023-03-17T11:14:50+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/how-to-apply-ubuntu-pro/</loc>
