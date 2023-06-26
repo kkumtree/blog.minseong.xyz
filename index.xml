@@ -6,7 +6,21 @@
     <description>Recent content on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Thu, 22 Jun 2023 16:07:05 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 29 Jun 2023 02:28:34 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Realease file for URL is not valid yet 해결 방법</title>
+      <link>https://blog.minseong.xyz/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/</link>
+      <pubDate>Thu, 29 Jun 2023 02:28:34 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/</guid>
+      <description>최근 WSL를 쓰게 되면서, 한 가지 이슈가 생겼다.
+APT repo를 업데이트 하면 아래와 같은 에러가 발생한다.
+이것저것 손대보고 해결법을 적어보고자 한다.
+E: Release file for http://ports.ubuntu.com/ubuntu-ports/dists/jammy/InRelease is not valid yet (invalid for another 5min 1s). Updates for this repository will not be applied. 오류 증상은 릴리스 파일이 존재하지 않는데, 5분 1초동안 유효하지 않는다고 한다.
+무슨 말인가 싶은데, 5분 있다가 업데이트 해보라는 것이다.
+원인 오랫동안 절전모드로 두어서 시간 동기화가 안된 것으로 보인다.</description>
+    </item>
+    
     <item>
       <title>Linux Runlevel - 런레벨/부트레벨</title>
       <link>https://blog.minseong.xyz/post/runlevel-in-linux/</link>

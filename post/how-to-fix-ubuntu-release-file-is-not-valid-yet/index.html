@@ -6,17 +6,17 @@
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>Linux Runlevel - 런레벨/부트레벨 | kkumtree</title>
+    <title>Realease file for URL is not valid yet 해결 방법 | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="Linux Runlevel - 런레벨/부트레벨" />
+    <meta property="og:title" content="Realease file for URL is not valid yet 해결 방법" />
 
     
-    <meta property="og:image" content='https://blog.minseong.xyz/post/runlevel-in-linux/images/runlevel_linking.png' />
-    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/runlevel-in-linux/images/runlevel_linking.png' />
+    <meta property="og:image" content='https://blog.minseong.xyz/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/images/apt-update-with-error.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/images/apt-update-with-error.png' />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content='https://blog.minseong.xyz/post/runlevel-in-linux/images/runlevel_linking.png' />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/images/apt-update-with-error.png' />
 
     
     <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
@@ -76,13 +76,13 @@
 <main>
   <section class="p-strip--image main-strip"
     }
-    style="background-image:url('images/runlevel_linking.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    style="background-image:url('images/apt-update-with-error.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
     >
       <div class="row">
         
         <div class="col-6">
           <div class="p-card--overlay">
-            <h2>Linux Runlevel - 런레벨/부트레벨</h2>
+            <h2>Realease file for URL is not valid yet 해결 방법</h2>
             <ul class="p-card__content p-inline-list--middot">
               
               <li class="p-inline-list__item">
@@ -90,18 +90,18 @@
               </li>
               
             </ul>
-            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-22T16:07:05&#43;09:00</u></p>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-29T02:28:34&#43;09:00</u></p>
             <p class="p-card__content"></p>
+            
+            <a href="/tags/wsl" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">WSL</span>
+              </div>
+            </a>
             
             <a href="/tags/ubuntu" class="tag">
               <div class="p-chip">
                 <span class="p-chip__value">Ubuntu</span>
-              </div>
-            </a>
-            
-            <a href="/tags/bdia" class="tag">
-              <div class="p-chip">
-                <span class="p-chip__value">BDIA</span>
               </div>
             </a>
             
@@ -112,97 +112,64 @@
   </section>
   <section class="p-strip">
   <div class="row">
-  <p>CPU를 1600X에서 5700X로 업그레이드를 진행하기에 앞서,<br>
-RunLevel(런레벨/부트레벨)에 대해 한번 메모하고자 함.</p>
-<h2 id="runlevel">Runlevel</h2>
+  <p>최근 WSL를 쓰게 되면서, 한 가지 이슈가 생겼다.<br>
+APT repo를 업데이트 하면 아래와 같은 에러가 발생한다.<br>
+이것저것 손대보고 해결법을 적어보고자 한다.</p>
+<p><img src="images/apt-update-with-error.png" alt="apt-update-with-error"></p>
+<pre tabindex="0"><code class="language-message" data-lang="message">E: Release file for http://ports.ubuntu.com/ubuntu-ports/dists/jammy/InRelease is not valid yet (invalid for another 5min 1s). Updates for this repository will not be applied.
+</code></pre><p>오류 증상은 릴리스 파일이 존재하지 않는데, 5분 1초동안 유효하지 않는다고 한다.<br>
+무슨 말인가 싶은데, 5분 있다가 업데이트 해보라는 것이다.</p>
+<h2 id="원인">원인</h2>
+<p>오랫동안 절전모드로 두어서 시간 동기화가 안된 것으로 보인다.<br>
+재부팅하지 않으려고 했기에, 해결을 위해 더 많은 시간을 보냈다.</p>
+<h2 id="해결-방법-1-시간-동기화">해결 방법 1. 시간 동기화</h2>
 <ul>
-<li>
-<p>7가지 레벨이 존재</p>
+<li>검색엔진에 널려있는 해결법은 시간 동기화이다.
+당연하게도 Ubuntu의 시각이 과거에 있기 때문에, 하드웨어 시각을 실제 시간에 맞추면 된다.</li>
+<li>물론 시간동기화는 자동으로 이루어지기 때문에 웬만한 경우에는 해결되나,<br>
+사용하고 있던 WSL환경에서는 한 시간이 되어도 해결되지 않았다.</li>
+<li>아래의 커맨드를 통해서 강제 동기화를 하였으나 <strong>효과가 없었다.</strong><br>
+하지만, 많은 경우 해결이 된다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 강제로 시간 동기화</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Force system to use local time</span>
+</span></span><span style="display:flex;"><span>sudo timedatectl set-local-rtc <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># APT repo 정상 업데이트 확인</span>
+</span></span><span style="display:flex;"><span>sudo apt-get update -y <span style="color:#f92672">&amp;&amp;</span> sudo apt-get upgrade -y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 시간 동기화 설정 원복</span>
+</span></span><span style="display:flex;"><span>sudo timedatectl set-local-rtc <span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><h2 id="해결방법-2-시간-지정">해결방법 2. 시간 지정</h2>
 <ul>
-<li>man runlevel 참고</li>
+<li>우연히, Youtube 영상(References 추가)을 참고하여 문제를 해결 하였다.
+<ul>
+<li>시간을 문자열로 지정하면 된다.</li>
 </ul>
 </li>
-<li>
-<p>Level 5을 제외하고는, cli 환경에서만 구동</p>
-</li>
-<li>
-<p>Linux Standard Base 기준</p>
-<ul>
-<li><code>ls -l /lib/systemd/system/runlevel?.target</code> 명령어로 확인 가능</li>
+<li>영상에서는 시간을 특정하여 지정하였지만,<br>
+나의 경우에는 일 단위로 차이가 나서 효과가 없었다. 아예 날짜를 특정하여 지정하였다.</li>
 </ul>
-</li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 시간 지정 방법(1)</span>
+</span></span><span style="display:flex;"><span>sudo date -s <span style="color:#e6db74">&#34;23:59:59&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 시간 지정 방법(2)</span>
+</span></span><span style="display:flex;"><span>sudo date +%T -s <span style="color:#e6db74">&#34;20:31:31&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 날짜 지정 방법</span>
+</span></span><span style="display:flex;"><span>sudo date %Y%m%d -s <span style="color:#e6db74">&#34;20230624&#34;</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 시간 및 날짜 지정 방법</span>
+</span></span><span style="display:flex;"><span>sudo date -s <span style="color:#e6db74">&#34;2023-06-24 23:59:59&#34;</span>
+</span></span></code></pre></div><ul>
+<li>정상적으로 업데이트 됨을 확인</li>
+<li>이후에 장기간 사용하다 보면, 시간동기화를 할 것이기 때문에 큰 상관이 없다.</li>
 </ul>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">RunLevel</th>
-<th style="text-align:center">EN</th>
-<th style="text-align:center">설명</th>
-<th style="text-align:center">비고</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">Power Off</td>
-<td style="text-align:center">시스템 종료(중단/Halt)</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">Rescue</td>
-<td style="text-align:center">시스템 복구</td>
-<td style="text-align:center">단일 사용자 모드</td>
-</tr>
-<tr>
-<td style="text-align:center">2</td>
-<td style="text-align:center">Multi-User</td>
-<td style="text-align:center">다중 사용자(텍스트 모드, 네트워크 서비스 X)</td>
-<td style="text-align:center">사용 X (사용자 정의 가능)</td>
-</tr>
-<tr>
-<td style="text-align:center">3</td>
-<td style="text-align:center">Multi-User</td>
-<td style="text-align:center">다중 사용자(텍스트 모드)</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">4</td>
-<td style="text-align:center">Multi-User</td>
-<td style="text-align:center">상동</td>
-<td style="text-align:center">사용 X (사용자 정의 가능)</td>
-</tr>
-<tr>
-<td style="text-align:center">5</td>
-<td style="text-align:center">Graphical</td>
-<td style="text-align:center">다중 사용자 모드 (그래픽 모드)</td>
-<td style="text-align:center">X-window 기반</td>
-</tr>
-<tr>
-<td style="text-align:center">6</td>
-<td style="text-align:center">Reboot</td>
-<td style="text-align:center">시스템 리부팅</td>
-<td style="text-align:center"></td>
-</tr>
-</tbody>
-</table>
-<h2 id="운영체제ubuntu-2204-기준내-확인">운영체제(Ubuntu 22.04 기준)내 확인</h2>
+<p><img src="images/apt-update-without-error.png" alt="apt-update-without-error"></p>
+<h2 id="references">References</h2>
 <ul>
-<li>su 모드에서. target을 기반으로 링킹되어 있음을 확인</li>
-<li><code>ls -al /lib/systemd/system/runlevel?.target</code>: default</li>
-<li><code>ls -al /etc/systemd/system | grep runlevel?.target.wants</code>: 사용자 정의용 폴더</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo su
-</span></span><span style="display:flex;"><span>ls -l /lib/systemd/system/runlevel?.target*
-</span></span></code></pre></div><p><img src="images/runlevel_linking.png" alt="runlevel"></p>
-<ul>
-<li>타겟 변경의 경우, 아래 lesstif를 참조</li>
-</ul>
-<h2 id="reference">Reference</h2>
-<ul>
-<li><a href="https://en.wikipedia.org/wiki/Runlevel#Linux_Standard_Base_specification">Runlevel LSB - Wikipedia</a></li>
-<li><a href="https://dongle94.github.io/ubuntu/ubuntu-runlevel/">dongle94</a></li>
-<li><a href="https://www.lesstif.com/system-admin/linux-systemd-systemctl-run-level-target-98926803.html">lesstif</a></li>
+<li><a href="https://www.youtube.com/watch?v=Ym0-yRVqWmw">KailTut-Youtube</a></li>
+<li><a href="https://itsfoss.com/fix-repository-not-valid-yet-error-ubuntu/">IT&rsquo;S FOSS</a></li>
 </ul>
 
   </div>
@@ -276,16 +243,11 @@ RunLevel(런레벨/부트레벨)에 대해 한번 메모하고자 함.</p>
     <div class="row">
       <footer class="p-article-pagination">
         
-        <a class="p-article-pagination__link--previous" href="/post/vagrant-init-setup-with-docker/">
+        <a class="p-article-pagination__link--previous" href="/post/runlevel-in-linux/">
           <span class="p-article-pagination__label">Previous</span>
-          <span class="p-article-pagination__title">Vagrant 설치 및 Provider 지정</span>
+          <span class="p-article-pagination__title">Linux Runlevel - 런레벨/부트레벨</span>
         </a>
         
-        
-        <a class="p-article-pagination__link--next" href="/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/">
-          <span class="p-article-pagination__label">Next</span>
-          <span class="p-article-pagination__title">Realease file for URL is not valid yet 해결 방법</span>
-        </a>
         
       </footer>
     </div>

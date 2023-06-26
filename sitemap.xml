@@ -2,22 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2023-06-29T02:28:34+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2023-06-29T02:28:34+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/</loc>
+    <lastmod>2023-06-29T02:28:34+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2023-06-29T02:28:34+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/ubuntu/</loc>
+    <lastmod>2023-06-29T02:28:34+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/wsl/</loc>
+    <lastmod>2023-06-29T02:28:34+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/bdia/</loc>
     <lastmod>2023-06-22T16:07:05+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2023-06-22T16:07:05+09:00</lastmod>
-  </url><url>
     <loc>https://blog.minseong.xyz/post/runlevel-in-linux/</loc>
-    <lastmod>2023-06-22T16:07:05+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2023-06-22T16:07:05+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
-    <lastmod>2023-06-22T16:07:05+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/ubuntu/</loc>
     <lastmod>2023-06-22T16:07:05+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/vagrant/</loc>
