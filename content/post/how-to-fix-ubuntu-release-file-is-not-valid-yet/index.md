@@ -1,6 +1,6 @@
 ---
 date: 2023-06-29T02:28:34+09:00
-title: "Realease file for URL is not valid yet 해결 방법"
+title: "Release file for URL is not valid yet 해결 방법"
 tags:
  - WSL
  - Ubuntu
