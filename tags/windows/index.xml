@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Windows on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/windows/</link>
+    <description>Recent content in Windows on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Tue, 04 Jul 2023 09:57:14 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/windows/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Windows에서 여러 Github 토큰 관리</title>
+      <link>https://blog.minseong.xyz/post/how-to-manage-github-tokens-in-local-windows/</link>
+      <pubDate>Tue, 04 Jul 2023 09:57:14 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/how-to-manage-github-tokens-in-local-windows/</guid>
+      <description>평소에는 Git관리를 terminal을 통해서 하고,
+여러 SSH키를 통해 작업을 하기에
+.ssh/config를 통해 키 기반으로 관리하고 있었다.
+어쩌다보니, 토큰 기반으로 그것도 윈도우에서 관리를 해보게 되어서 둘 다 생소한 접근이라 새로운 셋업을 적용해보기로 했다.
+VSCode 기반으로 세팅하기에, 그대로 따라온다면 별 문제 없이 잘 적용될 것이다.
+cf. classic token이라 할지라도, 큰 이슈는 없을 것으로 생각된다.
+Git config의 적용범위 git config &amp;lt;parameter&amp;gt;를 통해, 설정 값을 구성할 수 있다. system &amp;gt; global &amp;gt; local 순으로 옵션이 override된다.</description>
+    </item>
+    
+  </channel>
+</rss>

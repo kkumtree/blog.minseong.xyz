@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Windows에서 여러 Github 토큰 관리 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Windows에서 여러 Github 토큰 관리" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/how-to-manage-github-tokens-in-local-windows/images/windows-credential-manager.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/how-to-manage-github-tokens-in-local-windows/images/windows-credential-manager.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/how-to-manage-github-tokens-in-local-windows/images/windows-credential-manager.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('images/windows-credential-manager.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Windows에서 여러 Github 토큰 관리</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-07-04T09:57:14&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/github" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">Github</span>
+              </div>
+            </a>
+            
+            <a href="/tags/vscode" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">VSCode</span>
+              </div>
+            </a>
+            
+            <a href="/tags/windows" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">Windows</span>
+              </div>
+            </a>
+            
+            <a href="/tags/bdia" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">BDIA</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>평소에는 Git관리를 terminal을 통해서 하고,<br>
+여러 SSH키를 통해 작업을 하기에<br>
+.ssh/config를 통해 키 기반으로 관리하고 있었다.</p>
+<p>어쩌다보니, 토큰 기반으로 그것도 윈도우에서 관리를 해보게 되어서
+둘 다 생소한 접근이라 새로운 셋업을 적용해보기로 했다.<br>
+VSCode 기반으로 세팅하기에,
+그대로 따라온다면 별 문제 없이 잘 적용될 것이다.</p>
+<p>cf. classic token이라 할지라도, 큰 이슈는 없을 것으로 생각된다.</p>
+<h2 id="git-config의-적용범위">Git config의 적용범위</h2>
+<p><code>git config &lt;parameter&gt;</code>를 통해, 설정 값을 구성할 수 있다.
+system &gt; global &gt; local 순으로 옵션이 override된다.</p>
+<ul>
+<li>&ndash;system: 시스템 전체에 적용</li>
+<li>&ndash;global: 사용자 전체에 적용</li>
+<li>&ndash;local: 해당 저장소에만 적용</li>
+</ul>
+<p>먼저 이걸 말한 이유는, Github의 repo별로 토큰을 개별 관리하기 위해서
+global 옵션에서 셋업을 하여야 하기에, 이해가 선행되어야한다.</p>
+<ul>
+<li>장점: Repo별로 Token을 관리하기 때문에, 권한 관리에 용이</li>
+<li>단점: 같은 토큰을 사용하는 Repo가 많아지만 중복 발생</li>
+</ul>
+<p>물론 Docs(Git홈페이지, man-page)를 참고하면 가장 큰 도움이 될 것이다.</p>
+<h2 id="repository별-토큰-관리">Repository별 토큰 관리</h2>
+<ul>
+<li>본 포스트에서는 Repo별로 토큰을 관리하기 위해, Fine-grained access control을 사용하여 토큰 2개를 발급 받는다.</li>
+<li><strong>Beta</strong> 기능이기에 작성 시점의 내용과 실제로 적용되는 내용이 다를 수 있다.</li>
+</ul>
+<h3 id="github-token-생성">Github Token 생성</h3>
+<p>이건 누구나 다 아는 내용이니 가볍게 후술하면,<br>
+(Profile) Settings &gt; <strong>Developer Settings</strong> &gt; Personal Access Token 에서
+Fine-grained access control을 통해, 토큰을 생성한다.</p>
+<ul>
+<li><code>Only select repositories</code> : 적용할 repo 선택</li>
+<li><code>Repository Permission</code> : Private 또는 특정 repo 선택 시 활성화
+<ul>
+<li>Contents : 기본적인 repo 컨텐츠 제어 (RO|RW)</li>
+<li>(Metadata) : Permission이 하나라도 지정되면, 자동 활성(필수)<br>
+AWS에서 Instance Name 기입하면 Tag 자동생성되는 것을 생각하자.</li>
+</ul>
+</li>
+</ul>
+<p>이 외의 옵션은, 필요에 따라 선택하면 된다.</p>
+<h2 id="windows에서-git-credential-config-관리">Windows에서 git-credential config 관리</h2>
+<ul>
+<li>
+<p>기본적으로, Windows에서 credential은 자격 증명 관리자에서 관리가 된다.<br>
+따라해보다가 안되면, 여기에서 원인이 되는 해당 자격증명을 삭제하면 된다.</p>
+<ul>
+<li>단, 따로 보관을 했거나, 알고 있는 경우에만 삭제하는 것을 권유
+<img src="./images/windows-credential-manager.png" alt="windows-credential-manager"></li>
+</ul>
+</li>
+<li>
+<p>(선택)원활한 시연을 위해 기존의 관련 설정을 지우고(수정) 적용한다.</p>
+<ul>
+<li>먼저 시도하지 말고, 그 다음의 설정값을 확인, 참조하여 적용하자.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#75715e"># 에디터에서 수정</span>
+</span></span><span style="display:flex;"><span>git config --system --edit
+</span></span><span style="display:flex;"><span>git config --global --edit
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CLI에서 수정</span>
+</span></span><span style="display:flex;"><span>git config --system --unset credential.helper
+</span></span><span style="display:flex;"><span>git config --global --unset credential.helper
+</span></span></code></pre></div><h3 id="0-git-credential-managergcm-설치-및-기본-에디터-셋업">0. git-credential-manager(GCM) 설치 및 기본 에디터 셋업</h3>
+<ul>
+<li>
+<p>Git 홈페이지에서 exe파일을 다운로드 받아 기본 설정으로 설치를 했다면, 기본값으로 설치되어 있을 것이다.</p>
+<ul>
+<li>다음 단계에서 제대로 명령어가 구동이 되지 않는다면, <a href="https://github.com/git-ecosystem/git-credential-manager/releases/latest">standalone</a>으로 설치할 수 있다.</li>
+</ul>
+</li>
+<li>
+<p>간혹 GNU nano로 설정값 에디터가 설정되어 있기에,<br>
+익숙한 에디터가 있다면 별도로 설정하도록 하자.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#75715e"># 택1. VSCode </span>
+</span></span><span style="display:flex;"><span>git config --global core.editor <span style="color:#e6db74">&#34;code -w&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 택2. vi(vim)</span>
+</span></span><span style="display:flex;"><span>git config --global core.editor <span style="color:#e6db74">&#34;vi&#34;</span>
+</span></span></code></pre></div></li>
+</ul>
+<h3 id="1-git-credential-managergcm-config-설정">1. git-credential-manager(GCM) config 설정</h3>
+<p>크게 두 가지를 설정한다.</p>
+<ul>
+<li>credential(token 등)저장 옵션</li>
+<li>repo 별 credential 관리 옵션</li>
+</ul>
+<h4 id="1-1-credential-저장-옵션">1-1. credential 저장 옵션</h4>
+<ul>
+<li>기본값(NULL): 아무것도 저장하지 않는다.</li>
+<li>cache: 메모리에 저장.
+<ul>
+<li>통상 15분 유효, 디스크 저장 X.</li>
+</ul>
+</li>
+<li>store: 파일에 저장.
+<ul>
+<li>기본경로 <code>~/.git-credentials</code></li>
+<li>개인적으로 경로가 혼동되기 때문에 직접 경로 지정을 사용.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#75715e"># 택1) store in `~/.git-credentials`</span>
+</span></span><span style="display:flex;"><span>git config --global credential.helper <span style="color:#e6db74">&#39;store --file ~/.git-credentials&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 택2) cache 1 hr</span>
+</span></span><span style="display:flex;"><span>git config --global credential.helper <span style="color:#e6db74">&#39;cache --timeout 3600&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 해제</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># git config --global --unset credential.helper</span>
+</span></span></code></pre></div><h4 id="1-2-repo-별-credential-관리-옵션">1-2. repo 별 credential 관리 옵션</h4>
+<ul>
+<li>위의 설정까지만 하면, repo간 다른 토큰을 쓰면 마지막에 입력한 토큰으로 계속 override된다.</li>
+<li>규칙을 적용하여 repo별로 토큰 관리 활성화를 한다. (like <code>SSH known_hosts</code>)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>git config --global credential.useHttpPath true
+</span></span></code></pre></div><h3 id="각-repo에-tokenize-적용">각 repo에 tokenize 적용</h3>
+<ul>
+<li>적용을 위해, 미리 local에서 토큰과 repo를 제거하고 다시 clone 작업
+<ul>
+<li>Github 기준, dockerhub</li>
+</ul>
+</li>
+<li>이후에 <code>~/.git-credentials</code>에 토큰이 repo별로 저장되어있는 것을 확인</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>git clone https<span style="color:#960050;background-color:#1e0010">:</span>//github.com/kkumtree/repo-example
+</span></span><span style="display:flex;"><span>&gt; Cloning into <span style="color:#e6db74">&#39;repo-example&#39;</span>...
+</span></span><span style="display:flex;"><span>&gt; Username <span style="color:#66d9ef">for</span> <span style="color:#e6db74">&#39;https://github.com/kkumtree/repo-example&#39;</span><span style="color:#960050;background-color:#1e0010">:</span> kkumtree
+</span></span><span style="display:flex;"><span>&gt; Password <span style="color:#66d9ef">for</span> <span style="color:#e6db74">&#39;https://kkumtree@github.com/kkumtree/repo-example&#39;</span><span style="color:#960050;background-color:#1e0010">:</span>&lt;INSERT TOKEN HERE&gt;
+</span></span><span style="display:flex;"><span>&gt; remote<span style="color:#960050;background-color:#1e0010">:</span> Enumerating objects<span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#ae81ff">49</span>, done.
+</span></span><span style="display:flex;"><span>&gt; remote<span style="color:#960050;background-color:#1e0010">:</span> Counting objects<span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#ae81ff">100</span>% (<span style="color:#ae81ff">49</span>/<span style="color:#ae81ff">49</span>), done.
+</span></span><span style="display:flex;"><span>&gt; remote<span style="color:#960050;background-color:#1e0010">:</span> Compressing objects<span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#ae81ff">100</span>% (<span style="color:#ae81ff">38</span>/<span style="color:#ae81ff">38</span>), done.
+</span></span><span style="display:flex;"><span>&gt; remote<span style="color:#960050;background-color:#1e0010">:</span> Total <span style="color:#ae81ff">49</span> (delta <span style="color:#ae81ff">5</span>), reused <span style="color:#ae81ff">37</span> (delta <span style="color:#ae81ff">1</span>), pack-reused <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>&gt; Receiving objects<span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#ae81ff">100</span>% (<span style="color:#ae81ff">49</span>/<span style="color:#ae81ff">49</span>), <span style="color:#ae81ff">5.63</span> KiB | <span style="color:#ae81ff">5.63</span> MiB/s, done.
+</span></span></code></pre></div><h2 id="further-more">Further More</h2>
+<ul>
+<li>앞에서 언급한 토큰 중복 이슈를 해결할 수는 있다.
+<ul>
+<li>참고: <a href="https://git-scm.com/docs/gitcredentials#_avoiding_repetition">https://git-scm.com/docs/gitcredentials#_avoiding_repetition</a></li>
+</ul>
+</li>
+<li>위의 설정에서 일부를 바꿔야하나, 아래와 같이 입력할 수 있다
+<ul>
+<li>자세한 건, 위의 avoiding repetition 링크 참조</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#75715e"># git config credential.https://example.com.username myusername</span>
+</span></span><span style="display:flex;"><span>git config credential.https<span style="color:#960050;background-color:#1e0010">:</span>//github.com.username kkumtree
+</span></span></code></pre></div><h2 id="정리">정리</h2>
+<ul>
+<li>여러 토큰을 리포지토리 별로 저장하는 방법을 서술하였다.
+<ul>
+<li>repo에 대한 UAC?(User Access Control)를 토큰 기반으로 하고자 할 때</li>
+</ul>
+</li>
+<li>UAC를 SSH key별로 하려면 다른 전략을 권한다.</li>
+</ul>
+<h2 id="reference">reference</h2>
+<ul>
+<li><a href="https://git-scm.com/book/ko/v2/Git-%EB%8F%84%EA%B5%AC-Credential-%EC%A0%80%EC%9E%A5%EC%86%8C">Git - Credential 저장소</a></li>
+<li><a href="https://github.com/git-ecosystem/git-credential-manager/releases/latest">The lastest GCM as a standalone service</a></li>
+<li><a href="https://git-scm.com/docs/gitcredentials">gitcredentials</a></li>
+<li><a href="https://git-scm.com/docs/git-credential-store">git-credential-store</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Release file for URL is not valid yet 해결 방법</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
