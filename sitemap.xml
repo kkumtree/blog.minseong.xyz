@@ -2,19 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/calico/</loc>
+    <lastmod>2023-07-25T00:40:14+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/init-calico-from-quay-registry/</loc>
+    <lastmod>2023-07-25T00:40:14+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/k8s/</loc>
+    <lastmod>2023-07-25T00:40:14+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2023-07-25T00:40:14+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2023-07-25T00:40:14+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2023-07-25T00:40:14+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/bdia/</loc>
     <lastmod>2023-07-04T09:57:14+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/github/</loc>
-    <lastmod>2023-07-04T09:57:14+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2023-07-04T09:57:14+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2023-07-04T09:57:14+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2023-07-04T09:57:14+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/vscode/</loc>

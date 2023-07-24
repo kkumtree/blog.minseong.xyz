@@ -6,7 +6,25 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 04 Jul 2023 09:57:14 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 25 Jul 2023 00:40:14 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>calico</title>
+      <link>https://blog.minseong.xyz/tags/calico/</link>
+      <pubDate>Tue, 25 Jul 2023 00:40:14 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/calico/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>k8s</title>
+      <link>https://blog.minseong.xyz/tags/k8s/</link>
+      <pubDate>Tue, 25 Jul 2023 00:40:14 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/k8s/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>BDIA</title>
       <link>https://blog.minseong.xyz/tags/bdia/</link>
