@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Terraform 시작하기 w/Minimal Ubuntu | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Terraform 시작하기 w/Minimal Ubuntu" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/terraform-hello-world-tfenv/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/terraform-hello-world-tfenv/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/terraform-hello-world-tfenv/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Terraform 시작하기 w/Minimal Ubuntu</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-08-31T22:21:08&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/terraform" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">Terraform</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/tfenv" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">tfenv</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>이번에는 <a href="https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4">CloudNet@</a>에서 진행하는 Terraform 스터디(이하, T101)에 참여했습니다.</p>
+<p>Terraform을 쓰면 왜 좋은지는 자세하고 전문적인 글이 있으므로,
+참고하시면 좋을 것 같습니다. (링크: <a href="https://www.44bits.io/ko/keyword/terraform">44bits</a>)</p>
+<p>예전에 테라폼을 썼던 적이 있지만, Module화가 어렵기도 하고<br>
+이번 기회에 테라폼 신간을 다시 복기하는 마음으로 참여했습니다.</p>
+<p>사용한 교재는 [<a href="https://link.coupang.com/a/8mN0N">테라폼으로 시작하는 IaC</a>] 입니다.</p>
+<p>이번에는 Terraform 초기 셋업에 대해, 살펴보고<br>
+시험삼아 Canonical 공식 Minimal Ubuntu(ARM64) AMI를 설치해보겠습니다.</p>
+<ul>
+<li>Terraform 설치</li>
+<li>tfenv 사용과 .tf 작성 따라하기</li>
+<li>Hello World in terraform</li>
+<li>Terraform 써보기</li>
+</ul>
+<p>순으로 진행합니다.</p>
+<h2 id="terraform-설치">Terraform 설치</h2>
+<p>Terraform은 Linux 환경(Ubuntu 기준)에서 설치할 수 있는 방법이 3가지 정도 있습니다.<br>
+최신내용은 <a href="https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli">Terraform CLI</a>에서 확인할 수 있습니다.</p>
+<ul>
+<li>Lubuntu 23.04 LTS 환경에서 진행했습니다.</li>
+</ul>
+<ol>
+<li>APT 패키지로 설치</li>
+</ol>
+<ul>
+<li>APT로 설치하는 것을 선호하는 편이라 먼저 해보았습니다만,<br>
+후술할 이슈로 인해, 3번의 tfenv 설치방법으로 바꾸었습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Install dependency for GPG</span>
+</span></span><span style="display:flex;"><span>sudo apt-get update <span style="color:#f92672">&amp;&amp;</span> sudo apt-get install -y gnupg software-properties-common
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install GPG key</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># If wget isn&#39;t installed, install wget too</span>
+</span></span><span style="display:flex;"><span>wget -O- https://apt.releases.hashicorp.com/gpg | <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>gpg --dearmor | <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (Optional) Verify GPG key&#39;s fingerprint</span>
+</span></span><span style="display:flex;"><span>gpg --no-default-keyring <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--fingerprint
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add Hashicorp repository to system</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># e.g. If you use one of Ubuntu 23.04 LTS dist, </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#      `lsb_release -cs` will be `lunar`</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">https://apt.releases.hashicorp.com </span><span style="color:#66d9ef">$(</span>lsb_release -cs<span style="color:#66d9ef">)</span><span style="color:#e6db74"> main&#34;</span> | <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>sudo tee /etc/apt/sources.list.d/hashicorp.list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install Terraform</span>
+</span></span><span style="display:flex;"><span>sudo apt-get update <span style="color:#f92672">&amp;&amp;</span> sudo apt-get install terraform -yqq 
+</span></span></code></pre></div><ol start="2">
+<li>Binary Installation from source code</li>
+</ol>
+<ul>
+<li>Github에서 소스코드를 받아서 설치하는 방식</li>
+<li>단 하나의 terraform &lsquo;고정된&rsquo; 버전을 사용할 목적(사내 약속, 1인 사용 등)에 적합</li>
+<li>pre-compiled package 방식을 원한다면, 공식 홈페이지 참조를 권합니다.</li>
+<li>Go 언어로 Compile을 진행합니다.
+<ul>
+<li>APT에서 <code>golang-go</code> 와 <code>gccgo-go</code> 두 가지를 제공하는데,
+평소 쓰던 것을 써도 좋고, 흥미롭다면 <a href="https://go.dev/doc/install/gccgo">둘의 차이</a>를 알아보고 설치하면 됩니다.</li>
+<li>본 게시물에서는 <code>golang-go</code> 로 진행합니다.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Download source</span>
+</span></span><span style="display:flex;"><span>git clone https://github.com/hashicorp/terraform.git <span style="color:#f92672">&amp;&amp;</span> cd terraform
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Compile source with Go</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># In my case, $GOPATH and $GOBIN are NULL.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># So, Binary is stored in default GOPATH( `~/go/bin` )</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># See, https://go.dev/doc/code</span>
+</span></span><span style="display:flex;"><span>go install
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># check $PATH</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># most linux dists have `/usr/local/bin`</span>
+</span></span><span style="display:flex;"><span>echo $PATH
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Move to one of `$PATH` directory (Sometimes sudo will be needed)</span>
+</span></span><span style="display:flex;"><span>mv ~/Downloads/terraform /usr/local/bin/
+</span></span></code></pre></div><p><img src="./images/gobin.jpg" alt="where is terraform binary?"></p>
+<ol start="3">
+<li>tfenv</li>
+</ol>
+<ul>
+<li>이번 주차 스터디에서 배운 가장 유용한 것 중 하나를 꼽으라면 tfenv일 것 같습니다.</li>
+<li><code>sdkman!</code> 이나 <code>nvm</code> 같은 terraform 전용 패키지 매니저라고 생각하면 될 것 같습니다.</li>
+<li>이미, 앞에서 두 가지를 다 해본 결과,<br>
+terraform은 직접 소스를 받아서 하는게 좋겠다는 판단이 들어서 수동설치로 진행.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Download source at $HOME</span>
+</span></span><span style="display:flex;"><span>cd $HOME <span style="color:#f92672">&amp;&amp;</span> git clone --depth<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> https://github.com/tfutils/tfenv.git ~/.tfenv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add binary to $PATH at `.bash_profile`</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;export PATH=&#34;$HOME/.tfenv/bin:$PATH&#34;&#39;</span> &gt;&gt; ~/.bash_profile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (Optional) If you want not to logout or reboot, type below</span>
+</span></span><span style="display:flex;"><span>source ~/.bash_profile
+</span></span></code></pre></div><h2 id="tfenv-사용해보기">tfenv 사용해보기</h2>
+<ul>
+<li>사용하는 것은 여타 패키지 매니저류들과 크게 다르지 않음.</li>
+<li>크게 3가지로 정리
+<ol>
+<li>원격지(remote)에서 받을 수 있는 terraform 버전 확인</li>
+<li>로컬로 지정한 terraform 버전 다운로드</li>
+<li>실제 사용할 terraform 버전 지정</li>
+</ol>
+</li>
+</ul>
+<h3 id="1-tfenv-list-remote">(1) tfenv list-remote</h3>
+<ul>
+<li>조건을 주지않으면 제공될 수 있는 모든 tfenv가 출력됨</li>
+<li>terraform은 <code>v0.13+</code> 직전과 이후로 큰 장벽이 있고, 포스팅 기준으로<br>
+이미 <code>v1.5.6</code>(stable), <code>v1.6.0</code>(alpha)가 최신이므로 이를 필터링해보겠습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># basic command</span>
+</span></span><span style="display:flex;"><span>tfenv list-remote
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (Optional)Check only major version 1</span>
+</span></span><span style="display:flex;"><span>tfenv list-remote | grep ^1.
+</span></span></code></pre></div><h3 id="2-tfenv-install">(2) tfenv install</h3>
+<ul>
+<li>확인된 특정 버전(e.g. <code>v1.5.6</code>)을 설치.
+<ul>
+<li><code>latest</code>를 지정하면 최신 stable 버전을 설치</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Install terraform v1.5.6</span>
+</span></span><span style="display:flex;"><span>tfenv install 1.5.6
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (Optional) Install latest version (stable)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># tfenv install latest</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Check if well-installed</span>
+</span></span><span style="display:flex;"><span>tfenv list
+</span></span></code></pre></div><h3 id="3-tfenv-use">(3) tfenv use</h3>
+<ul>
+<li>설치 만으로는 바로 terraform을 사용할 수 없습니다.<br>
+로컬에 받아놓은 terraform 중에서 특정 버전을 명시적으로 지정해야 사용할 수 있습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tfenv use 1.5.6
+</span></span></code></pre></div><p><img src="./images/install.jpg" alt="install terraform stable with tfenv"></p>
+<h2 id="hello-world-in-terraform">Hello World in terraform</h2>
+<ul>
+<li>이제 제대로 작동하는지, AWS에 시험삼아 올려보도록 합니다.</li>
+<li>Pre-requisite
+<ul>
+<li>awscli v2: <a href="https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/getting-started-install.html">AWS Docs</a></li>
+<li>AWS Default VPC</li>
+<li>AWS IAM User w/sufficient permissions<br>
+(e.g. EC2FullAccess, S3FullAccess)</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-tf-파일-생성">(1) .tf 파일 생성</h3>
+<ul>
+<li>terraform은 <code>.tf</code> 확장자를 가진 파일을 읽습니다.<br>
+여러 <code>.tf</code> 파일을 사용한다면, <code>main.tf</code>를 사용하는 것이 기본이나, <code>hello.tf</code>로 띄워봅니다.</li>
+<li>지금은 &lsquo;.tf&rsquo; 파일들은 하나의 폴더 단위 안에서 진행된다고 이해해두고, 특정 폴더 안에서 해봅니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Set skeleton with t4g.nano(ARM64) instance</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; main.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">provider &#34;aws&#34; {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  region = &#34;ap-northeast-2&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">resource &#34;aws_instance&#34; &#34;example&#34; {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ami           = &#34;&lt;AMI_ImageId&gt;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  instance_type = &#34;t4g.nano&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span></code></pre></div><h3 id="2-ami-이미지-찾기">(2) AMI 이미지 찾기</h3>
+<ul>
+<li>Ubuntu 이미지를 찾아보도록 합시다.
+<ul>
+<li>Minimal Ubuntu 22.04 LTS - Jammy (Arm)<br>
+cf. 22.04 버전의 Codename은 <code>jammy</code> 입니다.</li>
+</ul>
+</li>
+<li>두 가지 방법으로 알아봅니다.</li>
+</ul>
+<ol>
+<li>AWS 웹 콘솔에서 AMI ID 얻기</li>
+</ol>
+<ul>
+<li>Launch Instance &gt; Choose an Amazon Machine Image (AMI) &gt; Browse more AMIs</li>
+<li>AWS Marketplace AMIs 탭 선택 &gt; <code>jammy</code> 검색 &gt; Select &gt; Continue</li>
+<li>AMI를 파악합니다. 예를 들어&hellip;<br>
+아래와 같이 파악이 되었다면, AMI ID는 <code>ami-0a40cf5c43bd1585b</code> 입니다.</li>
+</ul>
+<pre tabindex="0"><code class="language-explain" data-lang="explain">[Amazon Machine Image (AMI)]
+ubuntu-minimal/images/hvm-ssd/ubuntu-jammy-22.04-arm64-minimal-20230726-ad51111f-e245-404d-8492-515abfd1e565
+ami-0a40cf5c43bd1585b &lt;&lt; HERE!
+</code></pre><p><img src="./images/ami.jpg" alt="AMI in AWS web console"></p>
+<ol start="2">
+<li>AWS CLI로 AMI 값 얻기</li>
+</ol>
+<ul>
+<li>
+<p>AWS CLI를 설치했다면, 아래와 같이 명령어를 통해 AMI 값을 얻을 수 있습니다.</p>
+</li>
+<li>
+<p>자세한 정보는 <a href="https://wiki.ubuntu.com/Minimal">Ubuntu Wiki</a>에서 확인할 수 있습니다. (GCE, OCI 등)</p>
+</li>
+<li>
+<p>쿼리를 적용해서 필터링을 해봅니다.</p>
+</li>
+</ul>
+<p><img src="./images/ami-query.jpg" alt="AMI with query"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>aws --output table ec2 describe-images --output json --owner <span style="color:#ae81ff">099720109477</span>   --region us-west-2   --filters <span style="color:#e6db74">&#34;Name=name,Values=ubuntu-minimal/images/hvm-ssd/ubuntu-jammy-22.04-arm*&#34;</span>   --query <span style="color:#e6db74">&#39;sort_by(Images, &amp;CreationDate)[-1].{Name: Name, ImageId: ImageId, CreationDate: CreationDate}&#39;</span>
+</span></span></code></pre></div><ul>
+<li>결과값은 아래와 같습니다. <code>ami-0710aced8c563d012</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Name&#34;</span>: <span style="color:#e6db74">&#34;ubuntu-minimal/images/hvm-ssd/ubuntu-jammy-22.04-arm64-minimal-20230830&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;ImageId&#34;</span>: <span style="color:#e6db74">&#34;ami-0710aced8c563d012&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;CreationDate&#34;</span>: <span style="color:#e6db74">&#34;2023-08-31T01:57:56.000Z&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
+<li>쿼리로 필터링을 하지 않았다면, 전체 버전을 조회할 수 있습니다.</li>
+</ul>
+<p><img src="./images/ami-no-query.jpg" alt="AMI without query"></p>
+<h3 id="3-ami-값-적용해두기">(3) AMI 값 적용해두기</h3>
+<ul>
+<li>위에서 얻은 AMI 값을 <code>hello.tf</code> 파일에 적용해두도록 합니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;s/&lt;AMI_ImageId&gt;/ami-0710aced8c563d012/g&#39;</span> hello.tf <span style="color:#f92672">&amp;&amp;</span> cat hello.tf
+</span></span></code></pre></div><p>아래와 같이 출력값이 나오는지 확인 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>provider <span style="color:#e6db74">&#34;aws&#34;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  region <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ap-northeast-2&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>resource <span style="color:#e6db74">&#34;aws_instance&#34;</span> <span style="color:#e6db74">&#34;example&#34;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  ami           <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ami-0710aced8c563d012&#34;</span>
+</span></span><span style="display:flex;"><span>  instance_type <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;t4g.nano&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="terraform-써보기">Terraform 써보기</h2>
+<ul>
+<li><code>hello.tf</code> 파일이 있는 폴더에서 순차적으로 아래의 명령어를 입력해볼 것입니다.
+<ul>
+<li><code>terraform init</code></li>
+<li><code>terraform apply</code></li>
+<li><code>terraform destroy</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="1-terraform-init">(1) terraform init</h3>
+<ul>
+<li>한번도 하지 않은 폴더에서 terraform을 사용하려면 필요합니다.</li>
+</ul>
+<p><img src="./images/init.jpg" alt="terraform init"></p>
+<h3 id="2-terraform-apply">(2) terraform apply</h3>
+<ul>
+<li>위에서 수정이 완료된 <code>hello.tf</code>를 AWS에 적용합니다.</li>
+<li><code>plan</code>을 생략했는데, <code>--auto-approve</code> 옵션을 주지 않으면 <code>apply</code>는<br>
+[ terraform plan -&gt; You say yes -&gt; terraform apply it ]을 진행합니다.</li>
+<li><code>yes</code>를 입력하지 않으면, 취소됩니다. <code>YES</code>, <code>Y</code>, <code>y</code>는 처리되지 않습니다.</li>
+<li>이 과정에서, 작업하고 있는 PC(특히, CPU) 사양에 따라 소요 시간이 널뛰기하니 참고.</li>
+</ul>
+<p><img src="./images/apply.jpg" alt="terraform apply"></p>
+<ul>
+<li>다른 터미널을 켜서, 아래와 같이 관찰 준비를 합니다. 인스턴스 ID가 뜨면 성공.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true; <span style="color:#66d9ef">do</span> aws ec2 describe-instances --query <span style="color:#e6db74">&#34;Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,InstanceName:Tags[?Key==&#39;Name&#39;]|[0].Value,Status:State.Name}&#34;</span> --filters Name<span style="color:#f92672">=</span>instance-state-name,Values<span style="color:#f92672">=</span>running --output text ; echo <span style="color:#e6db74">&#34;------------------------------&#34;</span> ; sleep 1; <span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><p><img src="./images/monit-apply.jpg" alt="monitoring instance created"></p>
+<h3 id="3-terraform-destroy">(3) terraform destroy</h3>
+<ul>
+<li>인스턴스가 생성된 것을 확인했으니, 해당 리소스를 삭제합니다.
+<code>terraform apply</code>와 마찬가지로 <code>yes</code>를 입력해야 삭제가 진행됩니다.</li>
+<li>기존에 수동으로 생성했던, 다른 인스턴스나 리소스들은 영향을 받지 않습니다.</li>
+</ul>
+<p><img src="./images/destroy.jpg" alt="terraform destroy"></p>
+<ul>
+<li>아래와 같이 인스턴스가 삭제되는 것을 확인할 수 있습니다.</li>
+</ul>
+<p><img src="./images/monit-destroy.jpg" alt="monitoring instance destroyed"></p>
+<h2 id="별첨-backend-lock">별첨: backend lock</h2>
+<ul>
+<li>terraform은 충돌을 방지하기 위해, 같은 backend를<br>
+대상으로 다른 곳에서 먼저 작업 중이라면 lock을 기본값으로 갖고있습니다.</li>
+<li>로컬 백엔드에서 작업하는 경우도, 터미널 2개 이상에서 시도할 경우 lock이 걸립니다.</li>
+</ul>
+<p><img src="./images/plan-lock-plan.jpg" alt="backend lock"></p>
+<h2 id="마무리-및-느낀점">마무리 및 느낀점</h2>
+<ul>
+<li>간단한 예제를 통해, Ubuntu 이미지를 직접 찾아보고 terraform을 알아보았습니다.</li>
+<li>tfenv는 가이드에서 소스코드를 얕은 클론(swallow clone)으로 진행하는데 반해,<br>
+terraform는 공식 GitHub에 있는 commit history를 다 가져오도록 함.<br>
+명령어를 $PATH에 등록할 때도 접근법이 다름.</li>
+</ul>
+<h2 id="reference">reference</h2>
+<ul>
+<li><a href="https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4">CloudNet@</a></li>
+<li><a href="https://link.coupang.com/a/8mN0N">테라폼으로 시작하는 IaC</a></li>
+<li><a href="https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli">Terraform CLI</a></li>
+<li><a href="https://go.dev/doc/install/gccgo">Go/gccgo</a></li>
+<li><a href="https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/getting-started-install.html">AWS awscli v2</a></li>
+<li><a href="https://wiki.ubuntu.com/Minimal">Ubuntu Wiki/Minimal</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/init-calico-from-quay-registry/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Init Calico from quay registry</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
