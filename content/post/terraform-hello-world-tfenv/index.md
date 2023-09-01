@@ -64,7 +64,7 @@ gpg --no-default-keyring \
 --fingerprint
 
 # Add Hashicorp repository to system
-# e.g. If you use one of Ubuntu 23.04 LTS dist, 
+# e.g. If you use one of Ubuntu 23.04 (not LTS) dist, 
 #      `lsb_release -cs` will be `lunar`
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
 https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
