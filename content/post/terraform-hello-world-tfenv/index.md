@@ -188,7 +188,7 @@ tfenv use 1.5.6
 
 ```bash
 # Set skeleton with t4g.nano(ARM64) instance
-cat <<EOT > main.tf
+cat <<EOT > hello.tf
 provider "aws" {
   region = "ap-northeast-2"
 }
