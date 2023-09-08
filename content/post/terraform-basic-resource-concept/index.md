@@ -1,5 +1,5 @@
 ---
-date: 2023-09-07T16:11:04+09:00
+date: 2023-09-08T22:41:14+09:00
 title: "Terraform resource 이해하기 w/AWS VPC"
 tags:
  - Terraform
@@ -14,7 +14,7 @@ authors:
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.png # 커버 이미지 URL
-draft: true # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
 이번에는 [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)를 통해 학습한 내용을 기반으로,  
@@ -47,6 +47,8 @@ secret_key     ****************Z0co shared-credentials-file
 data는 사용자가 정의하는 resource 및 리소스에 대한 스펙과 반대로,  
 provider(이번 포스트에서는 aws)에서 제공하는 리소스를 조회하는 기능입니다.  
 
+### (1) data 조회를 위한 tf 파일 작성
+
 이번에는 작업 대상 폴더 내의 루트 경로에 az.tf 파일만 작성을 합니다.
 
 ```HCL
@@ -56,6 +58,8 @@ data "aws_availability_zones" "available" {
     state = "available"
 }
 ```
+
+![availablity_zones_tf](./images/az1.png)
 
 - 해당 파일은 AWS(프로바이더)가 제공하는 AZ 중에서,  
   사용가능한 AZ들을 조회하여 available이라는 데이터로 가져옵니다.
@@ -72,9 +76,11 @@ terraform init -upgrade && terraform apply -auto-approve
   (2) 이 경우에는 az.tf 파일 하나만 있기에, AWS(프로바이더)에서 제공하는 정보들을 lock파일에 재작성한다고 이해하면 될 것 같습니다.
   (3) 자세한 사항은 [Terraform CLI](https://developer.hashicorp.com/terraform/cli/commands/init#child-module-installation)에서 확인할 수 있습니다.  
 
+### (2) tfstate 확인
+
 - tfstate 파일에서 가용할 수 있는 AZ 목록을 확인할 수 있습니다.  
 
-```tfstate
+```terraform
   "resources": [
     {
       "mode": "data",
@@ -114,6 +120,34 @@ terraform init -upgrade && terraform apply -auto-approve
     }
   ],
 ```
+
+![availablity_zones_tfstate](./images/az2.png)
+
+- 파일을 직접 확인하지 않아도, terraform 명령어를 통해서도 조회가 가능합니다.
+  - `terraform console`
+  - `terraform state show`
+
+(1) terraform console
+
+- 파이프로 리소스를 전달하여, 조회합니다.
+
+```bash
+echo 'data.aws_availability_zones.available.names' | terraform console
+```
+
+![tfstate_console](./images/az4.png)
+
+(2) terraform state show
+
+- `terraform state`: state 관리를 위한 서브 커맨드를 제공.  
+  - list / mv / pull / push / replace-provider / rm / show
+- subcommand `show`: 지정한 리소스의 state를 조회.
+
+```bash
+terraform state show data.aws_availability_zones.available
+```
+
+![tfstate_state_show](./images/az3.png)
 
 ## 2. output 알아보기
 
@@ -163,11 +197,18 @@ output "aws_vpc_secondary_id" {
 - output에 표시할 값으로 각 VPC 리소스의 ID를 가져오도록 하였습니다.
 - 참고) 작성시점 기준, `172.17.0.0/16` CIDR은 AWS의 일부 서비스(AWS Cloud9/Amazon SageMaker)에서 사용하므로 피하도록 합니다. (링크: [AWS VPC Docs](https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-cidr-blocks.html))
 
+![vpc_tf](./images/vpc_tf1.jpg)
+
 - 같은 backend를 바라보고 있지 않으므로, `terraform init`을 하고,  
   `terraform plan` 으로 확인해보고, `terraform apply`를 해봅니다.
 
-- `plan`: 실제 적용을 하지 않기에, `output`란에는 `(known after apply)`로 표기됨을 확인  
+- `plan`: 실제 적용을 하지 않기에, `output`란에는 `(known after apply)`로 표기됨을 확인
+
+![vpc_output_plan](./images/vpc_tf1_plan.jpg)
+
 - `apply`: (`yes`를 선택하여 적용 후) `output`란에 각 VPC의 ID가 표기됨을 알 수 있습니다.
+
+![vpc_output_apply](./images/vpc_tf1_apply.jpg)
 
 ### (2) output 값 조회
 
@@ -188,9 +229,18 @@ terraform output -raw aws_vpc_primary_id
 
 - 개행없이 출력하는 옵션은 여러모로 유용해보입니다.
 
+![vpc_output](./images/vpc_output.jpg)
+
 ## 3. resource 이름 변경
 
-- 앞에서 두 VPC 리소스를 `primary_vpc`와 `secondary_vpc`란 이름으로 지정하였습니다.  
+- 앞에서 두 VPC 리소스를 tf파일 내부에서  
+  `primary_vpc`와 `secondary_vpc`란 이름으로 지정하였습니다.  
+- 현재, 각 VPC ID는 아래와 같이 확인됩니다.  
+  - t101-vpc-primary: vpc-0af570aef245dc55f  
+  - t101-vpc-secondary: vpc-0f700cf4401c5f346  
+
+![vpc_origin_id](./images/console_vpc_origin.jpg)
+
 - 이번에는 이 이름을 수정해보고, 적용해보면서 terraform에서 이를 어떻게 처리하는 지 알아봅시다.
 
 ```HCL
@@ -198,11 +248,11 @@ provider "aws" {
   region = "ap-northeast-2"
 }
   
-resource "aws_vpc" "kkumtree_first_vpc" { // UPDATE HERE
+resource "aws_vpc" "kkumtree_first_vpc" {   // UPDATE HERE
   cidr_block = "172.16.0.0/16"
   tags = {
     Name = "t101-vpc-primary"
-  }172.17.0.0/16
+  }
 }
 
 resource "aws_vpc" "kkumtree_second_vpc" {  // UPDATE HERE
@@ -221,10 +271,14 @@ output "aws_vpc_secondary_id" {
 }
 ```
 
+![resource_rename](./images/vpc_tf2.jpg)
+
 - 당연하게도 `terraform apply`로 변경사항을 적용합니다.  
 
+![immutable](./images/immutable.jpg)
+
 - 혹시, 이때 뭔가 위화감이 들지 않나요?  
-  - cidr_block 값을 바꾸지 않았고 
+  - cidr_block 값을 바꾸지 않았고,  
   - 기존에 생성된 VPC에 대해 terraform 상에서 관리하는 리소스명만 바뀌었는데
   - `destroyed`가 뜹니다!  
 
@@ -233,6 +287,9 @@ output "aws_vpc_secondary_id" {
   변경된 정보로 새로운 인프라를 생성하여 교체합니다.  
 - F1 피트 스톱에서 바퀴를 갈아끼는 것을 연상하면 이해가 쉬울 수도 있을 것 같습니다.  
   (참고로, VPC 블록도 한 번 정하면, 대역을 변경할 수 없습니다)
+- 아래와 같이, VPC ID가 변경(교체)되었음을 확인할 수 있습니다.
+
+![vpc_renamed_id](./images/console_vpc_rename.jpg)
 
 ## 마무리 및 느낀점
 
@@ -246,4 +303,4 @@ output "aws_vpc_secondary_id" {
 - [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)
 - [테라폼으로 시작하는 IaC](https://link.coupang.com/a/8mN0N)
 - [Terraform CLI](https://developer.hashicorp.com/terraform/cli/commands/init#child-module-installation)
-- [AWS VPC Docs](https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-cidr-blocks.html)
+- [AWS VPC Docs](https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-cidr-blocks.html)  
