@@ -6,20 +6,38 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Thu, 31 Aug 2023 22:21:08 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 08 Sep 2023 22:41:14 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CloudNet@</title>
       <link>https://blog.minseong.xyz/tags/cloudnet@/</link>
-      <pubDate>Thu, 31 Aug 2023 22:21:08 +0900</pubDate>
+      <pubDate>Fri, 08 Sep 2023 22:41:14 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/cloudnet@/</guid>
       <description></description>
     </item>
     
     <item>
+      <title>HCL</title>
+      <link>https://blog.minseong.xyz/tags/hcl/</link>
+      <pubDate>Fri, 08 Sep 2023 22:41:14 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/hcl/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>immutable</title>
+      <link>https://blog.minseong.xyz/tags/immutable/</link>
+      <pubDate>Fri, 08 Sep 2023 22:41:14 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/immutable/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Terraform</title>
       <link>https://blog.minseong.xyz/tags/terraform/</link>
-      <pubDate>Thu, 31 Aug 2023 22:21:08 +0900</pubDate>
+      <pubDate>Fri, 08 Sep 2023 22:41:14 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/terraform/</guid>
       <description></description>
