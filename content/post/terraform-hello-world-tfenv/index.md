@@ -293,7 +293,7 @@ resource "aws_instance" "example" {
 
 ![terraform apply](./images/apply.jpg)
 
-- 다른 터미널을 켜서, 아래와 같이 관찰 준비를 합니다. 인스턴스 ID가 뜨면 성공.  
+- 다른 터미널을 켜서, 아래와 같이 관찰 준비를 합니다. 인스턴스 IP가 뜨면 성공.  
 
 ```bash
 while true; do aws ec2 describe-instances --query "Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,InstanceName:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --filters Name=instance-state-name,Values=running --output text ; echo "------------------------------" ; sleep 1; done
@@ -328,7 +328,7 @@ while true; do aws ec2 describe-instances --query "Reservations[*].Instances[*].
   terraform는 공식 GitHub에 있는 commit history를 다 가져오도록 함.  
   명령어를 $PATH에 등록할 때도 접근법이 다름.  
 
-## reference
+## Reference
 
 - [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)
 - [테라폼으로 시작하는 IaC](https://link.coupang.com/a/8mN0N)
