@@ -90,7 +90,7 @@ terraform {
   이렇게는 STS를 써본 적이 없어서, 아래 두 값만 넣어보았습니다.  
   - AWS_ACCESS_KEY_ID
   - AWS_SECRET_ACCESS_KEY: 반드시 Sensitive 설정!
-- 캡처는 못했지만, AWS를 많이 써보셨으면 저보다 잘 아실 것 같아서 
+- 캡처는 못했지만, AWS를 많이 써보셨으면 저보다 잘 아실 것 같아서  
   AZ를 data로 단순히 받아오는 작업을 걸었을 때, 잘 동작했습니다.
 
 ![seems-like-working](./images/tfcloud10.jpg)
