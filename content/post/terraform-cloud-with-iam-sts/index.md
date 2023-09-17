@@ -58,7 +58,8 @@ terraform {
 - Organization: Terraform Cloud에서 생성한 Organization 이름을 입력합니다.  
 - Workspaces: Terraform 작업 단위의 이름을 지정합니다.  
 
-한 번 init 해보겠습니다.  
+한 번 login 해보겠습니다.  
+[ `terraform login` ]을 입력해주세요.  
 
 - Token을 요구하는데요,  
   Terraform Cloud 웹 콘솔이 열리면서 토큰 발급 절차를 밟습니다.  
