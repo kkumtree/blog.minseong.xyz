@@ -234,6 +234,18 @@ resource "aws_s3_bucket" "kkumtree_tokyo_bucket" {
 ![TFC-success](./images/tfcloud08.jpg)
 ![AWS-S3-success](./images/tfcloud09.jpg)
 
+## 5. 마치며
+
+이번 포스트에서는, AWS와 HashiCorp가 권장하는 Dynamic provider credentials를 이용하여  
+Terraform Cloud를 사용할 수 있도록 셋업하는 방법을 알아보았습니다.  
+
+- 적용 중, 발생하는 오류는 댓글로 남겨주시면 같이 알아보겠습니다.  
+
+![dynamic-provider-credentials](./images/HashiCorp-Terraform-Provider.png)
+
+- 참고로 Terraform에서 `alias`를 남용하는 것은 좋지않고,  
+  리전 별 격리하는 것을 추천한다고 하네요.  
+
 ## Reference
 
 - [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)
