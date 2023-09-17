@@ -96,6 +96,25 @@
 
             
             <div class="p-list__item">
+              <a href="/post/aws-eks-study-week6/"><h2>AWS EKS 스터디 6주차 - Security</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-04T06:56:52&#43;09:00</u></p>
+              <p>이번에는 보안을 위한 인증 및 인가, 그리고 IRSA를 중심으로 EKS의 보안에 대해 학습해보았습니다.
+kops 스터디 때에는 잘 몰랐는데, RBAC 뿐만 아니라 복기하다보니&hellip;
+[4-1] projected Volume [4-2] AWS Load Balancer Controller IRSA 및 LB Pod mutating 위의 두 가지가 중요한 파트를 차지하고 있었음을 알 수 있었습니다.
+Network(2주차)가 매번 뭔가 일부가 아리송하였다면
+Security는 복기하다가 이론적으로는 간단(과연?)해보여도
+실제 구동방식 이해 자체가 초반에 안되서, 사흘 남짓 걸린 덕에 더 어려웠던 것 같습니다.
+그 외 myeks-bastion-2에 접속 시, 함께 진행할 때는 ssh {Public IP}로 잘 접속되는 걸 봤는데 정작 혼자 할 땐 접속이 되지않았습니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/how-to-backup-gpg-key-to-personal-media/"><h2>GnuPG 키 백업하기</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -164,22 +183,6 @@ HPA: Horizontal Pod Autoscaler VPA: Vertical Pod Autoscaler CA: Cluster Autoscal
 그리고 오늘&hellip; 카페를 두 곳이나 들리면서 하느라 약간의 번거로움도 있고 AWS 웹 콘솔에서 하려 했다.
 그런데, 유독 SG에서만 페이지 로딩이 timeout 걸려서,
 도저히 수정은 커녕 해당 ID도 파악을 하기 힘든 상황이 되었다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/aws-eks-study-week3/"><h2>AWS EKS 스터디 3주차 - Storage</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-12T05:36:38&#43;09:00</u></p>
-              <p>이번 주차에는 스토리지에 대해 실습을 진행해보았습니다. 지난번 kOps 스터디에서 다루었던 내용이지만, 부족했던 내용을 보충하면서 작성을 해보았습니다.
-주요한 내용은&hellip;
-NodeAffinity를 이용한 라벨링 AWS EBS controller의 경우, AWS managed policy를 활용 AWS Volume SnapShots Controller를 통한 볼륨 백업 AWS EFS controller에서의 동적 프로비저닝 AWS EKS 신규 노드그룹 생성 별도로 kube-ops-view의 경우, 웹으로 확인할 수 있을 때까지 시간이 소요된다는 점이 있습니다.
-1. 실습 환경 배포 2주차에 실습했던 내용들을 미리 배포 AWS LB ExternalDNS kube-ops-view context 이름 변경 지난 번까지 pkos가 뜨는 현상이 있었는데, 닉네임을 별도 지정할 수 있음 EFS 생성 관련 cloudformation이 추가되었음 EFS FS ID 조회를 하기 위해 aws-cli 필터 활용 (출처: AWS Docs) # 실습 YAML 파일 curl -O https://s3.</p>
             </div>
             
 <ol class="p-pagination">

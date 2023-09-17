@@ -6,17 +6,17 @@
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>Posts | kkumtree</title>
+    <title>AWS | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="Posts" />
+    <meta property="og:title" content="AWS" />
 
     
-    <meta property="og:image" content='https://blog.minseong.xyz/post/' />
-    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/' />
+    <meta property="og:image" content='https://blog.minseong.xyz/tags/aws/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/aws/' />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content='https://blog.minseong.xyz/post/' />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/aws/' />
 
     
     <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
@@ -82,7 +82,7 @@
   <section class="p-strip--suru main-slide main-strip">
       <div class="row">
         <div class="col-8 left-section">
-          <h1>Posts</h1>
+          <h1>AWS</h1>
           <p></p>
         </div>
       </div>
@@ -94,35 +94,6 @@
             
             
 
-            
-            <div class="p-list__item">
-              <a href="/post/making-dockerfile-for-node/"><h2>Node.js를 위한 Dockerfile 만들기</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-08T20:43:43&#43;09:00</u></p>
-              <p>새로 구축한 Dockerfile FROM public.ecr.aws/lts/ubuntu:22.04_stable ENV DEBIAN_FRONTEND=noninteractive # Set Preferred Variables ARG TZ=Asia/Seoul \ NODE_VER=18.x \ UBUNTU_DIST=jammy \ NPM_PKGS=&#34;cross-env pm2&#34; \ ADD_USG=kkumtree \ ADD_USR=kkumtree \ ADD_USR_LANG=C.UTF-8 ARG NODE_REPO=node_${NODE_VER} # Apply essentials RUN set -ex \ &amp;&amp; ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \ &amp;&amp; apt-get update -y &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; apt-get install -y --no-install-recommends apt-utils &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; apt-get install -y --no-install-recommends \ tzdata \ wget curl \ ca-certificates openssl \ lsb-release gnupg \ gcc g++ make \ zip unzip \ vim \ git \ &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; echo date # Install env for runtime # nodejs RUN set -ex \ &amp;&amp; curl -sLf -o /dev/null \ &#34;https://deb.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/how-to-request-spot-with-kops/"><h2>kops로 손쉽게 spot instance 요청하기</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-06T18:43:51&#43;09:00</u></p>
-              <p>kops로 충분히 spot instance를 굴릴 수 있지 않을까? 란 생각을 pkos 스터디 내내 하고 있었습니다만,
-이미 t3.small 돌렸다가 제대로 노드들이 작동하지도 않았음을 맛봤기 때문에&hellip;
-우선순위는 주차별 과제 제출이었기 때문에 이제야 시범 테스트를 해보고, 글을 작성해봅니다. 요약하자면 복습용으로는 충분히 가능하다. 라는 판단입니다. 참고로, 손쉽게 === 야매 의 느낌으로 기술해보았습니다. 글 읽기 귀찮다! 싶으면 여기에서 원글을 확인하실 수 있습니다. 왜 스팟 인스턴스인가? 이미 이전 포스팅의 서두에서 언급한 바 있으나,
-아무리 클라우드 서비스가 합리적이어도 On-demand 인스턴스를 학습용으로 사용하기엔 살짝 비효율적이라는 생각이 들었습니다.</p>
-            </div>
             
             <div class="p-list__item">
               <a href="/post/basic-aws-troubleshooting/"><h2>AWS 트러블 슈팅 - 7주 간의 k8s 실무 스터디를 마치며</h2></a>
@@ -142,46 +113,27 @@
 1. AWS 계정 잠금 해제 상황 처음 1주차 안내가 끝나고 Route53 Hostname을 구매하려고 하니, 자꾸 결제가 실패하는 문제가 발생했습니다.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/traefik-with-minikube-in-m1/"><h2>Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-02-05T04:54:06&#43;09:00</u></p>
-              <p>주변으로부터 피드백을 받은 내용이 있어 새로운 글로 보완예정입니다. - colima는 containerd처럼 cri가 아닌, Docker engine과 containerd 사이의 물건으로 추정됩니다. - 도커 엔진은 현재 containerd를 통해 프로세스를 관리. - colima도 docker shim 구조는 탈피했을 거라고 추측 중. - 도커 엔진과 containerd 사이의 컨테이너 엔진(관리도구?)로 보임 - colima 시작 시, 특정 런타임을 선택할 수 있습니다. 문서를 잘 읽어봅시다. `colima start --runtime containerd` - k8s를 위한 colima 시작 명령어는 별도로 있습니다. colima github를 참고해주세요.</p>
-            </div>
-            
 <ol class="p-pagination">
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous" 
-        href="/post/" title="Previous page">
+        href="/tags/aws/" title="Previous page">
         <i class="p-icon--contextual-menu">First page</i>
     </a>
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous " 
-        href="/post/page/4/" title="Previous page">
+        href="/tags/aws/page/2/" title="Previous page">
         <i class="p-icon--contextual-menu">Previous page</i>
     </a>
   </li>
   <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/">1</a>
+    <a class="p-pagination__link " href="/tags/aws/">1</a>
   </li>
   <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/2/">2</a>
+    <a class="p-pagination__link " href="/tags/aws/page/2/">2</a>
   </li>
   <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/3/">3</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/4/">4</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link  is-active" href="/post/page/5/">5</a>
+    <a class="p-pagination__link  is-active" href="/tags/aws/page/3/">3</a>
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next  is-disabled"
@@ -191,7 +143,7 @@
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next"
-        href="/post/page/5/" title="Last page">
+        href="/tags/aws/page/3/" title="Last page">
         <i class="p-icon--contextual-menu">Next page</i>
     </a>
   </li>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>IAM STS를 이용한 Terraform Cloud 권한 부여 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="IAM STS를 이용한 Terraform Cloud 권한 부여" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/terraform-cloud-with-iam-sts/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/terraform-cloud-with-iam-sts/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/terraform-cloud-with-iam-sts/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>IAM STS를 이용한 Terraform Cloud 권한 부여</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-09-13T20:54:28&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/terraform" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">Terraform</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">AWS</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>이번에는 Terraform Cloud가 얼마나 좋은지 더 알아보기 위해,<br>
+스터디에서 지속적으로 장점이 강조되어 왔던 Terraform Cloud에<br>
+IAM STS를 이용한 권한 부여 도전 및 적용 성공에 대해 써보려고 합니다.</p>
+<p>Terraform의 상태 저장을 위해 보통 AWS S3를 사용하는데,<br>
+알다시피 S3 기록은 무료지만, 불러오는 것은 유료입니다.<br>
+<del>(전기는 국산이지만, 원료는 수입입니다)</del></p>
+<p>그래서 스터디용으로는 Terraform을 불러올 때마다,<br>
+상태 값을 S3말고, 로컬에 저장했었는데요.<br>
+밖에서는 노트북, 집에서는 데스크탑으로 하려니<br>
+이걸 GitHub의 Private Repo에 저장할까? 하다가<br>
+Terraform Cloud를 써보기로 했습니다. (고통의 시작)</p>
+<h2 id="1-terraform-cloud-계정-생성-및-사용">1. Terraform Cloud 계정 생성 및 사용</h2>
+<ul>
+<li><a href="https://app.terraform.io/">Terraform Cloud</a>에 접속하여 계정을 생성합니다.
+<ul>
+<li>저와 같은 경우에는 GitHub 계정을 연동하여 생성하였습니다.</li>
+</ul>
+</li>
+<li>연동을 위해서, tf파일에 아래 블록을 추가합니다.
+<ul>
+<li>친절하게도 Terraform Cloud에서 튜토리얼을 제공하고 있습니다.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-HCL" data-lang="HCL"><span style="display:flex;"><span><span style="color:#66d9ef">terraform</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">cloud</span> {
+</span></span><span style="display:flex;"><span>    organization <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;kkumtree&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">workspaces</span> {
+</span></span><span style="display:flex;"><span>      name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;t101&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">required_providers</span> {
+</span></span><span style="display:flex;"><span>    aws <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      source  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hashicorp/aws&#34;</span>
+</span></span><span style="display:flex;"><span>      version <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;~&gt; 5.0&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>Organization: Terraform Cloud에서 생성한 Organization 이름을 입력합니다.</li>
+<li>Workspaces: Terraform 작업 단위의 이름을 지정합니다.</li>
+</ul>
+<p>한 번 init 해보겠습니다.</p>
+<ul>
+<li>Token을 요구하는데요,<br>
+Terraform Cloud 웹 콘솔이 열리면서 토큰 발급 절차를 밟습니다.<br>
+열리지 않는 경우, 안내에 따라 token 세팅 페이지로 이동하여 발급해주세요.</li>
+<li>토큰은 <strong>당연하게도</strong> 다시는 조회할 수 없으니, 따로 보관해두세요.<br>
+이 토큰을 다시 터미널에 입력하면, Terraform Cloud에 접속됩니다.</li>
+</ul>
+<p><img src="./images/tfcloud.jpg" alt="terraform-cloud-token"></p>
+<ul>
+<li>다시, init을 해보겠습니다. 잘 되었네요.</li>
+</ul>
+<p><img src="./images/tfcloud00.jpg" alt="terraform-cloud-init"></p>
+<ul>
+<li>그럼&hellip; apply를 해보겠습니다. 에러가 났네요.
+<ul>
+<li>분명, 로컬에 AWS Credential이 잘 세팅되어 있었는데요.</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/tfcloud03.jpg" alt="terraform-cloud-auth-error"></p>
+<h2 id="2-iam-credential-생성-및-저장">2. IAM Credential 생성 및 저장</h2>
+<ul>
+<li>한참을 헤메었는데&hellip; 단순하게도, Terraform Cloud의<br>
+<strong>workspace</strong>에 AWS Credential을 저장해야 했습니다.</li>
+<li>로컬에 AWS Credential을 조회하여(&hellip;) 이 값을<br>
+Terraform Cloud에 저장하면 됩니다. 참 쉽죠?</li>
+<li>다만, Variable 유형을 고를 때, Terraform variable이 아닌<br>
+<strong>Environment variable</strong>을 선택해야 합니다.</li>
+<li>STS도 저장할 수 있는 것으로 알고 있었는데,<br>
+이렇게는 STS를 써본 적이 없어서, 아래 두 값만 넣어보았습니다.
+<ul>
+<li>AWS_ACCESS_KEY_ID</li>
+<li>AWS_SECRET_ACCESS_KEY: 반드시 Sensitive 설정!</li>
+</ul>
+</li>
+<li>캡처는 못했지만, AWS를 많이 써보셨으면 저보다 잘 아실 것 같아서
+AZ를 data로 단순히 받아오는 작업을 걸었을 때, 잘 동작했습니다.</li>
+</ul>
+<p><img src="./images/tfcloud10.jpg" alt="seems-like-working"></p>
+<h2 id="3-aws-credential을-쓰고-싶지-않은데">3. AWS Credential을 쓰고 싶지 않은데&hellip;?</h2>
+<p>문득, 위와 같은 생각이 들었습니다.</p>
+<ul>
+<li>Terraform Cloud 자체에서도 Token을 발급받아서 쓰는데,<br>
+Terraform Cloud 전용 IAM User를 만들어서<br>
+<strong>비밀키를 하드코딩</strong>해서 써야..하나?</li>
+<li>Quick Start 가이드에서 STS를 쓰던데, 나는 왜 못쓰나&hellip;?</li>
+</ul>
+<p>그래서, 한 번 찾아보았습니다. 찾아보았더니 아래 두 게시물을 참조하였는데요.  처음 게시물은 아무래도 연식이 있는 게시물이라 AssumeRole 생성 단계에서 막혀서, 두 번째 게시물을 토대로 진행하였습니다.</p>
+<ul>
+<li><a href="https://saturncloud.io/blog/terraform-cloudenterprise-a-comprehensive-guide-to-using-aws-assume-roles/">SaturnCloud/Terraform Cloud/Enterprise: A Comprehensive Guide to Using AWS Assume Roles</a></li>
+<li><a href="https://aws.amazon.com/ko/blogs/apn/simplify-and-secure-terraform-workflows-on-aws-with-dynamic-provider-credentials/">AWS/Simplify and Secure Terraform Workflows on AWS with Dynamic Provider Credentials</a></li>
+</ul>
+<h3 id="31-iam-oidc-idpidentity-provider-생성">3.1 IAM OIDC IdP(identity Provider) 생성</h3>
+<ul>
+<li>먼저, AWS IAM에서 IAM OIDC Provider를 생성합니다.
+<ul>
+<li>Provider type: OpenID Connect</li>
+<li>Provider URL: <a href="https://app.terraform.io">https://app.terraform.io</a></li>
+<li>Audience: aws.worklaod.identity</li>
+</ul>
+</li>
+<li>중간에 생성되는 Thumbprint는 IAM 콘솔에서 다시 조회 가능하니, 괜찮습니다.</li>
+</ul>
+<p><img src="./images/tfcloud06_idP.jpg" alt="iam-oidc-provider"></p>
+<h3 id="32-신뢰-개체trusted-entities-생성">3.2 신뢰 개체(Trusted entities) 생성</h3>
+<ul>
+<li>IdP를 통해, Terraform Cloud과 AWS IAM간의 신뢰 관계를<br>
+구축하는 것이기 때문에 신뢰 개체를 생성해야 합니다.</li>
+<li>게시물을 토대로 기재하되, 두 값은 직접 입력해야 합니다.
+<ul>
+<li>&lt;AWS계정ID&gt;: AWS 계정 ID로 변경</li>
+<li>&lt;TFC조직명&gt;: Terraform Cloud 생성한 계정에서 만든 조직으로 변경</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&#34;Version&#34;</span>: <span style="color:#e6db74">&#34;2012-10-17&#34;</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&#34;Statement&#34;</span>: [
+</span></span><span style="display:flex;"><span>		{
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">&#34;Principal&#34;</span>: {
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">&#34;Federated&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:iam::&lt;AWS계정ID&gt;:oidc-provider/app.terraform.io&#34;</span>
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">&#34;Action&#34;</span>: <span style="color:#e6db74">&#34;sts:AssumeRoleWithWebIdentity&#34;</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">&#34;Condition&#34;</span>: {
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">&#34;StringEquals&#34;</span>: {
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;app.terraform.io:aud&#34;</span>: <span style="color:#e6db74">&#34;aws.workload.identity&#34;</span>
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">&#34;StringLike&#34;</span>: {
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;app.terraform.io:sub&#34;</span>: <span style="color:#e6db74">&#34;organization:&lt;TFC조직명&gt;:project:*:workspace:*:run_phase:*&#34;</span>
+</span></span><span style="display:flex;"><span>				}
+</span></span><span style="display:flex;"><span>			}
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="33-권한-부여">3.3 권한 부여</h3>
+<p>현재는 VPC 및 EC2, 그리고 S3 생성을 할 것이기에 두 가지 정책을 추가했습니다.</p>
+<ul>
+<li>AmazonEC2FullAccess</li>
+<li>AmazonS3FullAccess</li>
+</ul>
+<p><img src="./images/tfcloud07.jpg" alt="trusted-entities-add-permissions"></p>
+<h3 id="34-terraform-cloud에-variable-설정">3.4 Terraform Cloud에 Variable 설정</h3>
+<p>AWS에서의 지정이 끝났으니, Terraform Cloud에서도 설정을 해야 합니다.</p>
+<p>기존의 AWS Credential을 삭제하고, 아래와 같이 설정합니다.</p>
+<ul>
+<li>TFC_AWS_RUN_ROLE_ARN: arn:aws:iam::&lt;AWS계정ID&gt;:role/&lt;생성한Role이름&gt;</li>
+<li>TFC_AWS_PROVIDER_AUTH: true</li>
+</ul>
+<p>아래 값은 기본값이 <code>aws.workload.identity</code> 이기 때문에<br>
+조직내에서 IAM AUDIENCE를 변경한 경우에만 설정합니다.</p>
+<ul>
+<li>TFC_AWS_WORKLOAD_IDENTITY_AUDIENCE</li>
+</ul>
+<p><img src="./images/tfcloud11_variable.jpg" alt="tfc-variable"></p>
+<h2 id="4-구동-확인">4. 구동 확인</h2>
+<p>이제 아래와 같이, 작성하고 멀티 리전에 S3 버킷을 생성하는 작업을 해보겠습니다.</p>
+<ul>
+<li>서울 리전에도 <code>alias=&quot;seoul&quot;</code>을 추가하고,<br>
+<code>provider = aws.seoul</code>로 지정하고 싶었지만 오류가 나서 해제!</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-HCL" data-lang="HCL"><span style="display:flex;"><span><span style="color:#75715e"># main.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">terraform</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">cloud</span> {
+</span></span><span style="display:flex;"><span>    organization <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;kkumtree&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">workspaces</span> {
+</span></span><span style="display:flex;"><span>      name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;t101&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">required_providers</span> {
+</span></span><span style="display:flex;"><span>    aws <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      source  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hashicorp/aws&#34;</span>
+</span></span><span style="display:flex;"><span>      version <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;~&gt; 5.0&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">provider</span> <span style="color:#e6db74">&#34;aws&#34;</span> {
+</span></span><span style="display:flex;"><span>  region <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ap-northeast-2&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">provider</span> <span style="color:#e6db74">&#34;aws&#34;</span> {
+</span></span><span style="display:flex;"><span>  region <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ap-northeast-1&#34;</span>
+</span></span><span style="display:flex;"><span>  alias  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;tokyo&#34;</span>
+</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># S3
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_s3_bucket&#34; &#34;kkumtree_seoul_bucket&#34;</span> {
+</span></span><span style="display:flex;"><span>  bucket <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;kkumtree-first-bucket&#34;</span>
+</span></span><span style="display:flex;"><span>  tags <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;kkumtree-t101-seoul-bucket&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_s3_bucket&#34; &#34;kkumtree_tokyo_bucket&#34;</span> {
+</span></span><span style="display:flex;"><span>  provider <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws</span>.<span style="color:#66d9ef">tokyo</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  bucket <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;kkumtree-second-bucket&#34;</span>
+</span></span><span style="display:flex;"><span>  tags <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;kkumtree-t101-tokyo-bucket&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>TFC에서도 처리가 잘 되었음을 확인했고(ACL오류 빼고),<br>
+AWS 콘솔에서도 잘 생성되었음을 확인했습니다.</li>
+</ul>
+<p><img src="./images/tfcloud08.jpg" alt="TFC-success">
+<img src="./images/tfcloud09.jpg" alt="AWS-S3-success"></p>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4">CloudNet@</a></li>
+<li><a href="https://link.coupang.com/a/8mN0N">테라폼으로 시작하는 IaC</a></li>
+<li><a href="https://app.terraform.io/">Terraform Cloud</a></li>
+<li><a href="https://saturncloud.io/blog/terraform-cloudenterprise-a-comprehensive-guide-to-using-aws-assume-roles/">SaturnCloud/Terraform Cloud/Enterprise: A Comprehensive Guide to Using AWS Assume Roles</a></li>
+<li><a href="https://aws.amazon.com/ko/blogs/apn/simplify-and-secure-terraform-workflows-on-aws-with-dynamic-provider-credentials/">AWS/Simplify and Secure Terraform Workflows on AWS with Dynamic Provider Credentials</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/terraform-basic-resource-concept/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Terraform resource 이해하기 w/AWS VPC</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

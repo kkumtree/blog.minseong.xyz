@@ -6,7 +6,26 @@
     <description>Recent content in Terraform on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Fri, 08 Sep 2023 22:41:14 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/terraform/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 13 Sep 2023 20:54:28 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/terraform/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>IAM STS를 이용한 Terraform Cloud 권한 부여</title>
+      <link>https://blog.minseong.xyz/post/terraform-cloud-with-iam-sts/</link>
+      <pubDate>Wed, 13 Sep 2023 20:54:28 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/terraform-cloud-with-iam-sts/</guid>
+      <description>이번에는 Terraform Cloud가 얼마나 좋은지 더 알아보기 위해,
+스터디에서 지속적으로 장점이 강조되어 왔던 Terraform Cloud에
+IAM STS를 이용한 권한 부여 도전 및 적용 성공에 대해 써보려고 합니다.
+Terraform의 상태 저장을 위해 보통 AWS S3를 사용하는데,
+알다시피 S3 기록은 무료지만, 불러오는 것은 유료입니다.
+(전기는 국산이지만, 원료는 수입입니다)
+그래서 스터디용으로는 Terraform을 불러올 때마다,
+상태 값을 S3말고, 로컬에 저장했었는데요.
+밖에서는 노트북, 집에서는 데스크탑으로 하려니
+이걸 GitHub의 Private Repo에 저장할까? 하다가
+Terraform Cloud를 써보기로 했습니다.</description>
+    </item>
+    
     <item>
       <title>Terraform resource 이해하기 w/AWS VPC</title>
       <link>https://blog.minseong.xyz/post/terraform-basic-resource-concept/</link>
