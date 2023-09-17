@@ -103,7 +103,8 @@ terraform {
   **비밀키를 하드코딩**해서 써야..하나?
 - Quick Start 가이드에서 STS를 쓰던데, 나는 왜 못쓰나...?
 
-그래서, 한 번 찾아보았습니다. 찾아보았더니 아래 두 게시물을 참조하였는데요.  처음 게시물은 아무래도 연식이 있는 게시물이라 AssumeRole 생성 단계에서 막혀서, 두 번째 게시물을 토대로 진행하였습니다.  
+그래서, 한 번 찾아보았습니다. 찾아보았더니 아래 두 게시물을 참조하였는데요.  
+처음 게시물은 AssumeRole 생성 단계에서 막혀서, 두 번째 게시물을 토대로 진행하였습니다.  
 
 - [SaturnCloud/Terraform Cloud/Enterprise: A Comprehensive Guide to Using AWS Assume Roles](https://saturncloud.io/blog/terraform-cloudenterprise-a-comprehensive-guide-to-using-aws-assume-roles/)
 - [AWS/Simplify and Secure Terraform Workflows on AWS with Dynamic Provider Credentials](https://aws.amazon.com/ko/blogs/apn/simplify-and-secure-terraform-workflows-on-aws-with-dynamic-provider-credentials/)
