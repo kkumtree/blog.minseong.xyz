@@ -2,6 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2023-09-24T11:47:51+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2023-09-24T11:47:51+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2023-09-24T11:47:51+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/terraform/</loc>
+    <lastmod>2023-09-24T11:47:51+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/terraformer/</loc>
+    <lastmod>2023-09-24T11:47:51+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/tfenv/</loc>
+    <lastmod>2023-09-24T11:47:51+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/troubleshoot-terraformer-with-tfenv/</loc>
+    <lastmod>2023-09-24T11:47:51+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/aws/</loc>
     <lastmod>2023-09-13T20:54:28+09:00</lastmod>
   </url><url>
@@ -9,18 +30,6 @@
     <lastmod>2023-09-13T20:54:28+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/terraform-cloud-with-iam-sts/</loc>
-    <lastmod>2023-09-13T20:54:28+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2023-09-13T20:54:28+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2023-09-13T20:54:28+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
-    <lastmod>2023-09-13T20:54:28+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/terraform/</loc>
     <lastmod>2023-09-13T20:54:28+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/hcl/</loc>
@@ -35,7 +44,7 @@
     <loc>https://blog.minseong.xyz/post/terraform-hello-world-tfenv/</loc>
     <lastmod>2023-08-31T22:21:08+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/tags/tfenv/</loc>
+    <loc>https://blog.minseong.xyz/tags/ubuntu/</loc>
     <lastmod>2023-08-31T22:21:08+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/calico/</loc>
@@ -63,9 +72,6 @@
     <lastmod>2023-07-04T09:57:14+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/</loc>
-    <lastmod>2023-06-29T02:28:34+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/ubuntu/</loc>
     <lastmod>2023-06-29T02:28:34+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/wsl/</loc>

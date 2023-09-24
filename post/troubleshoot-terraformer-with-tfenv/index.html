@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Troubleshoot when using terraformer with tfenv | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Troubleshoot when using terraformer with tfenv" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/troubleshoot-terraformer-with-tfenv/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/troubleshoot-terraformer-with-tfenv/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/troubleshoot-terraformer-with-tfenv/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Troubleshoot when using terraformer with tfenv</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-09-24T11:47:51&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/terraform" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">Terraform</span>
+              </div>
+            </a>
+            
+            <a href="/tags/tfenv" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">tfenv</span>
+              </div>
+            </a>
+            
+            <a href="/tags/terraformer" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">terraformer</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>Removing &amp; installing packages are some annoying, isn&rsquo;t it?
+So, I like using version managers like SDKMAN, nvm, etc..</p>
+<p>I also use tfenv for terraform version management.<br>
+(prev post: <a href="https://kkumtree.github.io/post/terraform-hello-world-tfenv">KR/&lsquo;Terraform 시작하기 w/Minimal Ubuntu&rsquo;</a>)</p>
+<p>And I recommend neighbors to use <a href="https://github.com/GoogleCloudPlatform/terraformer">terraformer</a> for first learning about terraform.</p>
+<p>terraformer is a great terraform generator tool for converting existing cloud infrastructure to terraform code.</p>
+<p>In this post, I write how I use terraformer with tfenv.</p>
+<h2 id="1-how-to-install-terraformer-in-linux">1. How to install <code>terraformer</code> in Linux</h2>
+<ul>
+<li>After follow below, you can use terraformer with <code>terraformer</code> command!</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export PROVIDER<span style="color:#f92672">=</span>aws 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># you can use other providers like &#39;google, kubernetes&#39;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Or if you want to use all providers, adjust &#39;all&#39; instead of &#39;aws&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">\c</span>url -LO <span style="color:#e6db74">&#34;https://github.com/GoogleCloudPlatform/terraformer/releases/download/</span><span style="color:#66d9ef">$(</span>curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d <span style="color:#e6db74">&#39;&#34;&#39;</span> -f 4<span style="color:#66d9ef">)</span><span style="color:#e6db74">/terraformer-</span><span style="color:#e6db74">${</span>PROVIDER<span style="color:#e6db74">}</span><span style="color:#e6db74">-linux-amd64&#34;</span>
+</span></span><span style="display:flex;"><span>chmod +x terraformer-<span style="color:#e6db74">${</span>PROVIDER<span style="color:#e6db74">}</span>-linux-amd64
+</span></span><span style="display:flex;"><span>sudo mv terraformer-<span style="color:#e6db74">${</span>PROVIDER<span style="color:#e6db74">}</span>-linux-amd64 /usr/local/bin/terraformer
+</span></span></code></pre></div><h2 id="2-importing-aws-vpc-with-terraformer">2. Importing AWS VPC with terraformer</h2>
+<ul>
+<li>After install terraformer, you can import AWS VPC with terraformer like below<br>
+(Also you can import other AWS resources like EC2, S3, etc..)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>terraformer import aws --resources<span style="color:#f92672">=</span>vpc --regions<span style="color:#f92672">=</span>ap-northeast-2 
+</span></span></code></pre></div><ul>
+<li>But, error will happen&hellip; if you use tfenv like me.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ terraformer import aws --resources<span style="color:#f92672">=</span>vpc --regions<span style="color:#f92672">=</span>ap-northeast-2
+</span></span><span style="display:flex;"><span>2023/09/24 12:03:53 aws importing region ap-northeast-2
+</span></span><span style="display:flex;"><span>2023/09/24 12:03:53 open /home/kkumtree/.terraform.d/plugins/linux_amd64: no such file or directory
+</span></span><span style="display:flex;"><span>$ whereis terraform
+</span></span><span style="display:flex;"><span>terraform: /home/kkumtree/.tfenv/bin/terraform
+</span></span></code></pre></div><ul>
+<li>
+<p>As you can see, terraformer can&rsquo;t find terraform binary.</p>
+<ul>
+<li>Terraformer use terraform binary in <code>/home/kkumtree/.terraform.d/plugins/linux_amd64</code> but,</li>
+<li>tfenv use terraform binary in <code>/home/kkumtree/.tfenv/bin/terraform</code>.</li>
+</ul>
+</li>
+<li>
+<p>So it needed to make a symbolic link to solve this problem<br>
+(But, It will makes me complicated in next year, I promise.)
+or&hellip; use some tricks like following.</p>
+</li>
+</ul>
+<h2 id="3-problem-solving">3. Problem solving</h2>
+<h3 id="1-make-dummy-file-for-executing-terraformer">(1) Make dummy file for executing terraformer</h3>
+<ul>
+<li>Make dummy main.tf file in directory which you want to get terraform codes by terraformer.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir ~/Documents/tf-aws-snapshot
+</span></span><span style="display:flex;"><span>cd ~/Documents/tf-aws-snapshot
+</span></span><span style="display:flex;"><span>cat &lt;&lt;EOF &gt; main.tf
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># heredoc&gt; terraform {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># heredoc&gt;   required_providers {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># heredoc&gt;     aws = {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># heredoc&gt;       source = &#34;hashicorp/aws&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># heredoc&gt;       version = &#34;5.17.0&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># heredoc&gt;     }</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># heredoc&gt;   }</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># heredoc&gt; }</span>
+</span></span><span style="display:flex;"><span>cat main.tf
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># terraform {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   required_providers {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     aws = {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#       source = &#34;hashicorp/aws&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#       version = &#34;5.17.0&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     }</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   }</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># }</span>
+</span></span></code></pre></div><ul>
+<li>If you need, add specific region in main.tf</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#a6e22e">terraform</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">required_providers</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">aws</span> = {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">source</span> = <span style="color:#e6db74">&#34;hashicorp/aws&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">version</span> = <span style="color:#e6db74">&#34;5.17.0&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">provider</span> <span style="color:#e6db74">&#34;aws&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">region</span> = <span style="color:#e6db74">&#34;ap-northeast-2&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="2-init-terraform">(2) init terraform</h3>
+<ul>
+<li>Init terraform with <code>terraform init</code> command
+<ul>
+<li>It uses tfenv&rsquo;s terraform binary</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ terraform init
+</span></span><span style="display:flex;"><span>Initializing the backend...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Initializing provider plugins...
+</span></span><span style="display:flex;"><span>- Finding hashicorp/aws versions matching <span style="color:#e6db74">&#34;5.17.0&#34;</span>...
+</span></span><span style="display:flex;"><span>- Installing hashicorp/aws v5.17.0...
+</span></span><span style="display:flex;"><span>- Installed hashicorp/aws v5.17.0 <span style="color:#f92672">(</span>signed by HashiCorp<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Terraform has created a lock file .terraform.lock.hcl to record the provider
+</span></span><span style="display:flex;"><span>selections it made above. Include this file in your version control repository
+</span></span><span style="display:flex;"><span>so that Terraform can guarantee to make the same selections by default when
+</span></span><span style="display:flex;"><span>you run <span style="color:#e6db74">&#34;terraform init&#34;</span> in the future.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Terraform has been successfully initialized!
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>You may now begin working with Terraform. Try running <span style="color:#e6db74">&#34;terraform plan&#34;</span> to see
+</span></span><span style="display:flex;"><span>any changes that are required <span style="color:#66d9ef">for</span> your infrastructure. All Terraform commands
+</span></span><span style="display:flex;"><span>should now work.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>If you ever set or change modules or backend configuration <span style="color:#66d9ef">for</span> Terraform,
+</span></span><span style="display:flex;"><span>rerun this command to reinitialize your working directory. If you forget, other
+</span></span><span style="display:flex;"><span>commands will detect it and remind you to <span style="color:#66d9ef">do</span> so <span style="color:#66d9ef">if</span> necessary.
+</span></span></code></pre></div><ul>
+<li>And check what happened in <code>.terraform</code> directory</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ tree -a
+</span></span><span style="display:flex;"><span>.
+</span></span><span style="display:flex;"><span>├── main.tf
+</span></span><span style="display:flex;"><span>├── .terraform
+</span></span><span style="display:flex;"><span>│   └── providers
+</span></span><span style="display:flex;"><span>│       └── registry.terraform.io
+</span></span><span style="display:flex;"><span>│           └── hashicorp
+</span></span><span style="display:flex;"><span>│               └── aws
+</span></span><span style="display:flex;"><span>│                   └── 5.17.0
+</span></span><span style="display:flex;"><span>│                       └── linux_amd64
+</span></span><span style="display:flex;"><span>│                           └── terraform-provider-aws_v5.17.0_x5
+</span></span><span style="display:flex;"><span>└── .terraform.lock.hcl
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">8</span> directories, <span style="color:#ae81ff">3</span> files
+</span></span></code></pre></div><ul>
+<li>As you see, terraform headless binary is installed in <code>.terraform</code> directory.<br>
+(It is not tfenv&rsquo;s terraform binary, but it is enough to use terraformer)</li>
+</ul>
+<h3 id="3-import-aws-vpc-with-terraformer">(3) Import AWS VPC with terraformer</h3>
+<ul>
+<li>Now, we can import AWS VPC with terraformer. Get ready to study with terraform codes!</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ terraformer import aws --resources<span style="color:#f92672">=</span>vpc --regions<span style="color:#f92672">=</span>ap-northeast-2
+</span></span><span style="display:flex;"><span>2023/09/24 12:30:39 aws importing region ap-northeast-2
+</span></span><span style="display:flex;"><span>2023/09/24 12:30:40 aws importing... vpc
+</span></span><span style="display:flex;"><span>2023/09/24 12:30:40 aws <span style="color:#66d9ef">done</span> importing vpc
+</span></span><span style="display:flex;"><span>2023/09/24 12:30:40 Number of resources <span style="color:#66d9ef">for</span> service vpc: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>2023/09/24 12:30:40 Refreshing state... aws_vpc.tfer--vpc-xxxxxxxxxxxxxxxxx
+</span></span><span style="display:flex;"><span>2023/09/24 12:30:40 Refreshing state... aws_vpc.tfer--vpc-yyyyyyyyyyyyyyyyy
+</span></span><span style="display:flex;"><span>2023/09/24 12:30:41 Filtered number of resources <span style="color:#66d9ef">for</span> service vpc: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>2023/09/24 12:30:41 aws Connecting.... 
+</span></span><span style="display:flex;"><span>2023/09/24 12:30:41 aws save vpc
+</span></span><span style="display:flex;"><span>2023/09/24 12:30:41 aws save tfstate <span style="color:#66d9ef">for</span> vpc
+</span></span><span style="display:flex;"><span>$ tree
+</span></span><span style="display:flex;"><span>.
+</span></span><span style="display:flex;"><span>├── generated
+</span></span><span style="display:flex;"><span>│   └── aws
+</span></span><span style="display:flex;"><span>│       └── vpc
+</span></span><span style="display:flex;"><span>│           ├── outputs.tf
+</span></span><span style="display:flex;"><span>│           ├── provider.tf
+</span></span><span style="display:flex;"><span>│           ├── terraform.tfstate
+</span></span><span style="display:flex;"><span>│           └── vpc.tf
+</span></span><span style="display:flex;"><span>└── main.tf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span> directories, <span style="color:#ae81ff">5</span> files
+</span></span></code></pre></div><h2 id="4-conclusion">4. Conclusion</h2>
+<p>I was also in trouble with this situation.<br>
+But refences below helped me to solve this problem.</p>
+<h2 id="5-references">5. References</h2>
+<ul>
+<li><a href="https://github.com/GoogleCloudPlatform/terraformer/issues/1695#issuecomment-1536052978">GitHub/Getting error while running terraformer on google provider</a></li>
+<li><a href="https://github.com/GoogleCloudPlatform/terraformer">Terraformer</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho@ubuntu-kr.org">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/terraform-cloud-with-iam-sts/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">IAM STS를 이용한 Terraform Cloud 권한 부여</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho@ubuntu-kr.org">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

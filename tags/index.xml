@@ -6,7 +6,34 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Wed, 13 Sep 2023 20:54:28 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 24 Sep 2023 11:47:51 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Terraform</title>
+      <link>https://blog.minseong.xyz/tags/terraform/</link>
+      <pubDate>Sun, 24 Sep 2023 11:47:51 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/terraform/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>terraformer</title>
+      <link>https://blog.minseong.xyz/tags/terraformer/</link>
+      <pubDate>Sun, 24 Sep 2023 11:47:51 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/terraformer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tfenv</title>
+      <link>https://blog.minseong.xyz/tags/tfenv/</link>
+      <pubDate>Sun, 24 Sep 2023 11:47:51 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/tfenv/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>AWS</title>
       <link>https://blog.minseong.xyz/tags/aws/</link>
@@ -22,15 +49,6 @@
       <pubDate>Wed, 13 Sep 2023 20:54:28 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/cloudnet@/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Terraform</title>
-      <link>https://blog.minseong.xyz/tags/terraform/</link>
-      <pubDate>Wed, 13 Sep 2023 20:54:28 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/terraform/</guid>
       <description></description>
     </item>
     
@@ -53,11 +71,11 @@
     </item>
     
     <item>
-      <title>tfenv</title>
-      <link>https://blog.minseong.xyz/tags/tfenv/</link>
+      <title>Ubuntu</title>
+      <link>https://blog.minseong.xyz/tags/ubuntu/</link>
       <pubDate>Thu, 31 Aug 2023 22:21:08 +0900</pubDate>
       
-      <guid>https://blog.minseong.xyz/tags/tfenv/</guid>
+      <guid>https://blog.minseong.xyz/tags/ubuntu/</guid>
       <description></description>
     </item>
     
@@ -112,15 +130,6 @@
       <pubDate>Tue, 04 Jul 2023 09:57:14 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/windows/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Ubuntu</title>
-      <link>https://blog.minseong.xyz/tags/ubuntu/</link>
-      <pubDate>Thu, 29 Jun 2023 02:28:34 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/ubuntu/</guid>
       <description></description>
     </item>
     
