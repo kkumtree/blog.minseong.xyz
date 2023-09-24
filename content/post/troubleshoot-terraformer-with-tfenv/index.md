@@ -199,7 +199,7 @@ $ tree
 ## 4. Conclusion
 
 I was also in trouble with this situation.  
-But refences below helped me to solve this problem.  
+But references below helped me to solve this problem.  
 
 ## 5. References
 
