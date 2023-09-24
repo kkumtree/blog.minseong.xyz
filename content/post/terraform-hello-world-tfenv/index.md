@@ -4,6 +4,7 @@ title: "Terraform 시작하기 w/Minimal Ubuntu"
 tags:
  - Terraform
  - CloudNet@
+ - Ubuntu
  - tfenv
 authors:
     - name: kkumtree
