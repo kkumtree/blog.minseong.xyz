@@ -9,7 +9,7 @@ tags:
 authors:
     - name: kkumtree
       bio: plumber for infra
-      email: mscho@ubuntu-kr.org
+      email: mscho7969@ubuntu.com
       launchpad: mscho7969
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 

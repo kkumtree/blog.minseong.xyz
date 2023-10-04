@@ -10,7 +10,7 @@ permalinks = [
 
 [params]
   shortTitle = "Blog"
-  contact = "mscho@ubuntu-kr.org"
+  contact = "mscho7969@ubuntu.com"
   github = "kkumtree"
   launchpad = "mscho7969"
   source_repo = "https://github.com/kkumtree/blog.minseong.xyz"
