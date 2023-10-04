@@ -339,3 +339,80 @@ So, I changed plan by setting variables partially in root module.
     We set AWS provider as `aws` in `main.tf`. So, we can reuse it here.  
 - `output.tf` : (Optional) output for the machine that handles terraform.  
 
+```hcl
+# main.tf
+
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "~> 5.17.0"
+    }
+    external = {
+      source = "hashicorp/external"
+      version = "~> 2.3.1"
+    }
+  }
+}
+
+provider "aws" {
+  region = "ap-northeast-2"
+
+  default_tags {
+    tags = {
+      "Project" = "LAB_AWS_TF00"
+      "Environment" = "Learning"
+      "Terraform" = "true"
+    }
+  }
+}
+```
+
+```hcl
+# modules.tf
+
+module "local_module_ec2" {
+  source = "../modules/terraform-aws-ec2"
+  depends_on = [ 
+    module.local_module_vpc, 
+    module.local_module_subnet,
+    module.local_module_sg,
+    module.local_module_igw
+  ]
+
+  vpc_id = module.local_module_vpc.aws_vpc_vpc_id
+  subnet_pri-a_id = module.local_module_subnet.aws_subnet_pri-a_id
+  subnet_pri-c_id = module.local_module_subnet.aws_subnet_pri-c_id
+  subnet_pub-a_id = module.local_module_subnet.aws_subnet_pub-a_id
+  subnet_pub-c_id = module.local_module_subnet.aws_subnet_pub-c_id
+  sg_sg-web_id = module.local_module_sg.aws_security_group_sg-web_id
+  sg_sg-nat_id = module.local_module_sg.aws_security_group_sg-nat_id
+  sg_sg-ssh_id = module.local_module_sg.aws_security_group_sg-ssh_id
+
+  providers = {
+    aws = aws
+  }
+}
+
+module "local_module_vpc" {
+  source = "../modules/terraform-aws-vpc"
+
+  providers = {
+    aws = aws
+  }
+}
+```
+
+```hcl
+# output.tf
+
+output "local_module_output_ec2" {
+  value =  module.local_module_ec2.aws_instance_web-a_id
+}
+
+output "local_module_output_vpc" {
+  value =  module.local_module_vpc.aws_vpc_vpc_id
+}
+```
+
+## 3. 
