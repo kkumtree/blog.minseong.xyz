@@ -108,9 +108,9 @@ But, problems were enough critical to think 'why we have to use terraform?'.
 
 I had been failed to understand and transform legacy terraform structure to module structure, before the group study started.  
 
-So, in this post, I use basic AWS 2-tier architecture as example.  
+So, in this post, I use basic AWS 1-tier architecture as example.  
 
-![2-tier-architecture](./images/2-tier-practice.png)
+![1-tier-architecture](./images/1-tier-practice.png)
 
 ### (1) Create legacy(folder) structure by terraformer
 
