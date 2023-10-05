@@ -14,7 +14,7 @@ authors:
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.png 
-draft: true
+draft: false
 ---
 
 This week is last week of [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4) group study about terraform.  
@@ -415,4 +415,44 @@ output "local_module_output_vpc" {
 }
 ```
 
-## 3. 
+## 3. Check terraform works
+
+### (1) terraform apply
+
+![terraform-apply](./images/confirm-well-configured.png)
+
+### (2) all resources are created
+
+![aws-resources-created](./images/resource_created.png)
+
+### (3) terraform destroy to delete all
+
+![terraform-destroy](./images/destroy_all_resources.png)  
+
+## 4. Advantages of module structure
+
+I think, advantages of module structure is..
+
+- We can manage all resources in one tfstate file.  
+- Variables could be controlled in one root folder!  
+- It could be easier to find dependency error between resources.  
+  ![dependency-error](./images/error_with_wrong_mapping.png)  
+
+## 5. Conclusion
+
+In this post, I review my terraform code with module structure.  
+It was not easy to configure but understanding resources well in admin's view.  
+This example still have some problems to be refactored.  
+I wish this post will be helpful to moduling terraform.  
+
+(Codes will be updated in this post)
+
+## 6. References
+
+- [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)
+- [terraformer](https://github.com/GoogleCloudPlatform/terraformer)  
+- [my blog/terrafomer usage](https://blog.minseong.xyz/post/troubleshoot-terraformer-with-tfenv/)
+- [Terraform Modules](https://blog.devops.dev/terraform-modules-46ef5e0963c3)  
+- [How Terraform Works : Modules Illustrated](https://awstip.com/terraform-modules-illustrate-26cbc48be83a)
+- [Terraform: Creating Reusable Modules-Part 1](https://medium.com/@stisdol/terraform-creating-reusable-modules-part-1-cf850e890f88)  
+- [Terraform/AWS provider Docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)  
