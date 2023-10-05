@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Understanding terraform module | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Understanding terraform module" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/architecting-aws-with-terraform-module/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/architecting-aws-with-terraform-module/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/architecting-aws-with-terraform-module/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Understanding terraform module</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-10-04T11:24:13&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/terraform" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">Terraform</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">AWS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/refactoring" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">refactoring</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>This week is last week of <a href="https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4">CloudNet@</a> group study about terraform.</p>
+<p>In this study, my personal goal is <code>making AWS architecture only with terraform and one tfstate file</code>.</p>
+<ul>
+<li>Basic knowledge about AWS resources is required.</li>
+</ul>
+<h2 id="1-terraform-without-module">1. Terraform without Module</h2>
+<p>Before, I already met terraform for maintaining AWS in production level.<br>
+But at that time, our team maintain them as folder structure which is used by <a href="https://github.com/GoogleCloudPlatform/terraformer">terraformer</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># example structure</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$ tree
+</span></span><span style="display:flex;"><span>.
+</span></span><span style="display:flex;"><span>├── alb
+</span></span><span style="display:flex;"><span>│   ├── lb.tf
+</span></span><span style="display:flex;"><span>│   ├── lb_listener.tf
+</span></span><span style="display:flex;"><span>│   ├── lb_target_group.tf
+</span></span><span style="display:flex;"><span>│   ├── lb_target_group_attachment.tf
+</span></span><span style="display:flex;"><span>│   ├── outputs.tf
+</span></span><span style="display:flex;"><span>│   ├── provider.tf
+</span></span><span style="display:flex;"><span>│   └── variables.tf
+</span></span><span style="display:flex;"><span>├── auto_scaling
+</span></span><span style="display:flex;"><span>│   ├── autoscaling_group.tf
+</span></span><span style="display:flex;"><span>│   ├── launch_template.tf
+</span></span><span style="display:flex;"><span>│   ├── outputs.tf
+</span></span><span style="display:flex;"><span>│   ├── provider.tf
+</span></span><span style="display:flex;"><span>│   └── variables.tf
+</span></span><span style="display:flex;"><span>├── ec2_instance
+</span></span><span style="display:flex;"><span>│   ├── instance.tf
+</span></span><span style="display:flex;"><span>│   ├── outputs.tf
+</span></span><span style="display:flex;"><span>│   ├── provider.tf
+</span></span><span style="display:flex;"><span>│   └── variables.tf
+</span></span><span style="display:flex;"><span>├── eni
+</span></span><span style="display:flex;"><span>│   ├── network_interface.tf
+</span></span><span style="display:flex;"><span>│   ├── outputs.tf
+</span></span><span style="display:flex;"><span>│   └── provider.tf
+</span></span><span style="display:flex;"><span>├── igw
+</span></span><span style="display:flex;"><span>│   ├── internet_gateway.tf
+</span></span><span style="display:flex;"><span>│   ├── outputs.tf
+</span></span><span style="display:flex;"><span>│   ├── provider.tf
+</span></span><span style="display:flex;"><span>│   └── variables.tf
+</span></span><span style="display:flex;"><span>├── nacl
+</span></span><span style="display:flex;"><span>│   ├── default_network_acl.tf
+</span></span><span style="display:flex;"><span>│   ├── outputs.tf
+</span></span><span style="display:flex;"><span>│   ├── provider.tf
+</span></span><span style="display:flex;"><span>│   └── variables.tf
+</span></span><span style="display:flex;"><span>├── route_table
+</span></span><span style="display:flex;"><span>│   ├── main_route_table_association.tf
+</span></span><span style="display:flex;"><span>│   ├── outputs.tf
+</span></span><span style="display:flex;"><span>│   ├── provider.tf
+</span></span><span style="display:flex;"><span>│   ├── route_table.tf
+</span></span><span style="display:flex;"><span>│   ├── route_table_association.tf
+</span></span><span style="display:flex;"><span>│   └── variables.tf
+</span></span><span style="display:flex;"><span>├── s3
+</span></span><span style="display:flex;"><span>│   ├── outputs.tf
+</span></span><span style="display:flex;"><span>│   ├── provider.tf
+</span></span><span style="display:flex;"><span>│   └── s3_bucket.tf
+</span></span><span style="display:flex;"><span>├── sg
+</span></span><span style="display:flex;"><span>│   ├── outputs.tf
+</span></span><span style="display:flex;"><span>│   ├── provider.tf
+</span></span><span style="display:flex;"><span>│   ├── security_group.tf
+</span></span><span style="display:flex;"><span>│   └── variables.tf
+</span></span><span style="display:flex;"><span>├── subnet
+</span></span><span style="display:flex;"><span>│   ├── outputs.tf
+</span></span><span style="display:flex;"><span>│   ├── provider.tf
+</span></span><span style="display:flex;"><span>│   ├── subnet.tf
+</span></span><span style="display:flex;"><span>│   └── variables.tf
+</span></span><span style="display:flex;"><span>└── vpc
+</span></span><span style="display:flex;"><span>    ├── outputs.tf
+</span></span><span style="display:flex;"><span>    ├── provider.tf
+</span></span><span style="display:flex;"><span>    └── vpc.tf
+</span></span></code></pre></div><p>At glance, this solution looks like cool.<br>
+But, problems were enough critical to think &lsquo;why we have to use terraform?&rsquo;.</p>
+<ol>
+<li>terraform state file(.tfstate) are spread at each folder.<br>
+It means, checkpoint we have to manage will be increased as much as we add new resources.</li>
+<li>Cause by 1, each resource is dependent on other resources.<br>
+It means, we have to manage resources in order.<br>
+For example, we have to create VPC first, and then we can create subnet.<br>
+And if we don&rsquo;t need specific resource, we have to check other resources whether they refer to the resource.<br>
+These actions could cause human error and affect to production services.</li>
+</ol>
+<h2 id="2-terraform-with-module">2. Terraform with Module</h2>
+<p>I had been failed to understand and transform legacy terraform structure to module structure, before the group study started.</p>
+<p>So, in this post, I use basic AWS 2-tier architecture as example.</p>
+<p><img src="./images/2-tier-practice.png" alt="2-tier-architecture"></p>
+<h3 id="1-create-legacyfolder-structure-by-terraformer">(1) Create legacy(folder) structure by terraformer</h3>
+<p>To make ease transformation, make architecture in AWS Web console.<br>
+And then, I use terraformer to make terraform files.</p>
+<p>How to use terraformer? See official Docs, OR <a href="https://blog.minseong.xyz/post/troubleshoot-terraformer-with-tfenv/">my post</a>. :)</p>
+<h3 id="2-create-folder-tree-for-module-structure">(2) Create folder tree for module structure</h3>
+<ul>
+<li>
+<p>There are too much best practices to read all of them about terraform module. (By coincidence, all of them are written in medium)</p>
+<ul>
+<li>ref_1) <a href="https://blog.devops.dev/terraform-modules-46ef5e0963c3">Terraform Modules</a></li>
+<li>ref_2) <a href="https://awstip.com/terraform-modules-illustrate-26cbc48be83a">How Terraform Works : Modules Illustrated</a></li>
+<li>ref_3) <a href="https://medium.com/@stisdol/terraform-creating-reusable-modules-part-1-cf850e890f88">Terraform: Creating Reusable Modules-Part 1</a></li>
+</ul>
+</li>
+<li>
+<p>Depth of folder is your choice, I make it below.<br>
+(It is suggested in the study and <a href="https://kbookstore.com/catalog/product/view/_ignore_category/1/id/693159/s/iac-9791169211123/">Book</a>)</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ tree
+</span></span><span style="display:flex;"><span>.
+</span></span><span style="display:flex;"><span>├── modules
+</span></span><span style="display:flex;"><span>│   ├── terraform-aws-alb
+</span></span><span style="display:flex;"><span>│   │   ├── listener.tf
+</span></span><span style="display:flex;"><span>│   │   ├── main.tf
+</span></span><span style="display:flex;"><span>│   │   ├── output.tf
+</span></span><span style="display:flex;"><span>│   │   ├── tg.tf
+</span></span><span style="display:flex;"><span>│   │   ├── tg_attachment.tf
+</span></span><span style="display:flex;"><span>│   │   └── variable.tf
+</span></span><span style="display:flex;"><span>│   ├── terraform-aws-ec2
+</span></span><span style="display:flex;"><span>│   │   ├── data.tf
+</span></span><span style="display:flex;"><span>│   │   ├── main.tf
+</span></span><span style="display:flex;"><span>│   │   ├── output.tf
+</span></span><span style="display:flex;"><span>│   │   └── variable.tf
+</span></span><span style="display:flex;"><span>│   ├── terraform-aws-igw
+</span></span><span style="display:flex;"><span>│   │   ├── main.tf
+</span></span><span style="display:flex;"><span>│   │   ├── outputs.tf
+</span></span><span style="display:flex;"><span>│   │   └── variable.tf
+</span></span><span style="display:flex;"><span>│   ├── terraform-aws-route_table
+</span></span><span style="display:flex;"><span>│   │   ├── association.tf
+</span></span><span style="display:flex;"><span>│   │   ├── main.tf
+</span></span><span style="display:flex;"><span>│   │   ├── main_association.tf
+</span></span><span style="display:flex;"><span>│   │   ├── output.tf
+</span></span><span style="display:flex;"><span>│   │   └── variable.tf
+</span></span><span style="display:flex;"><span>│   ├── terraform-aws-sg
+</span></span><span style="display:flex;"><span>│   │   ├── data.tf
+</span></span><span style="display:flex;"><span>│   │   ├── main.tf
+</span></span><span style="display:flex;"><span>│   │   ├── output.tf
+</span></span><span style="display:flex;"><span>│   │   └── variable.tf
+</span></span><span style="display:flex;"><span>│   ├── terraform-aws-subnet
+</span></span><span style="display:flex;"><span>│   │   ├── main.tf
+</span></span><span style="display:flex;"><span>│   │   ├── output.tf
+</span></span><span style="display:flex;"><span>│   │   └── variable.tf
+</span></span><span style="display:flex;"><span>│   └── terraform-aws-vpc
+</span></span><span style="display:flex;"><span>│       ├── main.tf
+</span></span><span style="display:flex;"><span>│       ├── output.tf
+</span></span><span style="display:flex;"><span>│       └── variable.tf
+</span></span><span style="display:flex;"><span>└── provider_for_module
+</span></span><span style="display:flex;"><span>    ├── main.tf
+</span></span><span style="display:flex;"><span>    ├── modules.tf
+</span></span><span style="display:flex;"><span>    └── output.tf
+</span></span></code></pre></div><ul>
+<li>Child modules have prefix <code>terraform-aws-</code></li>
+<li>I named root(parent) module as <code>provider_for_module</code> to distinguish.</li>
+</ul>
+<h3 id="3-transform-legacy-structure-to-module-structure">(3) Transform legacy structure to module structure</h3>
+<p>In this section, only handle ec2 module as practice</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ tree
+</span></span><span style="display:flex;"><span>.
+</span></span><span style="display:flex;"><span>└── terraform-aws-ec2
+</span></span><span style="display:flex;"><span>    ├── data.tf
+</span></span><span style="display:flex;"><span>    ├── main.tf
+</span></span><span style="display:flex;"><span>    ├── output.tf
+</span></span><span style="display:flex;"><span>    └── variable.tf
+</span></span></code></pre></div><ul>
+<li>
+<p>I divide terraform files for concentrating on actions
+<code>(Optional)</code> and filename is just my policy.</p>
+<ul>
+<li><code>main.tf</code> : Only IaC for ec2 module.<br>
+Guide is well-described in <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance">Docs</a>.</li>
+<li><code>variable.tf</code> : variables for customizing ec2 resources at local.<br>
+ex. <code>name</code>, <code>tags</code></li>
+<li><code>data.tf</code> : (Optional) data on AWS, they have to exist before managing resources.<br>
+Also guide exists in <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami">Docs</a>.<br>
+ex. <code>ami</code></li>
+<li><code>output.tf</code> : (Optional) output for other modules.
+ex. <code>ec2_id</code>, <code>ec2_ip</code>, <code>ec2_primary_network_interface_id</code></li>
+</ul>
+</li>
+<li>
+<p>Examples are below.</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># main.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_instance&#34; &#34;ssh&#34;</span> {
+</span></span><span style="display:flex;"><span>  ami <span style="color:#f92672">=</span> <span style="color:#66d9ef">data</span>.<span style="color:#66d9ef">aws_ami</span>.<span style="color:#66d9ef">al2023</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">arm64</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>  associate_public_ip_address <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  instance_type <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">instance_type_arm64</span>
+</span></span><span style="display:flex;"><span>  key_name <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">key_name</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">metadata_options</span> {
+</span></span><span style="display:flex;"><span>    http_put_response_hop_limit <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;2&#34;</span>
+</span></span><span style="display:flex;"><span>    http_tokens                 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;required&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  tags <span style="color:#f92672">=</span> { 
+</span></span><span style="display:flex;"><span>    Name <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">instance_tag_name_ssh</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  tags_all <span style="color:#f92672">=</span> { 
+</span></span><span style="display:flex;"><span>    Name <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">instance_tag_name_ssh</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  source_dest_check <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>  subnet_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">subnet_pub</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">a_id</span>
+</span></span><span style="display:flex;"><span>  vpc_security_group_ids <span style="color:#f92672">=</span> [ <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">sg_sg</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">ssh_id</span> ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># output.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;aws_instance_ssh_id&#34;</span> {
+</span></span><span style="display:flex;"><span>  value <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">ssh</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;aws_instance_nat-a_eni_id&#34;</span> {
+</span></span><span style="display:flex;"><span>  value <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">nat</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">a</span>.<span style="color:#66d9ef">primary_network_interface_id</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">locals</span> {
+</span></span><span style="display:flex;"><span>  aws_instance_web-a_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">web</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">a</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>  aws_instance_web-c_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">web</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">c</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>  aws_instance_nat-a_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">nat</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">a</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>  aws_instance_nat-c_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">nat</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">c</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>  aws_instance_ssh_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">ssh</span>.<span style="color:#66d9ef">id</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  /* aws_instance_ssh-c_id = aws_instance.ssh-c.id */</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;generated_ec2_via_module&#34;</span> {
+</span></span><span style="display:flex;"><span>  value <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    web-a <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">web</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">a</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>    web-c <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">web</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">c</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>    nat-a <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">nat</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">a</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>    nat-c <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">nat</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">c</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>    ssh <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_instance</span>.<span style="color:#66d9ef">ssh</span>.<span style="color:#66d9ef">id</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    /* ssh-c = aws_instance.ssh-c.id */</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># data.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">data</span> <span style="color:#e6db74">&#34;aws_ami&#34; &#34;al2023-arm64&#34;</span> {
+</span></span><span style="display:flex;"><span>  most_recent <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  owners      <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;amazon&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">filter</span> {
+</span></span><span style="display:flex;"><span>    name   <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;name&#34;</span>
+</span></span><span style="display:flex;"><span>    values <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;al2023-ami-*-arm64&#34;</span>]
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">data</span> <span style="color:#e6db74">&#34;aws_launch_template&#34; &#34;ssh-tpl-al2023-arm64&#34;</span> {
+</span></span><span style="display:flex;"><span>  name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;LAB-SSH-TPL&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># variable.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;instance_type_arm64&#34;</span> {
+</span></span><span style="display:flex;"><span>  description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Instance type for ARM64 instances&#34;</span>
+</span></span><span style="display:flex;"><span>  default <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;t4g.small&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;vpc_id&#34;</span> {
+</span></span><span style="display:flex;"><span>  description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Security group IDs for web instances&#34;</span>
+</span></span><span style="display:flex;"><span>  default <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;instance_tag_name_ssh&#34;</span> {
+</span></span><span style="display:flex;"><span>  description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Instance tag name&#34;</span>
+</span></span><span style="display:flex;"><span>  default <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;LAB-SSH&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Oh, Wait&hellip; Why <code>vpc_id</code> variable is <code>null</code>?</p>
+<h3 id="4-create-root-module">(4) Create root module</h3>
+<p>At first, I set variables in each module&hellip;<br>
+Because, It was traditional way.<br>
+But, I realized that checkpoint to be maintained would be tremendously increased;</p>
+<p>So, I changed plan by setting variables partially in root module.</p>
+<ul>
+<li>root module structure</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>└── provider_for_module
+</span></span><span style="display:flex;"><span>    ├── main.tf
+</span></span><span style="display:flex;"><span>    ├── modules.tf
+</span></span><span style="display:flex;"><span>    └── output.tf
+</span></span></code></pre></div><ul>
+<li><code>main.tf</code> : I specify only <code>terraform</code> and <code>provider</code> blocks.
+<ul>
+<li><code>terraform</code> : Set providers version.<br>
+(Also we can set backend strategy here.)</li>
+<li><code>provider</code> : Set AWS provider for sharing with all modules.<br>
+Also we can default values like tags for monitoring all.<br>
+Before making module, provider should be set in a <code>.tf</code> file of each folder.<br>
+By module, we can set provider in root module <strong>once</strong>.</li>
+</ul>
+</li>
+<li><code>modules.tf</code> : Connect with child modules.
+<ul>
+<li><code>source</code> : path of child module.</li>
+<li><code>depend_on</code> : (Optional) Set dependency between modules.<br>
+Most AWS resources have dependency with each other. Just for safe launch.</li>
+<li><code>variable</code> : Set variables for child module.<br>
+At here, we use other resources made in other modules, as variables.</li>
+<li><code>providers</code> : Set provider for child module.<br>
+We set AWS provider as <code>aws</code> in <code>main.tf</code>. So, we can reuse it here.</li>
+</ul>
+</li>
+<li><code>output.tf</code> : (Optional) output for the machine that handles terraform.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># main.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">terraform</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">required_providers</span> {
+</span></span><span style="display:flex;"><span>    aws <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      source <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hashicorp/aws&#34;</span>
+</span></span><span style="display:flex;"><span>      version <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;~&gt; 5.17.0&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    external <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      source <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hashicorp/external&#34;</span>
+</span></span><span style="display:flex;"><span>      version <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;~&gt; 2.3.1&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">provider</span> <span style="color:#e6db74">&#34;aws&#34;</span> {
+</span></span><span style="display:flex;"><span>  region <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ap-northeast-2&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">default_tags</span> {
+</span></span><span style="display:flex;"><span>    tags <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      &#34;Project&#34; <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;LAB_AWS_TF00&#34;</span>
+</span></span><span style="display:flex;"><span>      &#34;Environment&#34; <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Learning&#34;</span>
+</span></span><span style="display:flex;"><span>      &#34;Terraform&#34; <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># modules.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">module</span> <span style="color:#e6db74">&#34;local_module_ec2&#34;</span> {
+</span></span><span style="display:flex;"><span>  source <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;../modules/terraform-aws-ec2&#34;</span>
+</span></span><span style="display:flex;"><span>  depends_on <span style="color:#f92672">=</span> [ 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_vpc</span>, 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_subnet</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_sg</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_igw</span>
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  vpc_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_vpc</span>.<span style="color:#66d9ef">aws_vpc_vpc_id</span>
+</span></span><span style="display:flex;"><span>  subnet_pri-a_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_subnet</span>.<span style="color:#66d9ef">aws_subnet_pri</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">a_id</span>
+</span></span><span style="display:flex;"><span>  subnet_pri-c_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_subnet</span>.<span style="color:#66d9ef">aws_subnet_pri</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">c_id</span>
+</span></span><span style="display:flex;"><span>  subnet_pub-a_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_subnet</span>.<span style="color:#66d9ef">aws_subnet_pub</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">a_id</span>
+</span></span><span style="display:flex;"><span>  subnet_pub-c_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_subnet</span>.<span style="color:#66d9ef">aws_subnet_pub</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">c_id</span>
+</span></span><span style="display:flex;"><span>  sg_sg-web_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_sg</span>.<span style="color:#66d9ef">aws_security_group_sg</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">web_id</span>
+</span></span><span style="display:flex;"><span>  sg_sg-nat_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_sg</span>.<span style="color:#66d9ef">aws_security_group_sg</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">nat_id</span>
+</span></span><span style="display:flex;"><span>  sg_sg-ssh_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_sg</span>.<span style="color:#66d9ef">aws_security_group_sg</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">ssh_id</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  providers <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    aws <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">module</span> <span style="color:#e6db74">&#34;local_module_vpc&#34;</span> {
+</span></span><span style="display:flex;"><span>  source <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;../modules/terraform-aws-vpc&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  providers <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    aws <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># output.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;local_module_output_ec2&#34;</span> {
+</span></span><span style="display:flex;"><span>  value <span style="color:#f92672">=</span>  <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_ec2</span>.<span style="color:#66d9ef">aws_instance_web</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">a_id</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;local_module_output_vpc&#34;</span> {
+</span></span><span style="display:flex;"><span>  value <span style="color:#f92672">=</span>  <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_vpc</span>.<span style="color:#66d9ef">aws_vpc_vpc_id</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="3-check-terraform-works">3. Check terraform works</h2>
+<h3 id="1-terraform-apply">(1) terraform apply</h3>
+<p><img src="./images/confirm-well-configured.png" alt="terraform-apply"></p>
+<h3 id="2-all-resources-are-created">(2) all resources are created</h3>
+<p><img src="./images/resource_created.png" alt="aws-resources-created"></p>
+<h3 id="3-terraform-destroy-to-delete-all">(3) terraform destroy to delete all</h3>
+<p><img src="./images/destroy_all_resources.png" alt="terraform-destroy"></p>
+<h2 id="4-advantages-of-module-structure">4. Advantages of module structure</h2>
+<p>I think, advantages of module structure is..</p>
+<ul>
+<li>We can manage all resources in one tfstate file.</li>
+<li>Variables could be controlled in one root folder!</li>
+<li>It could be easier to find dependency error between resources.<br>
+<img src="./images/error_with_wrong_mapping.png" alt="dependency-error"></li>
+</ul>
+<h2 id="5-conclusion">5. Conclusion</h2>
+<p>In this post, I review my terraform code with module structure.<br>
+It was not easy to configure but understanding resources well in admin&rsquo;s view.<br>
+This example still have some problems to be refactored.<br>
+I wish this post will be helpful to moduling terraform.</p>
+<p>(Codes will be updated in this post)</p>
+<h2 id="6-references">6. References</h2>
+<ul>
+<li><a href="https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4">CloudNet@</a></li>
+<li><a href="https://github.com/GoogleCloudPlatform/terraformer">terraformer</a></li>
+<li><a href="https://blog.minseong.xyz/post/troubleshoot-terraformer-with-tfenv/">my blog/terrafomer usage</a></li>
+<li><a href="https://blog.devops.dev/terraform-modules-46ef5e0963c3">Terraform Modules</a></li>
+<li><a href="https://awstip.com/terraform-modules-illustrate-26cbc48be83a">How Terraform Works : Modules Illustrated</a></li>
+<li><a href="https://medium.com/@stisdol/terraform-creating-reusable-modules-part-1-cf850e890f88">Terraform: Creating Reusable Modules-Part 1</a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs">Terraform/AWS provider Docs</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/troubleshoot-terraformer-with-tfenv/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Troubleshoot when using terraformer with tfenv</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>refactoring on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/refactoring/</link>
+    <description>Recent content in refactoring on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 04 Oct 2023 11:24:13 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/refactoring/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Understanding terraform module</title>
+      <link>https://blog.minseong.xyz/post/architecting-aws-with-terraform-module/</link>
+      <pubDate>Wed, 04 Oct 2023 11:24:13 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/architecting-aws-with-terraform-module/</guid>
+      <description>This week is last week of CloudNet@ group study about terraform.
+In this study, my personal goal is making AWS architecture only with terraform and one tfstate file.
+Basic knowledge about AWS resources is required. 1. Terraform without Module Before, I already met terraform for maintaining AWS in production level.
+But at that time, our team maintain them as folder structure which is used by terraformer
+# example structure $ tree .</description>
+    </item>
+    
+  </channel>
+</rss>
