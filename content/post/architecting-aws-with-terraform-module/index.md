@@ -388,18 +388,10 @@ module "local_module_ec2" {
   sg_sg-web_id = module.local_module_sg.aws_security_group_sg-web_id
   sg_sg-nat_id = module.local_module_sg.aws_security_group_sg-nat_id
   sg_sg-ssh_id = module.local_module_sg.aws_security_group_sg-ssh_id
-
-  providers = {
-    aws = aws
-  }
 }
 
 module "local_module_vpc" {
   source = "../modules/terraform-aws-vpc"
-
-  providers = {
-    aws = aws
-  }
 }
 ```
 
