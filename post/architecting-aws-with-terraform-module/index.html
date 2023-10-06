@@ -471,18 +471,10 @@ We set AWS provider as <code>aws</code> in <code>main.tf</code>. So, we can reus
 </span></span><span style="display:flex;"><span>  sg_sg-web_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_sg</span>.<span style="color:#66d9ef">aws_security_group_sg</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">web_id</span>
 </span></span><span style="display:flex;"><span>  sg_sg-nat_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_sg</span>.<span style="color:#66d9ef">aws_security_group_sg</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">nat_id</span>
 </span></span><span style="display:flex;"><span>  sg_sg-ssh_id <span style="color:#f92672">=</span> <span style="color:#66d9ef">module</span>.<span style="color:#66d9ef">local_module_sg</span>.<span style="color:#66d9ef">aws_security_group_sg</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#66d9ef">ssh_id</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  providers <span style="color:#f92672">=</span> {
-</span></span><span style="display:flex;"><span>    aws <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws</span>
-</span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">module</span> <span style="color:#e6db74">&#34;local_module_vpc&#34;</span> {
 </span></span><span style="display:flex;"><span>  source <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;../modules/terraform-aws-vpc&#34;</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  providers <span style="color:#f92672">=</span> {
-</span></span><span style="display:flex;"><span>    aws <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws</span>
-</span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># output.tf
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
