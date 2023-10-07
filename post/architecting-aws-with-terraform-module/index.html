@@ -207,7 +207,7 @@ These actions could cause human error and affect to production services.</li>
 </ol>
 <h2 id="2-terraform-with-module">2. Terraform with Module</h2>
 <p>I had been failed to understand and transform legacy terraform structure to module structure, before the group study started.</p>
-<p>So, in this post, I use basic AWS 1-tier architecture as example.</p>
+<p>In this post, I use basic AWS 1-tier architecture as example.</p>
 <p><img src="./images/1-tier-practice.png" alt="1-tier-architecture"></p>
 <h3 id="1-create-legacyfolder-structure-by-terraformer">(1) Create legacy(folder) structure by terraformer</h3>
 <p>To make ease transformation, make architecture in AWS Web console.<br>
@@ -285,7 +285,7 @@ And then, I use terraformer to make terraform files.</p>
 </span></span><span style="display:flex;"><span>    └── variable.tf
 </span></span></code></pre></div><ul>
 <li>
-<p>I divide terraform files for concentrating on actions
+<p>I divide terraform files for concentrating on actions.<br>
 <code>(Optional)</code> and filename is just my policy.</p>
 <ul>
 <li><code>main.tf</code> : Only IaC for ec2 module.<br>
@@ -295,7 +295,7 @@ ex. <code>name</code>, <code>tags</code></li>
 <li><code>data.tf</code> : (Optional) data on AWS, they have to exist before managing resources.<br>
 Also guide exists in <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami">Docs</a>.<br>
 ex. <code>ami</code></li>
-<li><code>output.tf</code> : (Optional) output for other modules.
+<li><code>output.tf</code> : (Optional) output for other modules.<br>
 ex. <code>ec2_id</code>, <code>ec2_ip</code>, <code>ec2_primary_network_interface_id</code></li>
 </ul>
 </li>
@@ -420,8 +420,8 @@ By module, we can set provider in root module <strong>once</strong>.</li>
 Most AWS resources have dependency with each other. Just for safe launch.</li>
 <li><code>variable</code> : Set variables for child module.<br>
 At here, we use other resources made in other modules, as variables.</li>
-<li><code>providers</code> : Set provider for child module.<br>
-We set AWS provider as <code>aws</code> in <code>main.tf</code>. So, we can reuse it here.</li>
+<li><code>providers</code> : (Optional) Set specific provider for child module.<br>
+<del>We set AWS provider as <code>aws</code> in <code>main.tf</code>. So, we can reuse it here.</del></li>
 </ul>
 </li>
 <li><code>output.tf</code> : (Optional) output for the machine that handles terraform.</li>
@@ -505,7 +505,9 @@ We set AWS provider as <code>aws</code> in <code>main.tf</code>. So, we can reus
 It was not easy to configure but understanding resources well in admin&rsquo;s view.<br>
 This example still have some problems to be refactored.<br>
 I wish this post will be helpful to moduling terraform.</p>
-<p>(Codes will be updated in this post)</p>
+<ul>
+<li>Source Code: <a href="https://github.com/kkumtree/demo_terraform_module">https://github.com/kkumtree/demo_terraform_module</a></li>
+</ul>
 <h2 id="6-references">6. References</h2>
 <ul>
 <li><a href="https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4">CloudNet@</a></li>
