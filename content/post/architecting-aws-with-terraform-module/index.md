@@ -108,7 +108,7 @@ But, problems were enough critical to think 'why we have to use terraform?'.
 
 I had been failed to understand and transform legacy terraform structure to module structure, before the group study started.  
 
-So, in this post, I use basic AWS 1-tier architecture as example.  
+In this post, I use basic AWS 1-tier architecture as example.  
 
 ![1-tier-architecture](./images/1-tier-practice.png)
 
@@ -191,16 +191,16 @@ $ tree
     └── variable.tf
 ```
 
-- I divide terraform files for concentrating on actions
+- I divide terraform files for concentrating on actions.  
   `(Optional)` and filename is just my policy.  
   - `main.tf` : Only IaC for ec2 module.  
     Guide is well-described in [Docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance).  
   - `variable.tf` : variables for customizing ec2 resources at local.  
-    ex. `name`, `tags`
+    ex. `name`, `tags`  
   - `data.tf` : (Optional) data on AWS, they have to exist before managing resources.  
     Also guide exists in [Docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami).  
-    ex. `ami`
-  - `output.tf` : (Optional) output for other modules.
+    ex. `ami`  
+  - `output.tf` : (Optional) output for other modules.  
     ex. `ec2_id`, `ec2_ip`, `ec2_primary_network_interface_id`  
 
 - Examples are below.  
@@ -335,8 +335,8 @@ So, I changed plan by setting variables partially in root module.
     Most AWS resources have dependency with each other. Just for safe launch.  
   - `variable` : Set variables for child module.  
     At here, we use other resources made in other modules, as variables.  
-  - `providers` : Set provider for child module.  
-    We set AWS provider as `aws` in `main.tf`. So, we can reuse it here.  
+  - `providers` : (Optional) Set specific provider for child module.  
+    ~~We set AWS provider as `aws` in `main.tf`. So, we can reuse it here.~~  
 - `output.tf` : (Optional) output for the machine that handles terraform.  
 
 ```hcl
@@ -437,7 +437,7 @@ It was not easy to configure but understanding resources well in admin's view.
 This example still have some problems to be refactored.  
 I wish this post will be helpful to moduling terraform.  
 
-(Codes will be updated in this post)
+- Source Code: <https://github.com/kkumtree/demo_terraform_module>  
 
 ## 6. References
 
