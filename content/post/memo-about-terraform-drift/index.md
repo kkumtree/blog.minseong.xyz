@@ -150,7 +150,8 @@ terraform {
 - 단, 현재 버전에서는 output파일을 로컬에 내보내려면,  
   TFC의 기본 실행 모드(Default Execution Mode)를  
   `Remote`에서 `Local`로 변경해야 합니다.
-- 고유의 강점인 웹 콘솔에서의 협업-review- 기능을 포기한다고 생각하면 됩니다.
+- 고유의 강점인 웹 콘솔에서의 협업-review- 기능을 포기한다고 생각하면 됩니다.  
+  대신에, 사용자 지정 모듈을 다시 원래 상대경로로 로드할 수 있었습니다.  
 - 실제 운영용으로 한다면, plan 중 Lock이 걸릴 것이므로 유의.  
 
 ```bash
@@ -191,3 +192,16 @@ esac
 5. lifecycle을 처음 사용해보았고, 이를 통해 불필요한 작업을 줄일 수 있었습니다.  
 
 ## 5. References  
+
+- [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)
+- [테라폼으로 시작하는 IaC](https://link.coupang.com/a/8mN0N)
+- [Trend Micro/Terraform Tutorial: Drift Detection Strategies](https://www.trendmicro.com/en_us/devops/22/c/terraform-tutorial-drift-detection-strategies.html)
+- [GitHub/terraform](https://github.com/hashicorp/terraform/issues/30678)
+- [hashicorp/Modules in Package Sub-directories](https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories)
+- [hashicorp/Manage resource drift](https://developer.hashicorp.com/terraform/tutorials/state/resource-drift#resource-drift)  
+- [hashicorp/discuss](https://discuss.hashicorp.com/t/saving-a-generated-plan-is-currently-not-supported/2116)
+- [hashicorp/resource-lifecycle](https://developer.hashicorp.com/terraform/tutorials/state/resource-lifecycle)
+- [hashicorp/The lifecycle Meta-Argument](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle)
+- [spacelift/Terraform Drift – How to Detect and Manage It](https://spacelift.io/blog/terraform-drift-detection)
+- [sendbird/Infrastructure Management using Terraform](https://sendbird.com/ko/blog/infrastructure-management-using-terraform)
+- [Medium/Send Terraform Drift Status To Slack Channel](https://medium.com/avmconsulting-blog/send-terraform-drift-status-to-slack-channel-f08eb5a99873)
