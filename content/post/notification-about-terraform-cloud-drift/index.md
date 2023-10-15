@@ -58,7 +58,7 @@ tf코드로 구성한 후,
 좀더 일반적으로 풀어보면, 테라폼으로 환경을 구축한 이후에  
 
 - CSP에서 제공하는 CLI나 웹콘솔 등에서 수동으로 VM 크기 등을 변경하는 상황  
-- CloudFormation(AWS), ARM템플릿/Bicep(AWS), Chef, Puppet  
+- CloudFormation(AWS), ARM템플릿/Bicep(Azure), Chef, Puppet  
   또는 Ansible 같이 Terraform에 의해 자동화되지 않은 프로세스를 실행하는 상황  
 
 으로 인해서 Terraform의 상태 파일이 감지하지 못하는  
