@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>TFC(Terraform Cloud) drift 알림 설정 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="TFC(Terraform Cloud) drift 알림 설정" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/notification-about-terraform-cloud-drift/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/notification-about-terraform-cloud-drift/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/notification-about-terraform-cloud-drift/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>TFC(Terraform Cloud) drift 알림 설정</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-10-15T00:10:33&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/terraform" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">Terraform</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">AWS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/tfc" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">TFC</span>
+              </div>
+            </a>
+            
+            <a href="/tags/drift" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">drift</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p><a href="https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4">CloudNet@</a>에서의 Terraform 스터디가 끝나고 나서,<br>
+테라폼을 실제 운영 상황에 도입하면서 마주할 수 밖에 없는 드리프트(drift) 상황에 대해<br>
+이해해보는 시간을 가졌습니다.</p>
+<pre tabindex="0"><code class="language-info" data-lang="info">참고) TFC에서의 Drift Detection 기능은 현재 TFC Plus 에디션에서 지원됩니다.  
+</code></pre><h2 id="1-용어-이해해보기">1. 용어 이해해보기</h2>
+<p>사실은 작년부터 테라폼을 접하고나서, IaC라는 개념에 꽂히기만 했지<br>
+운영 입장에서 마주했었던 수많은 시행착오들을 흔한 유저에러로만 생각해왔었습니다.<br>
+스터디에 참여하면서 종종 &lsquo;드리프트&rsquo;라는 단어를 듣고, 찾아보니<br>
+상당부분이 이에 속하는 상황이라는 것을 알 수 있었습니다.</p>
+<h3 id="1-drift">(1) Drift?</h3>
+<p>글 작성을 위해 찾아본 기술적 Drift는 본래 주행에 있어서의 그것과<br>
+크게 차이가 없음을 알 수 있었습니다.</p>
+<p>현재까지 이해한 바로는 엔지니어의 계획에 의해 구성된 설계 내에서<br>
+리소스가 생성되고 관리가 되어야 하는데,<br>
+(1) 시간이 흐르거나 (2) 일시적이거나 급한 상황에 따라<br>
+계획된 구성을 벗어나는 현상 그 자체라고 이해해보았습니다.</p>
+<h3 id="2-terraform에서의-drift">(2) Terraform에서의 Drift</h3>
+<p>과거에 제가 테라폼을 처음 접하고 적용하는 상황에 비추어보면,<br>
+제가 요청받은 사항(주로, 테스트 개발용 인스턴스, 도메인, AMI 등)을<br>
+tf코드로 구성한 후,</p>
+<ul>
+<li>태그를 고치는 작업</li>
+<li>테스트서버용 도메인을 수정하는 작업</li>
+</ul>
+<p>위와 같은 자잘한 사항을 처음에 값을 바꾸고난 이후에,<br>
+새로이 요청받은 리소스를 셋업할 때 처음 마주하였습니다.</p>
+<p>좀더 일반적으로 풀어보면, 테라폼으로 환경을 구축한 이후에</p>
+<ul>
+<li>CSP에서 제공하는 CLI나 웹콘솔 등에서 수동으로 VM 크기 등을 변경하는 상황</li>
+<li>CloudFormation(AWS), ARM템플릿/Bicep(AWS), Chef, Puppet<br>
+또는 Ansible 같이 Terraform에 의해 자동화되지 않은 프로세스를 실행하는 상황</li>
+</ul>
+<p>으로 인해서 Terraform의 상태 파일이 감지하지 못하는<br>
+변경 사항이 발생하는 경우라고 하네요.</p>
+<p><img src="./images/drift_detected.png" alt="drift_detected_in_tf"></p>
+<h3 id="3-drift-발생-상황이-문제가-되는가">(3) Drift 발생 상황이 문제가 되는가?</h3>
+<p>보통은 terraform plan이나 apply(plan이 선행됨)를 통하면,<br>
+이러한 변경사항(drift)를 확인할 수 있기 때문에 큰 이슈라고 생각하지 않을 수 있습니다.</p>
+<p>찾아보니, 일부 변경사항은 확인이 안될 수도 있기 때문에</p>
+<ul>
+<li>수동으로 해결해야하는 상황이 발생할 수 있습니다.</li>
+<li>더 나아가, 테라폼 외부에서 변경된 사항을 되돌리는 과정에서<br>
+리소스를 쓰지 못할 수도 있고, 배포 실패를 초래할 수 있습니다.</li>
+</ul>
+<h2 id="2-drift에-대한-알림-및-설정-wterraform-cloud">2. Drift에 대한 알림 및 설정 w/Terraform Cloud</h2>
+<p>그러면 이러한 사항에 대해 알림을 설정하여,<br>
+<del>인프라 관리자가 사항을 적시에 알 수 있도록 해보겠습니다.</del><br>
+현재 TFC Free를 써보고 있기에, 모든 테라폼 작업 요청에 대해 알람을 걸어보겠습니다.</p>
+<h3 id="1-terraform-cloud-연결">(1) Terraform Cloud 연결</h3>
+<p>예전 <a href="https://blog.minseong.xyz/post/architecting-aws-with-terraform-module/">포스팅</a>에서 다룬 테라폼 코드입니다</p>
+<ul>
+<li>
+<p>예제 소스: <a href="https://github.com/kkumtree/demo_terraform_module">Github</a> (브랜치명: <code>setting-for-tfc</code>)</p>
+</li>
+<li>
+<p>TFC에서 안내하는 대로 root 모듈 내의 terraform 부분을 수정합니다.</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-HCL" data-lang="HCL"><span style="display:flex;"><span><span style="color:#75715e"># demo_terraform_module/provider_for_module/main.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">terraform</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">cloud</span> {
+</span></span><span style="display:flex;"><span>    organization <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;kkumtree&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">workspaces</span> {
+</span></span><span style="display:flex;"><span>      name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;t101&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">required_providers</span> {
+</span></span><span style="display:flex;"><span>    aws <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      source <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hashicorp/aws&#34;</span>
+</span></span><span style="display:flex;"><span>      version <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;~&gt; 5.17.0&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    external <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>      source <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hashicorp/external&#34;</span>
+</span></span><span style="display:flex;"><span>      version <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;~&gt; 2.3.1&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><img src="./images/tfc_init_config.png" alt="tfc_init_config"></p>
+<ul>
+<li>이후에는 TFC에서 쓸 AWS 접속 정보를 셋업합니다. (택일)</li>
+</ul>
+<p>(1) TFC용 IAM User를 생성하여 연결하거나,<br>
+(2) TFC용 OIDC 프로바이더를 생성하여 연결합니다.</p>
+<ul>
+<li>IdP를 선택하였고, 예제 파일을 구동하기 위해 권한은<br>
+<code>AmazonEC2FullAccess</code>, <code>iam:PassRole</code> 을 할당하였습니다.<br>
+IAM Role을 호출하기에, Role을 설정하지 않으면 에러가 발생합니다.</li>
+</ul>
+<p><img src="./images/just_iam_permission_error.png" alt="aws_permission_error_not_tf_error"></p>
+<h3 id="2-slack-알림-설정">(2) Slack 알림 설정</h3>
+<ul>
+<li>Slack 알람 설정 인터페이스가 좀 많이 바뀌었는데,<br>
+큰 틀에서는 달라진게 없어서 웹훅URL을 발급받아 연결할 수 있었습니다.</li>
+</ul>
+<p><img src="./images/slack_app_1.png" alt="slack_app_1"><br>
+<img src="./images/slack_app_2.png" alt="slack_app_2"><br>
+<img src="./images/slack_app_3.png" alt="slack_app_3"><br>
+<img src="./images/slack_app_4_url.png" alt="slack_app_4"></p>
+<ul>
+<li>TFC에서는 아래와 같이 설정하면 됩니다.</li>
+</ul>
+<p><img src="./images/use_slack_url_in_tfc.png" alt="use_slack_in_tfc"></p>
+<ul>
+<li>예전에 local 백엔드에서 했던대로 하면 될 줄 알았는데,<br>
+TFC에서는 모듈 경로를 로컬의 상대경로로 지정하면 오류가 발생합니다.</li>
+</ul>
+<p><img src="./images/tfc_symlink_error.png" alt="tfc_symlink_error"></p>
+<ul>
+<li>
+<p>github에 예제 코드를 공개로 저장했었기에,<br>
+<a href="https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories">예제</a>에 안내된 방식 <code>git::https://github.com</code>로 했다가, 에러가 났습니다.<br>
+차분히, Github를 참조하여 아래와 같이 지정하였습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git::git@github.com:kkumtree/demo_terraform_module.git//modules/terraform-aws-ec2?ref<span style="color:#f92672">=</span>setting-for-tfc
+</span></span></code></pre></div></li>
+<li>
+<p>//: 테라폼이 해당 부분 이후를 서브 디렉토리로 인식할 수 있게 합니다.</p>
+</li>
+<li>
+<p>ref: 브랜치, 혹은 태그. 본 포스팅에서도 브랜치를 선택하는 용도로 사용하였습니다.</p>
+</li>
+</ul>
+<p><img src="./images/module_git_addr_error.png" alt="error_with_wrong_git_addr"></p>
+<ul>
+<li>제대로 수정한 이후에 module을 git에서 가져오는 것을 볼 수 있습니다.</li>
+</ul>
+<p><img src="./images/init_with_fixed_git_addr.png" alt="init_after_fixing_git_addr"></p>
+<ul>
+<li>테라폼 명령어를 입력할 때마다, 알림을 받아볼 수 있었습니다.</li>
+</ul>
+<p><img src="./images/slack_notification_enabled.png" alt="slack_app_notification"></p>
+<h2 id="3-번외-drift-알림을-만들어서-써보기">3. (번외) drift 알림을 만들어서 써보기</h2>
+<ul>
+<li>다른 서드파티들을 보니 Cron작업으로 drift detection을 하는 것 같아,<br>
+Bash 스크립팅을 통해 간이로 알림을 보내는 작업을 해보겠습니다.</li>
+<li>단, 현재 버전에서는 output파일을 로컬에 내보내려면,<br>
+TFC의 기본 실행 모드(Default Execution Mode)를<br>
+<code>Remote</code>에서 <code>Local</code>로 변경해야 합니다.</li>
+</ul>
+<p><img src="./images/where_to_set_local_execution_mode_in_tfc.png" alt="how_to_set_excution_mode"></p>
+<ul>
+<li>고유의 강점인 웹 콘솔에서의 협업-review- 기능을 포기한다고 생각하면 됩니다.<br>
+대신에, 사용자 지정 모듈을 다시 원래 상대경로로 로드할 수 있었습니다.</li>
+<li>실제 운영용으로 한다면, plan 중 Lock이 걸릴 것이므로 유의.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>terraform plan --detailed-exitcode -out<span style="color:#f92672">=</span>tf.plan 2&gt; /dev/null <span style="color:#f92672">||</span> ec<span style="color:#f92672">=</span>$?
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> $ec in
+</span></span><span style="display:flex;"><span>0<span style="color:#f92672">)</span> echo <span style="color:#e6db74">&#34;No Changes Found&#34;</span>: exit 0;;
+</span></span><span style="display:flex;"><span>1<span style="color:#f92672">)</span> printf <span style="color:#e6db74">&#39;%s/n&#39;</span> <span style="color:#e6db74">&#34;Command exited with non-zero&#34;</span>;exit 1;;
+</span></span><span style="display:flex;"><span>2<span style="color:#f92672">)</span> echo <span style="color:#e6db74">&#34;Changes found&#34;</span>;
+</span></span><span style="display:flex;"><span>   MESSAGE<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>terraform show -no-color tf.plan| awk <span style="color:#e6db74">&#39;/#/,EOF { print $0 }&#39;</span><span style="color:#66d9ef">)</span>;
+</span></span><span style="display:flex;"><span>   curl -X POST -H <span style="color:#e6db74">&#39;Content-type: application/json&#39;</span> --data <span style="color:#e6db74">&#34;{&#39;text&#39;:&#39;</span>$MESSAGE<span style="color:#e6db74">&#39;}&#34;</span> $SLACK_WEBHOOK
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">esac</span>
+</span></span></code></pre></div><ul>
+<li>
+<p>위에 쓰여진 $SLACK_WEBHOOK 은 웹훅 URL 주소를 bash 환경변수로 지정하였습니다.</p>
+</li>
+<li>
+<p>포스팅을 위해 스크린샷을 저장하려고 하니, 불필요한 변경점이 발생합니다.</p>
+</li>
+</ul>
+<p><img src="./images/if_not_using_lifecycle_argument.png" alt="if_not_using_lifecycle"></p>
+<ul>
+<li>그래서, AMI 관련 lifecycle 예외조건을 걸어<br>
+변경점을 줄인 뒤 해당 쉘을 실행해보겠습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-HCL" data-lang="HCL"><span style="display:flex;"><span><span style="color:#75715e"># In EC2 resource block
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">lifecycle</span> {
+</span></span><span style="display:flex;"><span>    ignore_changes <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">tags</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">ami</span>,
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><ul>
+<li>이제, Bastion 인스턴스(LAB-SSH)에 접속하는데 쓰일 SG의 IP주소만 바꿨을 때,<br>
+이에 대한 드리프트만 발생됨을 볼 수 있습니다.</li>
+</ul>
+<p><img src="./images/bash_script_example.png" alt="bash_shell_executed"></p>
+<ul>
+<li>예제이기 때문에, 알림에 있어 불필요한 정보까지 나열되었지만<br>
+변경사항(drift)이 있을 경우에만 알림을 받는다는 목적은 달성하였습니다.</li>
+</ul>
+<p><img src="./images/bash_script_with_slack_app_1.png" alt="slack_notification_by_bash_script_1"><br>
+<img src="./images/bash_script_with_slack_app_2.png" alt="slack_notification_by_bash_script_2"></p>
+<ul>
+<li><code>local</code> 모드로 실행할 경우, state파일이 저장되는 방식도 다소 달라짐을 볼 수 있습니다.</li>
+</ul>
+<p><img src="./images/when_use_local_execution_mode.png" alt="state_name_when_use_local_execution_mode"></p>
+<h2 id="4-마치며">4. 마치며</h2>
+<ol>
+<li>Drift에 대해 이해해보는 시간이 되었습니다.</li>
+<li>원격지(VCS)에서 sub-directory 방식으로 사용자 지정 모듈을 호출하였습니다.</li>
+<li>Slack 웹훅을 통하여, TFC로부터의 알림을 수신했습니다.</li>
+<li>TFC의 실행모드를 변경하여, 차이를 살펴보았습니다.</li>
+<li>lifecycle을 처음 사용해보았고, 이를 통해 불필요한 작업을 줄일 수 있었습니다.</li>
+<li>모니터링 관점에서 TFC Plus를 고려해보는 것도 좋은 방법이 될 수 있을 것 같습니다.</li>
+</ol>
+<h2 id="5-references">5. References</h2>
+<ul>
+<li><a href="https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4">CloudNet@</a></li>
+<li><a href="https://link.coupang.com/a/8mN0N">테라폼으로 시작하는 IaC</a></li>
+<li><a href="https://www.trendmicro.com/en_us/devops/22/c/terraform-tutorial-drift-detection-strategies.html">Trend Micro/Terraform Tutorial: Drift Detection Strategies</a></li>
+<li><a href="https://github.com/hashicorp/terraform/issues/30678">GitHub/terraform</a></li>
+<li><a href="https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories">hashicorp/Modules in Package Sub-directories</a></li>
+<li><a href="https://developer.hashicorp.com/terraform/tutorials/state/resource-drift#resource-drift">hashicorp/Manage resource drift</a></li>
+<li><a href="https://discuss.hashicorp.com/t/saving-a-generated-plan-is-currently-not-supported/2116">hashicorp/discuss</a></li>
+<li><a href="https://developer.hashicorp.com/terraform/tutorials/state/resource-lifecycle">hashicorp/resource-lifecycle</a></li>
+<li><a href="https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle">hashicorp/The lifecycle Meta-Argument</a></li>
+<li><a href="https://spacelift.io/blog/terraform-drift-detection">spacelift/Terraform Drift – How to Detect and Manage It</a></li>
+<li><a href="https://sendbird.com/ko/blog/infrastructure-management-using-terraform">sendbird/Infrastructure Management using Terraform</a></li>
+<li><a href="https://medium.com/avmconsulting-blog/send-terraform-drift-status-to-slack-channel-f08eb5a99873">Medium/Send Terraform Drift Status To Slack Channel</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/architecting-aws-with-terraform-module/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Understanding terraform module</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <p></p>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

@@ -6,7 +6,23 @@
     <description>Recent content on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Wed, 04 Oct 2023 11:24:13 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 15 Oct 2023 00:10:33 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TFC(Terraform Cloud) drift 알림 설정</title>
+      <link>https://blog.minseong.xyz/post/notification-about-terraform-cloud-drift/</link>
+      <pubDate>Sun, 15 Oct 2023 00:10:33 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/notification-about-terraform-cloud-drift/</guid>
+      <description>CloudNet@에서의 Terraform 스터디가 끝나고 나서,
+테라폼을 실제 운영 상황에 도입하면서 마주할 수 밖에 없는 드리프트(drift) 상황에 대해
+이해해보는 시간을 가졌습니다.
+참고) TFC에서의 Drift Detection 기능은 현재 TFC Plus 에디션에서 지원됩니다. 1. 용어 이해해보기 사실은 작년부터 테라폼을 접하고나서, IaC라는 개념에 꽂히기만 했지
+운영 입장에서 마주했었던 수많은 시행착오들을 흔한 유저에러로만 생각해왔었습니다.
+스터디에 참여하면서 종종 &amp;lsquo;드리프트&amp;rsquo;라는 단어를 듣고, 찾아보니
+상당부분이 이에 속하는 상황이라는 것을 알 수 있었습니다.
+(1) Drift? 글 작성을 위해 찾아본 기술적 Drift는 본래 주행에 있어서의 그것과</description>
+    </item>
+    
     <item>
       <title>Understanding terraform module</title>
       <link>https://blog.minseong.xyz/post/architecting-aws-with-terraform-module/</link>
