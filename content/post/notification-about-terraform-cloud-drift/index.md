@@ -1,6 +1,6 @@
 ---
 date: 2023-10-15T00:10:33+09:00
-title: "테라폼 드리프트(drift)에 대한 메모 및 알림 설정"
+title: "TFC(Terraform Cloud) drift 알림 설정"
 tags:
  - Terraform
  - CloudNet@
@@ -15,7 +15,7 @@ authors:
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.png 
-draft: true
+draft: false
 ---
 
 [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)에서의 Terraform 스터디가 끝나고 나서,  
@@ -64,6 +64,8 @@ tf코드로 구성한 후,
 으로 인해서 Terraform의 상태 파일이 감지하지 못하는  
 변경 사항이 발생하는 경우라고 하네요.  
 
+![drift_detected_in_tf](./images/drift_detected.png)  
+
 ### (3) Drift 발생 상황이 문제가 되는가?  
 
 보통은 terraform plan이나 apply(plan이 선행됨)를 통하면,  
@@ -88,7 +90,7 @@ tf코드로 구성한 후,
 - 예제 소스: [Github](https://github.com/kkumtree/demo_terraform_module) (브랜치명: `setting-for-tfc`)
 
 - TFC에서 안내하는 대로 root 모듈 내의 terraform 부분을 수정합니다.  
-  
+
 ```HCL
 # demo_terraform_module/provider_for_module/main.tf
 terraform {
@@ -114,6 +116,8 @@ terraform {
 }
 ```
 
+![tfc_init_config](./images/tfc_init_config.png)  
+
 - 이후에는 TFC에서 쓸 AWS 접속 정보를 셋업합니다. (택일)  
 
 (1) TFC용 IAM User를 생성하여 연결하거나,  
@@ -121,14 +125,28 @@ terraform {
 
 - IdP를 선택하였고, 예제 파일을 구동하기 위해 권한은  
   `AmazonEC2FullAccess`, `iam:PassRole` 을 할당하였습니다.  
+  IAM Role을 호출하기에, Role을 설정하지 않으면 에러가 발생합니다.  
+
+![aws_permission_error_not_tf_error](./images/just_iam_permission_error.png)  
 
 ### (2) Slack 알림 설정
 
 - Slack 알람 설정 인터페이스가 좀 많이 바뀌었는데,  
   큰 틀에서는 달라진게 없어서 웹훅URL을 발급받아 연결할 수 있었습니다.  
 
+![slack_app_1](./images/slack_app_1.png)  
+![slack_app_2](./images/slack_app_2.png)  
+![slack_app_3](./images/slack_app_3.png)  
+![slack_app_4](./images/slack_app_4_url.png)  
+
+- TFC에서는 아래와 같이 설정하면 됩니다.  
+
+![use_slack_in_tfc](./images/use_slack_url_in_tfc.png)
+
 - 예전에 local 백엔드에서 했던대로 하면 될 줄 알았는데,  
   TFC에서는 모듈 경로를 로컬의 상대경로로 지정하면 오류가 발생합니다.  
+
+![tfc_symlink_error](./images/tfc_symlink_error.png)
 
 - github에 예제 코드를 공개로 저장했었기에,  
   [예제](https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories)에 안내된 방식 `git::https://github.com`로 했다가, 에러가 났습니다.  
@@ -141,15 +159,26 @@ terraform {
 - //: 테라폼이 해당 부분 이후를 서브 디렉토리로 인식할 수 있게 합니다.  
 - ref: 브랜치, 혹은 태그. 본 포스팅에서도 브랜치를 선택하는 용도로 사용하였습니다.  
 
+![error_with_wrong_git_addr](./images/module_git_addr_error.png)
+
+- 제대로 수정한 이후에 module을 git에서 가져오는 것을 볼 수 있습니다.  
+
+![init_after_fixing_git_addr](./images/init_with_fixed_git_addr.png)
+
 - 테라폼 명령어를 입력할 때마다, 알림을 받아볼 수 있었습니다.  
+
+![slack_app_notification](./images/slack_notification_enabled.png)
 
 ## 3. (번외) drift 알림을 만들어서 써보기
 
-- 다른 서드파티들을 보니 Cron작업으로 수행을 하는 것 같아,  
+- 다른 서드파티들을 보니 Cron작업으로 drift detection을 하는 것 같아,  
   Bash 스크립팅을 통해 간이로 알림을 보내는 작업을 해보겠습니다.  
 - 단, 현재 버전에서는 output파일을 로컬에 내보내려면,  
   TFC의 기본 실행 모드(Default Execution Mode)를  
-  `Remote`에서 `Local`로 변경해야 합니다.
+  `Remote`에서 `Local`로 변경해야 합니다.  
+
+![how_to_set_excution_mode](./images/where_to_set_local_execution_mode_in_tfc.png)
+
 - 고유의 강점인 웹 콘솔에서의 협업-review- 기능을 포기한다고 생각하면 됩니다.  
   대신에, 사용자 지정 모듈을 다시 원래 상대경로로 로드할 수 있었습니다.  
 - 실제 운영용으로 한다면, plan 중 Lock이 걸릴 것이므로 유의.  
@@ -166,9 +195,14 @@ case $ec in
 esac
 ```
 
-- $SLACK_WEBHOOK: 웹훅 URL 주소
+- 위에 쓰여진 $SLACK_WEBHOOK 은 웹훅 URL 주소를 bash 환경변수로 지정하였습니다.  
 
-- AMI 관련, lifecycle 예외조건을 걸어 변경점을 조정한 뒤 해당 쉘을 실행해보겠습니다.  
+- 포스팅을 위해 스크린샷을 저장하려고 하니, 불필요한 변경점이 발생합니다.  
+
+![if_not_using_lifecycle](./images/if_not_using_lifecycle_argument.png)
+
+- 그래서, AMI 관련 lifecycle 예외조건을 걸어  
+  변경점을 줄인 뒤 해당 쉘을 실행해보겠습니다.  
 
 ```HCL
 # In EC2 resource block
@@ -180,16 +214,29 @@ esac
   }
 ```
 
+- 이제, Bastion 인스턴스(LAB-SSH)에 접속하는데 쓰일 SG의 IP주소만 바꿨을 때,  
+이에 대한 드리프트만 발생됨을 볼 수 있습니다.  
+
+![bash_shell_executed](./images/bash_script_example.png)
+
 - 예제이기 때문에, 알림에 있어 불필요한 정보까지 나열되었지만  
   변경사항(drift)이 있을 경우에만 알림을 받는다는 목적은 달성하였습니다.  
 
+![slack_notification_by_bash_script_1](./images/bash_script_with_slack_app_1.png)  
+![slack_notification_by_bash_script_2](./images/bash_script_with_slack_app_2.png)  
+
+- `local` 모드로 실행할 경우, state파일이 저장되는 방식도 다소 달라짐을 볼 수 있습니다.  
+
+![state_name_when_use_local_execution_mode](./images/when_use_local_execution_mode.png)  
+
 ## 4. 마치며
 
-1. Drift에 대해 이해할 수 있었습니다.  
-2. 원격지에서 sub-directory 방식으로 사용자 지정 모듈을 불러올 수 있었습니다.  
-3. Slack 웹훅을 통하여, TFC로부터의 알림을 수신해보았습니다.  
-4. TFC의 실행모드를 변경하여, 차이를 살펴볼 수 있었습니다.  
+1. Drift에 대해 이해해보는 시간이 되었습니다.  
+2. 원격지(VCS)에서 sub-directory 방식으로 사용자 지정 모듈을 호출하였습니다.  
+3. Slack 웹훅을 통하여, TFC로부터의 알림을 수신했습니다.  
+4. TFC의 실행모드를 변경하여, 차이를 살펴보았습니다.  
 5. lifecycle을 처음 사용해보았고, 이를 통해 불필요한 작업을 줄일 수 있었습니다.  
+6. 모니터링 관점에서 TFC Plus를 고려해보는 것도 좋은 방법이 될 수 있을 것 같습니다.  
 
 ## 5. References  
 
