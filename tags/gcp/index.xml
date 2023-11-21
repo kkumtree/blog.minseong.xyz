@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>GCP on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/gcp/</link>
+    <description>Recent content in GCP on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Tue, 21 Nov 2023 13:51:29 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/gcp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>그림으로 배우는 구글 클라우드 101 리뷰</title>
+      <link>https://blog.minseong.xyz/post/visualizing-google-cloud-101-book-review/</link>
+      <pubDate>Tue, 21 Nov 2023 13:51:29 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/visualizing-google-cloud-101-book-review/</guid>
+      <description>Jpub에서 최근 출판한 그림으로 배우는 구글 클라우드 101 - 제이펍 홈페이지에 대해,
+짧막하게 소개하는 글입니다.
+《그림으로 배우는 구글 클라우드 101》 서평단으로 본 도서를 제공받아 작성하였습니다. 최근 AWS 프로젝트를 진행하고 있습니다. Terraform을 활용하여, IaC 기반의 인프라 구성을 하고 있는데요.
+작년부터 DR(DR, Disaster Recovery)이 급격하게 화두가 되면서,
+Multi-AZ, Multi-Region을 넘어 Multi-Cloud도 고려의 대상이 되는 것 같습니다.
+관심이 있는지라 이번 프로젝트가 끝나면, AWS 외에도 GCP같은 다양한 CSP를 다시금 다뤄보고 싶다는 생각이 들었습니다.
+물론 GCP를 주력으로 쓰고 있다면 이야기가 다르겠지만,</description>
+    </item>
+    
+  </channel>
+</rss>

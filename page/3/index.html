@@ -97,6 +97,24 @@
 
             
             <div class="p-list__item">
+              <a href="/post/runlevel-in-linux/"><h2>Linux Runlevel - 런레벨/부트레벨</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-22T16:07:05&#43;09:00</u></p>
+              <p>CPU를 1600X에서 5700X로 업그레이드를 진행하기에 앞서,
+RunLevel(런레벨/부트레벨)에 대해 한번 메모하고자 함.
+Runlevel 7가지 레벨이 존재
+man runlevel 참고 Level 5을 제외하고는, cli 환경에서만 구동
+Linux Standard Base 기준
+ls -l /lib/systemd/system/runlevel?.target 명령어로 확인 가능 RunLevel EN 설명 비고 0 Power Off 시스템 종료(중단/Halt) 1 Rescue 시스템 복구 단일 사용자 모드 2 Multi-User 다중 사용자(텍스트 모드, 네트워크 서비스 X) 사용 X (사용자 정의 가능) 3 Multi-User 다중 사용자(텍스트 모드) 4 Multi-User 상동 사용 X (사용자 정의 가능) 5 Graphical 다중 사용자 모드 (그래픽 모드) X-window 기반 6 Reboot 시스템 리부팅 운영체제(Ubuntu 22.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/vagrant-init-setup-with-docker/"><h2>Vagrant 설치 및 Provider 지정</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -163,23 +181,6 @@ Network(2주차)가 매번 뭔가 일부가 아리송하였다면
 Security는 복기하다가 이론적으로는 간단(과연?)해보여도
 실제 구동방식 이해 자체가 초반에 안되서, 사흘 남짓 걸린 덕에 더 어려웠던 것 같습니다.
 그 외 myeks-bastion-2에 접속 시, 함께 진행할 때는 ssh {Public IP}로 잘 접속되는 걸 봤는데 정작 혼자 할 땐 접속이 되지않았습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/how-to-backup-gpg-key-to-personal-media/"><h2>GnuPG 키 백업하기</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-27T18:29:18&#43;09:00</u></p>
-              <p>23/05/30 GPG 키 복원방법 및 출처 추가 망가진 PC 메인보드를 교체하고, 서둘러 GPG key를 백업하였습니다.
-용량이 그리 큰편은 아니니, 왠만한 USB 메모리에도 충분히 백업이 가능합니다.
-(어째서 안했었을꼬&hellip;)
-출처는 마지막 referenece를 참조해주시기 바랍니다.
-1. Backup # tree로 ~/.gnupg 확인 tree ~/.gnupg # 현재 사용중인 키 확인 gpg --list-secret-keys --keyid-format LONG # 키 백업 ## public 키 백업 gpg --export --export-options backup --output ~/public_mscho.gpg ## private 키 백업 (암호 입력 필요) gpg --export-secret-keys --export-options backup --output ~/private_mscho.</p>
             </div>
             
 <ol class="p-pagination">
