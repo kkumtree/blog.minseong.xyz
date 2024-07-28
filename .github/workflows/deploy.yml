@@ -13,17 +13,17 @@ jobs:
     # Check out latest commit 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         name: Checkout src repo
         with:
           ref: main
       
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: 1.20.5
+          go-version: '^1.13.1'
           cache: false
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'yarn'
@@ -48,7 +48,7 @@ jobs:
         run: hugo
 
       # Checkout destination branch
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         name: Checkout dest repo
         with:
           path: dest
