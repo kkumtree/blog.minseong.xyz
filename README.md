@@ -6,7 +6,7 @@ Built with [Hugo](https://gohugo.io) and [Vanilla - A simple, extensible CSS fra
 
 ## License
 
-MIT License (See `LICENSE`)
+CC BY-NC-ND 4.0 License (See `LICENSE`)
 
 ## 새 포스팅 추가하기
 
