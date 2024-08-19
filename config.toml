@@ -17,7 +17,7 @@ permalinks = [
   defaultContentLanguage = "ko"
   copyright = "© 2024 kkumtree and contributors All rights reserved."
   creativeCommonsUrl = "https://creativecommons.org/licenses/by-nc-nd/4.0/"
-  creativeCommons = "CC BY-NC-ND 4.0"
+  creativeCommons = "CC BY-NC-ND 4.0 Licensed"
 
 [params.adsense]
   client = "ca-pub-1254864146899485"
