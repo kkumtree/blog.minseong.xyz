@@ -24,7 +24,14 @@
           <a href="https://launchpad.net/~{{.Site.Params.launchpad}}">Launchpad</a>
         </li>
       </ul>
-      <p><a href="{{.Site.Params.creativeCommonsUrl}}">{{.Site.Params.creativeCommons}}</a> | {{.Site.Params.copyright}}</p>
+      <p>
+        <a href="{{.Site.Params.copyright.creativeCommonsUrl}}">
+          {{.Site.Params.copyright.creativeCommons}}
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="{{.Site.Params.copyright.creativeCommonsIcoCc}}">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="{{.Site.Params.copyright.creativeCommonsIcoBy}}">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="{{.Site.Params.copyright.creativeCommonsIcoNc}}">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="{{.Site.Params.copyright.creativeCommonsIcoNd}}">
+        </a> | {{.Site.Params.copyright.base}}</p>
       <a href="{{.Site.Params.source_repo}}">{{ i18n "footer_src_repo" }}</a>
     </div>
   </div>
