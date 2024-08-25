@@ -45,7 +45,7 @@ But, I changed it to Creative Commons Licences. [CC BY-NC-ND 4.0](https://creati
 
 There are some reasons.  
 
-1. First, I'm a little aware of be crawled by bot **for feeding** AI(In these days, also called generative AI). It's wondering how effective declared licences could be helpful. But It could be better written in other languages rather than English. I want to communicate with people in my blog's comments. I just do this cause of my curiousity.  
+1. First, I'm a little nervous of be crawled by bot **for feeding** AI(In these days, also called generative AI). It's wondering how effective declared licences could be helpful. But It could be better written in other languages rather than English. I want to communicate with people in my blog's comments. I just do this cause of my curiousity.  
 
     ![bot could read foreign language faster?](images/read_foreign_language.png)  
 
