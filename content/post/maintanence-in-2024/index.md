@@ -47,7 +47,7 @@ There are some reasons.
 
 1. First, I'm a little nervous of be crawled by bot **for feeding** AI(In these days, also called generative AI). It's wondering how effective declared licences could be helpful. But It could be better written in other languages rather than English. I want to communicate with people in my blog's comments. I just do this cause of my curiousity.  
 
-    ![bot could read foreign language faster?](images/read_foreign_language.png)  
+    ![bot could read foreign language faster?](images/readible_performance.png)  
 
 2. Second, I was inspired by another blogger a.k.a. [Great-Stone](https://docmoa.github.io/). He also uses `CC BY-NC-ND 4.0`, and it will be rare case based on my experience. ND means No Derivatives.  
 
