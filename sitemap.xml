@@ -2,6 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/blog/</loc>
+    <lastmod>2024-08-26T00:02:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/maintanence-in-2024/</loc>
+    <lastmod>2024-08-26T00:02:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/bot/</loc>
+    <lastmod>2024-08-26T00:02:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/creativecommons/</loc>
+    <lastmod>2024-08-26T00:02:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/github/</loc>
+    <lastmod>2024-08-26T00:02:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2024-08-26T00:02:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2024-08-26T00:02:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2024-08-26T00:02:49+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/book/</loc>
     <lastmod>2023-11-21T13:51:29+09:00</lastmod>
   </url><url>
@@ -9,15 +33,6 @@
     <lastmod>2023-11-21T13:51:29+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/jpub/</loc>
-    <lastmod>2023-11-21T13:51:29+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2023-11-21T13:51:29+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2023-11-21T13:51:29+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2023-11-21T13:51:29+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/visualizing-google-cloud-101-book-review/</loc>
@@ -86,9 +101,6 @@
     <loc>https://blog.minseong.xyz/tags/bdia/</loc>
     <lastmod>2023-07-04T09:57:14+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/tags/github/</loc>
-    <lastmod>2023-07-04T09:57:14+09:00</lastmod>
-  </url><url>
     <loc>https://blog.minseong.xyz/tags/vscode/</loc>
     <lastmod>2023-07-04T09:57:14+09:00</lastmod>
   </url><url>
@@ -127,9 +139,6 @@
   </url><url>
     <loc>https://blog.minseong.xyz/tags/flux/</loc>
     <lastmod>2023-06-10T15:13:19+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/blog/</loc>
-    <lastmod>2023-06-04T09:15:14+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/disqus/</loc>
     <lastmod>2023-06-04T09:15:14+09:00</lastmod>

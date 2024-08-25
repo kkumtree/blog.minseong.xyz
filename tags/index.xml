@@ -6,7 +6,43 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 21 Nov 2023 13:51:29 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 26 Aug 2024 00:02:49 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>blog</title>
+      <link>https://blog.minseong.xyz/tags/blog/</link>
+      <pubDate>Mon, 26 Aug 2024 00:02:49 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/blog/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>bot</title>
+      <link>https://blog.minseong.xyz/tags/bot/</link>
+      <pubDate>Mon, 26 Aug 2024 00:02:49 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/bot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>creativecommons</title>
+      <link>https://blog.minseong.xyz/tags/creativecommons/</link>
+      <pubDate>Mon, 26 Aug 2024 00:02:49 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/creativecommons/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>GitHub</title>
+      <link>https://blog.minseong.xyz/tags/github/</link>
+      <pubDate>Mon, 26 Aug 2024 00:02:49 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/github/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>book</title>
       <link>https://blog.minseong.xyz/tags/book/</link>
@@ -161,15 +197,6 @@
     </item>
     
     <item>
-      <title>GitHub</title>
-      <link>https://blog.minseong.xyz/tags/github/</link>
-      <pubDate>Tue, 04 Jul 2023 09:57:14 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/github/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>VSCode</title>
       <link>https://blog.minseong.xyz/tags/vscode/</link>
       <pubDate>Tue, 04 Jul 2023 09:57:14 +0900</pubDate>
@@ -238,15 +265,6 @@
       <pubDate>Sat, 10 Jun 2023 15:13:19 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/flux/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>blog</title>
-      <link>https://blog.minseong.xyz/tags/blog/</link>
-      <pubDate>Sun, 04 Jun 2023 09:15:14 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/blog/</guid>
       <description></description>
     </item>
     
