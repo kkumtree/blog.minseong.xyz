@@ -6,7 +6,52 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sun, 01 Sep 2024 09:02:15 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 02 Sep 2024 00:33:19 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>golang</title>
+      <link>https://blog.minseong.xyz/tags/golang/</link>
+      <pubDate>Mon, 02 Sep 2024 00:33:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>installation</title>
+      <link>https://blog.minseong.xyz/tags/installation/</link>
+      <pubDate>Mon, 02 Sep 2024 00:33:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/installation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kans</title>
+      <link>https://blog.minseong.xyz/tags/kans/</link>
+      <pubDate>Mon, 02 Sep 2024 00:33:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/kans/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kind</title>
+      <link>https://blog.minseong.xyz/tags/kind/</link>
+      <pubDate>Mon, 02 Sep 2024 00:33:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/kind/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kubernetes</title>
+      <link>https://blog.minseong.xyz/tags/kubernetes/</link>
+      <pubDate>Mon, 02 Sep 2024 00:33:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>docker</title>
       <link>https://blog.minseong.xyz/tags/docker/</link>
@@ -22,15 +67,6 @@
       <pubDate>Sun, 01 Sep 2024 09:02:15 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/jenkins/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>kans</title>
-      <link>https://blog.minseong.xyz/tags/kans/</link>
-      <pubDate>Sun, 01 Sep 2024 09:02:15 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/kans/</guid>
       <description></description>
     </item>
     

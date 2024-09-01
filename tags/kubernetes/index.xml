@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kubernetes on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/kubernetes/</link>
+    <description>Recent content in kubernetes on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Mon, 02 Sep 2024 00:33:19 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>리눅스에 KIND 설치하기 w/golang</title>
+      <link>https://blog.minseong.xyz/post/kans-2w-kind-installation-on-linux/</link>
+      <pubDate>Mon, 02 Sep 2024 00:33:19 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/kans-2w-kind-installation-on-linux/</guid>
+      <description>CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)에 참여하게 되면서 기록을 남기고 있습니다.
+이번에는 kind(Kubernetes IN Docker)를 Golang을 통해 설치하면서 약간의 소?란이 있었던 부분만 다룹니다.
+1. KIND란? 아래 사진으로 대체합니다. 자세한 내용은 Docs/Initial_design에서 볼수 있습니다. 2. KIND 설치하기 Docs/Quick-start를 참고합니다. Linux의 경우, 패키지 관리자 설치가 없어 바이너리, 혹은 소스로 설치해야 합니다.
+아래 두 문장에 뭔가 발동하여 Go 언어로 설치를 해보기로 했습니다.
+If you are a go developer you may find the go install option convenient.</description>
+    </item>
+    
+  </channel>
+</rss>

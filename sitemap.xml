@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/golang/</loc>
+    <lastmod>2024-09-02T00:33:19+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/installation/</loc>
+    <lastmod>2024-09-02T00:33:19+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/kans/</loc>
+    <lastmod>2024-09-02T00:33:19+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/kind/</loc>
+    <lastmod>2024-09-02T00:33:19+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2024-09-02T00:33:19+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/kubernetes/</loc>
+    <lastmod>2024-09-02T00:33:19+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2024-09-02T00:33:19+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2024-09-02T00:33:19+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/kans-2w-kind-installation-on-linux/</loc>
+    <lastmod>2024-09-02T00:33:19+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/docker/</loc>
     <lastmod>2024-09-01T09:02:15+09:00</lastmod>
   </url><url>
@@ -11,22 +38,10 @@
     <loc>https://blog.minseong.xyz/post/kans-1w-container-socket/</loc>
     <lastmod>2024-09-01T09:02:15+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/tags/kans/</loc>
-    <lastmod>2024-09-01T09:02:15+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2024-09-01T09:02:15+09:00</lastmod>
-  </url><url>
     <loc>https://blog.minseong.xyz/tags/networking/</loc>
     <lastmod>2024-09-01T09:02:15+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2024-09-01T09:02:15+09:00</lastmod>
-  </url><url>
     <loc>https://blog.minseong.xyz/tags/socket/</loc>
-    <lastmod>2024-09-01T09:02:15+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2024-09-01T09:02:15+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/blog/</loc>
