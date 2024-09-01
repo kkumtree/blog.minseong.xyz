@@ -15,7 +15,7 @@ authors:
     github: kkumtree
     profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: images/k8s_4wish.png
-draft: true
+draft: false
 ---
 
 최근 [CloudNet@](https://gasidaseo.notion.site/24-3-df0466c474ff40528e37b24bfdfe9d0f)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)에 참여하게 되었습니다.  
