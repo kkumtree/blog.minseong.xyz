@@ -6,7 +6,21 @@
     <description>Recent content on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 26 Aug 2024 00:02:49 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 01 Sep 2024 09:02:15 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기</title>
+      <link>https://blog.minseong.xyz/post/kans-1w-container-socket/</link>
+      <pubDate>Sun, 01 Sep 2024 09:02:15 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/kans-1w-container-socket/</guid>
+      <description>최근 CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)에 참여하게 되었습니다.
+난이도를 생각하면 KH(Hardcore)NS가 더 맞아보이지만&amp;hellip;
+k8s가 워낙 인기가 많기도 하지만, Pod 간 통신에는 많은 지식이 투여되기에 이번 기회에 살펴보기로 했습니다.
+첫 주차는, 바로 Kubernetes에 진입하지 않고 Containerization에 대한 이해를 먼저 다뤄주셨습니다.
+여타 쿠버네티스 강의와 달리 9주 간 매주 일요일에만 진행되는 세션인데도, 기반 기술을 다시 짚어주셔서 감사했습니다.
+1. AWS EC2 Instance 셋업 CloudFormation을 통해, EC2 및 제반사항을 구성하여 주셨습니다만, 취미 삼아 Terraform 변환 작업을 해보았습니다.</description>
+    </item>
+    
     <item>
       <title>Blog maintanence in 2024</title>
       <link>https://blog.minseong.xyz/post/maintanence-in-2024/</link>

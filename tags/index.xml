@@ -6,7 +6,52 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 26 Aug 2024 00:02:49 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 01 Sep 2024 09:02:15 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>docker</title>
+      <link>https://blog.minseong.xyz/tags/docker/</link>
+      <pubDate>Sun, 01 Sep 2024 09:02:15 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/docker/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>jenkins</title>
+      <link>https://blog.minseong.xyz/tags/jenkins/</link>
+      <pubDate>Sun, 01 Sep 2024 09:02:15 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/jenkins/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kans</title>
+      <link>https://blog.minseong.xyz/tags/kans/</link>
+      <pubDate>Sun, 01 Sep 2024 09:02:15 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/kans/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>networking</title>
+      <link>https://blog.minseong.xyz/tags/networking/</link>
+      <pubDate>Sun, 01 Sep 2024 09:02:15 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/networking/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>socket</title>
+      <link>https://blog.minseong.xyz/tags/socket/</link>
+      <pubDate>Sun, 01 Sep 2024 09:02:15 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/socket/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>blog</title>
       <link>https://blog.minseong.xyz/tags/blog/</link>

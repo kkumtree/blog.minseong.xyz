@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/kans-1w-container-socket/images/k8s_4wish.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/kans-1w-container-socket/images/k8s_4wish.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/kans-1w-container-socket/images/k8s_4wish.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('images/k8s_4wish.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-01T09:02:15&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/kans" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kans</span>
+              </div>
+            </a>
+            
+            <a href="/tags/networking" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">networking</span>
+              </div>
+            </a>
+            
+            <a href="/tags/docker" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">docker</span>
+              </div>
+            </a>
+            
+            <a href="/tags/jenkins" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">jenkins</span>
+              </div>
+            </a>
+            
+            <a href="/tags/socket" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">socket</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>최근 <a href="https://gasidaseo.notion.site/24-3-df0466c474ff40528e37b24bfdfe9d0f">CloudNet@</a>에서 진행하고 있는 <strong>K</strong>8s <strong>A</strong>dvanced <strong>N</strong>etwork <strong>S</strong>tudy(이하, KANS)에 참여하게 되었습니다.<br>
+<del>난이도를 생각하면 KH(Hardcore)NS가 더 맞아보이지만&hellip;</del></p>
+<p>k8s가 워낙 인기가 많기도 하지만, Pod 간 통신에는 많은 지식이 투여되기에 이번 기회에 살펴보기로 했습니다.</p>
+<p><img src="images/k8s_4wish.png" alt="돔황챠"></p>
+<p>첫 주차는, 바로 Kubernetes에 진입하지 않고 Containerization에 대한 이해를 먼저 다뤄주셨습니다.<br>
+여타 쿠버네티스 강의와 달리 9주 간 매주 일요일에만 진행되는 세션인데도, 기반 기술을 다시 짚어주셔서 감사했습니다.</p>
+<h2 id="1-aws-ec2-instance-셋업">1. AWS EC2 Instance 셋업</h2>
+<p>CloudFormation을 통해, EC2 및 제반사항을 구성하여 주셨습니다만, 취미 삼아 Terraform 변환 작업을 해보았습니다. <del>하지 말았어야했는데&hellip;</del> LoL</p>
+<ul>
+<li><a href="https://github.com/DontShaveTheYak/cf2tf">cf2tf</a> 툴이 많이 개선된 거 같아, 이번 기회에 다시 사용해보았으나 잘못 구성해준 사항을 고치느라 오히려 시간이 많이 소요되었습니다.</li>
+</ul>
+<p>처음부터 직접 구성하는게 더 빠르지 않았을 까란 생각도 들었고 현 시점에서 멱등성이 제대로 구현이 안되서 께름칙합니다만, 아래 링크에서 확인할 수 있습니다. 시간이 허락해준다면 <code>*.auto.tfvars</code> 에 대해서는 별도의 포스팅으로 다룰 수 있도록 해보겠습니다.</p>
+<ul>
+<li>[<a href="https://github.com/kkumtree/kans/tree/week1">Github/kans</a>]: Branch <code>week1</code>(dc37074). Output만 변경했는데도, 인스턴스 교체가 이루어지는 사소한 이슈가 있습니다. 그리고 인바운드 규칙은 나중에 수정하셔야하는 부분입니다.</li>
+</ul>
+<p>AWS 웹콘솔에서 <code>Launch Instance</code> 기본값과 크게 다른 사항은 Root ENI에 Subnet 대역 내의 Private IP를 고정 할당해주는 것이었습니다.</p>
+<h2 id="2-docker-셋업">2. Docker 셋업</h2>
+<p>근래에는 Docker가 당연하다시피 되어 참 다행(과연&hellip;?)이라고 생각하는데, 개인용으로 Docker는 <a href="https://snapcraft.io/about">Snapcraft</a>로 쓰는지라 이때부터 험난했습니다;</p>
+<p>Ubuntu에 Docker를 설치하지 않았다면 아래처럼 안내를 보실 수 있을텐데,<br>
+snap과 podman-docker 설명 외에는 Docker Docs를 보시기를 권장합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ubuntu@MyServer:~/kans$ docker network create kankins
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Command <span style="color:#e6db74">&#39;docker&#39;</span> not found, but can be installed with:
+</span></span><span style="display:flex;"><span>sudo snap install docker         <span style="color:#75715e"># version 24.0.5, or</span>
+</span></span><span style="display:flex;"><span>sudo apt  install docker.io      <span style="color:#75715e"># version 24.0.7-0ubuntu2~22.04.1</span>
+</span></span><span style="display:flex;"><span>sudo apt  install podman-docker  <span style="color:#75715e"># version 3.4.4+ds1-1ubuntu1.22.04.2</span>
+</span></span><span style="display:flex;"><span>See <span style="color:#e6db74">&#39;snap info docker&#39;</span> <span style="color:#66d9ef">for</span> additional versions.
+</span></span></code></pre></div><h3 id="설치-방법">설치 방법</h3>
+<ol>
+<li><a href="https://docs.docker.com/engine/install/ubuntu/#installation-methods">Docker Docs</a>
+<ul>
+<li><a href="https://get.docker.com/">One-click Shell Scripting</a>: 세상 좋아졌네요.. EC2에는 이걸로 설치했습니다.</li>
+<li>APT Repository: 보통은 이걸 세팅합니다.</li>
+</ul>
+</li>
+<li><a href="https://snapcraft.io/docker">Snapcraft/Docker</a></li>
+</ol>
+<p>설치했다면 Docker 사용자에게 권한상승을 해줘야, <del>귀찮은</del> sudo를 생략할 수 있습니다.</p>
+<p>말은 즉슨, 개인용이니 어느정도는 감안하셔서 사용하시면 된다는 의미이지요. 각 방법 별 권한상승 방법은 아래와 같습니다.<br>
+스터디을 진행해주신 gasida님의 말씀대로 해당 세션을 빠져나온(Logout) 후 다시 접속해야합니다.</p>
+<p><code>세상에 안되는게 어딨어</code>하고 좀 찾아보니 하위 쉘을 열면 어느 정도 가능해보이는데, 스터디 하다가 꼬이면 다시 테라폼 올려야해서 그냥 로그아웃했습니다; 이 부분 궁금하신 분은 reference의 stackoverflow를 참고해주세요.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># (0) One-click Installation</span>
+</span></span><span style="display:flex;"><span>curl -fsSL https://get.docker.com -o get-docker.sh  
+</span></span><span style="display:flex;"><span>sudo sh get-docker.sh  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (1) APT based</span>
+</span></span><span style="display:flex;"><span>sudo groupadd docker
+</span></span><span style="display:flex;"><span>sudo usermod -aG docker $USER
+</span></span><span style="display:flex;"><span>newgrp docker
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Logout and Login Needed for session </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (2) Snap based</span>
+</span></span><span style="display:flex;"><span>sudo addgroup --system docker
+</span></span><span style="display:flex;"><span>sudo adduser $USER docker
+</span></span><span style="display:flex;"><span>newgrp docker
+</span></span><span style="display:flex;"><span>sudo snap disable docker
+</span></span><span style="display:flex;"><span>sudo snap enable docker
+</span></span></code></pre></div><h2 id="3-jenkins-이미지를-구워서-올려보자">3. Jenkins 이미지를 구워서 올려보자</h2>
+<ul>
+<li>이번 세션에서 제일 쉬워보이는 과제였는데, 매번 픽이 이상한 거 같습니다.</li>
+</ul>
+<p>취미 빼고 Jenkins를 마지막으로 다뤄본게 2년 전이라, 겸사겸사 이정도면 눈감고 하겠지~ 했는데 사소한게 바뀐거 같아서 시간이 많이 소요되었습니다.</p>
+<ul>
+<li>사소한 것 목록
+<ul>
+<li>Documentation</li>
+<li>Base Image: Debian 2 Ubuntu</li>
+</ul>
+</li>
+</ul>
+<p>별도로, DockerHub는 Official 이미지는 6년도 지났겠다. <a href="https://hub.docker.com/_/jenkins">Deprecated</a> 명시를 떠나, Prune 한번만 해줬으면 좋겠습니다.</p>
+<h3 id="0-document-유의사항">(0) Document 유의사항</h3>
+<p>Jenkins가 다 좋은데, 신규 유저용 <a href="https://www.jenkins.io/doc/book/installing/docker/#on-macos-and-linux">공식문서</a> 링크만 던져주기에는 살짝 미묘한 점이 있습니다.</p>
+<p><code>On macOS and Linux</code>의 (4)항에서 Debian을 베이스로 하지만, 이는 최신버전에서는 적용이 되지 않습니다.</p>
+<p>작성일 기준으로 <code>jenkins/jenkins:lts-jdk17</code> 이미지를 사용 시, Ubuntu 베이스로 변경되었습니다.<br>
+무슨 사연이 있는지는 모르겠지만, 당연히 <a href="https://blog.ubuntu-kr.org/2023/09/11/key-signing-and-encrypt-messages-with-gnupg/">GPG</a> 키사이닝 값이 다르니 터지는&hellip;<br>
+DinD 주제도 같이 다뤄보려고 했다가 시간이 부족해져서, 기본적인 부분만 다뤄보겠습니다.</p>
+<h3 id="1-브릿지-생성-및-dockerfile-작성">(1) 브릿지 생성 및 Dockerfile 작성</h3>
+<ul>
+<li>Docs대로라면 이렇게 만들어야 될 겁니다.</li>
+<li>하지만, 기본값의 네트워크를 쓰는 것은 보통 권장사항은 아니며, 나중에 브릿지가 궁금하시면 [<a href="https://docs.docker.com/engine/network/tutorials/standalone/#use-user-defined-bridge-networks">Docker Docs#Use user-defined bridge networks</a>] 참고하시면 됩니다.</li>
+<li>특히 Dockerfile 작성 부분에서 혼을 담아 설명해주셔서, 글 한번 읽고 아 Docker가 그랬었지하고 넘어갈 수 있었습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 1-1. Bridge Network </span>
+</span></span><span style="display:flex;"><span>docker network create kankins
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1-2. Dockerfile </span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF&gt;Dockerfile
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">FROM jenkins/jenkins:lts-jdk17
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">USER root
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RUN apt-get update &amp;&amp; apt-get install -y lsb-release
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RUN curl -fsSLo /usr/share/keyrings/docker.asc \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  https://download.docker.com/linux/ubuntu/gpg
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RUN echo &#34;deb [arch=$(dpkg --print-architecture) \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  signed-by=/usr/share/keyrings/docker.asc] \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  https://download.docker.com/linux/ubuntu \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  $(lsb_release -cs) stable&#34; &gt; /etc/apt/sources.list.d/docker.list
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RUN apt-get update &amp;&amp; apt-get install -y docker-ce-cli
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">USER jenkins
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RUN jenkins-plugin-cli --plugins &#34;blueocean docker-workflow&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><h3 id="2-이미지-빌드-및-실행">(2) 이미지 빌드 및 실행</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 2. Build </span>
+</span></span><span style="display:flex;"><span>docker build -t kankins-redocean:lts-jdk17-240818 . 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. Run</span>
+</span></span><span style="display:flex;"><span>docker run <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --name kankins-redocean <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --restart<span style="color:#f92672">=</span>on-failure <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --detach <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --network kankins <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --env DOCKER_HOST<span style="color:#f92672">=</span>tcp://docker:2376 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --env DOCKER_CERT_PATH<span style="color:#f92672">=</span>/certs/client <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --env DOCKER_TLS_VERIFY<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --publish 7969:8080 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --publish 50000:50000 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --volume jenkins-data:/var/jenkins_home <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --volume jenkins-docker-certs:/certs/client:ro <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  kankins-redocean:lts-jdk17-240818
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4. Get Initial Password</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>docker exec -it kankins-redocean <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  cat /var/jenkins_home/secrets/initialAdminPassword
+</span></span></code></pre></div><h3 id="3-자잘한-밑정리">(3) 자잘한 밑정리</h3>
+<p>테라폼 코드 변환 중에 인바운드 허용이 막혀있다는 걸, 이때 깨닫고 웹콘솔로 수정&hellip;</p>
+<p><img src="images/inbound.png" alt="inbound_rule"></p>
+<p>키 입력과 추가 플러그인 설치, 어드민 로그인을 웹페이지로 해야한다는 점이 매우 불안정해보이고, 거슬리는 부분입니다. 여하간 설치가 끝났고 접속<strong>은</strong> 됩니다. 해보니&hellip; 으-음</p>
+<p><img src="images/be_happy.png" alt="happy_jenkins"></p>
+<ul>
+<li>로그가 떠서 행복하군요 :)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#ubuntu@MyServer:~/kans$ docker logs da 2&gt;&amp;1 | grep -i SEVERE</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.398+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>32<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin Token Macro Plugin v400.v35420b_922dcb_ (token-macro)</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.400+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>33<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin Favorite v2.221.v19ca_666b_62f5 (favorite)</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.401+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>34<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin REST Implementation for Blue Ocean v1.27.14 (blueocean-rest-impl)</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.406+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>34<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin GitHub plugin v1.40.0 (github)</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.407+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>34<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin GitHub Branch Source Plugin v1797.v86fdb_4d57d43 (github-branch-source)</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.413+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>33<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin Pipeline implementation for Blue Ocean v1.27.14 (blueocean-pipeline-api-impl)</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.414+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>33<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin Bitbucket Pipeline for Blue Ocean v1.27.14 (blueocean-bitbucket-pipeline)</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.416+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>33<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin Events API for Blue Ocean v1.27.14 (blueocean-events)</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.417+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>31<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin Git Pipeline for Blue Ocean v1.27.14 (blueocean-git-pipeline)</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.418+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>33<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin GitHub Pipeline for Blue Ocean v1.27.14 (blueocean-github-pipeline)</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.419+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>31<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin Blue Ocean Pipeline Editor v1.27.14 (blueocean-pipeline-editor)</span>
+</span></span><span style="display:flex;"><span>2024-09-01 02:08:30.420+0000 <span style="color:#f92672">[</span>id<span style="color:#f92672">=</span>33<span style="color:#f92672">]</span>	SEVERE	jenkins.InitReactorRunner$1<span style="color:#75715e">#onTaskFailed: Failed Loading plugin Blue Ocean v1.27.14 (blueocean)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ubuntu@MyServer:~/kans$ docker logs da 2&gt;&amp;1 | grep -i missing</span>
+</span></span><span style="display:flex;"><span> - Plugin is missing: json-path-api <span style="color:#f92672">(</span>2.8.0-5.v07cb_a_1ca_738c<span style="color:#f92672">)</span>
+</span></span></code></pre></div><ul>
+<li><a href="https://plugins.jenkins.io/json-path-api/dependencies/">https://plugins.jenkins.io/json-path-api/dependencies/</a></li>
+</ul>
+<p>이후의 내용은 아래에서 수정하면서 다루겠습니다.</p>
+<h2 id="4-브릿지-없이-해보자">4. 브릿지 없이 해보자&hellip;?</h2>
+<ul>
+<li>docker는 de facto이니, 컨테이너 끄고 이미지 지우는 건 생략(서술 안해도 되서 편하다&hellip;)
+<ul>
+<li>별도 생성한 bridge는 더이상 사용하지 않으니, 지워주시면 됩니다.</li>
+<li>빠른 실행을 위해, 초기 구동 시 생성된 volume은 삭제하지 않았습니다.</li>
+</ul>
+</li>
+<li>이번에는 브릿지를 생성하지 않고, Host의 Docker 데몬을 사용해보겠습니다.(?)</li>
+</ul>
+<p>사실 저도 무슨 말인가 생각하고 있습니다. <del>보통 거꾸로 아님..?</del></p>
+<h3 id="1-dockerfile-작성">(1) Dockerfile 작성</h3>
+<p>앞서 오류를 알았으니, 포스팅 작성 시점 기준으로 한번 수정해보겠습니다. 수정하고 나니, 위의 오류<strong>는</strong> 잡았네요.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF&gt;Dockerfile
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">FROM jenkins/jenkins:lts-jdk17
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">USER jenkins
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RUN jenkins-plugin-cli --plugins \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  blueocean \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  docker-workflow \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  antisamy-markup-formatter \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  json-path-api \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  token-macro \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  build-timeout \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  timestamper \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  resource-disposer \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ws-cleanup \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ant \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  gradle \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  workflow-aggregator \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  github \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  github-branch-source \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  pipeline-github-lib \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  metrics \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  pipeline-graph-view \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  eddsa-api \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  trilead-api \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ssh-slaves \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  matrix-auth \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  pam-auth \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ldap \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  email-ext \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  theme-manager \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  dark-theme
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><ul>
+<li>오-옹. CD 한 장에는 절대 넣을 수 없는 웅장한 이미지가 탄생하였습니다! :)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ubuntu@MyServer:~/kans$ docker build -t kankins-redocean:lts-jdk17-240818 . </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ubuntu@MyServer:~/kans$ docker images</span>
+</span></span><span style="display:flex;"><span>REPOSITORY         TAG                IMAGE ID       CREATED          SIZE
+</span></span><span style="display:flex;"><span>kankins-redocean   lts-jdk17-240818   ecd80984a2ae   <span style="color:#ae81ff">23</span> minutes ago   824MB
+</span></span></code></pre></div><h3 id="2-컨테이너-실행">(2) 컨테이너 실행</h3>
+<ul>
+<li>브릿지를 사용하지 않는대신, Host의 Docker 런타임의 소켓을 공유해보겠습니다.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>Moby</th>
+<th>Host(From)</th>
+<th>Container(To)</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>As-is</td>
+<td>bridge(local)</td>
+<td>-</td>
+<td>-</td>
+<td>Default</td>
+</tr>
+<tr>
+<td>As-is</td>
+<td>volume</td>
+<td>jenkins-docker-certs</td>
+<td>/certs/client</td>
+<td>DinD 데몬의 인증서</td>
+</tr>
+<tr>
+<td>As-is</td>
+<td>env</td>
+<td>-</td>
+<td>-</td>
+<td>DOCKER_HOST=tcp://docker:2376 (제거)</td>
+</tr>
+<tr>
+<td>As-is</td>
+<td>env</td>
+<td>-</td>
+<td>-</td>
+<td>DOCKER_CERT_PATH=/certs/client (제거)</td>
+</tr>
+<tr>
+<td>As-is</td>
+<td>env</td>
+<td>-</td>
+<td>-</td>
+<td>DOCKER_TLS_VERIFY=1 (제거)</td>
+</tr>
+<tr>
+<td>To-be</td>
+<td>volume</td>
+<td>/var/run/docker.sock</td>
+<td>/var/run/docker.sock</td>
+<td>Host의 Docker Unix Socket</td>
+</tr>
+<tr>
+<td>To-be</td>
+<td>volume</td>
+<td>/usr/bin/docker</td>
+<td>/usr/bin/docker</td>
+<td>Host의 Docker Engine(Client)</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --name kankins-redocean <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --restart<span style="color:#f92672">=</span>on-failure <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --detach <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --volume /var/run/docker.sock:/var/run/docker.sock <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --volume /usr/bin/docker:/usr/bin/docker <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --publish 7969:8080 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --publish 50000:50000 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --volume jenkins-data:/var/jenkins_home <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  kankins-redocean:lts-jdk17-240818
+</span></span></code></pre></div><h3 id="3-container의-jenkins-유저에-권한-부여">(3) Container의 Jenkins 유저에 권한 부여</h3>
+<ul>
+<li>Host의 Docker 데몬을 사용하려면, Container의 Jenkins 유저에 권한을 부여해야합니다.<br>
+기존의 Dockerfile에서는 Docker TLS 활성화 및 별도의 Docker 볼륨을 물렸지만, 다 내려놓았습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 1. Container의 Docker 소켓의 GID 확인</span>
+</span></span><span style="display:flex;"><span>docker exec --user <span style="color:#ae81ff">0</span> kankins-redocean stat -c <span style="color:#e6db74">&#39;%g&#39;</span> /var/run/docker.sock  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. Docker 그룹의 사용자가 Docker 소켓을 사용할 수 있도록 허용</span>
+</span></span><span style="display:flex;"><span>docker exec --user <span style="color:#ae81ff">0</span> kankins-redocean groupadd -g <span style="color:#66d9ef">$(</span>docker exec --user <span style="color:#ae81ff">0</span> kankins-redocean stat -c <span style="color:#e6db74">&#39;%g&#39;</span> /var/run/docker.sock<span style="color:#66d9ef">)</span> docker  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. Host의 Docker 그룹에 Jenkins 유저 추가  </span>
+</span></span><span style="display:flex;"><span>docker exec --user <span style="color:#ae81ff">0</span> kankins-redocean usermod -aG docker jenkins  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (선택) 권한 확인</span>
+</span></span><span style="display:flex;"><span>docker exec --user jenkins kankins-redocean docker ps
+</span></span></code></pre></div><ul>
+<li>이후, Host(EC2)에서 Docker를 재시작하여 허용했습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo service docker restart
+</span></span><span style="display:flex;"><span>systemctl restart docker
+</span></span></code></pre></div><h3 id="4-jenkins-pipepline">(4) Jenkins Pipepline</h3>
+<ul>
+<li>이미 작년 8월에 하셨던 분의 <a href="https://www.handongbee.com/posts/Docker-%EB%93%A4%EC%97%AC%EB%8B%A4%EB%B3%B4%EA%B8%B0/">포스팅</a>을 참조하여 파이프라인을 돌렸으나, 가볍게 Nginx 돌려보고 마치겠습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>pipeline <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  agent any
+</span></span><span style="display:flex;"><span>  stages <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Start Nginx&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        sh <span style="color:#e6db74">&#39;&#39;&#39;echo &#34;pwd: \\$\\$$(pwd)\\$\\$&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">echo &#34;whoami: \\$\\$$(whoami)\\$\\$&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">docker run --name docker-nginx -p 80:80 -d nginx:stable-alpine&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>접속도 정상적으로 확인됩니다.</p>
+<p><img src="images/outofcontainer.png" alt="outofcontainer"></p>
+<p>Nginx가 Host에서 구동하는 것을 확인하였습니다.<br>
+또한 Host의 Docker 데몬을 사용하였기에, 이미지를 확인해볼 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ubuntu@MyServer:~/kans$ docker images</span>
+</span></span><span style="display:flex;"><span>REPOSITORY             TAG                IMAGE ID       CREATED          SIZE
+</span></span><span style="display:flex;"><span>simple-jenkins-image   latest             131b4e942d9a   <span style="color:#ae81ff">35</span> minutes ago   7.8MB
+</span></span><span style="display:flex;"><span>kankins-redocean       lts-jdk17-240818   c771835009b8   <span style="color:#ae81ff">54</span> minutes ago   616MB
+</span></span><span style="display:flex;"><span>nginx                  stable-alpine      9703b2608a98   <span style="color:#ae81ff">2</span> weeks ago      43.3MB
+</span></span><span style="display:flex;"><span>alpine                 latest             324bc02ae123   <span style="color:#ae81ff">5</span> weeks ago      7.8MB
+</span></span></code></pre></div><h2 id="5-why">5. Why&hellip;?</h2>
+<h3 id="1-unix-소켓-통신-마운트">(1) Unix 소켓 통신 마운트</h3>
+<ul>
+<li>중간에 이미 <code>/var/run/docker.sock</code> 의 권한을 허용하면서 눈치 채셨겠지만, 이는 TCP/IP 대신, Unix Socket을 활용하여 접근을 하였습니다.</li>
+<li>널널한 개발자님의 <a href="https://youtu.be/zh0OMXg2Kog?si=7WsuIA4nV261Yh6V&amp;t=954">Youtube 영상(15:54~)</a> 에도 친절히 나와있지만, Host의 도커 엔진의 소켓과 바이너리를 Jenkins 컨테이너에게 마운트 함으로서 통신을 할 수 있었습니다.</li>
+</ul>
+<h3 id="2-네트워크-설정-살펴보기">(2) 네트워크 설정 살펴보기</h3>
+<ul>
+<li>네트워크 정보 확인 : docker0</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ubuntu@MyServer:~/kans$ ip -br -c addr</span>
+</span></span><span style="display:flex;"><span>lo               UNKNOWN        127.0.0.1/8 ::1/128
+</span></span><span style="display:flex;"><span>ens5             UP             192.168.50.10/24 metric <span style="color:#ae81ff">100</span> fe80::ca:aff:fecd:fc67/64
+</span></span><span style="display:flex;"><span>docker0          UP             172.17.0.1/16 fe80::42:61ff:fe65:129c/64
+</span></span><span style="display:flex;"><span>br-e4c35b376649  DOWN           172.18.0.1/16 fe80::42:b7ff:fe97:45dd/64
+</span></span><span style="display:flex;"><span>veth54addf7@if53 UP             fe80::b86f:cbff:fe47:4438/64
+</span></span><span style="display:flex;"><span>veth311d18d@if57 UP             fe80::849b:b9ff:fe2f:ba63/64
+</span></span></code></pre></div><ul>
+<li>브릿지 정보 확인</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ubuntu@MyServer:~/kans$ brctl show</span>
+</span></span><span style="display:flex;"><span>bridge name	bridge id		STP enabled	interfaces
+</span></span><span style="display:flex;"><span>br-e4c35b376649		8000.0242b79745dd	no		
+</span></span><span style="display:flex;"><span>docker0		8000.02426165129c	no		veth311d18d
+</span></span><span style="display:flex;"><span>							veth54addf7
+</span></span></code></pre></div><ul>
+<li>FILTER</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ubuntu@MyServer:~/kans$ sudo iptables -t filter -S</span>
+</span></span><span style="display:flex;"><span>-P INPUT ACCEPT
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## FORWARD ACCEPT가 아닌 DROP으로 설정되어 있습니다.</span>
+</span></span><span style="display:flex;"><span>-P FORWARD DROP 
+</span></span><span style="display:flex;"><span>-P OUTPUT ACCEPT
+</span></span><span style="display:flex;"><span>-N DOCKER
+</span></span><span style="display:flex;"><span>-N DOCKER-ISOLATION-STAGE-1
+</span></span><span style="display:flex;"><span>-N DOCKER-ISOLATION-STAGE-2
+</span></span><span style="display:flex;"><span>-N DOCKER-USER
+</span></span><span style="display:flex;"><span>-A FORWARD -j DOCKER-USER
+</span></span><span style="display:flex;"><span>-A FORWARD -j DOCKER-ISOLATION-STAGE-1
+</span></span><span style="display:flex;"><span>-A FORWARD -o docker0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+</span></span><span style="display:flex;"><span>-A FORWARD -o docker0 -j DOCKER
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## docker0 대역에서 (1) 대역 간 및 (2) 외부 전달 시 ACCEPT로 설정</span>
+</span></span><span style="display:flex;"><span>-A FORWARD -i docker0 ! -o docker0 -j ACCEPT
+</span></span><span style="display:flex;"><span>-A FORWARD -i docker0 -o docker0 -j ACCEPT
+</span></span><span style="display:flex;"><span>-A FORWARD -o br-e4c35b376649 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+</span></span><span style="display:flex;"><span>-A FORWARD -o br-e4c35b376649 -j DOCKER
+</span></span><span style="display:flex;"><span>-A FORWARD -i br-e4c35b376649 ! -o br-e4c35b376649 -j ACCEPT
+</span></span><span style="display:flex;"><span>-A FORWARD -i br-e4c35b376649 -o br-e4c35b376649 -j ACCEPT
+</span></span><span style="display:flex;"><span>-A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport <span style="color:#ae81ff">8080</span> -j ACCEPT
+</span></span><span style="display:flex;"><span>-A DOCKER -d 172.17.0.2/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport <span style="color:#ae81ff">50000</span> -j ACCEPT
+</span></span><span style="display:flex;"><span>-A DOCKER -d 172.17.0.3/32 ! -i docker0 -o docker0 -p tcp -m tcp --dport <span style="color:#ae81ff">80</span> -j ACCEPT
+</span></span><span style="display:flex;"><span>-A DOCKER-ISOLATION-STAGE-1 -i docker0 ! -o docker0 -j DOCKER-ISOLATION-STAGE-2
+</span></span><span style="display:flex;"><span>-A DOCKER-ISOLATION-STAGE-1 -i br-e4c35b376649 ! -o br-e4c35b376649 -j DOCKER-ISOLATION-STAGE-2
+</span></span><span style="display:flex;"><span>-A DOCKER-ISOLATION-STAGE-1 -j RETURN
+</span></span><span style="display:flex;"><span>-A DOCKER-ISOLATION-STAGE-2 -o docker0 -j DROP
+</span></span><span style="display:flex;"><span>-A DOCKER-ISOLATION-STAGE-2 -o br-e4c35b376649 -j DROP
+</span></span><span style="display:flex;"><span>-A DOCKER-ISOLATION-STAGE-2 -j RETURN
+</span></span><span style="display:flex;"><span>-A DOCKER-USER -j RETURN
+</span></span></code></pre></div><ul>
+<li>NAT POSTROUTING</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ubuntu@MyServer:~/kans$ sudo iptables -t nat -S</span>
+</span></span><span style="display:flex;"><span>-P PREROUTING ACCEPT
+</span></span><span style="display:flex;"><span>-P INPUT ACCEPT
+</span></span><span style="display:flex;"><span>-P OUTPUT ACCEPT
+</span></span><span style="display:flex;"><span>-P POSTROUTING ACCEPT
+</span></span><span style="display:flex;"><span>-N DOCKER
+</span></span><span style="display:flex;"><span>-A PREROUTING -m addrtype --dst-type LOCAL -j DOCKER
+</span></span><span style="display:flex;"><span>-A OUTPUT ! -d 127.0.0.0/8 -m addrtype --dst-type LOCAL -j DOCKER
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 172.17.0.0/16 대역에서 외부 전달 시 MASQUERADE(SNAT) 정책이 추가되었음을 확인할 수 있습니다.</span>
+</span></span><span style="display:flex;"><span>-A POSTROUTING -s 172.17.0.0/16 ! -o docker0 -j MASQUERADE            
+</span></span><span style="display:flex;"><span>-A POSTROUTING -s 172.18.0.0/16 ! -o br-e4c35b376649 -j MASQUERADE    
+</span></span><span style="display:flex;"><span>-A POSTROUTING -s 172.17.0.2/32 -d 172.17.0.2/32 -p tcp -m tcp --dport <span style="color:#ae81ff">8080</span> -j MASQUERADE
+</span></span><span style="display:flex;"><span>-A POSTROUTING -s 172.17.0.2/32 -d 172.17.0.2/32 -p tcp -m tcp --dport <span style="color:#ae81ff">50000</span> -j MASQUERADE
+</span></span><span style="display:flex;"><span>-A POSTROUTING -s 172.17.0.3/32 -d 172.17.0.3/32 -p tcp -m tcp --dport <span style="color:#ae81ff">80</span> -j MASQUERADE
+</span></span><span style="display:flex;"><span>-A DOCKER -i docker0 -j RETURN
+</span></span><span style="display:flex;"><span>-A DOCKER -i br-e4c35b376649 -j RETURN
+</span></span><span style="display:flex;"><span>-A DOCKER ! -i docker0 -p tcp -m tcp --dport <span style="color:#ae81ff">7969</span> -j DNAT --to-destination 172.17.0.2:8080
+</span></span><span style="display:flex;"><span>-A DOCKER ! -i docker0 -p tcp -m tcp --dport <span style="color:#ae81ff">50000</span> -j DNAT --to-destination 172.17.0.2:50000
+</span></span><span style="display:flex;"><span>-A DOCKER ! -i docker0 -p tcp -m tcp --dport <span style="color:#ae81ff">80</span> -j DNAT --to-destination 172.17.0.3:80
+</span></span></code></pre></div><h2 id="마치며">마치며</h2>
+<ul>
+<li>이부분은 추가 후술 하겠습니다.</li>
+</ul>
+<!-- raw HTML omitted -->
+<h2 id="references">References</h2>
+<p><a href="https://stackoverflow.com/questions/49434650/how-to-add-a-user-to-a-group-without-logout-login-bash-script">stackoverflow/49434650</a><br>
+<a href="https://stackoverflow.com/questions/4651437/how-do-i-set-a-variable-to-the-output-of-a-command-in-bash">stackoverflow/4651437</a></p>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/maintanence-in-2024/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Blog maintanence in 2024</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
