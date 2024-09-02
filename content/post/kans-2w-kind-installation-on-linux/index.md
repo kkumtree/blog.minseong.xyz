@@ -18,6 +18,8 @@ image: kind_banner.png
 draft: false
 ---
 
+> Helm 설치 추가
+
 [CloudNet@](https://gasidaseo.notion.site/24-3-df0466c474ff40528e37b24bfdfe9d0f)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)에 참여하게 되면서 기록을 남기고 있습니다.  
 
 이번에는 kind(**K**ubernetes **IN** **D**ocker)를 Golang을 통해 설치하면서 약간의 소?란이 있었던 부분만 다룹니다.  
@@ -158,4 +160,15 @@ sudo apt-get install -y kubectl
   
 ```bash
 sudo snap install k9s
+```  
+
+- helm: [Helm Docs #From Apt (Debian/Ubuntu)](https://helm.sh/docs/intro/install/#from-apt-debianubuntu).  
+  k8s를 편하게 쓰고자하는 일종의 레포지토리입니다.  
+
+```bash
+curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+# sudo apt-get install apt-transport-https --yes # Use If error occurs
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update
+sudo apt-get install helm
 ```  
