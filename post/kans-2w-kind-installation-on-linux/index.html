@@ -130,7 +130,10 @@
   </section>
   <section class="p-strip">
   <div class="row">
-  <p><a href="https://gasidaseo.notion.site/24-3-df0466c474ff40528e37b24bfdfe9d0f">CloudNet@</a>에서 진행하고 있는 <strong>K</strong>8s <strong>A</strong>dvanced <strong>N</strong>etwork <strong>S</strong>tudy(이하, KANS)에 참여하게 되면서 기록을 남기고 있습니다.</p>
+  <blockquote>
+<p>Helm 설치 추가</p>
+</blockquote>
+<p><a href="https://gasidaseo.notion.site/24-3-df0466c474ff40528e37b24bfdfe9d0f">CloudNet@</a>에서 진행하고 있는 <strong>K</strong>8s <strong>A</strong>dvanced <strong>N</strong>etwork <strong>S</strong>tudy(이하, KANS)에 참여하게 되면서 기록을 남기고 있습니다.</p>
 <p>이번에는 kind(<strong>K</strong>ubernetes <strong>IN</strong> <strong>D</strong>ocker)를 Golang을 통해 설치하면서 약간의 소?란이 있었던 부분만 다룹니다.</p>
 <h2 id="1-kind란">1. KIND란?</h2>
 <ul>
@@ -241,6 +244,15 @@
 전에 다른 분이 알록달록 잘 쓰셔서 한 번 설치해보았습니다.</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo snap install k9s
+</span></span></code></pre></div><ul>
+<li>helm: <a href="https://helm.sh/docs/intro/install/#from-apt-debianubuntu">Helm Docs #From Apt (Debian/Ubuntu)</a>.<br>
+k8s를 편하게 쓰고자하는 일종의 레포지토리입니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg &gt; /dev/null
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># sudo apt-get install apt-transport-https --yes # Use If error occurs</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;deb [arch=</span><span style="color:#66d9ef">$(</span>dpkg --print-architecture<span style="color:#66d9ef">)</span><span style="color:#e6db74"> signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main&#34;</span> | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+</span></span><span style="display:flex;"><span>sudo apt-get update
+</span></span><span style="display:flex;"><span>sudo apt-get install helm
 </span></span></code></pre></div>
   </div>
   </section>
