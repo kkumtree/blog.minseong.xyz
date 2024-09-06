@@ -2,16 +2,16 @@
 date: 2024-09-03T21:16:07+09:00
 title: "KIND 톺아보기"
 tags:
-	- kans  
-	- kind    
-	- kubernetes  
+  - kans  
+  - kind    
+  - kubernetes  
 authors:
-	- name: kkumtree
-		bio: plumber for infra
-		email: mscho7969@ubuntu.com
-		launchpad: mscho7969
-		github: kkumtree
-		profile: https://avatars.githubusercontent.com/u/52643858?v=4 
+  - name: kkumtree
+    bio: plumber for infra
+    email: mscho7969@ubuntu.com
+    launchpad: mscho7969
+    github: kkumtree
+    profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.png
 draft: false
 ---
