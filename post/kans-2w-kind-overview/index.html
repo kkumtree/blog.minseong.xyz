@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>KIND 톺아보기 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="KIND 톺아보기" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/kans-2w-kind-overview/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/kans-2w-kind-overview/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/kans-2w-kind-overview/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>KIND 톺아보기</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-03T21:16:07&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/kans" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kans</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kind" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kind</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kubernetes" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kubernetes</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <blockquote>
+<p><a href="https://opendict.korean.go.kr/dictionary/view?sense_no=437729&amp;viewType=confirm">톺아보다(우리말샘)</a> 는 의외로 표준어라고 합니다.</p>
+</blockquote>
+<p><a href="../kans-2w-kind-installation-on-linux/">KIND 설치</a> 이후에 기본적인 내용을 살펴봅니다.</p>
+<p><a href="https://gasidaseo.notion.site/24-3-df0466c474ff40528e37b24bfdfe9d0f">CloudNet@</a>에서 진행하고 있는 <strong>K</strong>8s <strong>A</strong>dvanced <strong>N</strong>etwork <strong>S</strong>tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.</p>
+<h2 id="0-kubeconfig">0. $KUBECONFIG</h2>
+<ul>
+<li>
+<p>$KUBECONFIG 환경변수가 없을 경우:<br>
+보통은 <code>~/.kube</code> 디렉토리가 생성됩니다.<br>
+확인해보니, config 값과 더불어, <code>cache</code> 디렉토리도 확인할 수 있었습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ find ~/.kube -maxdepth <span style="color:#ae81ff">2</span> -type f -exec ls -ld <span style="color:#e6db74">&#34;{}&#34;</span> <span style="color:#ae81ff">\;</span>
+</span></span><span style="display:flex;"><span>-rw------- <span style="color:#ae81ff">1</span> kkumtree kkumtree <span style="color:#ae81ff">44</span> Sep  <span style="color:#ae81ff">3</span> 21:31 /home/kkumtree/.kube/config
+</span></span><span style="display:flex;"><span>❯ find ~/.kube -maxdepth <span style="color:#ae81ff">2</span> -type d -exec ls -ld <span style="color:#e6db74">&#34;{}&#34;</span> <span style="color:#ae81ff">\;</span>
+</span></span><span style="display:flex;"><span>drwxr-x--- <span style="color:#ae81ff">3</span> kkumtree kkumtree <span style="color:#ae81ff">4096</span> Sep  <span style="color:#ae81ff">3</span> 21:31 /home/kkumtree/.kube
+</span></span><span style="display:flex;"><span>drwxr-x--- <span style="color:#ae81ff">4</span> kkumtree kkumtree <span style="color:#ae81ff">4096</span> Sep  <span style="color:#ae81ff">3</span> 21:11 /home/kkumtree/.kube/cache
+</span></span><span style="display:flex;"><span>drwxr-x--- <span style="color:#ae81ff">5</span> kkumtree kkumtree <span style="color:#ae81ff">4096</span> Sep  <span style="color:#ae81ff">3</span> 21:28 /home/kkumtree/.kube/cache/discovery
+</span></span><span style="display:flex;"><span>drwxr-x--- <span style="color:#ae81ff">3</span> kkumtree kkumtree <span style="color:#ae81ff">4096</span> Sep  <span style="color:#ae81ff">3</span> 21:28 /home/kkumtree/.kube/cache/http
+</span></span></code></pre></div></li>
+<li>
+<p>KIND용 $KUBECONFIG 설정:<br>
+그래서 아래처럼, 경로를 만들고 $KUBECONFIG 환경변수를 설정해주었습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir -p ~/.kind
+</span></span><span style="display:flex;"><span>export KUBECONFIG<span style="color:#f92672">=</span>~/.kind/kubeconfig
+</span></span></code></pre></div></li>
+<li>
+<p>(참고) 과거에 변수로 좀 곯머리를 앓았다보니, 쉘스크립팅 예제를 짜봤습니다.<br>
+<a href="https://github.com/kkumtree/kans/blob/week2/kind-basic/kubeconfig_manager.sh">https://github.com/kkumtree/kans/blob/week2/kind-basic/kubeconfig_manager.sh</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ pwd
+</span></span><span style="display:flex;"><span>/home/kkumtree/Documents/github/kans/kind-basic
+</span></span><span style="display:flex;"><span>❯ ll
+</span></span><span style="display:flex;"><span>total 4.0K
+</span></span><span style="display:flex;"><span>-rwxrwxr-x <span style="color:#ae81ff">1</span> kkumtree kkumtree 1.1K Sep  <span style="color:#ae81ff">2</span> 22:49 kubeconfig_manager.sh
+</span></span><span style="display:flex;"><span>❯ . ./kubeconfig_manager.sh
+</span></span><span style="display:flex;"><span><span style="color:#f92672">==============================</span>
+</span></span><span style="display:flex;"><span>| kubeconfig manager <span style="color:#66d9ef">for</span> kind
+</span></span><span style="display:flex;"><span>------------------------------
+</span></span><span style="display:flex;"><span>| $HOME: $$/home/kkumtree$$
+</span></span><span style="display:flex;"><span>| $KUBECONFIG: $$$$
+</span></span><span style="display:flex;"><span><span style="color:#f92672">==============================</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>Press Enter to confirm OR type custom path<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>kubeconfig <span style="color:#66d9ef">for</span> kind <span style="color:#f92672">[</span>/home/kkumtree/.kind/kubeconfig<span style="color:#f92672">]</span>:
+</span></span><span style="display:flex;"><span>env KUBECONFIG is set to: $$/home/kkumtree/.kind/kubeconfig$$
+</span></span><span style="display:flex;"><span>❯ . ./kubeconfig_manager.sh
+</span></span><span style="display:flex;"><span>env KUBECONFIG is unset
+</span></span></code></pre></div></li>
+</ul>
+<h2 id="1-kind-첫-구동">1. KIND 첫 구동</h2>
+<ul>
+<li>
+<p>KIND는 이름 값대로 컨테이너 이미지를 사용합니다.<br>
+그래서, 이미지가 로컬에 없다면 받는데 시간이 소요됩니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ docker images
+</span></span><span style="display:flex;"><span>REPOSITORY     TAG       IMAGE ID       CREATED       SIZE
+</span></span><span style="display:flex;"><span>kindest/node   v1.30.4   ea9c94202240   <span style="color:#ae81ff">2</span> weeks ago   991MB
+</span></span></code></pre></div></li>
+<li>
+<p>새로운 터미널을 한 쪽에 열어, 어떻게 작동하는지 살펴보기 위한 준비를 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>watch kubectl get pod -A --sort-by<span style="color:#f92672">=</span>.metadata.creationTimestamp
+</span></span></code></pre></div></li>
+<li>
+<p>사용 이미지 지정: <code>kindest/node:v1.30.4</code><br>
+최신버전인 <code>v1.31</code>은 앞으로 적용해볼 서비스들과 호환성을 위해, 버전을 낮춰서 사용합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kind create cluster --image kindest/node:v1.30.4
+</span></span><span style="display:flex;"><span>Creating cluster <span style="color:#e6db74">&#34;kind&#34;</span> ...
+</span></span><span style="display:flex;"><span>✓ Ensuring node image <span style="color:#f92672">(</span>kindest/node:v1.30.4<span style="color:#f92672">)</span> 🖼
+</span></span><span style="display:flex;"><span>✓ Preparing nodes 📦
+</span></span><span style="display:flex;"><span>✓ Writing configuration 📜
+</span></span><span style="display:flex;"><span>✓ Starting control-plane 🕹️
+</span></span><span style="display:flex;"><span>✓ Installing CNI 🔌
+</span></span><span style="display:flex;"><span>✓ Installing StorageClass 💾
+</span></span><span style="display:flex;"><span>Set kubectl context to <span style="color:#e6db74">&#34;kind-kind&#34;</span>
+</span></span><span style="display:flex;"><span>You can now use your cluster with:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl cluster-info --context kind-kind
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Thanks <span style="color:#66d9ef">for</span> using kind! 😊
+</span></span></code></pre></div></li>
+<li>
+<p>아래와 같이, control-plane pod 내부에 pod가 순차적으로 올라오는 것을 볼 수 있습니다.<br>
+(phase.1) etcd/apiserver/controller-manager/scheduler 가 먼저 올라옵니다.
+(phase.2) coredns/kube-proxy 그리고 kindnet, local path provisioner 가 설치됩니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ <span style="color:#f92672">(</span>앞에서 다른 터미널로 2초마다 감시<span style="color:#f92672">)</span>watch kubectl get pod -A --sort-by<span style="color:#f92672">=</span>.metadata.creationTimestamp
+</span></span><span style="display:flex;"><span>NAMESPACE            NAME                                         READY   STATUS    RESTARTS   AGE
+</span></span><span style="display:flex;"><span>kube-system          etcd-kind-control-plane                      1/1     Running   <span style="color:#ae81ff">0</span>          7m5s
+</span></span><span style="display:flex;"><span>kube-system          kube-apiserver-kind-control-plane            1/1     Running   <span style="color:#ae81ff">0</span>          7m5s
+</span></span><span style="display:flex;"><span>kube-system          kube-controller-manager-kind-control-plane   1/1     Running   <span style="color:#ae81ff">0</span>          7m5s
+</span></span><span style="display:flex;"><span>kube-system          kube-scheduler-kind-control-plane            1/1     Running   <span style="color:#ae81ff">0</span>          7m5s
+</span></span><span style="display:flex;"><span>kube-system          coredns-7db6d8ff4d-dtgmb                     1/1     Running   <span style="color:#ae81ff">0</span>          6m51s
+</span></span><span style="display:flex;"><span>kube-system          coredns-7db6d8ff4d-zfsp2                     1/1     Running   <span style="color:#ae81ff">0</span>          6m51s
+</span></span><span style="display:flex;"><span>kube-system          kindnet-4l5v8                                1/1     Running   <span style="color:#ae81ff">0</span>          6m51s
+</span></span><span style="display:flex;"><span>kube-system          kube-proxy-gt6fw                             1/1     Running   <span style="color:#ae81ff">0</span>          6m51s
+</span></span><span style="display:flex;"><span>local-path-storage   local-path-provisioner-7d4d9bdcc5-pw5b2      1/1     Running   <span style="color:#ae81ff">0</span>          6m51s
+</span></span></code></pre></div></li>
+<li>
+<p>구동 상태에서 kubeconfig 파일은 다음과 같은 구조로 내용을 담고 있음을 알 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ cat ~/.kind/kubeconfig
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>clusters:
+</span></span><span style="display:flex;"><span>- cluster:
+</span></span><span style="display:flex;"><span>		certificate-authority-data: &lt;base64encoded&gt;
+</span></span><span style="display:flex;"><span>		server: https://127.0.0.1:40305
+</span></span><span style="display:flex;"><span>	name: kind-kind
+</span></span><span style="display:flex;"><span>contexts:
+</span></span><span style="display:flex;"><span>- context:
+</span></span><span style="display:flex;"><span>		cluster: kind-kind
+</span></span><span style="display:flex;"><span>		user: kind-kind
+</span></span><span style="display:flex;"><span>	name: kind-kind
+</span></span><span style="display:flex;"><span>current-context: kind-kind
+</span></span><span style="display:flex;"><span>kind: Config
+</span></span><span style="display:flex;"><span>preferences: <span style="color:#f92672">{}</span>
+</span></span><span style="display:flex;"><span>users:
+</span></span><span style="display:flex;"><span>- name: kind-kind
+</span></span><span style="display:flex;"><span>	user:
+</span></span><span style="display:flex;"><span>		client-certificate-data: &lt;base64encoded&gt; 
+</span></span><span style="display:flex;"><span>		client-key-data: &lt;base64encoded&gt;
+</span></span></code></pre></div></li>
+<li>
+<p>Control Plane 대상으로 nginx 배포 테스트: Taint가 걸려있지 않아, 정상적으로 배포</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl run nginx --image<span style="color:#f92672">=</span>nginx:stable-alpine
+</span></span><span style="display:flex;"><span>kkumtree@kkumtree-G1619-04:~$ kubectl get pod -owide
+</span></span><span style="display:flex;"><span>NAME    READY   STATUS    RESTARTS   AGE   IP           NODE                 NOMINATED NODE   READINESS GATES
+</span></span><span style="display:flex;"><span>nginx   1/1     Running   <span style="color:#ae81ff">0</span>          23s   10.244.0.5   kind-control-plane   &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>kubectl describe node
+</span></span><span style="display:flex;"><span>kkumtree@kkumtree-G1619-04:~$ kubectl describe node | grep Taints
+</span></span><span style="display:flex;"><span>Taints:             &lt;none&gt;
+</span></span></code></pre></div></li>
+<li>
+<p>클러스터를 삭제한 후, kubeconfig 파일을 확인해보면, 상세 값들이 지워졌음을 확인할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kind delete cluster
+</span></span><span style="display:flex;"><span>Deleting cluster <span style="color:#e6db74">&#34;kind&#34;</span> ...
+</span></span><span style="display:flex;"><span>Deleted nodes: <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;kind-control-plane&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>❯ cat ~/.kind/kubeconfig
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Config
+</span></span><span style="display:flex;"><span>preferences: <span style="color:#f92672">{}</span>
+</span></span></code></pre></div></li>
+</ul>
+<h2 id="2-kindnet-local-path-provisioner-는-무엇인가">2. kindnet? local-path-provisioner? 는 무엇인가?</h2>
+<ul>
+<li>문득, <code>이 두 가지는 뭘까?</code> 하고  <del>위험한</del> 궁금증이 생겨 찾아봤습니다.</li>
+</ul>
+<h3 id="1-kindnet">(1) kindnet</h3>
+<p><a href="https://github.com/aojea/kindnet#kindnet-components">GitHub/kindnet</a>의 내용을 요약하면,</p>
+<ul>
+<li>현재, KIND의 기본 CNI 플러그인</li>
+<li><code>모든</code> 클러스터 노드가 동일한 서브넷에 속한 환경에서만 작동</li>
+<li>임베디드 ipmasq(IP매스커레이드) 에이전트</li>
+<li>IPv6를 지원하는 CNI플러그인이 부족한 상황에서 개발됨</li>
+</ul>
+<p>또한 <a href="https://www.tkng.io/cni/kindnet/">TKNG</a>에서는 Reachability(도달성)과 Connectivity(연결성)관점에서 CNI 플러그인으로서의 요건 충족을 설명하고 있었습니다.</p>
+<h3 id="2-local-path-provisioner">(2) local-path-provisioner</h3>
+<p><a href="https://github.com/rancher/local-path-provisioner">GitHub/local-path-provisioner</a>: SUSE의 RANCHER에서 관리하고 있다는 것을 처음 인지하였습니다.</p>
+<p>또한 <code>그냥 로컬PV랑 똑같은거 아니야?</code>라고 하기엔 사소한(?) 오해가 있었습니다.</p>
+<ul>
+<li>k8s에서 기본으로 지원하는, <code>Local Persistent Volume</code> 보다 간단한 솔루션</li>
+<li>사용자 구성에 따라 <code>hostPath</code> 또는 <code>local</code> 기반의 PV를 노드에 자동으로 생성</li>
+<li>(단점)볼륨 용량 제한을 둘 수 없음. 값이 설정되어있더라도 무시</li>
+</ul>
+<h2 id="3-worker-노드-추가해보기">3. Worker 노드 추가해보기</h2>
+<p>앞에서는 각 Node 구성을 위한 컨테이너 이미지 로컬 저장 겸 구성요소를 살펴보았으니,<br>
+Control Plane 외에도 Worker Node를 추가하여 구성을 해봅니다.</p>
+<p>기존의 KIND 클러스터는 종료해둔 상태입니다. : <code>kind delete cluster</code></p>
+<ul>
+<li>
+<p>1개의 Control Plane과1개의 Worker Node를 구성하는 config를 설정해봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt; YML &gt; ~/.kind/kind-config-1-1.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: kind.x-k8s.io/v1alpha4
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Cluster
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">nodes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: control-plane
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: worker
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">YML</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kind create cluster --config ~/.kind/kind-config-1-1.yml --name kindful
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ✓ Preparing nodes 📦 📦 # 해당 라인에서 Node Pod를 2개 이상  준비함을 볼 수 있습니다.  </span>
+</span></span></code></pre></div></li>
+<li>
+<p>Worker Node에 kindnet과 kube-proxy가 올라갔음을 알 수 있습니다. (제일 나중에 구동)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kkumtree@kkumtree-G1619-04:~$ kubectl get pod -owide -n kube-system | grep kindful-worker
+</span></span><span style="display:flex;"><span>kindnet-wcgg4                                   1/1     Running   <span style="color:#ae81ff">0</span>          2m12s   172.18.0.3   kindful-worker          &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>kube-proxy-hxwjf                                1/1     Running   <span style="color:#ae81ff">0</span>          2m12s   172.18.0.3   kindful-worker          &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kkumtree@kkumtree-G1619-04:~$ kubectl get pod -owide -n kube-system | grep kindful-worker
+</span></span><span style="display:flex;"><span>kindnet-wcgg4                                   1/1     Running   <span style="color:#ae81ff">0</span>          2m12s   172.18.0.3   kindful-worker          &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>kube-proxy-hxwjf                                1/1     Running   <span style="color:#ae81ff">0</span>          2m12s   172.18.0.3   kindful-worker          &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kkumtree@kkumtree-G1619-04:~$ kubectl get pod -A --sort-by<span style="color:#f92672">=</span>.metadata.creationTimestamp
+</span></span><span style="display:flex;"><span>NAMESPACE            NAME                                            READY   STATUS    RESTARTS   AGE
+</span></span><span style="display:flex;"><span>kube-system          etcd-kindful-control-plane                      1/1     Running   <span style="color:#ae81ff">0</span>          3m27s
+</span></span><span style="display:flex;"><span>kube-system          kube-apiserver-kindful-control-plane            1/1     Running   <span style="color:#ae81ff">0</span>          3m27s
+</span></span><span style="display:flex;"><span>kube-system          kube-controller-manager-kindful-control-plane   1/1     Running   <span style="color:#ae81ff">0</span>          3m27s
+</span></span><span style="display:flex;"><span>kube-system          kube-scheduler-kindful-control-plane            1/1     Running   <span style="color:#ae81ff">0</span>          3m27s
+</span></span><span style="display:flex;"><span>kube-system          coredns-6f6b679f8f-5bnhz                        1/1     Running   <span style="color:#ae81ff">0</span>          3m20s
+</span></span><span style="display:flex;"><span>kube-system          coredns-6f6b679f8f-tp89q                        1/1     Running   <span style="color:#ae81ff">0</span>          3m20s
+</span></span><span style="display:flex;"><span>kube-system          kindnet-lwp7n                                   1/1     Running   <span style="color:#ae81ff">0</span>          3m20s
+</span></span><span style="display:flex;"><span>kube-system          kube-proxy-wb9bq                                1/1     Running   <span style="color:#ae81ff">0</span>          3m20s
+</span></span><span style="display:flex;"><span>local-path-storage   local-path-provisioner-57c5987fd4-jdg5m         1/1     Running   <span style="color:#ae81ff">0</span>          3m20s
+</span></span><span style="display:flex;"><span>kube-system          kindnet-wcgg4                                   1/1     Running   <span style="color:#ae81ff">0</span>          3m19s
+</span></span><span style="display:flex;"><span>kube-system          kube-proxy-hxwjf                                1/1     Running   <span style="color:#ae81ff">0</span>          3m19s
+</span></span></code></pre></div></li>
+<li>
+<p>Worker Node도 함께 생성시, Control Plane에 Taints 정보가 있음을 알 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  kkumtree@kkumtree-G1619-04:~$ kubectl describe node | grep Taints
+</span></span><span style="display:flex;"><span>  Taints:             node-role.kubernetes.io/control-plane:NoSchedule
+</span></span><span style="display:flex;"><span>  Taints:             &lt;none&gt;
+</span></span></code></pre></div></li>
+<li>
+<p>클러스터 삭제 시에는 생성시 지정했던 클러스터 이름을 지정해야합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kkumtree@kkumtree-G1619-04:~$ kind delete cluster --name kindful
+</span></span><span style="display:flex;"><span>Deleting cluster <span style="color:#e6db74">&#34;kindful&#34;</span> ...
+</span></span><span style="display:flex;"><span>Deleted nodes: <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;kindful-control-plane&#34;</span> <span style="color:#e6db74">&#34;kindful-worker&#34;</span><span style="color:#f92672">]</span>
+</span></span></code></pre></div></li>
+</ul>
+<h2 id="4-port-mapping-과-샘플-서비스-시연">4. Port Mapping 과 샘플 서비스 시연</h2>
+<p>모두 시연을 좋아하니까..!(터덜) 샘플 웹서비스으로 어떻게 표시 되는지 확인해봅니다.</p>
+<h3 id="1-port-mapping">(1) Port Mapping</h3>
+<p>결국, 각 노드는 Docker Container이기에 평소 하던 것처럼 포트를 열어주면 됩니다.<br>
+워커노드에 31000번 부터 부여해볼 것이며, NodePort 설정과 비슷하다고 보면 좋을 것 같습니다.</p>
+<table>
+<thead>
+<tr>
+<th>Host</th>
+<th>▶</th>
+<th>Container</th>
+<th>Service</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>31000</td>
+<td>-</td>
+<td>32000</td>
+<td>kube-ops-view(helm)</td>
+</tr>
+<tr>
+<td>31001</td>
+<td>-</td>
+<td>32001</td>
+<td>nginx:stable-alpine</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt; YML &gt; ~/.kind/kind-config-1-2.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: kind.x-k8s.io/v1alpha4
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Cluster
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">nodes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: control-plane
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: worker
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">	extraPortMappings:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">	- containerPort: 32000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">		hostPort: 31000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">		# listenAddress: &#34;0.0.0.0&#34; # Default (Opt.)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">		# protocol: tcp # Default (Also Opt.)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">	- containerPort: 32001
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">		hostPort: 31001
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">YML</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kind create cluster --config ~/.kind/kind-config-1-2.yml --name bueno
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ✓ Preparing nodes 📦 📦 # 해당 라인에서 Node Pod를 2개 이상 준비함을 볼 수 있습니다.  </span>
+</span></span></code></pre></div><h3 id="2-kube-ops-view-hostport-31000">(2) kube-ops-view (hostPort: 31000)</h3>
+<ul>
+<li>Helm 설치가 되어있어야 합니다.</li>
+</ul>
+<p>Config YAML에서 지정한대로 컨테이너 포트를 맞춰줘야합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm repo add geek-cookbook https://geek-cookbook.github.io/charts/
+</span></span><span style="display:flex;"><span>helm install kube-ops-view geek-cookbook/kube-ops-view --version 1.2.2 --set service.main.type<span style="color:#f92672">=</span>NodePort,service.main.ports.http.nodePort<span style="color:#f92672">=</span><span style="color:#ae81ff">32000</span> --set env.TZ<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Asia/Tokyo&#34;</span> --namespace kube-system
+</span></span></code></pre></div><ul>
+<li>아래와 같이 잘 설치되었는지, 확인합니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get deploy,pod,svc,ep -n kube-system -l app.kubernetes.io/instance<span style="color:#f92672">=</span>kube-ops-view
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;KUBE-OPS-VIEW URL = http://localhost:31000/#scale=2&#34;</span>
+</span></span></code></pre></div><h3 id="3-nginx-hostport31001">(3) Nginx (hostPort:31001)</h3>
+<p>Deployment 및 Service 배포로 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: deploy-helloworld
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: deploy-helloworld
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: deploy-helloworld
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: deploy-helloworld
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: nginx:stable-alpine
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - containerPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: deploy-helloworld
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: svc-webport
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      nodePort: 32001
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: deploy-helloworld
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: NodePort
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><p>아래 두 가지 방법 중 아무거나 입력하여 확인합니다.<br>
+<code>open</code>은 설정된 기본  웹브라우저에서, <code>curl</code>은 Terminal 환경일 때 사용하면 됩니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>open http://localhost:31001
+</span></span><span style="display:flex;"><span>curl -s localhost:31001 | grep -o <span style="color:#e6db74">&#34;&lt;title&gt;.*&lt;/title&gt;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;title&gt;Welcome to nginx!&lt;/title&gt;</span>
+</span></span></code></pre></div><h3 id="4-서비스-제거-및-종료">(4) 서비스 제거 및 종료</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl delete deploy,svc deploy-helloworld
+</span></span><span style="display:flex;"><span>helm uninstall kube-ops-view -n kube-system
+</span></span></code></pre></div>
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/kans-2w-kind-installation-on-linux/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">리눅스에 KIND 설치하기 w/golang</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
