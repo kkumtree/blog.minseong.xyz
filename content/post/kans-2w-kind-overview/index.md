@@ -2,9 +2,9 @@
 date: 2024-09-03T21:16:07+09:00
 title: "KIND 톺아보기"
 tags:
- - kans  
- - kind    
- - kubernetes  
+	- kans  
+	- kind    
+	- kubernetes  
 authors:
 	- name: kkumtree
 		bio: plumber for infra
