@@ -12,13 +12,15 @@ authors:
 		launchpad: mscho7969
 		github: kkumtree
 		profile: https://avatars.githubusercontent.com/u/52643858?v=4 
-image: kind_banner.png
-draft: true
+image: cover.png
+draft: false
 ---
 
 > [톺아보다(우리말샘)](https://opendict.korean.go.kr/dictionary/view?sense_no=437729&viewType=confirm) 는 의외로 표준어라고 합니다.  
 
 [KIND 설치](../kans-2w-kind-installation-on-linux/) 이후에 기본적인 내용을 살펴봅니다.  
+
+[CloudNet@](https://gasidaseo.notion.site/24-3-df0466c474ff40528e37b24bfdfe9d0f)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.  
 
 ## 0. $KUBECONFIG
 
@@ -147,6 +149,18 @@ draft: true
 			client-key-data: <base64encoded>
 	```
 
+- Control Plane 대상으로 nginx 배포 테스트: Taint가 걸려있지 않아, 정상적으로 배포
+
+	```bash
+	kubectl run nginx --image=nginx:stable-alpine
+	kkumtree@kkumtree-G1619-04:~$ kubectl get pod -owide
+	NAME    READY   STATUS    RESTARTS   AGE   IP           NODE                 NOMINATED NODE   READINESS GATES
+	nginx   1/1     Running   0          23s   10.244.0.5   kind-control-plane   <none>           <none>
+  kubectl describe node
+	kkumtree@kkumtree-G1619-04:~$ kubectl describe node | grep Taints
+	Taints:             <none>
+	```
+
 - 클러스터를 삭제한 후, kubeconfig 파일을 확인해보면, 상세 값들이 지워졌음을 확인할 수 있습니다.  
 
 	```bash
@@ -164,7 +178,7 @@ draft: true
 
 - 문득, `이 두 가지는 뭘까?` 하고  ~~위험한~~ 궁금증이 생겨 찾아봤습니다. 
 
-### kindnet
+### (1) kindnet
 
 [GitHub/kindnet](https://github.com/aojea/kindnet#kindnet-components)의 내용을 요약하면,  
 
@@ -175,7 +189,7 @@ draft: true
 
 또한 [TKNG](https://www.tkng.io/cni/kindnet/)에서는 Reachability(도달성)과 Connectivity(연결성)관점에서 CNI 플러그인으로서의 요건 충족을 설명하고 있었습니다.  
 
-### local-path-provisioner
+### (2) local-path-provisioner
 
 [GitHub/local-path-provisioner](https://github.com/rancher/local-path-provisioner): SUSE의 RANCHER에서 관리하고 있다는 것을 처음 인지하였습니다.
 
@@ -185,4 +199,177 @@ draft: true
 - 사용자 구성에 따라 `hostPath` 또는 `local` 기반의 PV를 노드에 자동으로 생성  
 - (단점)볼륨 용량 제한을 둘 수 없음. 값이 설정되어있더라도 무시  
 
+## 3. Worker 노드 추가해보기
 
+앞에서는 각 Node 구성을 위한 컨테이너 이미지 로컬 저장 겸 구성요소를 살펴보았으니,  
+Control Plane 외에도 Worker Node를 추가하여 구성을 해봅니다. 
+
+기존의 KIND 클러스터는 종료해둔 상태입니다. : `kind delete cluster`  
+
+- 1개의 Control Plane과1개의 Worker Node를 구성하는 config를 설정해봅니다. 
+
+	```bash
+	cat << YML > ~/.kind/kind-config-1-1.yml
+	apiVersion: kind.x-k8s.io/v1alpha4
+	kind: Cluster
+	nodes:
+	- role: control-plane
+	- role: worker
+	YML
+
+	kind create cluster --config ~/.kind/kind-config-1-1.yml --name kindful
+	# ✓ Preparing nodes 📦 📦 # 해당 라인에서 Node Pod를 2개 이상  준비함을 볼 수 있습니다.  
+	```
+
+- Worker Node에 kindnet과 kube-proxy가 올라갔음을 알 수 있습니다. (제일 나중에 구동)
+
+	```bash
+	kkumtree@kkumtree-G1619-04:~$ kubectl get pod -owide -n kube-system | grep kindful-worker
+	kindnet-wcgg4                                   1/1     Running   0          2m12s   172.18.0.3   kindful-worker          <none>           <none>
+	kube-proxy-hxwjf                                1/1     Running   0          2m12s   172.18.0.3   kindful-worker          <none>           <none>
+
+	kkumtree@kkumtree-G1619-04:~$ kubectl get pod -owide -n kube-system | grep kindful-worker
+	kindnet-wcgg4                                   1/1     Running   0          2m12s   172.18.0.3   kindful-worker          <none>           <none>
+	kube-proxy-hxwjf                                1/1     Running   0          2m12s   172.18.0.3   kindful-worker          <none>           <none>
+
+	kkumtree@kkumtree-G1619-04:~$ kubectl get pod -A --sort-by=.metadata.creationTimestamp
+	NAMESPACE            NAME                                            READY   STATUS    RESTARTS   AGE
+	kube-system          etcd-kindful-control-plane                      1/1     Running   0          3m27s
+	kube-system          kube-apiserver-kindful-control-plane            1/1     Running   0          3m27s
+	kube-system          kube-controller-manager-kindful-control-plane   1/1     Running   0          3m27s
+	kube-system          kube-scheduler-kindful-control-plane            1/1     Running   0          3m27s
+	kube-system          coredns-6f6b679f8f-5bnhz                        1/1     Running   0          3m20s
+	kube-system          coredns-6f6b679f8f-tp89q                        1/1     Running   0          3m20s
+	kube-system          kindnet-lwp7n                                   1/1     Running   0          3m20s
+	kube-system          kube-proxy-wb9bq                                1/1     Running   0          3m20s
+	local-path-storage   local-path-provisioner-57c5987fd4-jdg5m         1/1     Running   0          3m20s
+	kube-system          kindnet-wcgg4                                   1/1     Running   0          3m19s
+	kube-system          kube-proxy-hxwjf                                1/1     Running   0          3m19s
+	```
+
+- Worker Node도 함께 생성시, Control Plane에 Taints 정보가 있음을 알 수 있습니다.
+
+  ```bash
+	kkumtree@kkumtree-G1619-04:~$ kubectl describe node | grep Taints
+	Taints:             node-role.kubernetes.io/control-plane:NoSchedule
+	Taints:             <none>
+	```
+
+- 클러스터 삭제 시에는 생성시 지정했던 클러스터 이름을 지정해야합니다.  
+
+	```bash
+	kkumtree@kkumtree-G1619-04:~$ kind delete cluster --name kindful
+	Deleting cluster "kindful" ...
+	Deleted nodes: ["kindful-control-plane" "kindful-worker"]
+	```
+
+## 4. Port Mapping 과 샘플 서비스 시연
+
+모두 시연을 좋아하니까..!(터덜) 샘플 웹서비스으로 어떻게 표시 되는지 확인해봅니다. 
+
+### (1) Port Mapping  
+
+결국, 각 노드는 Docker Container이기에 평소 하던 것처럼 포트를 열어주면 됩니다.  
+워커노드에 31000번 부터 부여해볼 것이며, NodePort 설정과 비슷하다고 보면 좋을 것 같습니다.  
+
+| Host | ▶ | Container | Service |
+| ---- | - | --------- | ------- |
+| 31000 | - | 32000 | kube-ops-view(helm) |
+| 31001 | - | 32001 | nginx:stable-alpine |
+
+```bash
+cat << YML > ~/.kind/kind-config-1-2.yml
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+- role: control-plane
+- role: worker
+	extraPortMappings:
+	- containerPort: 32000
+		hostPort: 31000
+		# listenAddress: "0.0.0.0" # Default (Opt.)
+		# protocol: tcp # Default (Also Opt.)
+	- containerPort: 32001
+		hostPort: 31001
+YML
+
+kind create cluster --config ~/.kind/kind-config-1-2.yml --name bueno
+# ✓ Preparing nodes 📦 📦 # 해당 라인에서 Node Pod를 2개 이상 준비함을 볼 수 있습니다.  
+```
+
+### (2) kube-ops-view (hostPort: 31000)
+
+- Helm 설치가 되어있어야 합니다.
+
+Config YAML에서 지정한대로 컨테이너 포트를 맞춰줘야합니다.  
+
+```bash
+helm repo add geek-cookbook https://geek-cookbook.github.io/charts/
+helm install kube-ops-view geek-cookbook/kube-ops-view --version 1.2.2 --set service.main.type=NodePort,service.main.ports.http.nodePort=32000 --set env.TZ="Asia/Tokyo" --namespace kube-system
+```
+
+- 아래와 같이 잘 설치되었는지, 확인합니다.  
+
+```bash
+kubectl get deploy,pod,svc,ep -n kube-system -l app.kubernetes.io/instance=kube-ops-view
+echo -e "KUBE-OPS-VIEW URL = http://localhost:31000/#scale=2"
+```
+
+### (3) Nginx (hostPort:31001)
+
+Deployment 및 Service 배포로 합니다. 
+
+```bash
+cat <<EOF | kubectl create -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-helloworld
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: deploy-helloworld
+  template:
+    metadata:
+      labels:
+        app: deploy-helloworld
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: deploy-helloworld
+        image: nginx:stable-alpine
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deploy-helloworld
+spec:
+  ports:
+    - name: svc-webport
+      port: 80
+      targetPort: 80
+      nodePort: 32001
+  selector:
+    app: deploy-helloworld
+  type: NodePort
+EOF
+```
+
+아래 두 가지 방법 중 아무거나 입력하여 확인합니다.  
+`open`은 설정된 기본  웹브라우저에서, `curl`은 Terminal 환경일 때 사용하면 됩니다.  
+
+```bash
+open http://localhost:31001
+curl -s localhost:31001 | grep -o "<title>.*</title>"
+# <title>Welcome to nginx!</title>
+```
+
+### (4) 서비스 제거 및 종료
+
+```bash
+kubectl delete deploy,svc deploy-helloworld
+helm uninstall kube-ops-view -n kube-system
+```
