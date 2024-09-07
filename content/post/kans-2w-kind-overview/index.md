@@ -107,8 +107,8 @@ draft: false
   ```  
 
 - 아래와 같이, control-plane pod 내부에 pod가 순차적으로 올라오는 것을 볼 수 있습니다.  
-	(phase.1) etcd/apiserver/controller-manager/scheduler 가 먼저 올라옵니다.
-	(phase.2) coredns/kube-proxy 그리고 kindnet, local path provisioner 가 설치됩니다. 
+	(phase.1) etcd/apiserver/controller-manager/scheduler 가 먼저 올라옵니다.  
+	(phase.2) coredns/kube-proxy 그리고 kindnet, local path provisioner 가 설치됩니다.  
 
 	```bash
 	❯ (앞에서 다른 터미널로 2초마다 감시)watch kubectl get pod -A --sort-by=.metadata.creationTimestamp
@@ -124,7 +124,7 @@ draft: false
 	local-path-storage   local-path-provisioner-7d4d9bdcc5-pw5b2      1/1     Running   0          6m51s
 	```
 
-- 구동 상태에서 kubeconfig 파일은 다음과 같은 구조로 내용을 담고 있음을 알 수 있습니다.
+- 구동 상태에서 kubeconfig 파일은 다음과 같은 구조로 내용을 담고 있음을 알 수 있습니다.  
 
 	```bash
 	❯ cat ~/.kind/kubeconfig
@@ -149,7 +149,7 @@ draft: false
 			client-key-data: <base64encoded>
 	```
 
-- Control Plane 대상으로 nginx 배포 테스트: Taint가 걸려있지 않아, 정상적으로 배포
+- Control Plane 대상으로 nginx 배포 테스트: Taint가 걸려있지 않아, 정상적으로 배포  
 
 	```bash
 	kubectl run nginx --image=nginx:stable-alpine
@@ -272,6 +272,8 @@ Control Plane 외에도 Worker Node를 추가하여 구성을 해봅니다.
 결국, 각 노드는 Docker Container이기에 평소 하던 것처럼 포트를 열어주면 됩니다.  
 워커노드에 31000번 부터 부여해볼 것이며, NodePort 설정과 비슷하다고 보면 좋을 것 같습니다.  
 
+- (참고) 포트는 31000번대부터 사용가능합니다. 에러코드에서도 확인 가능합니다.  
+
 | Host | ▶ | Container | Service |
 | ---- | - | --------- | ------- |
 | 31000 | - | 32000 | kube-ops-view(helm) |
@@ -299,6 +301,8 @@ kind create cluster --config ~/.kind/kind-config-1-2.yml --name bueno
 
 ### (2) kube-ops-view (hostPort: 31000)
 
+![kube-ops-view](images/kube-ops-view.png)  
+
 - Helm 설치가 되어있어야 합니다.
 
 Config YAML에서 지정한대로 컨테이너 포트를 맞춰줘야합니다.  
@@ -317,7 +321,9 @@ echo -e "KUBE-OPS-VIEW URL = http://localhost:31000/#scale=2"
 
 ### (3) Nginx (hostPort:31001)
 
-Deployment 및 Service 배포로 합니다. 
+![forever-health-checker](images/nginx.png)  
+
+Deployment 및 Service 배포로 합니다.  
 
 ```bash
 cat <<EOF | kubectl create -f -
@@ -372,4 +378,6 @@ curl -s localhost:31001 | grep -o "<title>.*</title>"
 ```bash
 kubectl delete deploy,svc deploy-helloworld
 helm uninstall kube-ops-view -n kube-system
-```
+kind delete cluster -n bueno
+```  
+
