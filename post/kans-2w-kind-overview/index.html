@@ -198,7 +198,7 @@
 </span></span></code></pre></div></li>
 <li>
 <p>아래와 같이, control-plane pod 내부에 pod가 순차적으로 올라오는 것을 볼 수 있습니다.<br>
-(phase.1) etcd/apiserver/controller-manager/scheduler 가 먼저 올라옵니다.
+(phase.1) etcd/apiserver/controller-manager/scheduler 가 먼저 올라옵니다.<br>
 (phase.2) coredns/kube-proxy 그리고 kindnet, local path provisioner 가 설치됩니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ <span style="color:#f92672">(</span>앞에서 다른 터미널로 2초마다 감시<span style="color:#f92672">)</span>watch kubectl get pod -A --sort-by<span style="color:#f92672">=</span>.metadata.creationTimestamp
 </span></span><span style="display:flex;"><span>NAMESPACE            NAME                                         READY   STATUS    RESTARTS   AGE
@@ -337,6 +337,9 @@ Control Plane 외에도 Worker Node를 추가하여 구성을 해봅니다.</p>
 <h3 id="1-port-mapping">(1) Port Mapping</h3>
 <p>결국, 각 노드는 Docker Container이기에 평소 하던 것처럼 포트를 열어주면 됩니다.<br>
 워커노드에 31000번 부터 부여해볼 것이며, NodePort 설정과 비슷하다고 보면 좋을 것 같습니다.</p>
+<ul>
+<li>(참고) 포트는 31000번대부터 사용가능합니다. 에러코드에서도 확인 가능합니다.</li>
+</ul>
 <table>
 <thead>
 <tr>
@@ -379,6 +382,7 @@ Control Plane 외에도 Worker Node를 추가하여 구성을 해봅니다.</p>
 </span></span><span style="display:flex;"><span>kind create cluster --config ~/.kind/kind-config-1-2.yml --name bueno
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># ✓ Preparing nodes 📦 📦 # 해당 라인에서 Node Pod를 2개 이상 준비함을 볼 수 있습니다.  </span>
 </span></span></code></pre></div><h3 id="2-kube-ops-view-hostport-31000">(2) kube-ops-view (hostPort: 31000)</h3>
+<p><img src="images/kube-ops-view.png" alt="kube-ops-view"></p>
 <ul>
 <li>Helm 설치가 되어있어야 합니다.</li>
 </ul>
@@ -391,6 +395,7 @@ Control Plane 외에도 Worker Node를 추가하여 구성을 해봅니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get deploy,pod,svc,ep -n kube-system -l app.kubernetes.io/instance<span style="color:#f92672">=</span>kube-ops-view
 </span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;KUBE-OPS-VIEW URL = http://localhost:31000/#scale=2&#34;</span>
 </span></span></code></pre></div><h3 id="3-nginx-hostport31001">(3) Nginx (hostPort:31001)</h3>
+<p><img src="images/nginx.png" alt="forever-health-checker"></p>
 <p>Deployment 및 Service 배포로 합니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
@@ -436,6 +441,7 @@ Control Plane 외에도 Worker Node를 추가하여 구성을 해봅니다.</p>
 </span></span></code></pre></div><h3 id="4-서비스-제거-및-종료">(4) 서비스 제거 및 종료</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl delete deploy,svc deploy-helloworld
 </span></span><span style="display:flex;"><span>helm uninstall kube-ops-view -n kube-system
+</span></span><span style="display:flex;"><span>kind delete cluster -n bueno
 </span></span></code></pre></div>
   </div>
   </section>
