@@ -200,7 +200,10 @@
 <p>아래와 같이, control-plane pod 내부에 pod가 순차적으로 올라오는 것을 볼 수 있습니다.<br>
 (phase.1) etcd/apiserver/controller-manager/scheduler 가 먼저 올라옵니다.<br>
 (phase.2) coredns/kube-proxy 그리고 kindnet, local path provisioner 가 설치됩니다.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ <span style="color:#f92672">(</span>앞에서 다른 터미널로 2초마다 감시<span style="color:#f92672">)</span>watch kubectl get pod -A --sort-by<span style="color:#f92672">=</span>.metadata.creationTimestamp
+</li>
+<li>
+<p>앞에서 다른 터미널로 2초마다 <code>watch</code>로 갱신하도록 시켜둔 상태</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ watch kubectl get pod -A --sort-by<span style="color:#f92672">=</span>.metadata.creationTimestamp
 </span></span><span style="display:flex;"><span>NAMESPACE            NAME                                         READY   STATUS    RESTARTS   AGE
 </span></span><span style="display:flex;"><span>kube-system          etcd-kind-control-plane                      1/1     Running   <span style="color:#ae81ff">0</span>          7m5s
 </span></span><span style="display:flex;"><span>kube-system          kube-apiserver-kind-control-plane            1/1     Running   <span style="color:#ae81ff">0</span>          7m5s
