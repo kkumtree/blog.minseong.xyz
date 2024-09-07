@@ -110,8 +110,10 @@ draft: false
 	(phase.1) etcd/apiserver/controller-manager/scheduler 가 먼저 올라옵니다.  
 	(phase.2) coredns/kube-proxy 그리고 kindnet, local path provisioner 가 설치됩니다.  
 
+- 앞에서 다른 터미널로 2초마다 `watch`로 갱신하도록 시켜둔 상태  
+
 	```bash
-	❯ (앞에서 다른 터미널로 2초마다 감시)watch kubectl get pod -A --sort-by=.metadata.creationTimestamp
+	❯ watch kubectl get pod -A --sort-by=.metadata.creationTimestamp
 	NAMESPACE            NAME                                         READY   STATUS    RESTARTS   AGE
 	kube-system          etcd-kind-control-plane                      1/1     Running   0          7m5s
 	kube-system          kube-apiserver-kind-control-plane            1/1     Running   0          7m5s
