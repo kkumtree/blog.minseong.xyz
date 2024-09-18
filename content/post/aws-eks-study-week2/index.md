@@ -1028,7 +1028,7 @@ kubectl delete -f k8s-iperf3.yaml
 
 ## reference
 
-- [CloudNet@](https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion 및 Slack 채널
+- [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion 및 Slack 채널
 - [kube-proxy ipvs issue @AWS Github](https://github.com/aws/containers-roadmap/issues/142#issuecomment-1367437044)
 - [EKS addons advanced configuration @AWS blog](https://aws.amazon.com/blogs/containers/amazon-eks-add-ons-advanced-configuration/)
 - [ipvs vs iptables](https://blog.naver.com/alice_k106/221606077410)

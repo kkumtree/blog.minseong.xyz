@@ -18,7 +18,7 @@ image: cover.png
 draft: false
 ---
 
-[CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)에서의 Terraform 스터디가 끝나고 나서,  
+[CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서의 Terraform 스터디가 끝나고 나서,  
 테라폼을 실제 운영 상황에 도입하면서 마주할 수 밖에 없는 드리프트(drift) 상황에 대해  
 이해해보는 시간을 가졌습니다.  
 
@@ -244,7 +244,7 @@ esac
 
 ## 5. References  
 
-- [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)
+- [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)
 - [테라폼으로 시작하는 IaC](https://link.coupang.com/a/8mN0N)
 - [Trend Micro/Terraform Tutorial: Drift Detection Strategies](https://www.trendmicro.com/en_us/devops/22/c/terraform-tutorial-drift-detection-strategies.html)
 - [GitHub/terraform](https://github.com/hashicorp/terraform/issues/30678)

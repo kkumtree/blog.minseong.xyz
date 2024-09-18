@@ -25,7 +25,7 @@ draft: true # 글 초안 여부
 
 ## 계기  
 
-[CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)에서 Terraform 스터디를 마칠 쯤에 테라폼을, 그것도 Terraform Cloud(TFC)를 사용해야하는 상황이 생겼습니다.  
+[CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 Terraform 스터디를 마칠 쯤에 테라폼을, 그것도 Terraform Cloud(TFC)를 사용해야하는 상황이 생겼습니다.  
 그룹 프로젝트 진행에 있어, 다른 팀과 OU로 구분되지 않은채로 같은 계정을 사용하게 된 것인데요.  
 Backend를 S3로 사용하게 되면, 무결성을 확신할 수 없었기 때문에, OIDC 기반으로 TFC를 사용하게 되었습니다.  
 해당 [포스트](https://blog.minseong.xyz/post/notification-about-terraform-cloud-drift/)를 작성할 때만 해도, TFC를 적극적으로 쓸 상황이 올거라고는 생각치 못했습니다.  

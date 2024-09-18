@@ -20,7 +20,7 @@ draft: false
 
 > Helm 설치 추가
 
-[CloudNet@](https://gasidaseo.notion.site/24-3-df0466c474ff40528e37b24bfdfe9d0f)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)에 참여하게 되면서 기록을 남기고 있습니다.  
+[CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)에 참여하게 되면서 기록을 남기고 있습니다.  
 
 이번에는 kind(**K**ubernetes **IN** **D**ocker)를 Golang을 통해 설치하면서 약간의 소?란이 있었던 부분만 다룹니다.  
 

@@ -18,7 +18,7 @@ image: images/k8s_4wish.png
 draft: false
 ---
 
-최근 [CloudNet@](https://gasidaseo.notion.site/24-3-df0466c474ff40528e37b24bfdfe9d0f)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)에 참여하게 되었습니다.  
+최근 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)에 참여하게 되었습니다.  
 ~~난이도를 생각하면 KH(Hardcore)NS가 더 맞아보이지만...~~
 
 k8s가 워낙 인기가 많기도 하지만, Pod 간 통신에는 많은 지식이 투여되기에 이번 기회에 살펴보기로 했습니다.  

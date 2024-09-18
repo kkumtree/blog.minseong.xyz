@@ -17,7 +17,7 @@ image: cover.png # 커버 이미지 URL
 draft: false # 글 초안 여부
 ---
 
-이번에는 [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)에서 진행하는 Terraform 스터디(이하, T101)에 참여했습니다. 
+이번에는 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하는 Terraform 스터디(이하, T101)에 참여했습니다. 
 
 Terraform을 쓰면 왜 좋은지는 자세하고 전문적인 글이 있으므로,
 참고하시면 좋을 것 같습니다. (링크: [44bits](https://www.44bits.io/ko/keyword/terraform))
@@ -331,7 +331,7 @@ while true; do aws ec2 describe-instances --query "Reservations[*].Instances[*].
 
 ## Reference
 
-- [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)
+- [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)
 - [테라폼으로 시작하는 IaC](https://link.coupang.com/a/8mN0N)
 - [Terraform CLI](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)  
 - [Go/gccgo](https://go.dev/doc/install/gccgo)

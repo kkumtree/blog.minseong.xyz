@@ -17,7 +17,7 @@ image: cover.png
 draft: false # 글 초안 여부
 ---
 
-최근 [CloudNet@](https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 Production Kubernetes Online Study(이하, PKOS)도 마지막 주차가 끝났습니다.  
+최근 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 Production Kubernetes Online Study(이하, PKOS)도 마지막 주차가 끝났습니다.  
 남은 계획은 4월부터 시작되는 휴식기간(a.k.a. 계약만료 후)중 복습 겸, 포스팅을 해보는 것입니다.  
 
 오늘은 아래와 같이 실패를 거듭하여 추가로 알게된 소소한 트러블슈팅을 정리해보려고 합니다.  
@@ -179,5 +179,5 @@ draft: false # 글 초안 여부
 
 ## reference
 
-- [CloudNet@](https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion 및 Slack 채널
+- [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion 및 Slack 채널
 - [kops Docs](https://kops.sigs.k8s.io/getting_started/aws/#create-cluster-configuration)

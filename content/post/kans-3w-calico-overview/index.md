@@ -18,6 +18,8 @@ image: images/calico_p8s_basic.png
 draft: false
 ---
 
+[CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)를 통해 학습한 내용을 정리합니다. 
+
 ## 1. Calico 설치  
 
 > 스터디에서 AWS CF 및 Calico 설치 스크립트(Manifest)를 제공하였기에, 이 부분은 참고만 하시기 바랍니다.  
@@ -343,7 +345,7 @@ kubectl apply -f calico-prometheus-user.yaml
 # clusterrolebinding.rbac.authorization.k8s.io/calico-prometheus-user created
 ```  
 
-### (3) 배포 및 구성
+### (3) 배포 및 구성![
 
 ConfigMap을 생성합니다.  
 

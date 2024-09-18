@@ -17,7 +17,7 @@ image: cover.png
 draft: false
 ---
 
-This week is last week of [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4) group study about terraform.  
+This week is last week of [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) group study about terraform.  
 
 In this study, my personal goal is `making AWS architecture only with terraform and one tfstate file`.  
 
@@ -441,7 +441,7 @@ I wish this post will be helpful to moduling terraform.
 
 ## 6. References
 
-- [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)
+- [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)
 - [terraformer](https://github.com/GoogleCloudPlatform/terraformer)  
 - [my blog/terrafomer usage](https://blog.minseong.xyz/post/troubleshoot-terraformer-with-tfenv/)
 - [Terraform Modules](https://blog.devops.dev/terraform-modules-46ef5e0963c3)  

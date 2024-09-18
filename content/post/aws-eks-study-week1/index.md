@@ -16,7 +16,7 @@ image: cover.png # 커버 이미지 URL
 draft: false # 글 초안 여부
 ---
 
-최근 [CloudNet@](https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는  
+최근 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는  
 AWS EKS Workshop Study(이하, AEWS)에 참여하게 되었습니다.  
 
 k8s가 워낙 인기가 많기도 하지만, 지난 kOps 스터디를 통해 관리요소가 참 많은 것을 느꼈었고,  
@@ -240,7 +240,7 @@ kubectl get svc mario -o jsonpath={.status.loadBalancer.ingress[0].hostname} | a
 
 ## reference
 
-- [CloudNet@](https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion 및 Slack 채널
+- [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion 및 Slack 채널
 - [EKS userguide @AWS](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html)
 - [ICMP def. @cloudflare](https://www.cloudflare.com/ko-kr/learning/ddos/glossary/internet-control-message-protocol-icmp/)
 - [ICMP def. @NetApp](https://docs.netapp.com/ko-kr/e-series-santricity/sm-hardware/what-are-icmp-ping-responses.html)

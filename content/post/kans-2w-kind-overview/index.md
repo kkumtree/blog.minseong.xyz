@@ -20,7 +20,7 @@ draft: false
 
 [KIND 설치](../kans-2w-kind-installation-on-linux/) 이후에 기본적인 내용을 살펴봅니다.  
 
-[CloudNet@](https://gasidaseo.notion.site/24-3-df0466c474ff40528e37b24bfdfe9d0f)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.  
+[CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.  
 
 ## 0. $KUBECONFIG
 

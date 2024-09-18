@@ -17,7 +17,7 @@ image: cover.png # 커버 이미지 URL
 draft: false # 글 초안 여부
 ---
 
-이번에는 [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)를 통해 학습한 내용을 기반으로,  
+이번에는 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)를 통해 학습한 내용을 기반으로,  
 
 - AZ를 대상으로 한 data 조회  
 - AWS VPC 생성 예제로 살펴보는 output
@@ -300,7 +300,7 @@ output "aws_vpc_secondary_id" {
 
 ## Reference
 
-- [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)
+- [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)
 - [테라폼으로 시작하는 IaC](https://link.coupang.com/a/8mN0N)
 - [Terraform CLI](https://developer.hashicorp.com/terraform/cli/commands/init#child-module-installation)
 - [AWS VPC Docs](https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-cidr-blocks.html)  

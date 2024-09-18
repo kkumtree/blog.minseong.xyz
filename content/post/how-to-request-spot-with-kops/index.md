@@ -138,7 +138,7 @@ draft: false # 글 초안 여부
 
 ## reference
 
-- [CloudNet@](https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion
+- [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion
 - [AWS EC2 스팟 인스턴스 요금](https://aws.amazon.com/ko/blogs/aws/new-ec2-spot-pricing/)
 - [Efficiently Scaling kOps clusters with Amazon EC2 Spot Instances](https://aws.amazon.com/ko/blogs/compute/efficiently-scaling-kops-clusters-with-amazon-ec2-spot-instances/)
 - [Using Spot Instances with Kubernetes’ Kops](https://onica.com/blog/devops/aws-spot-instances-with-kubernetes-kops/)

@@ -248,7 +248,7 @@ Terraform Cloud를 사용할 수 있도록 셋업하는 방법을 알아보았�
 
 ## Reference
 
-- [CloudNet@](https://gasidaseo.notion.site/3-8b2603d882734df0b96f8670bb4e15d4)
+- [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)
 - [테라폼으로 시작하는 IaC](https://link.coupang.com/a/8mN0N)
 - [Terraform Cloud](https://app.terraform.io/)
 - [SaturnCloud/Terraform Cloud/Enterprise: A Comprehensive Guide to Using AWS Assume Roles](https://saturncloud.io/blog/terraform-cloudenterprise-a-comprehensive-guide-to-using-aws-assume-roles/)

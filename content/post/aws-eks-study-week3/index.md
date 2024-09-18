@@ -862,7 +862,7 @@ eksctl delete nodegroup -c $CLUSTER_NAME -n ng2
 
 ## reference
 
-- [CloudNet@](https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion 및 Slack 채널
+- [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863) Notion 및 Slack 채널
 - [aws-cli filter @AWS Docs](https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/cli-usage-filter.html)
 - [k8s volume @조대협님의 블로그](https://bcho.tistory.com/1259)
 - [AWS EBS Controller @악분일상님의 블로그](https://malwareanalysis.tistory.com/598)
