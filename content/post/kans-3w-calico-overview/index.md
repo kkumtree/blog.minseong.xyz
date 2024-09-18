@@ -1,6 +1,6 @@
 ---
 date: 2024-09-15T18:40:22+09:00
-title: "Calico 및 Retina 설치 구성"
+title: "Calico 및 메트릭 수집 구성"
 tags:
   - kans  
   - cni
@@ -13,8 +13,8 @@ authors:
     launchpad: mscho7969
     github: kkumtree
     profile: https://avatars.githubusercontent.com/u/52643858?v=4 
-image: cover.png
-draft: true
+image: images/calico_p8s_basic.png
+draft: false
 ---
 
 ## 1. Calico 설치  
@@ -514,82 +514,6 @@ kubectl get svc,ep -n calico-monitoring
 echo -e "Prometheus URL = http://$(curl -s ipinfo.io/ip):30001/graph"  
 # Prometheus URL = http://3.35.169.117:30001/graph
 ```  
+Target에서 `felix_metrics`가 잡힌 것을 확인하였습니다.  
 
-
-
-
-
-## 3. Retina 설치  <재구성 필요>
-
-> Network Monitoring Tool인 [Retina](https://github.com/microsoft/retina)를 설치해봅니다.  
-
-- Helm이 있어야합니다. 공식 Docs가 제일 정확합니다.  
-
-### (1) Helm chart 설치  
-
-- 링크: <https://retina.sh/docs/Installation/Setup>  
-
-Basic Mode 로 진행해보겠습니다.  
-  
-```bash  
-# Set the version to a specific version here or get latest version from GitHub API.
-VERSION=$( curl -sL https://api.github.com/repos/microsoft/retina/releases/latest | jq -r .name)
-helm upgrade --install retina oci://ghcr.io/microsoft/retina/charts/retina \
-    --version $VERSION \
-    --set image.tag=$VERSION \
-    --set operator.tag=$VERSION \
-    --set logLevel=info \
-    --set enabledPlugin_linux="\[dropreason\,packetforward\,linuxutil\,dns\]"
-```  
-
-다음과 같은 출력값이 나옵니다.  
-
-```bash  
-Release "retina" does not exist. Installing it now.
-Pulled: ghcr.io/microsoft/retina/charts/retina:v0.0.16
-Digest: sha256:384e4b45d37ab49b6e2e742012e3d49230ce2be102895dccb504b42540091419
-NAME: retina
-LAST DEPLOYED: Sun Sep 15 19:29:03 2024
-NAMESPACE: default
-STATUS: deployed
-REVISION: 1
-NOTES:
-1. Installing retina service using helm: helm install retina ./deploy/legacy/manifests/controller/helm/retina/ --namespace kube-system --dependency-update
-2. Cleaning up/uninstalling/deleting retina and dependencies related: 
-```  
-
-### (2) Prometheus 설치  
-
-앞서 출력값의 NOTES.1을 그대로 치면 에러가 정상적으로 나야합니다. 해당 되는 파일을 받지 않았기 때문입니다.  
-
-- 에러 로그를 보면, 이 또한 Document를 안내하는 것을 알 수 있습니다.  https://github.com/microsoft/retina/blob/3d2c7a55f8c0388df271453f5fc7b166c2f275be/deploy/legacy/prometheus/values.yaml
-
-- Prometheus 커뮤니티 차트를 사용합니다. Legacy 모드로 진행하나, Github를 살펴보니 Hubble을 쓰는 방식도 있는 것 같습니다.  
-
-- 앞서 언급된 파일의 경로: <https://github.com/microsoft/retina/blob/3d2c7a55f8c0388df271453f5fc7b166c2f275be/deploy/legacy/prometheus/values.yaml>  
-
-    ```bash
-    (⎈|HomeLab:default) root@k8s-m:~/retina# mkdir -p deploy/legacy/prometheus
-    (⎈|HomeLab:default) root@k8s-m:~/retina# touch deploy/legacy/prometheus/values.yaml
-    (⎈|HomeLab:default) root@k8s-m:~/retina# helm install prometheus -n kube-system -f deploy/legacy/prometheus/values.yaml prometheus-community/kube-prometheus-stack
-    NAME: prometheus
-    LAST DEPLOYED: Sun Sep 15 19:59:33 2024
-    NAMESPACE: kube-system
-    STATUS: deployed
-    REVISION: 1
-    NOTES:
-    kube-prometheus-stack has been installed. Check its status by running:
-      kubectl --namespace kube-system get pods -l "release=prometheus"
-
-    Visit https://github.com/prometheus-operator/kube-prometheus for instructions on how to create & configure Alertmanager and Prometheus instances using the Operator.
-    ```
-
-- <에러남> 안내서에 따라 접속을 위해 Port-Forward 설정한 후 링크를 얻습니다.  
-  - 다만, 해당 명령어는 foreground로 실행하는 것이기에 새로운 터미널에서 하는 것을 권장합니다.  
-
-    ```bash
-    # Ternimal 1
-    kubectl port-forward --namespace kube-system svc/prometheus-operated 9090
-    # Terminal 2
-    echo -e "kubeskoop URL = http://$(curl -s ipinfo.io/ip):9090"
-    ```
+![Calico Prometheus](/images/calico_p8s_basic.png)
