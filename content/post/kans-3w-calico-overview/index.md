@@ -174,11 +174,11 @@ Felix 하나만 연결하면 그만일 줄 알았더니 그건 아닌 것 같습
   다만 작업시, 유의해야할 것이 각자 사용 중인 기본 포트가 정해져 있다는 점입니다.  
 
   | Component | Default Port | Protocol | Prerequisites | Memo |  
-  | --- | --- | --- | --- |  
+  | --- | --- | --- | --- | --- |  
   | Felix | 9091 | TCP | Y | - |  
   | Typha | 9091 | TCP | N | Default Setting |  
   | Typha(Amazon) | 9093 | TCP | N | TYPHA_PROMETHEUS_METRICS_PORT |  
-  | kube-controllers | 9094 | TCP | `calico-kube-controllers` |  
+  | kube-controllers | 9094 | TCP | Y | `calico-kube-controllers` |  
 
 - 특히, Typha의 경우, 위에 기술한 것과 같이 Amazon vpc-cni 설정에서 custom 포트가 별도 지정된다고 합니다. 다음 링크를 참조하시기 바랍니다. ([Github/amazon-vpc-cni-k8s](https://github.com/aws/amazon-vpc-cni-k8s/blob/b001dc6a8fff52926ed9a93ee6c4104f02d365ab/config/v1.6/calico.yaml#L569): v1.6-b001dc6)  
   Typha 도 활성하여 했으나, 선택사항이거니와 설치가 되어있지 않아 다루지 않습니다.  
@@ -341,6 +341,181 @@ kubectl apply -f calico-prometheus-user.yaml
 # serviceaccount/calico-prometheus-user created
 # clusterrolebinding.rbac.authorization.k8s.io/calico-prometheus-user created
 ```  
+
+### (3) 배포 및 구성
+
+ConfigMap을 생성합니다.  
+
+```bash
+cat <<EOF>prometheus-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: calico-monitoring
+data:
+  prometheus.yml: |-
+    global:
+      scrape_interval:   15s
+      external_labels:
+        monitor: 'tutorial-monitor'
+    scrape_configs:
+    - job_name: 'prometheus'
+      scrape_interval: 5s
+      static_configs:
+      - targets: ['localhost:9090']
+    - job_name: 'felix_metrics'
+      scrape_interval: 5s
+      scheme: http
+      kubernetes_sd_configs:
+      - role: endpoints
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        regex: felix-metrics-svc
+        replacement: $1
+        action: keep
+    - job_name: 'felix_windows_metrics'
+      scrape_interval: 5s
+      scheme: http
+      kubernetes_sd_configs:
+      - role: endpoints
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        regex: felix-windows-metrics-svc
+        replacement: $1
+        action: keep
+    - job_name: 'typha_metrics'
+      scrape_interval: 5s
+      scheme: http
+      kubernetes_sd_configs:
+      - role: endpoints
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        regex: typha-metrics-svc
+        replacement: $1
+        action: keep
+    - job_name: 'kube_controllers_metrics'
+      scrape_interval: 5s
+      scheme: http
+      kubernetes_sd_configs:
+      - role: endpoints
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        regex: kube-controllers-metrics-svc
+        replacement: $1
+        action: keep
+EOF
+
+kubectl apply -f prometheus-config.yaml
+```
+
+Calico를 수집할 Prometheus를 배포합니다.  
+
+> 앞에서 Calico 메트릭을 수집하고, 유효한 ConfigMap을 생성하였습니다.  
+
+```bash
+cat <<EOF>prometheus-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: prometheus-pod
+  namespace: calico-monitoring
+  labels:
+    app: prometheus-pod
+    role: monitoring
+spec:
+  nodeSelector:
+    kubernetes.io/os: linux
+  serviceAccountName: calico-prometheus-user
+  containers:
+  - name: prometheus-pod
+    image: prom/prometheus
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/prometheus/prometheus.yml
+      subPath: prometheus.yml
+    ports:
+    - containerPort: 9090
+  volumes:
+  - name: config-volume
+    configMap:
+      name: prometheus-config
+EOF
+
+kubectl apply -f prometheus-pod.yaml
+```  
+
+정상적으로 구동되는 지 확인합니다.  
+
+```bash
+kubectl get pods prometheus-pod -n calico-monitoring
+# NAME             READY   STATUS    RESTARTS   AGE
+# prometheus-pod   1/1     Running   0          14s
+```
+
+### (4) 대시보드에서 메트릭 확인 및 간단한 그래프 생성
+
+문서에서는 port-forward를 통해 확인하도록 하지만, AWS EC2에 구축했기에 확인하기가 어렵습니다.  
+
+> kubectl port-forward pod/prometheus-pod 9090:9090 -n calico-monitoring
+
+스터디에서 안내된 방법으로, 확인해보겠습니다.  
+
+#### a. Pod IP를 확인합니다.  
+  
+- `/graph`: 대시보드  
+- `/metrics`: Grafana 등 p8s 기반 시각화를 위한 메트릭 정보  
+  
+```bash  
+kubectl get pods prometheus-pod -n calico-monitoring -owide | grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}"
+# 172.16.184.8
+
+# curl 172.16.184.8:9090
+# <a href="/graph">Found</a>.
+```  
+
+#### b. NodePort svc를 생성합니다. (외부접속)  
+
+```bash  
+cat <<EOF>prometheus-dashboard-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-dashboard-svc
+  namespace: calico-monitoring
+spec:
+  type: NodePort
+  selector:
+    app: prometheus-pod
+    role: monitoring
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+      nodePort: 30001 
+EOF
+
+kubectl apply -f prometheus-dashboard-svc.yaml
+kubectl get svc,ep -n calico-monitoring
+# NAME                               TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE
+# service/prometheus-dashboard-svc   NodePort   10.200.1.45   <none>        9090:30001/TCP   0s
+
+# NAME                                 ENDPOINTS           AGE
+# endpoints/prometheus-dashboard-svc   172.16.184.8:9090   0s
+```  
+  
+아래 커맨드를 쳐서 나오는 URL로 웹 브라우저에서 확인을 합니다.  
+  
+```bash  
+echo -e "Prometheus URL = http://$(curl -s ipinfo.io/ip):30001/graph"  
+# Prometheus URL = http://3.35.169.117:30001/graph
+```  
+
+
 
 
 
