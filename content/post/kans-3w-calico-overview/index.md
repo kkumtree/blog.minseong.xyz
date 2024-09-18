@@ -6,6 +6,7 @@ tags:
   - cni
   - calico    
   - kubernetes  
+  - prometheus
 authors:
   - name: kkumtree
     bio: plumber for infra
@@ -516,4 +517,4 @@ echo -e "Prometheus URL = http://$(curl -s ipinfo.io/ip):30001/graph"
 ```  
 Target에서 `felix_metrics`가 잡힌 것을 확인하였습니다.  
 
-![Calico Prometheus](/images/calico_p8s_basic.png)
+![Calico Prometheus](images/calico_p8s_basic.png)
