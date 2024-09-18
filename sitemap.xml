@@ -2,25 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/calico/</loc>
+    <lastmod>2024-09-15T18:40:22+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/kans-3w-calico-overview/</loc>
+    <lastmod>2024-09-15T18:40:22+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/cni/</loc>
+    <lastmod>2024-09-15T18:40:22+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/kans/</loc>
-    <lastmod>2024-09-03T21:16:07+09:00</lastmod>
+    <lastmod>2024-09-15T18:40:22+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2024-09-15T18:40:22+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/kubernetes/</loc>
+    <lastmod>2024-09-15T18:40:22+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2024-09-15T18:40:22+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2024-09-15T18:40:22+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/kind/</loc>
     <lastmod>2024-09-03T21:16:07+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/kans-2w-kind-overview/</loc>
-    <lastmod>2024-09-03T21:16:07+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2024-09-03T21:16:07+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/kubernetes/</loc>
-    <lastmod>2024-09-03T21:16:07+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2024-09-03T21:16:07+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2024-09-03T21:16:07+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/golang/</loc>
@@ -124,9 +133,6 @@
   </url><url>
     <loc>https://blog.minseong.xyz/tags/ubuntu/</loc>
     <lastmod>2023-08-31T22:21:08+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/calico/</loc>
-    <lastmod>2023-07-25T00:40:14+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/init-calico-from-quay-registry/</loc>
     <lastmod>2023-07-25T00:40:14+09:00</lastmod>

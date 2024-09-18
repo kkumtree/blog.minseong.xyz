@@ -6,7 +6,19 @@
     <description>Recent content in calico on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 25 Jul 2023 00:40:14 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/calico/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 15 Sep 2024 18:40:22 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/calico/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Calico 및 메트릭 수집 구성</title>
+      <link>https://blog.minseong.xyz/post/kans-3w-calico-overview/</link>
+      <pubDate>Sun, 15 Sep 2024 18:40:22 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/kans-3w-calico-overview/</guid>
+      <description>1. Calico 설치 스터디에서 AWS CF 및 Calico 설치 스크립트(Manifest)를 제공하였기에, 이 부분은 참고만 하시기 바랍니다.
+CNI가 설치되지 않았기에 NotReady 상태에 있다가, Calico 설치하면 CoreDNS가 설정되며, Ready 상태로 변경된다.
+Calico 설치 전
+# Control Plane and worker nodes are not ready (⎈|HomeLab:default) root@k8s-m:~# kubectl get nodes NAME STATUS ROLES AGE VERSION k8s-m NotReady control-plane 32m v1.30.5 k8s-w0 NotReady &amp;lt;none&amp;gt; 31m v1.30.5 k8s-w1 NotReady &amp;lt;none&amp;gt; 31m v1.30.5 k8s-w2 NotReady &amp;lt;none&amp;gt; 31m v1.</description>
+    </item>
+    
     <item>
       <title>Init Calico from quay registry</title>
       <link>https://blog.minseong.xyz/post/init-calico-from-quay-registry/</link>

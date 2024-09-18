@@ -6,13 +6,40 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 03 Sep 2024 21:16:07 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 15 Sep 2024 18:40:22 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>calico</title>
+      <link>https://blog.minseong.xyz/tags/calico/</link>
+      <pubDate>Sun, 15 Sep 2024 18:40:22 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/calico/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>cni</title>
+      <link>https://blog.minseong.xyz/tags/cni/</link>
+      <pubDate>Sun, 15 Sep 2024 18:40:22 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/cni/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>kans</title>
       <link>https://blog.minseong.xyz/tags/kans/</link>
-      <pubDate>Tue, 03 Sep 2024 21:16:07 +0900</pubDate>
+      <pubDate>Sun, 15 Sep 2024 18:40:22 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/kans/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kubernetes</title>
+      <link>https://blog.minseong.xyz/tags/kubernetes/</link>
+      <pubDate>Sun, 15 Sep 2024 18:40:22 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/kubernetes/</guid>
       <description></description>
     </item>
     
@@ -22,15 +49,6 @@
       <pubDate>Tue, 03 Sep 2024 21:16:07 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/kind/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>kubernetes</title>
-      <link>https://blog.minseong.xyz/tags/kubernetes/</link>
-      <pubDate>Tue, 03 Sep 2024 21:16:07 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/kubernetes/</guid>
       <description></description>
     </item>
     
@@ -247,15 +265,6 @@
       <pubDate>Thu, 31 Aug 2023 22:21:08 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/ubuntu/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>calico</title>
-      <link>https://blog.minseong.xyz/tags/calico/</link>
-      <pubDate>Tue, 25 Jul 2023 00:40:14 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/calico/</guid>
       <description></description>
     </item>
     

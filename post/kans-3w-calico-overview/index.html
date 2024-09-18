@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Calico 및 메트릭 수집 구성 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Calico 및 메트릭 수집 구성" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/kans-3w-calico-overview/images/calico_p8s_basic.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/kans-3w-calico-overview/images/calico_p8s_basic.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/kans-3w-calico-overview/images/calico_p8s_basic.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('images/calico_p8s_basic.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Calico 및 메트릭 수집 구성</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-15T18:40:22&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/kans" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kans</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cni" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">cni</span>
+              </div>
+            </a>
+            
+            <a href="/tags/calico" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">calico</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kubernetes" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kubernetes</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <h2 id="1-calico-설치">1. Calico 설치</h2>
+<blockquote>
+<p>스터디에서 AWS CF 및 Calico 설치 스크립트(Manifest)를 제공하였기에, 이 부분은 참고만 하시기 바랍니다.</p>
+</blockquote>
+<p>CNI가 설치되지 않았기에 NotReady 상태에 있다가, Calico 설치하면 CoreDNS가 설정되며, Ready 상태로 변경된다.</p>
+<ul>
+<li>
+<p>Calico 설치 전</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Control Plane and worker nodes are not ready</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>⎈|HomeLab:default<span style="color:#f92672">)</span> root@k8s-m:~# kubectl get nodes
+</span></span><span style="display:flex;"><span>NAME     STATUS     ROLES           AGE   VERSION
+</span></span><span style="display:flex;"><span>k8s-m    NotReady   control-plane   32m   v1.30.5
+</span></span><span style="display:flex;"><span>k8s-w0   NotReady   &lt;none&gt;          31m   v1.30.5
+</span></span><span style="display:flex;"><span>k8s-w1   NotReady   &lt;none&gt;          31m   v1.30.5
+</span></span><span style="display:flex;"><span>k8s-w2   NotReady   &lt;none&gt;          31m   v1.30.5
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Count for iptalbes rules for comparison</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>⎈|HomeLab:default<span style="color:#f92672">)</span> root@k8s-m:~# iptables -t filter -L | wc -l
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">50</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>⎈|HomeLab:default<span style="color:#f92672">)</span> root@k8s-m:~# iptables -t nat -L | wc -l
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">48</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">(</span>⎈|HomeLab:default<span style="color:#f92672">)</span> root@k8s-m:~# kubectl get pod -A --sort-by<span style="color:#f92672">=</span>.metadata.creationTimestamp
+</span></span><span style="display:flex;"><span>NAMESPACE     NAME                            READY   STATUS    RESTARTS   AGE
+</span></span><span style="display:flex;"><span>kube-system   etcd-k8s-m                      1/1     Running   <span style="color:#ae81ff">0</span>          35m
+</span></span><span style="display:flex;"><span>kube-system   kube-apiserver-k8s-m            1/1     Running   <span style="color:#ae81ff">0</span>          35m
+</span></span><span style="display:flex;"><span>kube-system   kube-controller-manager-k8s-m   1/1     Running   <span style="color:#ae81ff">0</span>          35m
+</span></span><span style="display:flex;"><span>kube-system   kube-scheduler-k8s-m            1/1     Running   <span style="color:#ae81ff">0</span>          35m
+</span></span><span style="display:flex;"><span>kube-system   coredns-55cb58b774-bscbt        0/1     Pending   <span style="color:#ae81ff">0</span>          35m
+</span></span><span style="display:flex;"><span>kube-system   coredns-55cb58b774-w22zq        0/1     Pending   <span style="color:#ae81ff">0</span>          35m
+</span></span><span style="display:flex;"><span>kube-system   kube-proxy-5hgmn                1/1     Running   <span style="color:#ae81ff">0</span>          35m
+</span></span><span style="display:flex;"><span>kube-system   kube-proxy-bnv77                1/1     Running   <span style="color:#ae81ff">0</span>          35m
+</span></span><span style="display:flex;"><span>kube-system   kube-proxy-xf8q7                1/1     Running   <span style="color:#ae81ff">0</span>          35m
+</span></span><span style="display:flex;"><span>kube-system   kube-proxy-hzsnk                1/1     Running   <span style="color:#ae81ff">0</span>          35m
+</span></span></code></pre></div></li>
+<li>
+<p>Calico 설치 후</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">(</span>⎈|HomeLab:default<span style="color:#f92672">)</span> root@k8s-m:~# kubectl get nodes
+</span></span><span style="display:flex;"><span>NAME     STATUS   ROLES           AGE   VERSION
+</span></span><span style="display:flex;"><span>k8s-m    Ready    control-plane   45m   v1.30.5
+</span></span><span style="display:flex;"><span>k8s-w0   Ready    &lt;none&gt;          45m   v1.30.5
+</span></span><span style="display:flex;"><span>k8s-w1   Ready    &lt;none&gt;          45m   v1.30.5
+</span></span><span style="display:flex;"><span>k8s-w2   Ready    &lt;none&gt;          45m   v1.30.5
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>⎈|HomeLab:default<span style="color:#f92672">)</span> root@k8s-m:~# iptables -t filter -L | wc -l
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">210</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>⎈|HomeLab:default<span style="color:#f92672">)</span> root@k8s-m:~# iptables -t nat -L | wc -l
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">126</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">(</span>⎈|HomeLab:default<span style="color:#f92672">)</span> root@k8s-m:~# kubectl get pod -A --sort-by<span style="color:#f92672">=</span>.metadata.creationTimestamp
+</span></span><span style="display:flex;"><span>NAMESPACE     NAME                                       READY   STATUS    RESTARTS   AGE
+</span></span><span style="display:flex;"><span>kube-system   etcd-k8s-m                                 1/1     Running   <span style="color:#ae81ff">0</span>          37m
+</span></span><span style="display:flex;"><span>kube-system   kube-scheduler-k8s-m                       1/1     Running   <span style="color:#ae81ff">0</span>          37m
+</span></span><span style="display:flex;"><span>kube-system   kube-controller-manager-k8s-m              1/1     Running   <span style="color:#ae81ff">0</span>          37m
+</span></span><span style="display:flex;"><span>kube-system   kube-apiserver-k8s-m                       1/1     Running   <span style="color:#ae81ff">0</span>          37m
+</span></span><span style="display:flex;"><span>kube-system   coredns-55cb58b774-w22zq                   1/1     Running   <span style="color:#ae81ff">0</span>          36m
+</span></span><span style="display:flex;"><span>kube-system   coredns-55cb58b774-bscbt                   1/1     Running   <span style="color:#ae81ff">0</span>          36m
+</span></span><span style="display:flex;"><span>kube-system   kube-proxy-5hgmn                           1/1     Running   <span style="color:#ae81ff">0</span>          36m
+</span></span><span style="display:flex;"><span>kube-system   kube-proxy-bnv77                           1/1     Running   <span style="color:#ae81ff">0</span>          36m
+</span></span><span style="display:flex;"><span>kube-system   kube-proxy-xf8q7                           1/1     Running   <span style="color:#ae81ff">0</span>          36m
+</span></span><span style="display:flex;"><span>kube-system   kube-proxy-hzsnk                           1/1     Running   <span style="color:#ae81ff">0</span>          36m
+</span></span><span style="display:flex;"><span>kube-system   calico-node-xsqfv                          1/1     Running   <span style="color:#ae81ff">0</span>          57s
+</span></span><span style="display:flex;"><span>kube-system   calico-node-ttxcv                          1/1     Running   <span style="color:#ae81ff">0</span>          57s
+</span></span><span style="display:flex;"><span>kube-system   calico-node-6x5zq                          1/1     Running   <span style="color:#ae81ff">0</span>          57s
+</span></span><span style="display:flex;"><span>kube-system   calico-kube-controllers-77d59654f4-vl8sv   1/1     Running   <span style="color:#ae81ff">0</span>          56s
+</span></span><span style="display:flex;"><span>kube-system   calico-node-cqjxm                          1/1     Running   <span style="color:#ae81ff">0</span>          56s
+</span></span></code></pre></div></li>
+<li>
+<p>Calico 설치 스크립트를 통해 아래와 같은 변화가 주어집니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>poddisruptionbudget.policy/calico-kube-controllers created
+</span></span><span style="display:flex;"><span>serviceaccount/calico-kube-controllers created
+</span></span><span style="display:flex;"><span>serviceaccount/calico-node created
+</span></span><span style="display:flex;"><span>serviceaccount/calico-cni-plugin created
+</span></span><span style="display:flex;"><span>configmap/calico-config created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/bgpconfigurations.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/bgpfilters.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/bgppeers.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/blockaffinities.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/caliconodestatuses.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/clusterinformations.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/felixconfigurations.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/globalnetworkpolicies.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/globalnetworksets.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/hostendpoints.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/ipamblocks.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/ipamconfigs.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/ipamhandles.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/ippools.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/ipreservations.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/kubecontrollersconfigurations.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/networkpolicies.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/networksets.crd.projectcalico.org created
+</span></span><span style="display:flex;"><span>clusterrole.rbac.authorization.k8s.io/calico-kube-controllers created
+</span></span><span style="display:flex;"><span>clusterrole.rbac.authorization.k8s.io/calico-node created
+</span></span><span style="display:flex;"><span>clusterrole.rbac.authorization.k8s.io/calico-cni-plugin created
+</span></span><span style="display:flex;"><span>clusterrolebinding.rbac.authorization.k8s.io/calico-kube-controllers created
+</span></span><span style="display:flex;"><span>clusterrolebinding.rbac.authorization.k8s.io/calico-node created
+</span></span><span style="display:flex;"><span>clusterrolebinding.rbac.authorization.k8s.io/calico-cni-plugin created
+</span></span><span style="display:flex;"><span>daemonset.apps/calico-node created
+</span></span><span style="display:flex;"><span>deployment.apps/calico-kube-controllers created
+</span></span></code></pre></div></li>
+</ul>
+<h3 id="optional-calicoctl-설치">(Optional) calicoctl 설치</h3>
+<p>이외에도 Calico 사용을 위해 <a href="https://docs.tigera.io/calico/latest/operations/calicoctl/install#install-calicoctl-as-a-binary-on-a-single-host">calicoctl</a> 을 설치했습니다.</p>
+<p>이후에 Calico 메트릭을 p8s로 전송하기 위해 Calico에서 설정을 해야하는데, kubectl 대신 calicoctl을 사용해보기로 했습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>chmod +x calicoctl <span style="color:#f92672">&amp;&amp;</span> mv calicoctl /usr/bin
+</span></span><span style="display:flex;"><span>calicoctl version
+</span></span><span style="display:flex;"><span>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span><span style="display:flex;"><span>                                Dload  Upload   Total   Spent    Left  Speed
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> --:--:-- --:--:-- --:--:--     <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">100</span> 64.4M  <span style="color:#ae81ff">100</span> 64.4M    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>  21.2M      <span style="color:#ae81ff">0</span>  0:00:03  0:00:03 --:--:-- 40.4M
+</span></span><span style="display:flex;"><span>Client Version:    v3.28.1
+</span></span><span style="display:flex;"><span>Git commit:        <span style="color:#ae81ff">601856343</span>
+</span></span><span style="display:flex;"><span>Cluster Version:   v3.28.1
+</span></span><span style="display:flex;"><span>Cluster Type:      k8s,bgp,kubeadm,kdd
+</span></span></code></pre></div><h2 id="2-calico-to-prometheus-연동">2. Calico to Prometheus 연동</h2>
+<p>Docs: <a href="https://docs.tigera.io/calico/latest/operations/monitor/monitor-component-metrics#about-calico-felix-typha-and-kube-controllers-components">Tigera/Calico</a></p>
+<p>Prometheus(이하, p8s)에 Calico 메트릭을 전송하기 위해 설정을 해야합니다.</p>
+<p>Calico 문서에는 전송할 수 있는 3가지 요소에 대해서 설명하고 있습니다.<br>
+문서를 기반으로 의역해보면</p>
+<ol>
+<li>Felix: Calico의 두뇌라고 하는걸로 봐서는 핵심요소로 보입니다. Network Policy를 적용할 모든 머신에서 각각 구동되는 데몬이라고 합니다.</li>
+<li>Typha: Calico 노드와 Datastore 사이의 통신을 Felix에게 전달하도록 하는 Pods의 옵션 세트라고 합니다.</li>
+<li>kube-controllers: k8s API 돝기화를 비롯하여 가비지 리소스 수집 등 다양한 control-plane 기능을 담당하는 컨트롤러 세트를 실행하는 파드라고 합니다.</li>
+</ol>
+<p>Felix 하나만 연결하면 그만일 줄 알았더니 그건 아닌 것 같습니다.</p>
+<p>아래와 같이, 문서와 동일하게 진행해보겠습니다.</p>
+<ol>
+<li>(Calico) Metric Reporting 활성화</li>
+<li>(p8s) NS 및 SA 생성</li>
+<li>(p8s) 배포 및 구성</li>
+<li>(p8s) 대시보드에서 메트릭 확인 및 간단한 그래프 생성</li>
+</ol>
+<blockquote>
+<p>calicoctl 및 Manifest 기준으로 기술합니다.</p>
+</blockquote>
+<ul>
+<li>
+<p>이후에는, 앞서 언급한 3가지의 요소의 설정을 수정하여, Felix의 메트릭을 exposed(노출되도록) 설정합니다.<br>
+다만 작업시, 유의해야할 것이 각자 사용 중인 기본 포트가 정해져 있다는 점입니다.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Default Port</th>
+<th>Protocol</th>
+<th>Prerequisites</th>
+<th>Memo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Felix</td>
+<td>9091</td>
+<td>TCP</td>
+<td>Y</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Typha</td>
+<td>9091</td>
+<td>TCP</td>
+<td>N</td>
+<td>Default Setting</td>
+</tr>
+<tr>
+<td>Typha(Amazon)</td>
+<td>9093</td>
+<td>TCP</td>
+<td>N</td>
+<td>TYPHA_PROMETHEUS_METRICS_PORT</td>
+</tr>
+<tr>
+<td>kube-controllers</td>
+<td>9094</td>
+<td>TCP</td>
+<td>Y</td>
+<td><code>calico-kube-controllers</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>특히, Typha의 경우, 위에 기술한 것과 같이 Amazon vpc-cni 설정에서 custom 포트가 별도 지정된다고 합니다. 다음 링크를 참조하시기 바랍니다. (<a href="https://github.com/aws/amazon-vpc-cni-k8s/blob/b001dc6a8fff52926ed9a93ee6c4104f02d365ab/config/v1.6/calico.yaml#L569">Github/amazon-vpc-cni-k8s</a>: v1.6-b001dc6)<br>
+Typha 도 활성하여 했으나, 선택사항이거니와 설치가 되어있지 않아 다루지 않습니다.</p>
+</li>
+</ul>
+<h3 id="1-metric-reporting-활성화">(1) Metric Reporting 활성화</h3>
+<p>기존 Felix 설정을 확인합니다. 기본값은 비활성화되어 있습니다. (아예 명시되어 있지 않습니다)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>calicoctl get felixconfiguration -o yaml
+</span></span></code></pre></div><h4 id="a-felix-메트릭-노출을-위한-활성화-및-svc-생성">a. Felix 메트릭 노출을 위한 활성화 및 svc 생성</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>calicoctl patch felixconfiguration default  --patch <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;prometheusMetricsEnabled&#34;: true}}&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Successfully patched 1 &#39;FelixConfiguration&#39; resource</span>
+</span></span></code></pre></div><p>다시 확인합니다. (items.spec.prometheusMetricsEnabled: true)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>calicoctl get felixconfiguration -o yaml | grep prom
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   prometheusMetricsEnabled: true</span>
+</span></span></code></pre></div><p>Manifest로 Calico를 설칠했기 때문에, <code>kube-system</code> ns에 생성합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF&gt;felix.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: felix-metrics-svc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: kube-system
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  clusterIP: None
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    k8s-app: calico-node
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - port: 9091
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    targetPort: 9091
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f felix.yaml
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># service/felix-metrics-svc created</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get svc,ep -n kube-system felix-metrics-svc
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME                        TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># service/felix-metrics-svc   ClusterIP   None         &lt;none&gt;        9091/TCP   101s</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME                          ENDPOINTS                                                                AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># endpoints/felix-metrics-svc   192.168.10.10:9091,192.168.10.101:9091,192.168.10.102:9091 + 1 more...   101s</span>
+</span></span></code></pre></div><h4 id="b-typha-메트릭-노출을-위한-활성화-및-svc-생성">b. Typha 메트릭 노출을 위한 활성화 및 svc 생성</h4>
+<ul>
+<li>Typha는 배포되지 않은 것으로 파악되어 생략합니다.</li>
+</ul>
+<h4 id="c-kube-controllers-메트릭-노출을-위한-svc-생성">c. kube-controllers 메트릭 노출을 위한 svc 생성</h4>
+<p>현재 사용 중인 포트를 확인합니다. (<a href="https://docs.tigera.io/calico/latest/reference/resources/kubecontrollersconfig#sample-yaml">tigera/calico</a>: Kubernetes controllers configuration )</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>calicoctl get KubeControllersConfiguration -o yaml | grep prom
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   prometheusMetricsPort: 9094</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># calicoctl get kubecontollersconfiguration -o yaml </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Failed to get resources: resource type &#39;kubecontollersconfiguration&#39; is not supported</span>
+</span></span></code></pre></div><blockquote>
+<p>(Opt.) calicoctl을 통해 해당 포트를 패치할 수 있습니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># custom port: 9095</span>
+</span></span><span style="display:flex;"><span>calicoctl patch kubecontrollersconfiguration default  --patch <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;prometheusMetricsPort&#34;: 9095}}&#39;</span>
+</span></span></code></pre></div><p>아래와 같이 서비스를 배포합니다.<br>
+해보니, 이미 있었고 기본값이라 바뀌지 않았다고 확인됩니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF&gt;kube-controller.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: kube-controllers-metrics-svc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: kube-system
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  clusterIP: None
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    k8s-app: calico-kube-controllers
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - port: 9094
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    targetPort: 9094
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f kube-controller.yaml  
+</span></span></code></pre></div><h3 id="2-ns-및-sa-생성">(2) NS 및 SA 생성</h3>
+<ul>
+<li>NS: <code>calico-monitoring</code></li>
+<li>CR/SA/CRB: <code>calico-prometheus-user</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF&gt;calico-monitoring.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Namespace
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: calico-monitoring
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app:  ns-calico-monitoring
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    role: monitoring
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f calico-monitoring.yaml
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF&gt;calico-prometheus-user.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ClusterRole
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: calico-prometheus-user
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">rules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- apiGroups: [&#34;&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - endpoints
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - services
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - pods
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  verbs: [&#34;get&#34;, &#34;list&#34;, &#34;watch&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- nonResourceURLs: [&#34;/metrics&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  verbs: [&#34;get&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ServiceAccount
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: calico-prometheus-user
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: calico-monitoring
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rbac.authorization.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ClusterRoleBinding
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: calico-prometheus-user
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">roleRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiGroup: rbac.authorization.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  kind: ClusterRole
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: calico-prometheus-user
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">subjects:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- kind: ServiceAccount
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: calico-prometheus-user
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: calico-monitoring
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f calico-prometheus-user.yaml
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># clusterrole.rbac.authorization.k8s.io/calico-prometheus-user created</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># serviceaccount/calico-prometheus-user created</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># clusterrolebinding.rbac.authorization.k8s.io/calico-prometheus-user created</span>
+</span></span></code></pre></div><h3 id="3-배포-및-구성">(3) 배포 및 구성</h3>
+<p>ConfigMap을 생성합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF&gt;prometheus-config.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ConfigMap
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: prometheus-config
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: calico-monitoring
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">data:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  prometheus.yml: |-
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    global:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      scrape_interval:   15s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      external_labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        monitor: &#39;tutorial-monitor&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    scrape_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - job_name: &#39;prometheus&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      scrape_interval: 5s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      static_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - targets: [&#39;localhost:9090&#39;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - job_name: &#39;felix_metrics&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      scrape_interval: 5s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      scheme: http
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      kubernetes_sd_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - role: endpoints
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      relabel_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - source_labels: [__meta_kubernetes_service_name]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        regex: felix-metrics-svc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        replacement: $1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        action: keep
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - job_name: &#39;felix_windows_metrics&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      scrape_interval: 5s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      scheme: http
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      kubernetes_sd_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - role: endpoints
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      relabel_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - source_labels: [__meta_kubernetes_service_name]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        regex: felix-windows-metrics-svc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        replacement: $1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        action: keep
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - job_name: &#39;typha_metrics&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      scrape_interval: 5s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      scheme: http
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      kubernetes_sd_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - role: endpoints
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      relabel_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - source_labels: [__meta_kubernetes_service_name]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        regex: typha-metrics-svc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        replacement: $1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        action: keep
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - job_name: &#39;kube_controllers_metrics&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      scrape_interval: 5s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      scheme: http
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      kubernetes_sd_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - role: endpoints
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      relabel_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - source_labels: [__meta_kubernetes_service_name]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        regex: kube-controllers-metrics-svc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        replacement: $1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        action: keep
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f prometheus-config.yaml
+</span></span></code></pre></div><p>Calico를 수집할 Prometheus를 배포합니다.</p>
+<blockquote>
+<p>앞에서 Calico 메트릭을 수집하고, 유효한 ConfigMap을 생성하였습니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF&gt;prometheus-pod.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: prometheus-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: calico-monitoring
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: prometheus-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    role: monitoring
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  nodeSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    kubernetes.io/os: linux
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceAccountName: calico-prometheus-user
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: prometheus-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: prom/prometheus
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      limits:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        memory: &#34;128Mi&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        cpu: &#34;500m&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    volumeMounts:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: config-volume
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      mountPath: /etc/prometheus/prometheus.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      subPath: prometheus.yml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - containerPort: 9090
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  volumes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: config-volume
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    configMap:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: prometheus-config
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f prometheus-pod.yaml
+</span></span></code></pre></div><p>정상적으로 구동되는 지 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get pods prometheus-pod -n calico-monitoring
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME             READY   STATUS    RESTARTS   AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># prometheus-pod   1/1     Running   0          14s</span>
+</span></span></code></pre></div><h3 id="4-대시보드에서-메트릭-확인-및-간단한-그래프-생성">(4) 대시보드에서 메트릭 확인 및 간단한 그래프 생성</h3>
+<p>문서에서는 port-forward를 통해 확인하도록 하지만, AWS EC2에 구축했기에 확인하기가 어렵습니다.</p>
+<blockquote>
+<p>kubectl port-forward pod/prometheus-pod 9090:9090 -n calico-monitoring</p>
+</blockquote>
+<p>스터디에서 안내된 방법으로, 확인해보겠습니다.</p>
+<h4 id="a-pod-ip를-확인합니다">a. Pod IP를 확인합니다.</h4>
+<ul>
+<li><code>/graph</code>: 대시보드</li>
+<li><code>/metrics</code>: Grafana 등 p8s 기반 시각화를 위한 메트릭 정보</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get pods prometheus-pod -n calico-monitoring -owide | grep -Eo <span style="color:#e6db74">&#34;([0-9]{1,3}[\.]){3}[0-9]{1,3}&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 172.16.184.8</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># curl 172.16.184.8:9090</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;a href=&#34;/graph&#34;&gt;Found&lt;/a&gt;.</span>
+</span></span></code></pre></div><h4 id="b-nodeport-svc를-생성합니다-외부접속">b. NodePort svc를 생성합니다. (외부접속)</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF&gt;prometheus-dashboard-svc.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: prometheus-dashboard-svc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: calico-monitoring
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: NodePort
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: prometheus-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    role: monitoring
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - protocol: TCP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: 9090
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 9090
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      nodePort: 30001 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f prometheus-dashboard-svc.yaml
+</span></span><span style="display:flex;"><span>kubectl get svc,ep -n calico-monitoring
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME                               TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># service/prometheus-dashboard-svc   NodePort   10.200.1.45   &lt;none&gt;        9090:30001/TCP   0s</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME                                 ENDPOINTS           AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># endpoints/prometheus-dashboard-svc   172.16.184.8:9090   0s</span>
+</span></span></code></pre></div><p>아래 커맨드를 쳐서 나오는 URL로 웹 브라우저에서 확인을 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Prometheus URL = http://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:30001/graph&#34;</span>  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Prometheus URL = http://3.35.169.117:30001/graph</span>
+</span></span></code></pre></div><p>Target에서 <code>felix_metrics</code>가 잡힌 것을 확인하였습니다.</p>
+<p><img src="/images/calico_p8s_basic.png" alt="Calico Prometheus"></p>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/kans-2w-kind-overview/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">KIND 톺아보기</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

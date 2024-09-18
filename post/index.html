@@ -96,6 +96,22 @@
 
             
             <div class="p-list__item">
+              <a href="/post/kans-3w-calico-overview/"><h2>Calico 및 메트릭 수집 구성</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-15T18:40:22&#43;09:00</u></p>
+              <p>1. Calico 설치 스터디에서 AWS CF 및 Calico 설치 스크립트(Manifest)를 제공하였기에, 이 부분은 참고만 하시기 바랍니다.
+CNI가 설치되지 않았기에 NotReady 상태에 있다가, Calico 설치하면 CoreDNS가 설정되며, Ready 상태로 변경된다.
+Calico 설치 전
+# Control Plane and worker nodes are not ready (⎈|HomeLab:default) root@k8s-m:~# kubectl get nodes NAME STATUS ROLES AGE VERSION k8s-m NotReady control-plane 32m v1.30.5 k8s-w0 NotReady &lt;none&gt; 31m v1.30.5 k8s-w1 NotReady &lt;none&gt; 31m v1.30.5 k8s-w2 NotReady &lt;none&gt; 31m v1.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/kans-2w-kind-overview/"><h2>KIND 톺아보기</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -166,25 +182,6 @@ One is GitHub Actions&rsquo; dependency update and another is Licences.
 Cause, Blog is deployed via Github Actions, I need to check dependencies in Github Actions&rsquo; workflow.
 What I use is actions/checkout, actions/setup-go, and actions/setup-node.
 Name Prev. Version Latest Version Purpose checkout actions/checkoutv3 actions/checkoutv4 Src. and Dest. Branch setup-go actions/setup-go@v4 actions/setup-go@v5 Hugo setup-node actions/setup-node@v3 actions/setup-node@v4 Vanila Framework commit 5d4c9b9 Another thing is Licences.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/visualizing-google-cloud-101-book-review/"><h2>그림으로 배우는 구글 클라우드 101 리뷰</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-11-21T13:51:29&#43;09:00</u></p>
-              <p>Jpub에서 최근 출판한 그림으로 배우는 구글 클라우드 101 - 제이펍 홈페이지에 대해,
-짧막하게 소개하는 글입니다.
-《그림으로 배우는 구글 클라우드 101》 서평단으로 본 도서를 제공받아 작성하였습니다. 최근 AWS 프로젝트를 진행하고 있습니다. Terraform을 활용하여, IaC 기반의 인프라 구성을 하고 있는데요.
-작년부터 DR(DR, Disaster Recovery)이 급격하게 화두가 되면서,
-Multi-AZ, Multi-Region을 넘어 Multi-Cloud도 고려의 대상이 되는 것 같습니다.
-관심이 있는지라 이번 프로젝트가 끝나면, AWS 외에도 GCP같은 다양한 CSP를 다시금 다뤄보고 싶다는 생각이 들었습니다.
-물론 GCP를 주력으로 쓰고 있다면 이야기가 다르겠지만,</p>
             </div>
             
 <ol class="p-pagination">
