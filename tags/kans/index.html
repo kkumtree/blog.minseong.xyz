@@ -96,6 +96,26 @@
 
             
             <div class="p-list__item">
+              <a href="/post/kans-3w-calico-operator/"><h2>Calico Installation in Operator Mode</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-18T20:52:16&#43;09:00</u></p>
+              <p>CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+스터디 진행 시, Manifests를 사용하여 Calico를 설치하였으나,
+Operator를 사용하여 설치하는 방법을 정리합니다.
+과제는 아니었지만, 요새 다들 Operator Framework를 사용해서 마라샹궈 볶듯이
+Operator를 지지고 볶는 것 같아서 호기심에 정리해보았습니다.
+참고로 Manifests를 사용하여 설치 시, 50개의 노드[1]를 초과하는 경우 Typha를 구성하여야 합니다.
+Calico 설치 환경 : AWS EC2(No EKS), kubeadm[2], pod-network-cidr=172.16.0.0/16, IPIP Mode
+1. Calico Routing Mode 위에 언급된 IPIP Mode를 이해하려면 Calico의 Routing Mode를 훑을 필요성이 있었습니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/kans-3w-calico-overview/"><h2>Calico 및 메트릭 수집 구성</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
