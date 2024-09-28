@@ -6,7 +6,20 @@
     <description>Recent content in kans on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Wed, 18 Sep 2024 20:52:16 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/kans/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 27 Sep 2024 21:28:17 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/kans/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kubernetes Service(1): ClusterIP/NodePort</title>
+      <link>https://blog.minseong.xyz/post/kans-4w-clusterip-nodeport/</link>
+      <pubDate>Fri, 27 Sep 2024 21:28:17 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/kans-4w-clusterip-nodeport/</guid>
+      <description>Kubernetes의 (컨셉, 혹은 콘셉트라 불리는) Concepts 중에서 Service의 주제를 다뤄봅니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+Service Docs에 명료하게 적혀있긴 하지만,
+단위 기능으로 잘게 쪼갠 Pod는 결국 개별적인 IP를 갖게되는데, Blue/Green 이미지 업데이트를 비롯해서 같은 기능을 하는 새로운 Pod의 IP를 다른 Pod가 IP주소 그대로 접근하기 어려워 중간에 둔 것으로 이해를 해보았습니다.
+지금 레벨에서는 가정용 공유기에서 동적IP 환경에 대응하기 위해, DDNS를 사용하는 것과, MAC ADDR 기준으로 Static IP(DHCP모드시 활용)를 예약하는 것을 섞은 그 어딘가로 납득하고 계속 써보도록 하겠습니다.</description>
+    </item>
+    
     <item>
       <title>Calico Installation in Operator Mode</title>
       <link>https://blog.minseong.xyz/post/kans-3w-calico-operator/</link>

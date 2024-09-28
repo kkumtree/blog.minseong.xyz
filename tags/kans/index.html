@@ -96,6 +96,23 @@
 
             
             <div class="p-list__item">
+              <a href="/post/kans-4w-clusterip-nodeport/"><h2>Kubernetes Service(1): ClusterIP/NodePort</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-27T21:28:17&#43;09:00</u></p>
+              <p>Kubernetes의 (컨셉, 혹은 콘셉트라 불리는) Concepts 중에서 Service의 주제를 다뤄봅니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+Service Docs에 명료하게 적혀있긴 하지만,
+단위 기능으로 잘게 쪼갠 Pod는 결국 개별적인 IP를 갖게되는데, Blue/Green 이미지 업데이트를 비롯해서 같은 기능을 하는 새로운 Pod의 IP를 다른 Pod가 IP주소 그대로 접근하기 어려워 중간에 둔 것으로 이해를 해보았습니다.
+지금 레벨에서는 가정용 공유기에서 동적IP 환경에 대응하기 위해, DDNS를 사용하는 것과, MAC ADDR 기준으로 Static IP(DHCP모드시 활용)를 예약하는 것을 섞은 그 어딘가로 납득하고 계속 써보도록 하겠습니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/kans-3w-calico-operator/"><h2>Calico Installation in Operator Mode</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -169,24 +186,38 @@ CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)에 
 If you are a go developer you may find the go install option convenient.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/kans-1w-container-socket/"><h2>Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-01T09:02:15&#43;09:00</u></p>
-              <p>최근 CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)에 참여하게 되었습니다.
-난이도를 생각하면 KH(Hardcore)NS가 더 맞아보이지만&hellip;
-k8s가 워낙 인기가 많기도 하지만, Pod 간 통신에는 많은 지식이 투여되기에 이번 기회에 살펴보기로 했습니다.
-첫 주차는, 바로 Kubernetes에 진입하지 않고 Containerization에 대한 이해를 먼저 다뤄주셨습니다.
-여타 쿠버네티스 강의와 달리 9주 간 매주 일요일에만 진행되는 세션인데도, 기반 기술을 다시 짚어주셔서 감사했습니다.
-1. AWS EC2 Instance 셋업 CloudFormation을 통해, EC2 및 제반사항을 구성하여 주셨습니다만, 취미 삼아 Terraform 변환 작업을 해보았습니다.</p>
-            </div>
-            
+<ol class="p-pagination">
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--previous" 
+        href="/tags/kans/" title="Previous page">
+        <i class="p-icon--contextual-menu">First page</i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--previous  is-disabled" 
+         title="Previous page">
+        <i class="p-icon--contextual-menu">Previous page</i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link  is-active" href="/tags/kans/">1</a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link " href="/tags/kans/page/2/">2</a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--next "
+        href="/tags/kans/page/2/" title="Next page">
+        <i class="p-icon--contextual-menu">Next page</i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--next"
+        href="/tags/kans/page/2/" title="Last page">
+        <i class="p-icon--contextual-menu">Last page</i>
+    </a>
+  </li>
+</ol>
 </div>
         </div>
       </div>

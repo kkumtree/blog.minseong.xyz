@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Kubernetes Service(1): ClusterIP/NodePort | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Kubernetes Service(1): ClusterIP/NodePort" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/kans-4w-clusterip-nodeport/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/kans-4w-clusterip-nodeport/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/kans-4w-clusterip-nodeport/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Kubernetes Service(1): ClusterIP/NodePort</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-27T21:28:17&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/kans" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kans</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kind" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kind</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kubernetes" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kubernetes</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>Kubernetes의 (컨셉, 혹은 콘셉트라 불리는) <a href="https://kubernetes.io/docs/concepts/">Concepts</a> 중에서 Service의 주제를 다뤄봅니다.</p>
+<p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 <strong>K</strong>8s <strong>A</strong>dvanced <strong>N</strong>etwork <strong>S</strong>tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.</p>
+<p>Service <a href="https://kubernetes.io/docs/concepts/services-networking/service/">Docs</a>에 명료하게 적혀있긴 하지만,<br>
+단위 기능으로 잘게 쪼갠 Pod는 결국 개별적인 IP를 갖게되는데, Blue/Green 이미지 업데이트를 비롯해서 같은 기능을 하는 새로운 Pod의 IP를 다른 Pod가 IP주소 그대로 접근하기 어려워 중간에 둔 것으로 이해를 해보았습니다.</p>
+<p>지금 레벨에서는 가정용 공유기에서 동적IP 환경에 대응하기 위해, DDNS를 사용하는 것과, MAC ADDR 기준으로 Static IP(DHCP모드시 활용)를 예약하는 것을 섞은 그 어딘가로 납득하고 계속 써보도록 하겠습니다.</p>
+<h2 id="1-service-type-그리고-clusterip와-nodeport">1. Service type 그리고 ClusterIP와 NodePort</h2>
+<p><a href="https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types">Service type</a>은 expose(노출)범위에 따라, 아래와 같이 4가지입니다.</p>
+<ul>
+<li><strong>ClusterIP(default)</strong>: (클러스터의) 내부 IP 대역에 노출시킵니다.
+같은 뜻은 동일 클러스터 내부에서만 해당 서비스에 접근할 수 있습니다.
+Service에 대한 고정된 호출방법을 구성하는데, Static Virtual IP(고정 가상IP)와 Domain Name(주소, 혹은 도메인 네임)을 제공합니다.</li>
+<li><strong>NodePort</strong>: (클러스터를 구성하는) 각 노드의 외부IP를 통해 접근할 수 있는 포트를 지정합니다.
+어떻게보면 공유기의 <code>port-forward</code> 정도로 생각하면 좋을 것 같습니다.<br>
+눈만 뜨면 늘 새로워 보이는 k8s 인지라, 이제서야 눈치를 챘지만 ClusterIP랑 배타적인 것은 아닙니다.</li>
+<li>LoadBalancer: 각 CSP에서 제공되는 LB를 기반으로 서비스의 &ldquo;외부&rdquo; 노출범위 결정권을 LB에 넘기는 것으로만 이해하는 중인데,<br>
+이건 다음주차에 다뤄질 예정인지라 이번에는 다루지 않습니다.</li>
+<li>ExternalName: CNAME 레코드 관리이며, 프록시가 구성되지 않는다고합니다. <code>no proxying of any kind</code><br>
+DNS공급자랑 호환(ACME)이 안되면 난이도가 매우 높아지는 걸로만 파악.<br>
+이 또한 생략.</li>
+</ul>
+<blockquote>
+<p>이거로 ClusterIP와 NodePort를 다 이해하면 좋겠지만, iptables 처리도 이해가 필요했습니다.</p>
+</blockquote>
+<p>결국 Network traffic의 문제라 어디에서 이를 처리하는지도 봐야합니다.</p>
+<h3 id="a-clusterip">a. ClusterIP</h3>
+<ul>
+<li>iptables: Control Plane의 iptables Rule에 의해 각 노드에 배포된 Pod에 연결됩니다.</li>
+<li>load balancing: 랜덤으로 각 파드에 부하분산(공통)</li>
+<li><code>sessionAffinity</code>: 고정적인 접속 지원 및 최대 세션 고정 시간[default: 10800 (sec)]을 설정할 수 있음.</li>
+</ul>
+<h4 id="clusterip의-단점">ClusterIP의 단점</h4>
+<ul>
+<li>Health Check(H/C) 불가: 어플리케이션에 오류가 있는 Pod에 접근 가능.<br>
+<code>Readiness Probe</code> 설정으로 서비스 엔드포인트에서 제외하여 이를 구현할 수 있음.</li>
+<li><code>sessionAffinity</code> 이외에는 분산 방식 설정 불가능.<br>
+cf. <code>IPVS</code>: 다양한 분산방식(알고리즘) 가능.</li>
+</ul>
+<h3 id="b-nodeport">b. NodePort</h3>
+<ul>
+<li>iptables: 특정 Node의 iptables에 의해 이루어집니다. 노드의 Public IP 등을 통해 접속하는데<br>
+해당 노드 안에 없는 Pod여도 다른 노드로 리디렉션되는 것으로 보입니다.</li>
+<li>load balancing: 랜덤으로 각 파드에 부하분산(공통)</li>
+</ul>
+<h4 id="nodeport의-단점">NodePort의 단점</h4>
+<ul>
+<li>보안 취약: 외부에서 노드의 Public IP 및 포트로 접속하니까. LoadBalancer Service Type으로 외부 공개 최소화.</li>
+<li>기본적으로 외부 클라이언트의 IP를 웹서버에서 수집 불가함. 노드의 IP로 SNAT 되기 때문.<br>
+<code>{  externalTrafficPolicy: local }</code> 설정시, 해당 노드에 배치된 파드로만 접속되기에 SNAT되지 않아 수집가능.</li>
+<li><code>{ externalTrafficPolicy: local }</code> 상태에서 파드가 존재하지 않는 노드IP의 NodePort로 접속 시 실패.<br>
+이 또한 LB Service Type에서 Probe(H/C)로 대응 가능.</li>
+</ul>
+<h2 id="2-kube-proxy-모드-정리">2. kube-proxy 모드 정리</h2>
+<blockquote>
+<p>Mode: iptables / ipvs / nftables / eBPF<br>
+<code>kube-proxy</code> 가 이제 kubernetes 운용시 optional로 되었지만, 각 모드 자체는 인지할 필요성이 있었습니다.</p>
+</blockquote>
+<h3 id="a-user-space-deprecated">a. user space (deprecated)</h3>
+<ul>
+<li>1 Port : 1 Service Mapping</li>
+<li>user space -&gt; kernel space: 변환 비용</li>
+<li>kube-proxy 프로세스 장애시, SPOF. 대응이 어려움</li>
+</ul>
+<h3 id="b-iptables-iptables-apis---netfilter-subsystem">b. iptables (iptables APIs -&gt; netfilter subsystem)</h3>
+<ul>
+<li>SPOF 해소: <code>netfilter</code>가 proxy 역할을 대신 수행</li>
+<li>kube-proxy: netfilter rule 수정 담당, DaemonSet 구성</li>
+</ul>
+<h3 id="c-ipvs-kernel-ipvs-iptables-apis---netfilter-subsystem">c. IPVS (kernel IPVS, iptables APIs -&gt; netfilter subsystem)</h3>
+<blockquote>
+<p>사실 이거 때문에 정리를 했습니다.</p>
+</blockquote>
+<ul>
+<li><code>IPVS</code> 란?
+<ul>
+<li>Linux 커널단에서 제공하는 L4 Load Balancer: transport에서는 Port로 서비스 구분
+<ul>
+<li>iptables와 유사한 netfilter hook 기능을 기반으로 하나,<br>
+hash table을 default 데이터 구조로 사용하고, <strong>kernel</strong> space에서 동작.</li>
+<li>결국, Packet LB 수행시 iptable보다 높은 성능을 보임.
+<ul>
+<li>Proxy rule sync 및 리디레션 latency, 높은 network traffic 처리에 있어 성능 향상.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="d-nftables-ntables-api---netfilter-subsystem">d. nftables (ntables API -&gt; netfilter subsystem)</h3>
+<ul>
+<li>Only available on Linux Node, specific Linux kernel(&gt;=5.13) required.</li>
+<li>Alternative of iptables API for speed and scailability.</li>
+<li>현재 k8s v1.31 기준, 모든 network plugin과 호환되지 않을 것이라고 확인.</li>
+</ul>
+<h3 id="e-ebpf-xdp-networking-module">e. eBPF (+XDP Networking Module)</h3>
+<ul>
+<li>L3/L4 구간(Netfilter &lt;-&gt; TCP/UCP)을 거치는 kernel overhead마저 bypass 목적</li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/kans-3w-calico-operator/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Calico Installation in Operator Mode</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
