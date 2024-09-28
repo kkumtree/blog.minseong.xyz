@@ -18,6 +18,8 @@ draft: false # 글 초안 여부
 
 Kubernetes의 (컨셉, 혹은 콘셉트라 불리는) [Concepts](https://kubernetes.io/docs/concepts/) 중에서 Service의 주제를 다뤄봅니다.  
 
+[CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.  
+
 Service [Docs](https://kubernetes.io/docs/concepts/services-networking/service/)에 명료하게 적혀있긴 하지만,  
 단위 기능으로 잘게 쪼갠 Pod는 결국 개별적인 IP를 갖게되는데, Blue/Green 이미지 업데이트를 비롯해서 같은 기능을 하는 새로운 Pod의 IP를 다른 Pod가 IP주소 그대로 접근하기 어려워 중간에 둔 것으로 이해를 해보았습니다.  
 
