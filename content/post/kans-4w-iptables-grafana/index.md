@@ -210,7 +210,19 @@ kubectl get svc -A -owide | grep NodePort
 
 ## 3. iptables exporter 설정
 
-(눈물의 작성 중)
+### a. 원인 안내  
+
+간단합니다. 해당 대시보드 템플릿 안내문에, 템플릿 작성자가 따로 포크떠서 작성한 node-exporter를 안내하고 있기 때문이죠. Wow!  
+그래도 안내라도 있어서 다행입니다. 한번 볼까요?  
+
+- (LeiShi1313/node_exporter): <https://github.com/LeiShi1313/node_exporter/commits/master/>  
+
+![leishi-commit-log](images/leishi1313-node-exporter-commit-log.png)
+
+뭔가 바뀐거도 보이고... 아무래도 어떻게든 yaml에 때려넣어야하는 걸까... 고민하게 됩니다.  
+
+### b. 금일 최대의 고민 중
+
 
 ## Reference
 
