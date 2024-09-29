@@ -6,10 +6,10 @@
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>iptables monitoring with Grafana | kkumtree</title>
+    <title>iptables monitoring with Grafana (Not Completed) | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="iptables monitoring with Grafana" />
+    <meta property="og:title" content="iptables monitoring with Grafana (Not Completed)" />
 
     
     <meta property="og:image" content='https://blog.minseong.xyz/post/kans-4w-iptables-grafana/cover.png' />
@@ -82,7 +82,7 @@
         
         <div class="col-6">
           <div class="p-card--overlay">
-            <h2>iptables monitoring with Grafana</h2>
+            <h2>iptables monitoring with Grafana (Not Completed)</h2>
             <ul class="p-card__content p-inline-list--middot">
               
               <li class="p-inline-list__item">
@@ -136,7 +136,7 @@
 <blockquote>
 <p>작성시간 이슈로 featureGates, ConfigPatches, networking 설정 설명은 스킵&hellip;합니다.</p>
 </blockquote>
-<h3 id="a-1-master-4-slave-환경-구성">a. 1 Master, 4 Slave 환경 구성</h3>
+<h3 id="a-1-master-3-slave-환경-구성">a. 1 Master, 3 Slave 환경 구성</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT&gt; kind-svc-1w.yaml
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Cluster
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: kind.x-k8s.io/v1alpha4
@@ -240,7 +240,8 @@
 </blockquote>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># New Terminal</span>
 </span></span><span style="display:flex;"><span>kubectl port-forward svc/kube-prometheus-stack-grafana -n monitoring 9090:9090
-</span></span></code></pre></div><p>골치 아픈 etcd 마저 붙은 걸 알 수 있습니다.</p>
+</span></span></code></pre></div><p><img src="images/prometheus-first-mapping.png" alt="prometheus-first-mapping"></p>
+<p>골치 아픈 etcd 마저 붙은 걸 알 수 있습니다.</p>
 <blockquote>
 <p>사실, 바로 충돌될 줄 알고, 기대했는데&hellip; 저런.</p>
 </blockquote>
@@ -350,12 +351,141 @@ p8s에서 target 살펴봤을때 없는 걸 보니, 활성화해서되면 okay �
 <pre tabindex="0"><code class="language-memo" data-lang="memo">CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
 AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
 </code></pre><ul>
-<li>이후는 방전이 되서 계속 좀 써보겠습니다.</li>
+<li><code>kbknapp/iptables_exporter</code>
+<ul>
+<li><a href="https://github.com/kbknapp/iptables_exporter">GitHub</a></li>
+<li>권한 부분 외에는 따라해볼만 하고, 커밋 기준 최신이어서 시도를 해봅니다.</li>
+<li>buggy 한 것은 어쩔 수 없을 듯 합니다.</li>
 </ul>
+</li>
+</ul>
+<h4 id="iptables_exporter-설치">iptables_exporter 설치</h4>
+<blockquote>
+<p>가만 생각해보니 어차피 root로 접속하니, 되는지 정도만 보는 걸로 해봅니다.</p>
+</blockquote>
+<p><code>rust-toolkit</code>은 생경하니, 바이너리(x86_64) 파일을 받아서 해봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker exec -it myk8s-worker bash
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/# echo $PATH
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</span>
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/# cd /tmp
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/tmp# curl https://github.com/kbknapp/iptables_exporter/releases/download/v0.4.0/iptables_exporter-v0.4.0-x86_64-linux-musl.tar.gz -o iptables_exporter-v0.4.0-x86_64-linux-musl.tar.gz -L
+</span></span><span style="display:flex;"><span>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span><span style="display:flex;"><span>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> --:--:-- --:--:-- --:--:--     <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">100</span> 3114k  <span style="color:#ae81ff">100</span> 3114k    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>   436k      <span style="color:#ae81ff">0</span>  0:00:07  0:00:07 --:--:--  641k
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/tmp# tar -xvf iptables_exporter-v0.4.0-x86_64-linux-musl.tar.gz ./iptables_exporter
+</span></span><span style="display:flex;"><span>./iptables_exporter
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/tmp# mv iptables_exporter /usr/bin
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/tmp# iptables_exporter -V
+</span></span><span style="display:flex;"><span>iptables_exporter v0.4.0 <span style="color:#f92672">(</span>f8d6fca92a<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/tmp# rm *
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/tmp# cd -
+</span></span><span style="display:flex;"><span>/
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/#
+</span></span></code></pre></div><h4 id="systemd-등록">systemD 등록</h4>
+<p>이제 background로 실행할 수 있도록 systemd에 등록합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>root@myk8s-worker:/# cat <span style="color:#e6db74">&lt;&lt;EOT &gt; /etc/systemd/system/iptables_exporter.service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Unit]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Description=iptables_exporter
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">After=network.target
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Service]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Type=simple
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ExecStart=/usr/bin/iptables_exporter
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Restart=always
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RestartSec=5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[Install]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">WantedBy=multi-user.target
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># permission</span>
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/# chmod a+x /etc/systemd/system/iptables_exporter.service
+</span></span></code></pre></div><p>reload 후, 상태 체크</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>root@myk8s-worker:/# systemctl daemon-reload
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/# service status iptables_exporter
+</span></span><span style="display:flex;"><span>status: unrecognized service
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/# service iptables_exporter status
+</span></span><span style="display:flex;"><span>○ iptables_exporter.service - iptables_exporter
+</span></span><span style="display:flex;"><span>     Loaded: loaded <span style="color:#f92672">(</span>/etc/systemd/system/iptables_exporter.service; disabled; preset: enabled<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>     Active: inactive <span style="color:#f92672">(</span>dead<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/# service iptables_exporter start
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/# service iptables_exporter status
+</span></span><span style="display:flex;"><span>● iptables_exporter.service - iptables_exporter
+</span></span><span style="display:flex;"><span>     Loaded: loaded <span style="color:#f92672">(</span>/etc/systemd/system/iptables_exporter.service; disabled; preset: enabled<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>     Active: active <span style="color:#f92672">(</span>running<span style="color:#f92672">)</span> since Sun 2024-09-29 17:06:54 UTC; 2s ago
+</span></span><span style="display:flex;"><span>   Main PID: <span style="color:#ae81ff">8697</span> <span style="color:#f92672">(</span>iptables_export<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      Tasks: <span style="color:#ae81ff">1</span> <span style="color:#f92672">(</span>limit: 5729<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>     Memory: 1.3M
+</span></span><span style="display:flex;"><span>        CPU: 13ms
+</span></span><span style="display:flex;"><span>     CGroup: /system.slice/iptables_exporter.service
+</span></span><span style="display:flex;"><span>             └─8697 /usr/bin/iptables_exporter
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Sep <span style="color:#ae81ff">29</span> 17:06:54 myk8s-worker systemd<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span>: Started iptables_exporter.service - iptables_exporter.
+</span></span><span style="display:flex;"><span>Sep <span style="color:#ae81ff">29</span> 17:06:54 myk8s-worker iptables_exporter<span style="color:#f92672">[</span>8697<span style="color:#f92672">]</span>: 2024-09-29T17:06:54.686186Z  INFO iptables_exporter: Registering metrics...
+</span></span><span style="display:flex;"><span>Sep <span style="color:#ae81ff">29</span> 17:06:54 myk8s-worker iptables_exporter<span style="color:#f92672">[</span>8697<span style="color:#f92672">]</span>: 2024-09-29T17:06:54.686280Z  INFO iptables_exporter: Spawning server...
+</span></span><span style="display:flex;"><span>Sep <span style="color:#ae81ff">29</span> 17:06:54 myk8s-worker iptables_exporter<span style="color:#f92672">[</span>8697<span style="color:#f92672">]</span>: 2024-09-29T17:06:54.686338Z  INFO iptables_exporter: Collecting iptables metrics...
+</span></span><span style="display:flex;"><span>Sep <span style="color:#ae81ff">29</span> 17:06:54 myk8s-worker iptables_exporter<span style="color:#f92672">[</span>8697<span style="color:#f92672">]</span>: 2024-09-29T17:06:54.687570Z  INFO iptables_exporter: Collecting iptables metrics...
+</span></span><span style="display:flex;"><span>root@myk8s-worker:/# exit
+</span></span></code></pre></div><h4 id="scrape_config-설정">scrape_config 설정</h4>
+<p>이제 위에서 사용했던, monitor-values.yaml을 수정합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; monitor-values.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">prometheus:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  prometheusSpec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    podMonitorSelectorNilUsesHelmValues: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    serviceMonitorSelectorNilUsesHelmValues: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    nodeSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      mynode: control-plane
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    tolerations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - key: &#34;node-role.kubernetes.io/control-plane&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      operator: &#34;Equal&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      effect: &#34;NoSchedule&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    additionalScrapeConfigs: |
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - job_name: &#39;iptables&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        static_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - targets: [&#39;localhost:9455&#39;, &#39;172.18.0.3:9455&#39;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        relabel_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - source_labels: [ &#39;__address__&#39; ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          regex: &#39;(.*):\d+&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          target_label: instance
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">grafana:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  defaultDashboardsTimezone: Asia/Tokyo
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  adminPassword: kans7969
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  service:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    type: NodePort
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    nodePort: 30002
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  nodeSelector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mynode: control-plane
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tolerations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - key: &#34;node-role.kubernetes.io/control-plane&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    operator: &#34;Equal&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    effect: &#34;NoSchedule&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">defaultRules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  create: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">alertmanager:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>helm upgrade --install <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --namespace monitoring --create-namespace <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --repo https://prometheus-community.github.io/helm-charts <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  kube-prometheus-stack kube-prometheus-stack --values monitor-values.yaml
+</span></span></code></pre></div><p>다시 살펴보니.. 역시 에러가 나있는 군요.<br>
+포트 안 열려있어서 그런거 같은데, 일단 자야겠습니다.</p>
+<p><img src="images/custom-target-error.png" alt="custom-target-error"></p>
 <h2 id="reference">Reference</h2>
 <p><a href="https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad">https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad</a><br>
 <a href="https://sbcode.net/prometheus/prometheus-node-exporter-2nd/">https://sbcode.net/prometheus/prometheus-node-exporter-2nd/</a><br>
-<a href="https://www.crybit.com/install-and-configure-node-exporter/">https://www.crybit.com/install-and-configure-node-exporter/</a></p>
+<a href="https://www.crybit.com/install-and-configure-node-exporter/">https://www.crybit.com/install-and-configure-node-exporter/</a><br>
+<a href="https://docs.redhat.com/ko/documentation/red_hat_enterprise_linux/7/html/system_administrators_guide/sect-managing_services_with_systemd-unit_files#sect-Managing_Services_with_systemd-Unit_File_Create">https://docs.redhat.com/ko/documentation/red_hat_enterprise_linux/7/html/system_administrators_guide/sect-managing_services_with_systemd-unit_files#sect-Managing_Services_with_systemd-Unit_File_Create</a></p>
 
   </div>
   </section>

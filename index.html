@@ -97,7 +97,7 @@
 
             
             <div class="p-list__item">
-              <a href="/post/kans-4w-iptables-grafana/"><h2>iptables monitoring with Grafana</h2></a>
+              <a href="/post/kans-4w-iptables-grafana/"><h2>iptables monitoring with Grafana (Not Completed)</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
                 <li class="p-inline-list__item">
@@ -109,7 +109,7 @@
               <p>iptables를 수집하여 Grafana로 표현하는 방법을 알아봅니다.
 CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
 0. 환경 구성 (kind) 작성시간 이슈로 featureGates, ConfigPatches, networking 설정 설명은 스킵&hellip;합니다.
-a. 1 Master, 4 Slave 환경 구성 cat &lt;&lt;EOT&gt; kind-svc-1w.yaml kind: Cluster apiVersion: kind.x-k8s.io/v1alpha4 featureGates: &#34;InPlacePodVerticalScaling&#34;: true &#34;MultiCIDRServiceAllocator&#34;: true nodes: - role: control-plane labels: mynode: control-plane topology.kubernetes.io/zone: ap-northeast-2a extraPortMappings: - containerPort: 30000 hostPort: 30000 - containerPort: 30001 hostPort: 30001 - containerPort: 30002 hostPort: 30002 kubeadmConfigPatches: - | kind: ClusterConfiguration apiServer: extraArgs: runtime-config: api/all=true controllerManager: extraArgs: bind-address: 0.</p>
+a. 1 Master, 3 Slave 환경 구성 cat &lt;&lt;EOT&gt; kind-svc-1w.yaml kind: Cluster apiVersion: kind.x-k8s.io/v1alpha4 featureGates: &#34;InPlacePodVerticalScaling&#34;: true &#34;MultiCIDRServiceAllocator&#34;: true nodes: - role: control-plane labels: mynode: control-plane topology.kubernetes.io/zone: ap-northeast-2a extraPortMappings: - containerPort: 30000 hostPort: 30000 - containerPort: 30001 hostPort: 30001 - containerPort: 30002 hostPort: 30002 kubeadmConfigPatches: - | kind: ClusterConfiguration apiServer: extraArgs: runtime-config: api/all=true controllerManager: extraArgs: bind-address: 0.</p>
             </div>
             
             <div class="p-list__item">

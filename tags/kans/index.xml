@@ -8,7 +8,7 @@
     <language>ko-kr</language>
     <lastBuildDate>Sun, 29 Sep 2024 13:35:13 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/kans/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>iptables monitoring with Grafana</title>
+      <title>iptables monitoring with Grafana (Not Completed)</title>
       <link>https://blog.minseong.xyz/post/kans-4w-iptables-grafana/</link>
       <pubDate>Sun, 29 Sep 2024 13:35:13 +0900</pubDate>
       
@@ -16,7 +16,7 @@
       <description>iptables를 수집하여 Grafana로 표현하는 방법을 알아봅니다.
 CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
 0. 환경 구성 (kind) 작성시간 이슈로 featureGates, ConfigPatches, networking 설정 설명은 스킵&amp;hellip;합니다.
-a. 1 Master, 4 Slave 환경 구성 cat &amp;lt;&amp;lt;EOT&amp;gt; kind-svc-1w.yaml kind: Cluster apiVersion: kind.x-k8s.io/v1alpha4 featureGates: &amp;#34;InPlacePodVerticalScaling&amp;#34;: true &amp;#34;MultiCIDRServiceAllocator&amp;#34;: true nodes: - role: control-plane labels: mynode: control-plane topology.kubernetes.io/zone: ap-northeast-2a extraPortMappings: - containerPort: 30000 hostPort: 30000 - containerPort: 30001 hostPort: 30001 - containerPort: 30002 hostPort: 30002 kubeadmConfigPatches: - | kind: ClusterConfiguration apiServer: extraArgs: runtime-config: api/all=true controllerManager: extraArgs: bind-address: 0.</description>
+a. 1 Master, 3 Slave 환경 구성 cat &amp;lt;&amp;lt;EOT&amp;gt; kind-svc-1w.yaml kind: Cluster apiVersion: kind.x-k8s.io/v1alpha4 featureGates: &amp;#34;InPlacePodVerticalScaling&amp;#34;: true &amp;#34;MultiCIDRServiceAllocator&amp;#34;: true nodes: - role: control-plane labels: mynode: control-plane topology.kubernetes.io/zone: ap-northeast-2a extraPortMappings: - containerPort: 30000 hostPort: 30000 - containerPort: 30001 hostPort: 30001 - containerPort: 30002 hostPort: 30002 kubeadmConfigPatches: - | kind: ClusterConfiguration apiServer: extraArgs: runtime-config: api/all=true controllerManager: extraArgs: bind-address: 0.</description>
     </item>
     
     <item>
