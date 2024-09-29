@@ -252,9 +252,55 @@ p8s에서 target 살펴봤을때 없는 걸 보니, 활성화해서되면 okay �
 
 - ~~A안) 기존 node-exporter를 활성화하여 사용.~~  
   말이 되지 않음. 원본 node-exporter에는 v2ray 같은 건 있지 않았음.  
-- B안) 기존 helm 차트를 수정하여 node-exporter 참조 경로를 사용.  
-  values에서 지원 안하면 바로 폐기.  
+- ~~B안) 기존 helm 차트를 수정하여 node-exporter 참조 경로를 사용.~~  
+  그런, [험한거](https://github.com/LeiShi1313/node_exporter/blob/39295e6522dceea4ecda0d4520239149712a7a01/go.mod#L1) [하면](https://github.com/LeiShi1313/node_exporter/blob/39295e6522dceea4ecda0d4520239149712a7a01/docs/node-mixin/go.mod#L1) 안될 것 같네요.
+- C안) 뭔가 신비하고 놀라운 [Discussion](https://github.com/prometheus/node_exporter/issues/637#issuecomment-888409148)을 통해, 그저 더 삽질하기...  
+  이걸로... 해볼께요.  
+
+이걸 보니, 뭔가 심연을 느끼기 시작합니다. ~~`빨리 도망쳐`~~  
+
+> This horrifying cron one liner when set as a cron simulates an iptables exporter. At least on debian buster/stretch it does. It gives more or less the same output as the dedicated iptables exporter. It just uses awk to process the output of iptables-save -c into something prometheus can understand, and pops it in the folder the node exporter monitors.  
+
+
+```bash
+SCRAPE_INTERVAL=15
+OFFSET_INTERVAL=5
+* * * * * root sleep $OFFSET_INTERVAL; for i in $(seq $SCRAPE_INTERVAL $SCRAPE_INTERVAL 60); do /usr/sbin/iptables-save -c | grep -v '^#' | grep -v 'COMMIT' | sed -e s'/\[//g;s/\]//g' | awk -F'[ :]' '{ if($0 ~ /\*/) { table=$0; gsub("^*","",table); } else if($0 ~ /^\:/){ print "iptables_rule_bytes_total{chain=\"" $2 "\",policy=\"" $3 "\",table=\"" table "\"} " $5 "\niptables_rule_packets_total{chain=\"" $2 "\",policy=\"" $3 "\",table=\"" table "\"} " $4; } else { rule=$5; for(i=6;i<=NF;i++){rule=rule" "$i} print "iptables_rule_bytes_total{chain=\"" $4 "\",rule=\"" rule "\",table=\"" table "\"} " $2 "\niptables_rule_packets_total{chain=\"" $4 "\",rule=\"" rule "\",table=\"" table "\"} " $1; } }' > /var/lib/prometheus/node-exporter/iptables.prom; echo "iptables_scrape_success $(date +\%s)" >> /var/lib/prometheus/node-exporter/iptables.prom; sleep $SCRAPE_INTERVAL; done
+```
+
+아저씨 말씀으로 된다니, 그냥 빠르게 다른 걸 더 찾아봅니다. ~~`$(date +\%s)`를 쓰면 그 로그는 조상님께서 없애줄거냐며~~
+[권한](https://github.com/retailnext/iptables_exporter) [이야기가](https://github.com/kbknapp/iptables_exporter) 나오네요.  
+
+사실 뭐 discussion에서 permission 언급되길래 찾아보니, [pypi/iptables-exporter](https://pypi.org/project/iptables-exporter/)도 나오고 뭔가 어지러워보이다가 명료하게 권한 언급되는걸 봐서 해보기로 했습니다.  
+
+### d. Do... It
+
+#### 권한  
+
+- 총 3개의 권한을 허용해야합니다.  
+  - CAP_DAC_READ_SEARCH  
+  - CAP_NET_ADMIN  
+  - CAP_NET_RAW  
+
+#### 권한의 적용  
+
+- `retailnext/iptables_exporter`  
+  - [GitHub](https://github.com/retailnext/iptables_exporter)  
+  - 첫 구절을 보면, 친절하게 systemd 옵션 재설정이 필요하다고 합니다.  
+
+Unfortunately, iptables-save (which this exporter uses) doesn't work without special permissions.
+
+Including the following systemd [Service] options will allow this exporter to work without running it as root:
+
+```memo
+CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+```
+
+- 이후는 방전이 되서 계속 좀 써보겠습니다.  
 
 ## Reference
 
 <https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad>  
+<https://sbcode.net/prometheus/prometheus-node-exporter-2nd/>  
+<https://www.crybit.com/install-and-configure-node-exporter/>   
