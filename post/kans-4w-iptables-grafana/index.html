@@ -310,11 +310,52 @@ p8s에서 target 살펴봤을때 없는 걸 보니, 활성화해서되면 okay �
 <ul>
 <li><del>A안) 기존 node-exporter를 활성화하여 사용.</del><br>
 말이 되지 않음. 원본 node-exporter에는 v2ray 같은 건 있지 않았음.</li>
-<li>B안) 기존 helm 차트를 수정하여 node-exporter 참조 경로를 사용.<br>
-values에서 지원 안하면 바로 폐기.</li>
+<li><del>B안) 기존 helm 차트를 수정하여 node-exporter 참조 경로를 사용.</del><br>
+그런, <a href="https://github.com/LeiShi1313/node_exporter/blob/39295e6522dceea4ecda0d4520239149712a7a01/go.mod#L1">험한거</a> <a href="https://github.com/LeiShi1313/node_exporter/blob/39295e6522dceea4ecda0d4520239149712a7a01/docs/node-mixin/go.mod#L1">하면</a> 안될 것 같네요.</li>
+<li>C안) 뭔가 신비하고 놀라운 <a href="https://github.com/prometheus/node_exporter/issues/637#issuecomment-888409148">Discussion</a>을 통해, 그저 더 삽질하기&hellip;<br>
+이걸로&hellip; 해볼께요.</li>
+</ul>
+<p>이걸 보니, 뭔가 심연을 느끼기 시작합니다. <del><code>빨리 도망쳐</code></del></p>
+<blockquote>
+<p>This horrifying cron one liner when set as a cron simulates an iptables exporter. At least on debian buster/stretch it does. It gives more or less the same output as the dedicated iptables exporter. It just uses awk to process the output of iptables-save -c into something prometheus can understand, and pops it in the folder the node exporter monitors.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>SCRAPE_INTERVAL<span style="color:#f92672">=</span><span style="color:#ae81ff">15</span>
+</span></span><span style="display:flex;"><span>OFFSET_INTERVAL<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>* * * * * root sleep $OFFSET_INTERVAL; <span style="color:#66d9ef">for</span> i in <span style="color:#66d9ef">$(</span>seq $SCRAPE_INTERVAL $SCRAPE_INTERVAL 60<span style="color:#66d9ef">)</span>; <span style="color:#66d9ef">do</span> /usr/sbin/iptables-save -c | grep -v <span style="color:#e6db74">&#39;^#&#39;</span> | grep -v <span style="color:#e6db74">&#39;COMMIT&#39;</span> | sed -e s<span style="color:#e6db74">&#39;/\[//g;s/\]//g&#39;</span> | awk -F<span style="color:#e6db74">&#39;[ :]&#39;</span> <span style="color:#e6db74">&#39;{ if($0 ~ /\*/) { table=$0; gsub(&#34;^*&#34;,&#34;&#34;,table); } else if($0 ~ /^\:/){ print &#34;iptables_rule_bytes_total{chain=\&#34;&#34; $2 &#34;\&#34;,policy=\&#34;&#34; $3 &#34;\&#34;,table=\&#34;&#34; table &#34;\&#34;} &#34; $5 &#34;\niptables_rule_packets_total{chain=\&#34;&#34; $2 &#34;\&#34;,policy=\&#34;&#34; $3 &#34;\&#34;,table=\&#34;&#34; table &#34;\&#34;} &#34; $4; } else { rule=$5; for(i=6;i&lt;=NF;i++){rule=rule&#34; &#34;$i} print &#34;iptables_rule_bytes_total{chain=\&#34;&#34; $4 &#34;\&#34;,rule=\&#34;&#34; rule &#34;\&#34;,table=\&#34;&#34; table &#34;\&#34;} &#34; $2 &#34;\niptables_rule_packets_total{chain=\&#34;&#34; $4 &#34;\&#34;,rule=\&#34;&#34; rule &#34;\&#34;,table=\&#34;&#34; table &#34;\&#34;} &#34; $1; } }&#39;</span> &gt; /var/lib/prometheus/node-exporter/iptables.prom; echo <span style="color:#e6db74">&#34;iptables_scrape_success </span><span style="color:#66d9ef">$(</span>date +<span style="color:#ae81ff">\%</span>s<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> &gt;&gt; /var/lib/prometheus/node-exporter/iptables.prom; sleep $SCRAPE_INTERVAL; <span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><p>아저씨 말씀으로 된다니, 그냥 빠르게 다른 걸 더 찾아봅니다. <del><code>$(date +\%s)</code>를 쓰면 그 로그는 조상님께서 없애줄거냐며</del>
+<a href="https://github.com/retailnext/iptables_exporter">권한</a> <a href="https://github.com/kbknapp/iptables_exporter">이야기가</a> 나오네요.</p>
+<p>사실 뭐 discussion에서 permission 언급되길래 찾아보니, <a href="https://pypi.org/project/iptables-exporter/">pypi/iptables-exporter</a>도 나오고 뭔가 어지러워보이다가 명료하게 권한 언급되는걸 봐서 해보기로 했습니다.</p>
+<h3 id="d-do-it">d. Do&hellip; It</h3>
+<h4 id="권한">권한</h4>
+<ul>
+<li>총 3개의 권한을 허용해야합니다.
+<ul>
+<li>CAP_DAC_READ_SEARCH</li>
+<li>CAP_NET_ADMIN</li>
+<li>CAP_NET_RAW</li>
+</ul>
+</li>
+</ul>
+<h4 id="권한의-적용">권한의 적용</h4>
+<ul>
+<li><code>retailnext/iptables_exporter</code>
+<ul>
+<li><a href="https://github.com/retailnext/iptables_exporter">GitHub</a></li>
+<li>첫 구절을 보면, 친절하게 systemd 옵션 재설정이 필요하다고 합니다.</li>
+</ul>
+</li>
+</ul>
+<p>Unfortunately, iptables-save (which this exporter uses) doesn&rsquo;t work without special permissions.</p>
+<p>Including the following systemd [Service] options will allow this exporter to work without running it as root:</p>
+<pre tabindex="0"><code class="language-memo" data-lang="memo">CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+</code></pre><ul>
+<li>이후는 방전이 되서 계속 좀 써보겠습니다.</li>
 </ul>
 <h2 id="reference">Reference</h2>
-<p><a href="https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad">https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad</a></p>
+<p><a href="https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad">https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad</a><br>
+<a href="https://sbcode.net/prometheus/prometheus-node-exporter-2nd/">https://sbcode.net/prometheus/prometheus-node-exporter-2nd/</a><br>
+<a href="https://www.crybit.com/install-and-configure-node-exporter/">https://www.crybit.com/install-and-configure-node-exporter/</a></p>
 
   </div>
   </section>
