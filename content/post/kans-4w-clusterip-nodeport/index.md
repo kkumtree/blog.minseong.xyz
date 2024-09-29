@@ -3,7 +3,8 @@ date: 2024-09-27T21:28:17+09:00
 title: "Kubernetes Service(1): ClusterIP/NodePort"
 tags:
   - kans  
-  - kind    
+  - clusterip  
+  - nodeport  
   - kubernetes  
 authors:
   - name: kkumtree
