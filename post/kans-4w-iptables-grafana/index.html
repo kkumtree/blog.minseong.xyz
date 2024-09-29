@@ -307,6 +307,12 @@
 <p>역시, 누락된 위젯은 죄다 커밋내역과 연동된 내용이네요. 특히 v2ray 또한, 따로 <a href="https://github.com/LeiShi1313/net-traffic-exporter">GitHub repository</a>가 있습니다.</p>
 <p>이제 선택지는 얼마 없는 것 같습니다.<br>
 p8s에서 target 살펴봤을때 없는 걸 보니, 활성화해서되면 okay 안되면&hellip; GG</p>
+<ul>
+<li><del>A안) 기존 node-exporter를 활성화하여 사용.</del><br>
+말이 되지 않음. 원본 node-exporter에는 v2ray 같은 건 있지 않았음.</li>
+<li>B안) 기존 helm 차트를 수정하여 node-exporter 참조 경로를 사용.<br>
+values에서 지원 안하면 바로 폐기.</li>
+</ul>
 <h2 id="reference">Reference</h2>
 <p><a href="https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad">https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad</a></p>
 
