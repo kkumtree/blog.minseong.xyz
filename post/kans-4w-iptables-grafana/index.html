@@ -291,10 +291,22 @@
 <p>helm을 쓰는 대다수의 사용자들은 알 필요도 없고&hellip; 알 겨를도 없는 사항인데,<br>
 헬름 차트에도 그 뭐냐, dependency라는 것이 존재하는데요.</p>
 <p>최신문서 기준 아래와 같이 아 맞다 의존성이지. 의존성이 걸려있는 것을 알 수 있습니다.</p>
-<p><img src="images/dependencies.png" alt="dependencies"></p>
+<p><img src="images/helm-dependencies.png" alt="dependencies"></p>
 <p>음 읽고 더 미궁 속으로 빠집니다. 의존성 이름이 <code>prometheus-node-exporter</code> &hellip; 음 큰일났네요.</p>
 <h3 id="c-그래도-그냥-더-볼까">c. 그래도 그냥 더 볼까</h3>
 <p>일단 지금까지 태운 시간이 아까우니, 계속 봅니다.</p>
+<p>대시보드 기준으로 누락된 위젯에서 어떠한 값을 요청하는지 살펴봅니다.</p>
+<ul>
+<li><code>increase(node_iptables_download_bytes_total{job=~&quot;$job&quot;,instance=~&quot;$instance&quot;}[$__range])</code></li>
+<li><code>increase(node_iptables_upload_bytes_total{job=~&quot;$job&quot;,instance=~&quot;$instance&quot;}[$__range])</code></li>
+<li><code>irate(node_v2ray_download_bytes_total{job=~&quot;$job&quot;,instance=~&quot;$instance&quot;,dimension=~&quot;$dimension&quot;,target=~&quot;$target&quot;}[5m])</code></li>
+<li><code>irate(node_v2ray_upload_bytes_total{job=~&quot;$job&quot;,instance=~&quot;$instance&quot;,dimension=~&quot;$dimension&quot;,target=~&quot;$target&quot;}[5m])</code></li>
+<li><code>irate(node_v2ray_download_bytes_total{job=~&quot;$job&quot;,instance=~&quot;$instance&quot;,dimension=~&quot;$dimension&quot;,target=~&quot;$target&quot;}[5m])</code></li>
+<li><code>irate(node_iptables_download_bytes_total{job=~&quot;$job&quot;,instance=~&quot;$instance&quot;,chain=~&quot;$dimension&quot;,rule=~&quot;$target&quot;}[5m])</code></li>
+</ul>
+<p>역시, 누락된 위젯은 죄다 커밋내역과 연동된 내용이네요. 특히 v2ray 또한, 따로 <a href="https://github.com/LeiShi1313/net-traffic-exporter">GitHub repository</a>가 있습니다.</p>
+<p>이제 선택지는 얼마 없는 것 같습니다.<br>
+p8s에서 target 살펴봤을때 없는 걸 보니, 활성화해서되면 okay 안되면&hellip; GG</p>
 <h2 id="reference">Reference</h2>
 <p><a href="https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad">https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad</a></p>
 
