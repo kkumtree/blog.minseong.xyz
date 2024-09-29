@@ -287,7 +287,14 @@
 </ul>
 <p><img src="images/leishi1313-node-exporter-commit-log.png" alt="leishi-commit-log"></p>
 <p>뭔가 바뀐거도 보이고&hellip; 아무래도 어떻게든 yaml에 때려넣어야하는 걸까&hellip; 고민하게 됩니다.</p>
-<h3 id="b-금일-최대의-고민-중">b. 금일 최대의 고민 중</h3>
+<h3 id="b-고민해봅시다-무엇을">b. 고민해봅시다, 무엇을?</h3>
+<p>helm을 쓰는 대다수의 사용자들은 알 필요도 없고&hellip; 알 겨를도 없는 사항인데,<br>
+헬름 차트에도 그 뭐냐, dependency라는 것이 존재하는데요.</p>
+<p>최신문서 기준 아래와 같이 아 맞다 의존성이지. 의존성이 걸려있는 것을 알 수 있습니다.</p>
+<p><img src="images/dependencies.png" alt="dependencies"></p>
+<p>음 읽고 더 미궁 속으로 빠집니다. 의존성 이름이 <code>prometheus-node-exporter</code> &hellip; 음 큰일났네요.</p>
+<h3 id="c-그래도-그냥-더-볼까">c. 그래도 그냥 더 볼까</h3>
+<p>일단 지금까지 태운 시간이 아까우니, 계속 봅니다.</p>
 <h2 id="reference">Reference</h2>
 <p><a href="https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad">https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad</a></p>
 
