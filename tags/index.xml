@@ -6,11 +6,29 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Fri, 27 Sep 2024 21:28:17 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 29 Sep 2024 13:35:13 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>grafana</title>
+      <link>https://blog.minseong.xyz/tags/grafana/</link>
+      <pubDate>Sun, 29 Sep 2024 13:35:13 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/grafana/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>iptables</title>
+      <link>https://blog.minseong.xyz/tags/iptables/</link>
+      <pubDate>Sun, 29 Sep 2024 13:35:13 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/iptables/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>kans</title>
       <link>https://blog.minseong.xyz/tags/kans/</link>
-      <pubDate>Fri, 27 Sep 2024 21:28:17 +0900</pubDate>
+      <pubDate>Sun, 29 Sep 2024 13:35:13 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/kans/</guid>
       <description></description>
@@ -19,7 +37,7 @@
     <item>
       <title>kind</title>
       <link>https://blog.minseong.xyz/tags/kind/</link>
-      <pubDate>Fri, 27 Sep 2024 21:28:17 +0900</pubDate>
+      <pubDate>Sun, 29 Sep 2024 13:35:13 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/kind/</guid>
       <description></description>
@@ -28,9 +46,27 @@
     <item>
       <title>kubernetes</title>
       <link>https://blog.minseong.xyz/tags/kubernetes/</link>
-      <pubDate>Fri, 27 Sep 2024 21:28:17 +0900</pubDate>
+      <pubDate>Sun, 29 Sep 2024 13:35:13 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>clusterip</title>
+      <link>https://blog.minseong.xyz/tags/clusterip/</link>
+      <pubDate>Fri, 27 Sep 2024 21:28:17 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/clusterip/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>nodeport</title>
+      <link>https://blog.minseong.xyz/tags/nodeport/</link>
+      <pubDate>Fri, 27 Sep 2024 21:28:17 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/nodeport/</guid>
       <description></description>
     </item>
     

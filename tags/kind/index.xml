@@ -6,18 +6,17 @@
     <description>Recent content in kind on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Fri, 27 Sep 2024 21:28:17 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/kind/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 29 Sep 2024 13:35:13 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/kind/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Kubernetes Service(1): ClusterIP/NodePort</title>
-      <link>https://blog.minseong.xyz/post/kans-4w-clusterip-nodeport/</link>
-      <pubDate>Fri, 27 Sep 2024 21:28:17 +0900</pubDate>
+      <title>iptables monitoring with Grafana</title>
+      <link>https://blog.minseong.xyz/post/kans-4w-iptables-grafana/</link>
+      <pubDate>Sun, 29 Sep 2024 13:35:13 +0900</pubDate>
       
-      <guid>https://blog.minseong.xyz/post/kans-4w-clusterip-nodeport/</guid>
-      <description>Kubernetes의 (컨셉, 혹은 콘셉트라 불리는) Concepts 중에서 Service의 주제를 다뤄봅니다.
+      <guid>https://blog.minseong.xyz/post/kans-4w-iptables-grafana/</guid>
+      <description>iptables를 수집하여 Grafana로 표현하는 방법을 알아봅니다.
 CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-Service Docs에 명료하게 적혀있긴 하지만,
-단위 기능으로 잘게 쪼갠 Pod는 결국 개별적인 IP를 갖게되는데, Blue/Green 이미지 업데이트를 비롯해서 같은 기능을 하는 새로운 Pod의 IP를 다른 Pod가 IP주소 그대로 접근하기 어려워 중간에 둔 것으로 이해를 해보았습니다.
-지금 레벨에서는 가정용 공유기에서 동적IP 환경에 대응하기 위해, DDNS를 사용하는 것과, MAC ADDR 기준으로 Static IP(DHCP모드시 활용)를 예약하는 것을 섞은 그 어딘가로 납득하고 계속 써보도록 하겠습니다.</description>
+0. 환경 구성 (kind) 작성시간 이슈로 featureGates, ConfigPatches, networking 설정 설명은 스킵&amp;hellip;합니다.
+a. 1 Master, 4 Slave 환경 구성 cat &amp;lt;&amp;lt;EOT&amp;gt; kind-svc-1w.yaml kind: Cluster apiVersion: kind.x-k8s.io/v1alpha4 featureGates: &amp;#34;InPlacePodVerticalScaling&amp;#34;: true &amp;#34;MultiCIDRServiceAllocator&amp;#34;: true nodes: - role: control-plane labels: mynode: control-plane topology.kubernetes.io/zone: ap-northeast-2a extraPortMappings: - containerPort: 30000 hostPort: 30000 - containerPort: 30001 hostPort: 30001 - containerPort: 30002 hostPort: 30002 kubeadmConfigPatches: - | kind: ClusterConfiguration apiServer: extraArgs: runtime-config: api/all=true controllerManager: extraArgs: bind-address: 0.</description>
     </item>
     
     <item>
