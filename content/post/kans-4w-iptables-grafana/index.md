@@ -250,6 +250,11 @@ helm을 쓰는 대다수의 사용자들은 알 필요도 없고... 알 겨를�
 이제 선택지는 얼마 없는 것 같습니다.  
 p8s에서 target 살펴봤을때 없는 걸 보니, 활성화해서되면 okay 안되면... GG  
 
+- ~~A안) 기존 node-exporter를 활성화하여 사용.~~  
+  말이 되지 않음. 원본 node-exporter에는 v2ray 같은 건 있지 않았음.  
+- B안) 기존 helm 차트를 수정하여 node-exporter 참조 경로를 사용.  
+  values에서 지원 안하면 바로 폐기.  
+
 ## Reference
 
 <https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad>  
