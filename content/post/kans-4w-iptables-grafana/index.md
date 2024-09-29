@@ -1,6 +1,6 @@
 ---
 date: 2024-09-29T13:35:13+09:00
-title: "iptables monitoring with Grafana"
+title: "iptables monitoring with Grafana (Not Completed)"
 tags:
  - kans
  - kind
@@ -26,7 +26,7 @@ iptables를 수집하여 Grafana로 표현하는 방법을 알아봅니다.
 
 > 작성시간 이슈로 featureGates, ConfigPatches, networking 설정 설명은 스킵...합니다.  
 
-### a. 1 Master, 4 Slave 환경 구성  
+### a. 1 Master, 3 Slave 환경 구성  
 
 ```bash
 cat <<EOT> kind-svc-1w.yaml
@@ -149,6 +149,8 @@ helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --
 # New Terminal
 kubectl port-forward svc/kube-prometheus-stack-grafana -n monitoring 9090:9090
 ```
+
+![prometheus-first-mapping](images/prometheus-first-mapping.png)
 
 골치 아픈 etcd 마저 붙은 걸 알 수 있습니다.  
 
@@ -297,10 +299,156 @@ CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
 AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
 ```
 
-- 이후는 방전이 되서 계속 좀 써보겠습니다.  
+- `kbknapp/iptables_exporter`  
+  - [GitHub](https://github.com/kbknapp/iptables_exporter)  
+  - 권한 부분 외에는 따라해볼만 하고, 커밋 기준 최신이어서 시도를 해봅니다.  
+  - buggy 한 것은 어쩔 수 없을 듯 합니다.  
+
+#### iptables_exporter 설치
+
+> 가만 생각해보니 어차피 root로 접속하니, 되는지 정도만 보는 걸로 해봅니다.  
+
+`rust-toolkit`은 생경하니, 바이너리(x86_64) 파일을 받아서 해봅니다.  
+
+```bash
+docker exec -it myk8s-worker bash
+root@myk8s-worker:/# echo $PATH
+# /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+root@myk8s-worker:/# cd /tmp
+root@myk8s-worker:/tmp# curl https://github.com/kbknapp/iptables_exporter/releases/download/v0.4.0/iptables_exporter-v0.4.0-x86_64-linux-musl.tar.gz -o iptables_exporter-v0.4.0-x86_64-linux-musl.tar.gz -L
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 3114k  100 3114k    0     0   436k      0  0:00:07  0:00:07 --:--:--  641k
+root@myk8s-worker:/tmp# tar -xvf iptables_exporter-v0.4.0-x86_64-linux-musl.tar.gz ./iptables_exporter
+./iptables_exporter
+root@myk8s-worker:/tmp# mv iptables_exporter /usr/bin
+root@myk8s-worker:/tmp# iptables_exporter -V
+iptables_exporter v0.4.0 (f8d6fca92a)
+root@myk8s-worker:/tmp# rm *
+root@myk8s-worker:/tmp# cd -
+/
+root@myk8s-worker:/#
+```
+
+#### systemD 등록
+
+이제 background로 실행할 수 있도록 systemd에 등록합니다.  
+
+```bash
+root@myk8s-worker:/# cat <<EOT > /etc/systemd/system/iptables_exporter.service
+[Unit]
+Description=iptables_exporter
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/iptables_exporter
+Restart=always
+RestartSec=5
+CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+
+[Install]
+WantedBy=multi-user.target
+EOT
+
+# permission
+root@myk8s-worker:/# chmod a+x /etc/systemd/system/iptables_exporter.service
+```
+
+reload 후, 상태 체크
+
+```bash
+root@myk8s-worker:/# systemctl daemon-reload
+root@myk8s-worker:/# service status iptables_exporter
+status: unrecognized service
+root@myk8s-worker:/# service iptables_exporter status
+○ iptables_exporter.service - iptables_exporter
+     Loaded: loaded (/etc/systemd/system/iptables_exporter.service; disabled; preset: enabled)
+     Active: inactive (dead)
+root@myk8s-worker:/# service iptables_exporter start
+root@myk8s-worker:/# service iptables_exporter status
+● iptables_exporter.service - iptables_exporter
+     Loaded: loaded (/etc/systemd/system/iptables_exporter.service; disabled; preset: enabled)
+     Active: active (running) since Sun 2024-09-29 17:06:54 UTC; 2s ago
+   Main PID: 8697 (iptables_export)
+      Tasks: 1 (limit: 5729)
+     Memory: 1.3M
+        CPU: 13ms
+     CGroup: /system.slice/iptables_exporter.service
+             └─8697 /usr/bin/iptables_exporter
+
+Sep 29 17:06:54 myk8s-worker systemd[1]: Started iptables_exporter.service - iptables_exporter.
+Sep 29 17:06:54 myk8s-worker iptables_exporter[8697]: 2024-09-29T17:06:54.686186Z  INFO iptables_exporter: Registering metrics...
+Sep 29 17:06:54 myk8s-worker iptables_exporter[8697]: 2024-09-29T17:06:54.686280Z  INFO iptables_exporter: Spawning server...
+Sep 29 17:06:54 myk8s-worker iptables_exporter[8697]: 2024-09-29T17:06:54.686338Z  INFO iptables_exporter: Collecting iptables metrics...
+Sep 29 17:06:54 myk8s-worker iptables_exporter[8697]: 2024-09-29T17:06:54.687570Z  INFO iptables_exporter: Collecting iptables metrics...
+root@myk8s-worker:/# exit
+```
+
+#### scrape_config 설정
+
+이제 위에서 사용했던, monitor-values.yaml을 수정합니다.  
+
+```bash
+cat <<EOT > monitor-values.yaml
+prometheus:
+  prometheusSpec:
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    nodeSelector:
+      mynode: control-plane
+    tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Equal"
+      effect: "NoSchedule"
+    additionalScrapeConfigs: |
+      - job_name: 'iptables'
+        static_configs:
+        - targets: ['localhost:9455', '172.18.0.3:9455']
+        relabel_configs:
+        - source_labels: [ '__address__' ]
+          regex: '(.*):\d+'
+          target_label: instance
+          
+
+
+grafana:
+  defaultDashboardsTimezone: Asia/Tokyo
+  adminPassword: kans7969
+
+  service:
+    type: NodePort
+    nodePort: 30002
+  nodeSelector:
+    mynode: control-plane
+  tolerations:
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Equal"
+    effect: "NoSchedule"
+
+defaultRules:
+  create: false
+alertmanager:
+  enabled: false
+
+EOT
+
+helm upgrade --install \
+  --namespace monitoring --create-namespace \
+  --repo https://prometheus-community.github.io/helm-charts \
+  kube-prometheus-stack kube-prometheus-stack --values monitor-values.yaml
+```
+
+다시 살펴보니.. 역시 에러가 나있는 군요.  
+포트 안 열려있어서 그런거 같은데, 일단 자야겠습니다.
+
+![custom-target-error](images/custom-target-error.png)
 
 ## Reference
 
 <https://medium.com/@charled.breteche/kind-fix-missing-prometheus-operator-targets-1a1ff5d8c8ad>  
 <https://sbcode.net/prometheus/prometheus-node-exporter-2nd/>  
-<https://www.crybit.com/install-and-configure-node-exporter/>   
+<https://www.crybit.com/install-and-configure-node-exporter/>  
+<https://docs.redhat.com/ko/documentation/red_hat_enterprise_linux/7/html/system_administrators_guide/sect-managing_services_with_systemd-unit_files#sect-Managing_Services_with_systemd-Unit_File_Create>  
