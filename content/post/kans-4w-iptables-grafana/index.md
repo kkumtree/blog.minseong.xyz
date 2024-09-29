@@ -228,7 +228,7 @@ helm을 쓰는 대다수의 사용자들은 알 필요도 없고... 알 겨를�
 
 최신문서 기준 아래와 같이 아 맞다 의존성이지. 의존성이 걸려있는 것을 알 수 있습니다.  
 
-![dependencies](images/dependencies.png)  
+![dependencies](images/helm-dependencies.png)  
 
 음 읽고 더 미궁 속으로 빠집니다. 의존성 이름이 `prometheus-node-exporter` ... 음 큰일났네요.  
 
@@ -236,6 +236,19 @@ helm을 쓰는 대다수의 사용자들은 알 필요도 없고... 알 겨를�
 
 일단 지금까지 태운 시간이 아까우니, 계속 봅니다.  
 
+대시보드 기준으로 누락된 위젯에서 어떠한 값을 요청하는지 살펴봅니다.  
+
+- `increase(node_iptables_download_bytes_total{job=~"$job",instance=~"$instance"}[$__range])`  
+- `increase(node_iptables_upload_bytes_total{job=~"$job",instance=~"$instance"}[$__range])`  
+- `irate(node_v2ray_download_bytes_total{job=~"$job",instance=~"$instance",dimension=~"$dimension",target=~"$target"}[5m])`
+- `irate(node_v2ray_upload_bytes_total{job=~"$job",instance=~"$instance",dimension=~"$dimension",target=~"$target"}[5m])`
+- `irate(node_v2ray_download_bytes_total{job=~"$job",instance=~"$instance",dimension=~"$dimension",target=~"$target"}[5m])`
+- `irate(node_iptables_download_bytes_total{job=~"$job",instance=~"$instance",chain=~"$dimension",rule=~"$target"}[5m])`  
+
+역시, 누락된 위젯은 죄다 커밋내역과 연동된 내용이네요. 특히 v2ray 또한, 따로 [GitHub repository](https://github.com/LeiShi1313/net-traffic-exporter)가 있습니다.  
+
+이제 선택지는 얼마 없는 것 같습니다.  
+p8s에서 target 살펴봤을때 없는 걸 보니, 활성화해서되면 okay 안되면... GG  
 
 ## Reference
 
