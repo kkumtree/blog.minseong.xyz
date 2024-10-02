@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Kubernetes Service(2): LoadBalancer(MetalLB) - 곧 작성완료 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Kubernetes Service(2): LoadBalancer(MetalLB) - 곧 작성완료" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/kans-5w-metallb-loadbalancer/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/kans-5w-metallb-loadbalancer/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/kans-5w-metallb-loadbalancer/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Kubernetes Service(2): LoadBalancer(MetalLB) - 곧 작성완료</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-02T12:54:17&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/kans" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kans</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kind" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kind</span>
+              </div>
+            </a>
+            
+            <a href="/tags/metallb" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">metallb</span>
+              </div>
+            </a>
+            
+            <a href="/tags/loadbalancer" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">loadbalancer</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kubernetes" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kubernetes</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>지난 포스팅, <a href="https://blog.minseong.xyz/post/kans-4w-clusterip-nodeport/">Kubernetes Service(1): ClusterIP/NodePort</a>에 이어 LoadBalancer Type을 가볍게 살펴보고, MetalLB를 가볍게 붙여보겠습니다.</p>
+<p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 <strong>K</strong>8s <strong>A</strong>dvanced <strong>N</strong>etwork <strong>S</strong>tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.</p>
+<h2 id="1-loadbalancer-type">1. LoadBalancer Type</h2>
+<p>Service(1)에서 언급된 부분은 거두절미하고, 추가로 적을 수 있는 부분이 있다면, 아래 한 줄이 있습니다.</p>
+<blockquote>
+<p>You can define a LoadBalancer Service by disabling the load balancer NodePort allocation.</p>
+</blockquote>
+<p>글자 그대로 LB의 <code>NodePort</code> 할당을 비활성하여, LoadBalancer Service를 정의할 수 있습니다.<br>
+<a href="https://kubernetes.io/docs/concepts/services-networking/service/#load-balancer-nodeport-allocation">Disabling load balancer NodePort allocation</a> 문서를 살펴보니,<br>
+v1.24부터 Stable 상태로 보입니다.</p>
+<p>해당 문서에서 핵심만 추리자면&hellip;</p>
+<ul>
+<li><code>spec.allocateLoadBalancerNodePorts</code>: <code>true</code> (default)</li>
+<li>Traffic을 Pod로 직접 Routing하는 LB를 구현(implementation)하고자 할 때만 <code>false</code>로 변경하여 사용되어야 한다고 합니다.</li>
+<li>그렇지 않으면, 즉 Node port가 할당된 <strong>기존</strong> 노드에 <code>false</code>가 설정되면, Node ports는 <code>자동으로 할당 해제</code>되지 않는다고 합니다.
+<ul>
+<li><code>**not** be de-allocated automatically</code></li>
+<li>모든 서비스에서 명시적으로 <code>nodePorts</code> 를 제거해야한다고 합니다.</li>
+</ul>
+</li>
+<li>그리고 어조가 꽤나 센 편입니다.</li>
+</ul>
+<p><del>그만 알아보자</del></p>
+<h2 id="2-metallb">2. MetalLB</h2>
+<p>스터디 후반부에 AWS EKS를 사용하고, 현재는 kind 환경에서 진행하는 것이므로 MetalLB를 사용하기로 했습니다.</p>
+<p>이미 작년에 개인 프로젝트로 kubeadm+virtualbox 조합으로 구축할 때 외부 접근을 위해 MetalLB를 써봤고,<br>
+<a href="https://www.xslab.co.kr/default/products/sqnano.php">V-raptor SQ nano</a>로 이것저것 만져볼때, <a href="https://microk8s.io/docs/addon-metallb">Canonical microk8s</a>에서도 metalLB addon을 지원하는 것을 알게된 바,</p>
+<p>이미 현업 분들에게는 친숙한 툴이라 생각하고 설명은 생략하겠습니다(?).<br>
+사실 당시에 사서 고생을 해서, 포스팅을 남겨놨을 것 같았는데 코드로만 존재하네요. 빠른 손절.<br>
+<del>그건 그렇고 microk8s에서 metalLB addon 티커가 <code>v1.17</code>로 남아있어 심히 불편함을 감출 수 없군요</del></p>
+<p>일단 BGP는 클러스터링을 두 개를 해야되서 좀 그렇고, Layer2 기반으로 사용해보겠습니다.</p>
+<h2 id="3-kind-구성">3. kind 구성</h2>
+<h3 id="a-초기-구성">a. 초기 구성</h3>
+<p>현재 작성 중인 디바이스에 kind가 깔려있지 않아 기존 포스팅(<a href="https://blog.minseong.xyz/post/kans-2w-kind-installation-on-linux/">리눅스에 KIND 설치하기 w/golang</a>)를 참고하여 설치했습니다.<br>
+기존 포스팅(<a href="https://blog.minseong.xyz/post/kans-2w-kind-overview/">KIND 톺아보기</a>)과 달라진 점이 있다면, <code>kindest/node:v1.31.0</code>으로 버전을 올려 사용했습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ go version
+</span></span><span style="display:flex;"><span>go version go1.22.2 linux/amd64
+</span></span><span style="display:flex;"><span>❯ go env GOPATH
+</span></span><span style="display:flex;"><span>/home/kkumtree/go
+</span></span><span style="display:flex;"><span>❯ go install sigs.k8s.io/kind@v0.24.0
+</span></span><span style="display:flex;"><span>go: downloading sigs.k8s.io/kind v0.24.0
+</span></span><span style="display:flex;"><span>go: downloading github.com/spf13/pflag v1.0.5
+</span></span><span style="display:flex;"><span>go: downloading github.com/alessio/shellescape v1.4.2
+</span></span><span style="display:flex;"><span>go: downloading github.com/spf13/cobra v1.8.0
+</span></span><span style="display:flex;"><span>go: downloading github.com/pkg/errors v0.9.1
+</span></span><span style="display:flex;"><span>go: downloading github.com/mattn/go-isatty v0.0.20
+</span></span><span style="display:flex;"><span>go: downloading golang.org/x/sys v0.6.0
+</span></span><span style="display:flex;"><span>go: downloading github.com/pelletier/go-toml v1.9.5
+</span></span><span style="display:flex;"><span>go: downloading github.com/BurntSushi/toml v1.4.0
+</span></span><span style="display:flex;"><span>go: downloading github.com/evanphx/json-patch/v5 v5.6.0
+</span></span><span style="display:flex;"><span>go: downloading gopkg.in/yaml.v3 v3.0.1
+</span></span><span style="display:flex;"><span>go: downloading sigs.k8s.io/yaml v1.4.0
+</span></span><span style="display:flex;"><span>go: downloading github.com/google/safetext v0.0.0-20220905092116-b49f7bc46da2
+</span></span><span style="display:flex;"><span>❯ vi .profile <span style="color:#75715e"># 동적 지정하는 것으로 자세한건 이전 포스팅 참조  </span>
+</span></span><span style="display:flex;"><span>❯ source .profile
+</span></span><span style="display:flex;"><span>❯ kind version
+</span></span><span style="display:flex;"><span>kind v0.24.0 go1.22.2 linux/amd64
+</span></span></code></pre></div><h3 id="b-kind-클러스터-yaml-구성-및-구축">b. kind 클러스터 yaml 구성 및 구축</h3>
+<blockquote>
+<p>당연한 이야기지만, 이미지 크기가 900MB를 넘어서기 때문에 처음 띄울 시 시간이 다소 소요됩니다.</p>
+</blockquote>
+<h4 id="network">(Network)</h4>
+<ul>
+<li>Node<del>화된 컨테이너</del> network cidr: 172.18.0.0/16</li>
+<li>Pod network cidr: 10.10.0.0/16
+<ul>
+<li><code>10.10.1.0/24, 10.10.2.0/24, 10.10.3.0/24, 10.10.4.0/24</code><br>
+쪼개지는 이유 들었던 거 같은데 또 잊었다&hellip;</li>
+</ul>
+</li>
+<li>Service network cidr: 10.200.1.0/24</li>
+</ul>
+<h4 id="entry">(Entry)</h4>
+<ul>
+<li><a href="https://kind.sigs.k8s.io/docs/user/configuration/#feature-gates">featureGates</a>[<a href="https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/">k8s</a>]
+<ul>
+<li>Alpha,Beta 상태의 기능 관리</li>
+<li>InPlacePodVerticalScaling: false/alpha/1.27/-<del>, 제곧내</del></li>
+<li>MultiCIDRServiceAllocator: false/beta/1.31/-, IPAddress 객체를 사용하여 Service ClusterIP에 대한 IP 주소 할당 추적</li>
+</ul>
+</li>
+<li><a href="https://kind.sigs.k8s.io/docs/user/configuration/#extra-port-mappings">extraPortMappings</a>: 호스트와 컨테이너 간 포트 매핑
+<ul>
+<li>30000~30004</li>
+</ul>
+</li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/topology-aware-routing/">Topology Aware Routing</a>
+<ul>
+<li><code>nodes.labels.topology.kubernetes.io/zone</code>: 이것은 대체 무엇인가?에 대한 해답</li>
+<li>&lt;= v1.27: <code>Topology Aware Hints</code> 로 불림.</li>
+<li>EndpointSlice controller: 할당 가능한 CPU 코어 수를 기반으로 엔드포인트 및 kube-proxy 할당</li>
+<li>국문: <a href="https://kubernetes.io/ko/docs/concepts/services-networking/topology-aware-hints/">토폴로지 인지 힌트</a>, <a href="https://kubernetes.io/ko/docs/concepts/services-networking/service-topology/">토폴로지 키</a>
+<ul>
+<li>deprecated: 이후 없어질 수 있음</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>[kubeadmConfigPatches]
+<ul>
+<li>제곧내&hellip; 의 느낌이 솔솔 나지만</li>
+<li><code>extraArgs.runtime-config: api/all=true</code> 의미는?</li>
+<li><del>채찍피티</del>코파일럿에게 물어봤더니, 대충 링크를 던져줬습니다.</li>
+<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/">Runtime Configuration</a></li>
+<li>포맷: <code>--runtime-config &lt;comma-separated 'key=value' pairs&gt;</code></li>
+<li>실제: <code>-runtime-config=api/all=true</code></li>
+<li>해당 파라미터: api/all=true|false controls all API versions</li>
+<li>다행히 링크는 잘 주셨군요.</li>
+<li><del>이런 숭악한 걸 다들 어떻게 쓰시는 거지 @.@</del></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT&gt; kind-metallb-test.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Cluster
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: kind.x-k8s.io/v1alpha4
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">featureGates:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;InPlacePodVerticalScaling&#34;: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;MultiCIDRServiceAllocator&#34;: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">nodes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: control-plane
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mynode: control-plane
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    topology.kubernetes.io/zone: ap-northeast-2a
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  extraPortMappings:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 30000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 30001
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30001
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 30002
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30002
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 30003
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30003
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 30004
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30004
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  kubeadmConfigPatches:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - |
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    kind: ClusterConfiguration
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    apiServer:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      extraArgs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        runtime-config: api/all=true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    controllerManager:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      extraArgs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        bind-address: 0.0.0.0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    etcd:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      local:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        extraArgs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          listen-metrics-urls: http://0.0.0.0:2381
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    scheduler:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      extraArgs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        bind-address: 0.0.0.0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - |
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    kind: KubeProxyConfiguration
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metricsBindAddress: 0.0.0.0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: worker
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mynode: worker1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    topology.kubernetes.io/zone: ap-northeast-2a
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: worker
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mynode: worker2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    topology.kubernetes.io/zone: ap-northeast-2b
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: worker
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mynode: worker3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    topology.kubernetes.io/zone: ap-northeast-2c
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">networking:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  podSubnet: 10.10.0.0/16
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceSubnet: 10.200.1.0/24
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span></code></pre></div><p>이후 실행합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kind create cluster --config kind-metallb-test.yaml --name myk8s --image kindest/node:v1.31.0
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install additional tools </span>
+</span></span><span style="display:flex;"><span>docker exec -it myk8s-control-plane sh -c <span style="color:#e6db74">&#39;apt update &amp;&amp; apt install tree psmisc lsof wget bsdmainutils bridge-utils net-tools dnsutils ipset ipvsadm nfacct tcpdump ngrep iputils-ping arping git vim arp-scan -y&#39;</span>
+</span></span></code></pre></div><h2 id="4-테스트-pod-구성">4. 테스트 Pod 구성</h2>
+<h3 id="a-환경-기본정보-확인">a. 환경 기본정보 확인</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># cidr check</span>
+</span></span><span style="display:flex;"><span>❯ kubectl cluster-info dump | grep -m <span style="color:#ae81ff">2</span> -E <span style="color:#e6db74">&#34;cluster-cidr|service-cluster-ip-range&#34;</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;--service-cluster-ip-range=10.200.1.0/24&#34;</span>,
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;--cluster-cidr=10.10.0.0/16&#34;</span>,
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># confirm kube-proxy mode: iptables proxy mode</span>
+</span></span><span style="display:flex;"><span>❯ kubectl describe  configmap -n kube-system kube-proxy | grep mode
+</span></span><span style="display:flex;"><span>mode: iptables
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># iptables info  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 출력값은 너무 길어서 생략 / MetalLB 설치 후 대조용  </span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i in filter nat mangle raw ; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt; IPTables Type : </span>$i<span style="color:#e6db74"> &lt;&lt;&#34;</span>; docker exec -it myk8s-control-plane  iptables -t $i -S ; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i in filter nat mangle raw ; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt; IPTables Type : </span>$i<span style="color:#e6db74"> &lt;&lt;&#34;</span>; docker exec -it myk8s-worker  iptables -t $i -S ; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i in filter nat mangle raw ; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt; IPTables Type : </span>$i<span style="color:#e6db74"> &lt;&lt;&#34;</span>; docker exec -it myk8s-worker2 iptables -t $i -S ; echo; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i in filter nat mangle raw ; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt; IPTables Type : </span>$i<span style="color:#e6db74"> &lt;&lt;&#34;</span>; docker exec -it myk8s-worker3 iptables -t $i -S ; echo; <span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><h3 id="b-테스트-pod-생성">b. 테스트 Pod 생성</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl apply -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: webpod1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: webpod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  nodeName: myk8s-worker
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: traefik/whoami
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: webpod2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: webpod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  nodeName: myk8s-worker2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: traefik/whoami
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pod/webpod1 created</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pod/webpod2 created</span>
+</span></span></code></pre></div><h2 id="5-metallb-설치">5. MetalLB 설치</h2>
+<p>BGP모드는 시도도 해봤었지만, 여러가지 이유로 L2 Layer 방식으로 설치합니다.</p>
+<blockquote>
+<p>참고: kube-proxy 의 ipvs 모드 사용 시 &lsquo;strictARP: true&rsquo; 설정 필요</p>
+</blockquote>
+<ul>
+<li>그냥 Documentation 보세요<br>
+<a href="https://metallb.universe.tf/installation/">https://metallb.universe.tf/installation/</a></li>
+<li>스터디 시간에는 Manifest로 진행했지만,<br>
+오늘도 청개구리는 <a href="https://metallb.universe.tf/installation/#using-the-metallb-operator">Operator</a>로 설치할 겁니다 (?_?)</li>
+<li>OperatorHub: <a href="https://operatorhub.io/operator/metallb-operator">metallb-operator</a></li>
+<li>(참고용) FRR모드
+<ul>
+<li>BGP세션을 BFD세션으로 백업</li>
+<li>BGP Only 대비 빠르게 오류를 검증한다고 합니다.</li>
+<li>BFD?: <a href="https://www.juniper.net/documentation/kr/ko/software/junos/high-availability/topics/topic-map/bfd.html">Docs/Juniper Networks</a></li>
+<li>Bidirectional Forwarding Detection</li>
+</ul>
+</li>
+</ul>
+<h3 id="a-github-github를-보자">a. GitHub, GitHub를 보자&hellip;</h3>
+<p>음, 오퍼레이터허브에 들어왔더니 뭐가 뭔지 모르겠습니다. GitHub로 재빠르게 도?망칩니다.</p>
+<ul>
+<li><a href="https://github.com/metallb/metallb-operator">metallb/metallb-operator</a></li>
+</ul>
+<p>다행히 README는 멀쩡하네요. 아니 생각보다 괜찮은데요?</p>
+<ul>
+<li>kind는 원래 개발 환경용인지라, e2e테스트까지 제공하네요.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/metallb/metallb-operator.git
+</span></span><span style="display:flex;"><span>cd metallb-operator
+</span></span><span style="display:flex;"><span>make deploy
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt; EOF | kubectl apply -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: metallb.io/v1beta1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: MetalLB
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: metallb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: metallb-system
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>make test
+</span></span><span style="display:flex;"><span>make test-e2e
+</span></span></code></pre></div><p>그저 Quick Start 닥돌해보겠습니다.</p>
+<blockquote>
+<p>마지막 커밋 메시지가 아래와 같은데&hellip;<br>
+뭐 괜찮겠죠
+Openshift: instruct the cluster network operator to deploy frrk8s</p>
+</blockquote>
+<h3 id="b-quick-start">b. Quick Start</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 아래 커맨드 응용</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubectl apply -f bin/metallb-operator.yaml </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CRD 다운로드  </span>
+</span></span><span style="display:flex;"><span>curl -LO https://raw.githubusercontent.com/metallb/metallb-operator/refs/heads/main/bin/metallb-operator.yaml 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CRD 적용</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f metallb-operator.yaml
+</span></span></code></pre></div><p>아래와 유사하게 출력됩니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ curl -LO https://raw.githubusercontent.com/metallb/metallb-operator/refs/heads/main/bin/metallb-operator.yaml 
+</span></span><span style="display:flex;"><span>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span><span style="display:flex;"><span>                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">100</span>  233k  <span style="color:#ae81ff">100</span>  233k    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>   799k      <span style="color:#ae81ff">0</span> --:--:-- --:--:-- --:--:--  797k
+</span></span><span style="display:flex;"><span>❯ kubectl apply -f metallb-operator.yaml
+</span></span><span style="display:flex;"><span>namespace/metallb-system created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/bfdprofiles.metallb.io created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/bgpadvertisements.metallb.io created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/bgppeers.metallb.io created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/communities.metallb.io created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/frrconfigurations.frrk8s.metallb.io created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/frrnodestates.frrk8s.metallb.io created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/ipaddresspools.metallb.io created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/l2advertisements.metallb.io created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/metallbs.metallb.io created
+</span></span><span style="display:flex;"><span>customresourcedefinition.apiextensions.k8s.io/servicel2statuses.metallb.io created
+</span></span><span style="display:flex;"><span>serviceaccount/manager-account created
+</span></span><span style="display:flex;"><span>role.rbac.authorization.k8s.io/metallb-manager-role created
+</span></span><span style="display:flex;"><span>clusterrole.rbac.authorization.k8s.io/metallb-manager-role created
+</span></span><span style="display:flex;"><span>rolebinding.rbac.authorization.k8s.io/metallb-manager-rolebinding created
+</span></span><span style="display:flex;"><span>clusterrolebinding.rbac.authorization.k8s.io/metallb-manager-rolebinding created
+</span></span><span style="display:flex;"><span>secret/metallb-operator-webhook-server-cert created
+</span></span><span style="display:flex;"><span>secret/metallb-webhook-cert created
+</span></span><span style="display:flex;"><span>service/metallb-operator-webhook-service created
+</span></span><span style="display:flex;"><span>service/metallb-webhook-service created
+</span></span><span style="display:flex;"><span>deployment.apps/metallb-operator-controller-manager created
+</span></span><span style="display:flex;"><span>deployment.apps/metallb-operator-webhook-server created
+</span></span><span style="display:flex;"><span>validatingwebhookconfiguration.admissionregistration.k8s.io/metallb-operator-webhook-configuration created
+</span></span><span style="display:flex;"><span>validatingwebhookconfiguration.admissionregistration.k8s.io/metallb-webhook-configuration created
+</span></span><span style="display:flex;"><span>serviceaccount/controller created
+</span></span><span style="display:flex;"><span>serviceaccount/frr-k8s-daemon created
+</span></span><span style="display:flex;"><span>serviceaccount/speaker created
+</span></span><span style="display:flex;"><span>role.rbac.authorization.k8s.io/controller created
+</span></span><span style="display:flex;"><span>role.rbac.authorization.k8s.io/frr-k8s-daemon-role created
+</span></span><span style="display:flex;"><span>role.rbac.authorization.k8s.io/frr-k8s-daemon-scc created
+</span></span><span style="display:flex;"><span>role.rbac.authorization.k8s.io/pod-lister created
+</span></span><span style="display:flex;"><span>role.rbac.authorization.k8s.io/speaker created
+</span></span><span style="display:flex;"><span>clusterrole.rbac.authorization.k8s.io/metallb-system:kube-rbac-proxy created
+</span></span><span style="display:flex;"><span>clusterrole.rbac.authorization.k8s.io/frr-k8s-daemon-role created
+</span></span><span style="display:flex;"><span>clusterrole.rbac.authorization.k8s.io/frr-k8s-metrics-reader created
+</span></span><span style="display:flex;"><span>clusterrole.rbac.authorization.k8s.io/frr-k8s-proxy-role created
+</span></span><span style="display:flex;"><span>clusterrole.rbac.authorization.k8s.io/metallb-system:controller created
+</span></span><span style="display:flex;"><span>clusterrole.rbac.authorization.k8s.io/metallb-system:speaker created
+</span></span><span style="display:flex;"><span>rolebinding.rbac.authorization.k8s.io/controller created
+</span></span><span style="display:flex;"><span>rolebinding.rbac.authorization.k8s.io/frr-k8s-daemon-rolebinding created
+</span></span><span style="display:flex;"><span>rolebinding.rbac.authorization.k8s.io/frr-k8s-daemon-scc-binding created
+</span></span><span style="display:flex;"><span>rolebinding.rbac.authorization.k8s.io/pod-lister created
+</span></span><span style="display:flex;"><span>rolebinding.rbac.authorization.k8s.io/speaker created
+</span></span><span style="display:flex;"><span>clusterrolebinding.rbac.authorization.k8s.io/kube-rbac-proxy created
+</span></span><span style="display:flex;"><span>clusterrolebinding.rbac.authorization.k8s.io/frr-k8s-daemon-rolebinding created
+</span></span><span style="display:flex;"><span>clusterrolebinding.rbac.authorization.k8s.io/frr-k8s-proxy-rolebinding created
+</span></span><span style="display:flex;"><span>clusterrolebinding.rbac.authorization.k8s.io/metallb-system:controller created
+</span></span><span style="display:flex;"><span>clusterrolebinding.rbac.authorization.k8s.io/metallb-system:speaker created
+</span></span></code></pre></div><h3 id="c-오퍼레이터-관련-리소스-확인">c. 오퍼레이터 관련 리소스 확인</h3>
+<p>오퍼레이터가 제대로 적용되었는지 체크해봅시다.</p>
+<blockquote>
+<p>CRD에 FRR관련 정의도 들어간거 같은데 일단 눈을 감고 해봅시다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get crd | grep metallb
+</span></span><span style="display:flex;"><span>bfdprofiles.metallb.io                2024-10-02T14:18:46Z
+</span></span><span style="display:flex;"><span>bgpadvertisements.metallb.io          2024-10-02T14:18:46Z
+</span></span><span style="display:flex;"><span>bgppeers.metallb.io                   2024-10-02T14:18:46Z
+</span></span><span style="display:flex;"><span>communities.metallb.io                2024-10-02T14:18:46Z
+</span></span><span style="display:flex;"><span>frrconfigurations.frrk8s.metallb.io   2024-10-02T14:18:46Z
+</span></span><span style="display:flex;"><span>frrnodestates.frrk8s.metallb.io       2024-10-02T14:18:46Z
+</span></span><span style="display:flex;"><span>ipaddresspools.metallb.io             2024-10-02T14:18:46Z
+</span></span><span style="display:flex;"><span>l2advertisements.metallb.io           2024-10-02T14:18:46Z
+</span></span><span style="display:flex;"><span>metallbs.metallb.io                   2024-10-02T14:18:46Z
+</span></span><span style="display:flex;"><span>servicel2statuses.metallb.io          2024-10-02T14:18:46Z
+</span></span></code></pre></div><blockquote>
+<p>아래부터는 이해없이 무따기로 한거라, 양해 부탁드립니다.</p>
+</blockquote>
+<p>NS, POD(deployment,replicaset), SVC, CM, SECRET, EP 다 셋팅되었네요.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get all,configmap,secret,ep -n metallb-system
+</span></span><span style="display:flex;"><span>NAME                                                       READY   STATUS    RESTARTS   AGE
+</span></span><span style="display:flex;"><span>pod/metallb-operator-controller-manager-5dbc8fd577-bgczj   1/1     Running   <span style="color:#ae81ff">0</span>          13m
+</span></span><span style="display:flex;"><span>pod/metallb-operator-webhook-server-77d47cb764-9lcs8       1/1     Running   <span style="color:#ae81ff">0</span>          13m
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                                       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT<span style="color:#f92672">(</span>S<span style="color:#f92672">)</span>   AGE
+</span></span><span style="display:flex;"><span>service/metallb-operator-webhook-service   ClusterIP   10.200.1.159   &lt;none&gt;        443/TCP   13m
+</span></span><span style="display:flex;"><span>service/metallb-webhook-service            ClusterIP   10.200.1.149   &lt;none&gt;        443/TCP   13m
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                                                  READY   UP-TO-DATE   AVAILABLE   AGE
+</span></span><span style="display:flex;"><span>deployment.apps/metallb-operator-controller-manager   1/1     <span style="color:#ae81ff">1</span>            <span style="color:#ae81ff">1</span>           13m
+</span></span><span style="display:flex;"><span>deployment.apps/metallb-operator-webhook-server       1/1     <span style="color:#ae81ff">1</span>            <span style="color:#ae81ff">1</span>           13m
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                                                             DESIRED   CURRENT   READY   AGE
+</span></span><span style="display:flex;"><span>replicaset.apps/metallb-operator-controller-manager-5dbc8fd577   <span style="color:#ae81ff">1</span>         <span style="color:#ae81ff">1</span>         <span style="color:#ae81ff">1</span>       13m
+</span></span><span style="display:flex;"><span>replicaset.apps/metallb-operator-webhook-server-77d47cb764       <span style="color:#ae81ff">1</span>         <span style="color:#ae81ff">1</span>         <span style="color:#ae81ff">1</span>       13m
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                         DATA   AGE
+</span></span><span style="display:flex;"><span>configmap/kube-root-ca.crt   <span style="color:#ae81ff">1</span>      13m
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                                          TYPE     DATA   AGE
+</span></span><span style="display:flex;"><span>secret/metallb-operator-webhook-server-cert   Opaque   <span style="color:#ae81ff">4</span>      13m
+</span></span><span style="display:flex;"><span>secret/metallb-webhook-cert                   Opaque   <span style="color:#ae81ff">4</span>      13m
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                                         ENDPOINTS        AGE
+</span></span><span style="display:flex;"><span>endpoints/metallb-operator-webhook-service   10.10.2.2:9443   13m
+</span></span><span style="display:flex;"><span>endpoints/metallb-webhook-service            10.10.3.3:9443   13m
+</span></span></code></pre></div><p>파드 내에 kube-rbac-proxy 컨테이너는 프로메테우스 익스포터 역할 제공한다고 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get pods -n metallb-system -l app<span style="color:#f92672">=</span>metallb -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{range .items[*]}{.metadata.name}{&#39;:\n&#39;}{range .spec.containers[*]}{&#39;  &#39;}{.name}{&#39; -&gt; &#39;}{.image}{&#39;\n&#39;}{end}{end}&#34;</span>
+</span></span><span style="display:flex;"><span>metallb-operator-webhook-server-77d47cb764-9lcs8:
+</span></span><span style="display:flex;"><span>  webhook-server -&gt; quay.io/metallb/controller:main
+</span></span></code></pre></div><p>metallb 컨트롤러는 디플로이먼트로 배포된다고 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get ds,deploy -n metallb-system
+</span></span><span style="display:flex;"><span>NAME                                                  READY   UP-TO-DATE   AVAILABLE   AGE
+</span></span><span style="display:flex;"><span>deployment.apps/metallb-operator-controller-manager   1/1     <span style="color:#ae81ff">1</span>            <span style="color:#ae81ff">1</span>           20m
+</span></span><span style="display:flex;"><span>deployment.apps/metallb-operator-webhook-server       1/1     <span style="color:#ae81ff">1</span>            <span style="color:#ae81ff">1</span>           20m
+</span></span></code></pre></div><p>여기서 살짝 싸하네요. 그냥 다 밀어버리고 처음부터 다시 할까;<br>
+speaker pods(<code>speaker-lorem</code>)가 보이지 않는데, 이거 BGP 같기도&hellip;</p>
+<blockquote>
+<p>control-plane 이랑 worker2는 어디로?</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get pod -n metallb-system -o wide
+</span></span><span style="display:flex;"><span>NAME                                                   READY   STATUS    RESTARTS   AGE   IP          NODE            NOMINATED NODE   READINESS GATES
+</span></span><span style="display:flex;"><span>metallb-operator-controller-manager-5dbc8fd577-bgczj   1/1     Running   <span style="color:#ae81ff">0</span>          21m   10.10.2.2   myk8s-worker3   &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>metallb-operator-webhook-server-77d47cb764-9lcs8       1/1     Running   <span style="color:#ae81ff">0</span>          21m   10.10.3.3   myk8s-worker    &lt;none&gt;           &lt;none&gt;
+</span></span></code></pre></div><p>가다듬고 더 잘 찾아보니, <a href="https://docs.redhat.com/ko/documentation/openshift_container_platform/4.11/html/networking/metallb-operator-install#nw-metallb-operator-initial-config_metallb-operator-install">OpenShift Docs</a>에서 정상이라고 하네요.</p>
+<p><del>아직 끝난게 아니다!</del> 셋업이 덜 되서 바로 에러뜹니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl logs -n metallb-system -l app<span style="color:#f92672">=</span>metallb -f
+</span></span><span style="display:flex;"><span>Defaulted container <span style="color:#e6db74">&#34;speaker&#34;</span> out of: speaker, frr, reloader, frr-metrics, cp-frr-files <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-reloader <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-metrics <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Defaulted container <span style="color:#e6db74">&#34;speaker&#34;</span> out of: speaker, frr, reloader, frr-metrics, cp-frr-files <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-reloader <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-metrics <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Defaulted container <span style="color:#e6db74">&#34;speaker&#34;</span> out of: speaker, frr, reloader, frr-metrics, cp-frr-files <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-reloader <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-metrics <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Defaulted container <span style="color:#e6db74">&#34;speaker&#34;</span> out of: speaker, frr, reloader, frr-metrics, cp-frr-files <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-reloader <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-metrics <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>error: you are attempting to follow <span style="color:#ae81ff">6</span> log streams, but maximum allowed concurrency is 5, use --max-log-requests to increase the limit
+</span></span></code></pre></div><p>자신감을 갖고 이어봅시다.</p>
+<h3 id="d-metallb-deployment-생성">d. MetalLB deployment 생성</h3>
+<blockquote>
+<p>GitHub 만으로는 도저히 이게 뭘하는 건가 했는데, 스피커를 만들어주는 것 같네요.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ cat <span style="color:#e6db74">&lt;&lt; EOF | kubectl apply -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: metallb.io/v1beta1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: MetalLB
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: metallb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: metallb-system
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>metallb.metallb.io/metallb created
+</span></span></code></pre></div><p>제발&hellip;! (네트워크 상태가 좋지 않아서 핫스팟&hellip;)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get pod -n metallb-system -o wide
+</span></span><span style="display:flex;"><span>NAME                                                   READY   STATUS             RESTARTS   AGE    IP           NODE                  NOMINATED NODE   READINESS GATES
+</span></span><span style="display:flex;"><span>controller-7dd49fb757-rsf9n                            0/1     ImagePullBackOff   <span style="color:#ae81ff">0</span>          118s   10.10.2.3    myk8s-worker3         &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>metallb-operator-controller-manager-5dbc8fd577-bgczj   1/1     Running            <span style="color:#ae81ff">0</span>          36m    10.10.2.2    myk8s-worker3         &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>metallb-operator-webhook-server-77d47cb764-9lcs8       1/1     Running            <span style="color:#ae81ff">0</span>          36m    10.10.3.3    myk8s-worker          &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>speaker-ndwfb                                          0/4     Init:0/3           <span style="color:#ae81ff">0</span>          118s   172.18.0.3   myk8s-worker3         &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>speaker-vnjlb                                          0/4     Init:0/3           <span style="color:#ae81ff">0</span>          118s   172.18.0.5   myk8s-worker          &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>speaker-w9946                                          0/4     Init:0/3           <span style="color:#ae81ff">0</span>          118s   172.18.0.2   myk8s-worker2         &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>speaker-zgf46                                          0/4     Init:0/3           <span style="color:#ae81ff">0</span>          118s   172.18.0.4   myk8s-control-plane   &lt;none&gt;           &lt;none&gt;
+</span></span></code></pre></div><p>휴</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>Events:
+</span></span><span style="display:flex;"><span>  Type     Reason     Age                  From               Message
+</span></span><span style="display:flex;"><span>  ----     ------     ----                 ----               -------
+</span></span><span style="display:flex;"><span>  Normal   Scheduled  2m30s                default-scheduler  Successfully assigned metallb-system/controller-7dd49fb757-rsf9n to myk8s-worker3
+</span></span><span style="display:flex;"><span>  Warning  Failed     57s                  kubelet            Failed to pull image <span style="color:#e6db74">&#34;quay.io/metallb/controller:main&#34;</span>: failed to pull and unpack image <span style="color:#e6db74">&#34;quay.io/metallb/controller:main&#34;</span>: failed to copy: read tcp 172.18.0.3:33674-&gt;104.18.37.147:443: read: connection reset by peer
+</span></span><span style="display:flex;"><span>  Warning  Failed     57s                  kubelet            Error: ErrImagePull
+</span></span><span style="display:flex;"><span>  Normal   BackOff    56s                  kubelet            Back-off pulling image <span style="color:#e6db74">&#34;quay.io/metallb/controller:main&#34;</span>
+</span></span><span style="display:flex;"><span>  Warning  Failed     56s                  kubelet            Error: ImagePullBackOff
+</span></span><span style="display:flex;"><span>  Normal   Pulling    45s <span style="color:#f92672">(</span>x2 over 2m29s<span style="color:#f92672">)</span>  kubelet            Pulling image <span style="color:#e6db74">&#34;quay.io/metallb/controller:main&#34;</span> 
+</span></span><span style="display:flex;"><span>  Normal   Pulled     31s                  kubelet            Successfully pulled image <span style="color:#e6db74">&#34;quay.io/metallb/controller:main&#34;</span> in 13.488s <span style="color:#f92672">(</span>13.488s including waiting<span style="color:#f92672">)</span>. Image size: <span style="color:#ae81ff">29150053</span> bytes.
+</span></span><span style="display:flex;"><span>  Normal   Created    31s                  kubelet            Created container controller
+</span></span><span style="display:flex;"><span>  Normal   Started    31s                  kubelet            Started container controller
+</span></span></code></pre></div><p>잘 돌아갑니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get pod -n metallb-system -o wide
+</span></span><span style="display:flex;"><span>NAME                                                   READY   STATUS    RESTARTS   AGE    IP           NODE                  NOMINATED NODE   READINESS GATES
+</span></span><span style="display:flex;"><span>controller-7dd49fb757-rsf9n                            1/1     Running   <span style="color:#ae81ff">0</span>          4m3s   10.10.2.3    myk8s-worker3         &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>metallb-operator-controller-manager-5dbc8fd577-bgczj   1/1     Running   <span style="color:#ae81ff">0</span>          38m    10.10.2.2    myk8s-worker3         &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>metallb-operator-webhook-server-77d47cb764-9lcs8       1/1     Running   <span style="color:#ae81ff">0</span>          38m    10.10.3.3    myk8s-worker          &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>speaker-ndwfb                                          4/4     Running   <span style="color:#ae81ff">0</span>          4m3s   172.18.0.3   myk8s-worker3         &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>speaker-vnjlb                                          3/4     Running   <span style="color:#ae81ff">0</span>          4m3s   172.18.0.5   myk8s-worker          &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>speaker-w9946                                          3/4     Running   <span style="color:#ae81ff">0</span>          4m3s   172.18.0.2   myk8s-worker2         &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>speaker-zgf46                                          4/4     Running   <span style="color:#ae81ff">0</span>          4m3s   172.18.0.4   myk8s-control-plane   &lt;none&gt;           &lt;none&gt;
+</span></span></code></pre></div><p><del>아직 끝난게 아니다!</del> 셋업이 덜 되서 바로 에러뜹니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl logs -n metallb-system -l app<span style="color:#f92672">=</span>metallb -f
+</span></span><span style="display:flex;"><span>Defaulted container <span style="color:#e6db74">&#34;speaker&#34;</span> out of: speaker, frr, reloader, frr-metrics, cp-frr-files <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-reloader <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-metrics <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Defaulted container <span style="color:#e6db74">&#34;speaker&#34;</span> out of: speaker, frr, reloader, frr-metrics, cp-frr-files <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-reloader <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-metrics <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Defaulted container <span style="color:#e6db74">&#34;speaker&#34;</span> out of: speaker, frr, reloader, frr-metrics, cp-frr-files <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-reloader <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-metrics <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Defaulted container <span style="color:#e6db74">&#34;speaker&#34;</span> out of: speaker, frr, reloader, frr-metrics, cp-frr-files <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-reloader <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-metrics <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>error: you are attempting to follow <span style="color:#ae81ff">6</span> log streams, but maximum allowed concurrency is 5, use --max-log-requests to increase the limit
+</span></span></code></pre></div><h3 id="e-metallb-configmap-생성">e. MetalLB ConfigMap 생성</h3>
+<p>그렇습니다. 이제 kind에서 사용하는 브리지(docker bridge)를 확인하고 이 대역을 잡아줘야합니다.</p>
+<p>근데 방전되서 있다 더 작성해볼께요.</p>
+<h2 id="9-뱀다리">9. 뱀다리</h2>
+<h3 id="a-docker-brigde-network-default-cidr">a. docker brigde network default cidr?</h3>
+<p>&hellip; 가만 생각해보니, 172.18.0.0 대역을 yaml에 지정도 안했는데 그눔의 Docker 문서에선 눈에 잘 안 띄네?를 2주 전부터 생각했었는데</p>
+<p><a href="https://serverfault.com/questions/916941/configuring-docker-to-not-use-the-172-17-0-0-range">serverfault/916941</a>을 보고 기억났습니다.</p>
+<p>도커 네트워크 브릿지 설정 값을 보면 되는 것 &hellip; 분명 이거 덕분에 삽질을 좀 했던거로 아는데 안 적어두니 또륵.<br>
+도커가 이렇게나 위?험합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ docker -v
+</span></span><span style="display:flex;"><span>Docker version 24.0.7, build 24.0.7-0ubuntu4.1
+</span></span><span style="display:flex;"><span>❯ sudo docker network ls
+</span></span><span style="display:flex;"><span>NETWORK ID     NAME      DRIVER    SCOPE
+</span></span><span style="display:flex;"><span>a90c02431872   bridge    bridge    local
+</span></span><span style="display:flex;"><span>d2f5be011872   host      host      local
+</span></span><span style="display:flex;"><span>439c3626705a   none      null      local
+</span></span><span style="display:flex;"><span>❯ sudo docker network inspect bridge
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Name&#34;</span>: <span style="color:#e6db74">&#34;bridge&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Id&#34;</span>: <span style="color:#e6db74">&#34;a90c02431872f243e6c3918d0ca4f8875fb070ae0ad1a504891b74485634de14&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Created&#34;</span>: <span style="color:#e6db74">&#34;2024-10-02T08:22:04.247414071+09:00&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Scope&#34;</span>: <span style="color:#e6db74">&#34;local&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Driver&#34;</span>: <span style="color:#e6db74">&#34;bridge&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;EnableIPv6&#34;</span>: false,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;IPAM&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;Driver&#34;</span>: <span style="color:#e6db74">&#34;default&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;Options&#34;</span>: null,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;Config&#34;</span>: <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;Subnet&#34;</span>: <span style="color:#e6db74">&#34;172.17.0.0/16&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;Gateway&#34;</span>: <span style="color:#e6db74">&#34;172.17.0.1&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Internal&#34;</span>: false,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Attachable&#34;</span>: false,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Ingress&#34;</span>: false,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;ConfigFrom&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;Network&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;ConfigOnly&#34;</span>: false,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Containers&#34;</span>: <span style="color:#f92672">{}</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Options&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;com.docker.network.bridge.default_bridge&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;com.docker.network.bridge.enable_icc&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;com.docker.network.bridge.enable_ip_masquerade&#34;</span>: <span style="color:#e6db74">&#34;true&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;com.docker.network.bridge.host_binding_ipv4&#34;</span>: <span style="color:#e6db74">&#34;0.0.0.0&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;com.docker.network.bridge.name&#34;</span>: <span style="color:#e6db74">&#34;docker0&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;com.docker.network.driver.mtu&#34;</span>: <span style="color:#e6db74">&#34;1500&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Labels&#34;</span>: <span style="color:#f92672">{}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">]</span>
+</span></span></code></pre></div><h3 id="b-docker-권한-안-풀어두면-kind-에러-터지는-그거">b. docker 권한 안 풀어두면, kind 에러 터지는 그거</h3>
+<p>예, 그 뻔한 그거에요. 이 기기에서는 세팅을 안해뒀네요.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ERROR: failed to create cluster: failed to list nodes: command <span style="color:#e6db74">&#34;docker ps -a --filter label=io.x-k8s.kind.cluster=myk8s --format &#39;{{.Names}}&#39;&#34;</span> failed with error: exit status <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>Command Output: permission denied <span style="color:#66d9ef">while</span> trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get <span style="color:#e6db74">&#34;http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json?all=1&amp;filters=%7B%22label%22%3A%7B%22io.x-k8s.kind.cluster%3Dmyk8s%22%3Atrue%7D%7D&#34;</span>: dial unix /var/run/docker.sock: connect: permission denied
+</span></span></code></pre></div><p>이렇게 하면 됩니다. 참 쉽죠?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># https://snapcraft.io/docker refer and apply  </span>
+</span></span><span style="display:flex;"><span>sudo addgroup --system docker
+</span></span><span style="display:flex;"><span>sudo adduser $USER docker
+</span></span><span style="display:flex;"><span>newgrp docker
+</span></span><span style="display:flex;"><span>sudo service docker restart
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ sudo addgroup --system docker
+</span></span><span style="display:flex;"><span>info: The group <span style="color:#e6db74">`</span>docker<span style="color:#e6db74">&#39; already exists as a system group. Exiting.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">❯ sudo adduser $USER docker
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">info: Adding user `kkumtree&#39;</span> to group <span style="color:#e6db74">`</span>docker<span style="color:#960050;background-color:#1e0010">&#39;</span> ...
+</span></span><span style="display:flex;"><span>❯ newgrp docker
+</span></span><span style="display:flex;"><span>❯ sudo service docker restart
+</span></span></code></pre></div>
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/kans-4w-iptables-grafana/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">iptables monitoring with Grafana (Not Completed)</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

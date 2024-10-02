@@ -6,7 +6,21 @@
     <description>Recent content in kubernetes on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sun, 29 Sep 2024 13:35:13 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 02 Oct 2024 12:54:17 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kubernetes Service(2): LoadBalancer(MetalLB) - 곧 작성완료</title>
+      <link>https://blog.minseong.xyz/post/kans-5w-metallb-loadbalancer/</link>
+      <pubDate>Wed, 02 Oct 2024 12:54:17 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/kans-5w-metallb-loadbalancer/</guid>
+      <description>지난 포스팅, Kubernetes Service(1): ClusterIP/NodePort에 이어 LoadBalancer Type을 가볍게 살펴보고, MetalLB를 가볍게 붙여보겠습니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. LoadBalancer Type Service(1)에서 언급된 부분은 거두절미하고, 추가로 적을 수 있는 부분이 있다면, 아래 한 줄이 있습니다.
+You can define a LoadBalancer Service by disabling the load balancer NodePort allocation.
+글자 그대로 LB의 NodePort 할당을 비활성하여, LoadBalancer Service를 정의할 수 있습니다.
+Disabling load balancer NodePort allocation 문서를 살펴보니,</description>
+    </item>
+    
     <item>
       <title>iptables monitoring with Grafana (Not Completed)</title>
       <link>https://blog.minseong.xyz/post/kans-4w-iptables-grafana/</link>

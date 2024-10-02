@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/kans/</loc>
+    <lastmod>2024-10-02T12:54:17+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/kind/</loc>
+    <lastmod>2024-10-02T12:54:17+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2024-10-02T12:54:17+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/kubernetes/</loc>
+    <lastmod>2024-10-02T12:54:17+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/kans-5w-metallb-loadbalancer/</loc>
+    <lastmod>2024-10-02T12:54:17+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/loadbalancer/</loc>
+    <lastmod>2024-10-02T12:54:17+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/metallb/</loc>
+    <lastmod>2024-10-02T12:54:17+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2024-10-02T12:54:17+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2024-10-02T12:54:17+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/grafana/</loc>
     <lastmod>2024-09-29T13:35:13+09:00</lastmod>
   </url><url>
@@ -9,24 +36,6 @@
     <lastmod>2024-09-29T13:35:13+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/kans-4w-iptables-grafana/</loc>
-    <lastmod>2024-09-29T13:35:13+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/kans/</loc>
-    <lastmod>2024-09-29T13:35:13+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/kind/</loc>
-    <lastmod>2024-09-29T13:35:13+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2024-09-29T13:35:13+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/kubernetes/</loc>
-    <lastmod>2024-09-29T13:35:13+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2024-09-29T13:35:13+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2024-09-29T13:35:13+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/clusterip/</loc>
