@@ -447,6 +447,16 @@ metallb-operator-webhook-server-77d47cb764-9lcs8       1/1     Running   0      
 
 가다듬고 더 잘 찾아보니, [OpenShift Docs](https://docs.redhat.com/ko/documentation/openshift_container_platform/4.11/html/networking/metallb-operator-install#nw-metallb-operator-initial-config_metallb-operator-install)에서 정상이라고 하네요.  
 
+~~아직 끝난게 아니다!~~ 셋업이 덜 되서 바로 에러뜹니다.  
+
+```bash
+❯ kubectl logs -n metallb-system -l app=metallb -f
+Defaulted container "speaker" out of: speaker, frr, reloader, frr-metrics, cp-frr-files (init), cp-reloader (init), cp-metrics (init)
+Defaulted container "speaker" out of: speaker, frr, reloader, frr-metrics, cp-frr-files (init), cp-reloader (init), cp-metrics (init)
+Defaulted container "speaker" out of: speaker, frr, reloader, frr-metrics, cp-frr-files (init), cp-reloader (init), cp-metrics (init)
+Defaulted container "speaker" out of: speaker, frr, reloader, frr-metrics, cp-frr-files (init), cp-reloader (init), cp-metrics (init)
+error: you are attempting to follow 6 log streams, but maximum allowed concurrency is 5, use --max-log-requests to increase the limit
+```
 자신감을 갖고 이어봅시다. 
 
 ### d. MetalLB deployment 생성  
@@ -489,7 +499,7 @@ Events:
   Warning  Failed     57s                  kubelet            Error: ErrImagePull
   Normal   BackOff    56s                  kubelet            Back-off pulling image "quay.io/metallb/controller:main"
   Warning  Failed     56s                  kubelet            Error: ImagePullBackOff
-  Normal   Pulling    45s (x2 over 2m29s)  kubelet            Pulling image "quay.io/metallb/controller:main"
+  Normal   Pulling    45s (x2 over 2m29s)  kubelet            Pulling image "quay.io/metallb/controller:main" 
   Normal   Pulled     31s                  kubelet            Successfully pulled image "quay.io/metallb/controller:main" in 13.488s (13.488s including waiting). Image size: 29150053 bytes.
   Normal   Created    31s                  kubelet            Created container controller
   Normal   Started    31s                  kubelet            Started container controller
