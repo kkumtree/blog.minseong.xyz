@@ -1,6 +1,6 @@
 ---
 date: 2024-10-02T12:54:17+09:00
-title: "Kubernetes Service(2): LoadBalancer(MetalLB) - 곧 작성완료"
+title: "Kubernetes Service(2): LoadBalancer(MetalLB)"
 tags:
  - kans
  - kind
@@ -250,7 +250,7 @@ EOF
 
 ## 5. MetalLB 설치  
 
-BGP모드는 시도도 해봤었지만, 여러가지 이유로 L2 Layer 방식으로 설치합니다.  
+BGP모드는 예전에 시도도 해봤었지만, 여러가지 이유로 L2 Layer 방식으로 설치합니다.  
 
 > 참고: kube-proxy 의 ipvs 모드 사용 시 'strictARP: true' 설정 필요  
 
@@ -299,9 +299,9 @@ make test-e2e
 ```bash
 # 아래 커맨드 응용
 # kubectl apply -f bin/metallb-operator.yaml 
-# CRD 다운로드  
+# CRD (및 오퍼레이터 배포 커맨드) 다운로드  
 curl -LO https://raw.githubusercontent.com/metallb/metallb-operator/refs/heads/main/bin/metallb-operator.yaml 
-# CRD 적용
+# CRD 적용. 확인해보니 오퍼레이터도 함께 배포하는 모양  
 kubectl apply -f metallb-operator.yaml
 ```
 아래와 유사하게 출력됩니다.  
@@ -519,6 +519,7 @@ speaker-zgf46                                          4/4     Running   0      
 ```
 
 ~~아직 끝난게 아니다!~~ 셋업이 덜 되서 바로 에러뜹니다.  
+라기 보다는 concurrency 에러였군요. `--max-log-requests 6`로 늘리고 확인해보니 잘 나옵니다.  
 
 ```bash
 ❯ kubectl logs -n metallb-system -l app=metallb -f
@@ -533,20 +534,360 @@ error: you are attempting to follow 6 log streams, but maximum allowed concurren
 
 그렇습니다. 이제 kind에서 사용하는 브리지(docker bridge)를 확인하고 이 대역을 잡아줘야합니다.  
 
-근데 방전되서 있다 더 작성해볼께요.  
+- kind를 사용하면 기본값으로 `kind`라는 이름의 브리지를 사용합니다. 
 
-## 9. 뱀다리  
+```bash
+docker network ls
+# (sol0) kind alias 대신 Id(SHA256)으로 확인해도 됩니다. 다 같은 조회방법일 뿐.  
+docker network inspect kind
+# (sol1) docker inspect kind
+# (sol2) docker inspect <Id>
+# (sol3) docker network inspect <Id>
+```
 
-### a. docker brigde network default cidr?  
+- IP CIDR 조회
 
-... 가만 생각해보니, 172.18.0.0 대역을 yaml에 지정도 안했는데 그눔의 Docker 문서에선 눈에 잘 안 띄네?를 2주 전부터 생각했었는데 
+```bash
+docker ps -q | xargs docker inspect --format '{{.Name}} {{.NetworkSettings.Networks.kind.IPAddress}}'
+# 위의 것 치기 귀찮으면?  
+# 이건 각 Node에 할당 된 IP
+# docker inspect e8 | grep IPv4Address
+# 이건 브리지에 정의된 IP 대역
+# docker inspect e8 | grep Subnet
+```
+
+그렇군요
+
+```bash
+❯ docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+9a356b80a908   bridge    bridge    local
+d2f5be011872   host      host      local
+e8e5256f1aa7   kind      bridge    local
+439c3626705a   none      null      local
+❯ docker ps -q | xargs docker inspect --format '{{.Name}} {{.NetworkSettings.Networks.kind.IPAddress}}'
+/myk8s-worker 172.18.0.2
+/myk8s-control-plane 172.18.0.5
+/myk8s-worker2 172.18.0.4
+/myk8s-worker3 172.18.0.3
+❯ docker inspect e8 | grep Subnet
+                    "Subnet": "172.18.0.0/16",
+                    "Subnet": "fc00:f853:ccd:e793::/64",
+❯ docker inspect e8 | grep IPv4Address
+                "IPv4Address": "172.18.0.3/16",
+                "IPv4Address": "172.18.0.4/16",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv4Address": "172.18.0.5/16",
+```
+앞서 CRD를 조회해보면,  
+`ipaddresspools.metallb.io`와  
+`l2advertisements.metallb.io`가 있었습니다.  
+왜 조회했었는지 알겠...죠?  
+
+작성 방법 확인 방법
+
+```bash
+kubectl explain ipaddresspools.metallb.io
+kubectl explain l2advertisements.metallb.io
+```
+
+- MetalLB ConfigMap: (1) IPAddressPool  
+
+해당 서브넷에서 `설마 이 대역까지는 쓰지 않겠지?`란  
+경건한 마음으로 MetalLB용 서비스 IP 대역을 설정합니다.  
+
+```bash
+cat << EOF > metallb-ipaddresspool.yaml
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: kkumtree-ippool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 172.18.255.200-172.18.255.254
+EOF
+kubectl apply -f metallb-ipaddresspool.yaml
+```
+
+- MetalLB ConfigMap: (2) L2Advertisement  
+
+위에서 설정한 IPPool을 Layer2 Advertisement에 등록합니다.  
+
+```bash
+cat << EOF > metallb-l2advertisement.yaml
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: kkumtree-l2adv
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - kkumtree-ippool
+EOF
+kubectl apply -f metallb-l2advertisement.yaml
+```  
+
+그렇군요
+
+```bash  
+❯ kubectl get ipaddresspools,l2advertisements -n metallb-system
+NAME                                       AUTO ASSIGN   AVOID BUGGY IPS   ADDRESSES
+ipaddresspool.metallb.io/kkumtree-ippool   true          false             ["172.18.255.200-172.18.255.254"]
+
+NAME                                        IPADDRESSPOOLS        IPADDRESSPOOL SELECTORS   INTERFACES
+l2advertisement.metallb.io/kkumtree-l2adv   ["kkumtree-ippool"] 
+```  
+
+## 6. 테스트 서비스 생성  
+
+MetalLB에 대한 준비가 끝났으니, LB를 사용하는 서비스와 파드를 생성해봅시다.  
+
+```bash
+cat <<EOF> metallb-test-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc1
+spec:
+  ports:
+    - name: svc1-webport
+      port: 80
+      targetPort: 80
+  selector:
+    app: webpod
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc2
+spec:
+  ports:
+    - name: svc2-webport
+      port: 80
+      targetPort: 80
+  selector:
+    app: webpod
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc3
+spec:
+  ports:
+    - name: svc3-webport
+      port: 80
+      targetPort: 80
+  selector:
+    app: webpod
+  type: LoadBalancer
+EOF
+kubectl apply -f metallb-test-svc.yaml
+```
+
+- 생성 이후 새로운 터미널에서 ARP 스캔을 켜둡니다.
+
+```bash
+❯ docker exec -it myk8s-control-plane arp-scan --interfac=eth0 --localnet
+Interface: eth0, type: EN10MB, MAC: 02:42:ac:12:00:05, IPv4: 172.18.0.5
+Starting arp-scan 1.10.0 with 65536 hosts (https://github.com/royhills/arp-scan)
+172.18.0.1	02:42:01:57:ec:6f	(Unknown: locally administered)
+172.18.0.2	02:42:ac:12:00:02	(Unknown: locally administered)
+172.18.0.3	02:42:ac:12:00:03	(Unknown: locally administered)
+172.18.0.4	02:42:ac:12:00:04	(Unknown: locally administered)
+```
+
+- LoadBalancer 타입의 서비스가 NodePort와 ClusterIP를 포함하는 것을 확인할 수 있습니다.  
+  - (default) `allocateLoadBalancerNodePorts : true`
+
+```bash  
+❯ kubectl get svc,ep
+NAME                 TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)        AGE
+service/kubernetes   ClusterIP      10.200.1.1     <none>           443/TCP        2d20h
+service/svc1         LoadBalancer   10.200.1.66    172.18.255.200   80:31865/TCP   2m42s
+service/svc2         LoadBalancer   10.200.1.133   172.18.255.201   80:30199/TCP   2m42s
+service/svc3         LoadBalancer   10.200.1.175   172.18.255.202   80:30462/TCP   2m42s
+
+NAME                   ENDPOINTS                   AGE
+endpoints/kubernetes   172.18.0.5:6443             2d20h
+endpoints/svc1         10.10.1.2:80,10.10.3.2:80   2m42s
+endpoints/svc2         10.10.1.2:80,10.10.3.2:80   2m42s
+endpoints/svc3         10.10.1.2:80,10.10.3.2:80   2m42s
+```  
+
+- 그 사이에 ARP 스캔 중인 터미널에서는 이렇게 바뀌어있네요
+
+```bash  
+❯ docker exec -it myk8s-control-plane arp-scan --interfac=eth0 --localnet
+Interface: eth0, type: EN10MB, MAC: 02:42:ac:12:00:05, IPv4: 172.18.0.5
+Starting arp-scan 1.10.0 with 65536 hosts (https://github.com/royhills/arp-scan)
+172.18.0.1	02:42:01:57:ec:6f	(Unknown: locally administered)
+172.18.0.2	02:42:ac:12:00:02	(Unknown: locally administered)
+172.18.0.3	02:42:ac:12:00:03	(Unknown: locally administered)
+172.18.0.4	02:42:ac:12:00:04	(Unknown: locally administered)
+172.18.0.1	02:42:01:57:ec:6f	(Unknown: locally administered) (DUP: 2)
+172.18.0.2	02:42:ac:12:00:02	(Unknown: locally administered) (DUP: 2)
+172.18.0.3	02:42:ac:12:00:03	(Unknown: locally administered) (DUP: 2)
+172.18.0.4	02:42:ac:12:00:04	(Unknown: locally administered) (DUP: 2)
+172.18.0.1	02:42:01:57:ec:6f	(Unknown: locally administered) (DUP: 3)
+172.18.255.200	02:42:ac:12:00:02	(Unknown: locally administered)
+172.18.255.201	02:42:ac:12:00:02	(Unknown: locally administered)
+172.18.255.202	02:42:ac:12:00:03	(Unknown: locally administered)
+172.18.0.1	02:42:01:57:ec:6f	(Unknown: locally administered) (DUP: 4)
+172.18.0.1	02:42:01:57:ec:6f	(Unknown: locally administered) (DUP: 5)
+
+14 packets received by filter, 0 packets dropped by kernel
+Ending arp-scan 1.10.0: 65536 hosts scanned in 263.158 seconds (249.04 hosts/sec). 7 responded
+```  
+
+- 그럼 어떤 노드에서 Leader 역할을 하는지 살펴보겠습니다.  
+  - 
+
+```bash
+❯ kubectl describe svc | grep Events: -A5
+Events:                   <none>
+
+
+Name:                     svc1
+Namespace:                default
+Labels:                   <none>
+--
+Events:
+  Type    Reason        Age   From                Message
+  ----    ------        ----  ----                -------
+  Normal  IPAllocated   11m   metallb-controller  Assigned IP ["172.18.255.200"]
+  Normal  nodeAssigned  11m   metallb-speaker     announcing from node "myk8s-worker" with protocol "layer2"
+
+--
+Events:
+  Type    Reason        Age                From                Message
+  ----    ------        ----               ----                -------
+  Normal  IPAllocated   11m                metallb-controller  Assigned IP ["172.18.255.201"]
+  Normal  nodeAssigned  11m (x2 over 11m)  metallb-speaker     announcing from node "myk8s-worker" with protocol "layer2"
+
+--
+Events:
+  Type    Reason        Age   From                Message
+  ----    ------        ----  ----                -------
+  Normal  IPAllocated   11m   metallb-controller  Assigned IP ["172.18.255.202"]
+  Normal  nodeAssigned  11m   metallb-speaker     announcing from node "myk8s-worker3" with protocol "layer2"
+```
+
+물론, 이쯤되면 배포된 아무 서비스만 잡고 찍어보면 되겠죠?  
+
+```bash
+❯ kubectl describe svc/svc2 | grep metallb-speaker
+  Normal  nodeAssigned  13m (x2 over 13m)  metallb-speaker     announcing from node "myk8s-worker" with protocol "layer2"
+```
+
+- 이제 각 노드에 파드를 붙여보겠습니다.  
+  - 생각해보니 서비스 붙이기 전에 파드를 먼저 붙였어야했는데;  
+
+```bash
+cat <<EOT> 3pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webpod1
+  labels:
+    app: webpod
+spec:
+  nodeName: myk8s-worker
+  containers:
+  - name: container
+    image: traefik/whoami
+  terminationGracePeriodSeconds: 0
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webpod2
+  labels:
+    app: webpod
+spec:
+  nodeName: myk8s-worker2
+  containers:
+  - name: container
+    image: traefik/whoami
+  terminationGracePeriodSeconds: 0
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webpod3
+  labels:
+    app: webpod
+spec:
+  nodeName: myk8s-worker3
+  containers:
+  - name: container
+    image: traefik/whoami
+  terminationGracePeriodSeconds: 0
+EOT
+kubectl apply -f 3pod.yaml
+```
+- 어쨌거나 저쨌거나, kind 노드에서 접속해서 테스트 하지 않아도  
+  metalLB로 생성된 EXTERNAL-IP로도 잘 접속되는 것을 확인했습니다. 
+
+```bash
+❯ kubectl get svc
+NAME         TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)        AGE
+kubernetes   ClusterIP      10.200.1.1     <none>           443/TCP        3d3h
+svc1         LoadBalancer   10.200.1.66    172.18.255.200   80:31865/TCP   6h52m
+svc2         LoadBalancer   10.200.1.133   172.18.255.201   80:30199/TCP   6h52m
+svc3         LoadBalancer   10.200.1.175   172.18.255.202   80:30462/TCP   6h52m
+❯ curl -s 172.18.255.200
+Hostname: webpod2
+IP: 127.0.0.1
+IP: ::1
+IP: 10.10.1.2
+IP: fe80::b862:52ff:fed1:7cbb
+RemoteAddr: 172.18.0.2:3343
+GET / HTTP/1.1
+Host: 172.18.255.200
+User-Agent: curl/8.5.0
+Accept: */*
+
+❯ curl -s 172.18.255.201
+Hostname: webpod1
+IP: 127.0.0.1
+IP: ::1
+IP: 10.10.3.2
+IP: fe80::d0fa:f1ff:fe03:49bf
+RemoteAddr: 10.10.3.1:20630
+GET / HTTP/1.1
+Host: 172.18.255.201
+User-Agent: curl/8.5.0
+Accept: */*
+
+❯ curl -s 172.18.255.202
+Hostname: webpod2
+IP: 127.0.0.1
+IP: ::1
+IP: 10.10.1.2
+IP: fe80::b862:52ff:fed1:7cbb
+RemoteAddr: 172.18.0.3:6166
+GET / HTTP/1.1
+Host: 172.18.255.202
+User-Agent: curl/8.5.0
+Accept: */*
+```
+
+
+## 7. 뱀다리  
+
+### a. docker bridge network default cidr?  
+
+... 가만 생각해보니, 172.18.0.0 대역을 yaml에 지정도 안했는데 그눔의 Docker 문서에선 눈에 잘 안 띄네?를 2주 전부터 생각했었는데요  
 
 [serverfault/916941](https://serverfault.com/questions/916941/configuring-docker-to-not-use-the-172-17-0-0-range)을 보고 기억났습니다.  
 
 도커 네트워크 브릿지 설정 값을 보면 되는 것 ... 분명 이거 덕분에 삽질을 좀 했던거로 아는데 안 적어두니 또륵.  
 도커가 이렇게나 위?험합니다.  
 
-```bash
+```bash  
 ❯ docker -v
 Docker version 24.0.7, build 24.0.7-0ubuntu4.1
 ❯ sudo docker network ls
@@ -592,20 +933,20 @@ d2f5be011872   host      host      local
         "Labels": {}
     }
 ]
-```
+```  
 
 ### b. docker 권한 안 풀어두면, kind 에러 터지는 그거  
 
 예, 그 뻔한 그거에요. 이 기기에서는 세팅을 안해뒀네요.  
 
-```bash
+```bash  
 ERROR: failed to create cluster: failed to list nodes: command "docker ps -a --filter label=io.x-k8s.kind.cluster=myk8s --format '{{.Names}}'" failed with error: exit status 1
 Command Output: permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json?all=1&filters=%7B%22label%22%3A%7B%22io.x-k8s.kind.cluster%3Dmyk8s%22%3Atrue%7D%7D": dial unix /var/run/docker.sock: connect: permission denied
-```
+```  
 
 이렇게 하면 됩니다. 참 쉽죠?  
 
-```bash
+```bash  
 # https://snapcraft.io/docker refer and apply  
 sudo addgroup --system docker
 sudo adduser $USER docker
@@ -613,7 +954,7 @@ newgrp docker
 sudo service docker restart
 ```  
 
-```bash
+```bash  
 ❯ sudo addgroup --system docker
 info: The group `docker' already exists as a system group. Exiting.
 ❯ sudo adduser $USER docker
@@ -621,3 +962,57 @@ info: Adding user `kkumtree' to group `docker' ...
 ❯ newgrp docker
 ❯ sudo service docker restart
 ```  
+
+### c. MetalLB 설치 후 Controller 및 Speaker 확인  
+
+다른 방법도 있습니다.  
+
+```bash  
+❯ kubectl get deployment -n metallb-system controller
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+controller   1/1     1            1           2d17h
+```  
+
+```bash  
+❯ kubectl get daemonset -n metallb-system speaker
+NAME      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+speaker   4         4         4       4            4           kubernetes.io/os=linux   2d17h
+```  
+
+### d. Log cuncurrency 에러  
+
+```bash
+❯ kubectl logs -n metallb-system -l app=metallb -f
+error: you are attempting to follow 6 log streams, but maximum allowed concurrency is 5, use --max-log-requests to increase the limit
+```
+
+그러면 하라는 대로 해야죠
+
+```bash
+❯ kubectl logs -n metallb-system -l app=metallb -f --max-log-requests 6
+# (중략) 로그는 잘 나옵니다.
+failed to create fsnotify watcher: too many open files
+```
+
+??? 그것 참 까칠한 친구네요. ... 아 fd 문제인거 같은데요?  
+
+```bash
+# 1024인데 부족하다고?  
+# 아 다른거도 켜고 하고 있었구나
+❯ ulimit -n
+1024
+```
+`/etc/security/limits.conf` 를 수정해서 아래처럼 값 넣고 활성화 할 수는 있는데, 제 노트북을 건드리려니 좀 께름칙하군요.  
+얌전히 기본값 쓰겠습니다(?).  
+
+```bash
+#<domain> <type> <item> <value>
+* soft nofile 10000
+* hard nofile 30000
+```
+
+## Reference
+
+다 끝나갈 쯤에 발견한 건데, RedHat OpenShift Docs에 세상 친절하게 쓰여있었습니다...  
+
+- [OpenShift Container Platform ❯ 4.11 ❯ 네트워킹 ❯ 29장. MetalLB로 로드 밸런싱](https://docs.redhat.com/ko/documentation/openshift_container_platform/4.11/html/networking/load-balancing-with-metallb#nw-metallb-bgp-limitations_about-metallb-and-metallb-operator)
