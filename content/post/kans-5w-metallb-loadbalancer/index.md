@@ -743,7 +743,6 @@ Ending arp-scan 1.10.0: 65536 hosts scanned in 263.158 seconds (249.04 hosts/sec
 ```  
 
 - 그럼 어떤 노드에서 Leader 역할을 하는지 살펴보겠습니다.  
-  - 
 
 ```bash
 ❯ kubectl describe svc | grep Events: -A5
