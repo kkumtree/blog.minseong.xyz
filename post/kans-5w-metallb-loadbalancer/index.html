@@ -6,10 +6,10 @@
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>Kubernetes Service(2): LoadBalancer(MetalLB) - 곧 작성완료 | kkumtree</title>
+    <title>Kubernetes Service(2): LoadBalancer(MetalLB) | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="Kubernetes Service(2): LoadBalancer(MetalLB) - 곧 작성완료" />
+    <meta property="og:title" content="Kubernetes Service(2): LoadBalancer(MetalLB)" />
 
     
     <meta property="og:image" content='https://blog.minseong.xyz/post/kans-5w-metallb-loadbalancer/cover.png' />
@@ -82,7 +82,7 @@
         
         <div class="col-6">
           <div class="p-card--overlay">
-            <h2>Kubernetes Service(2): LoadBalancer(MetalLB) - 곧 작성완료</h2>
+            <h2>Kubernetes Service(2): LoadBalancer(MetalLB)</h2>
             <ul class="p-card__content p-inline-list--middot">
               
               <li class="p-inline-list__item">
@@ -350,7 +350,7 @@ v1.24부터 Stable 상태로 보입니다.</p>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># pod/webpod1 created</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># pod/webpod2 created</span>
 </span></span></code></pre></div><h2 id="5-metallb-설치">5. MetalLB 설치</h2>
-<p>BGP모드는 시도도 해봤었지만, 여러가지 이유로 L2 Layer 방식으로 설치합니다.</p>
+<p>BGP모드는 예전에 시도도 해봤었지만, 여러가지 이유로 L2 Layer 방식으로 설치합니다.</p>
 <blockquote>
 <p>참고: kube-proxy 의 ipvs 모드 사용 시 &lsquo;strictARP: true&rsquo; 설정 필요</p>
 </blockquote>
@@ -399,9 +399,9 @@ Openshift: instruct the cluster network operator to deploy frrk8s</p>
 <h3 id="b-quick-start">b. Quick Start</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 아래 커맨드 응용</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># kubectl apply -f bin/metallb-operator.yaml </span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># CRD 다운로드  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CRD (및 오퍼레이터 배포 커맨드) 다운로드  </span>
 </span></span><span style="display:flex;"><span>curl -LO https://raw.githubusercontent.com/metallb/metallb-operator/refs/heads/main/bin/metallb-operator.yaml 
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># CRD 적용</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CRD 적용. 확인해보니 오퍼레이터도 함께 배포하는 모양  </span>
 </span></span><span style="display:flex;"><span>kubectl apply -f metallb-operator.yaml
 </span></span></code></pre></div><p>아래와 유사하게 출력됩니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ curl -LO https://raw.githubusercontent.com/metallb/metallb-operator/refs/heads/main/bin/metallb-operator.yaml 
@@ -576,7 +576,8 @@ speaker pods(<code>speaker-lorem</code>)가 보이지 않는데, 이거 BGP 같�
 </span></span><span style="display:flex;"><span>speaker-vnjlb                                          3/4     Running   <span style="color:#ae81ff">0</span>          4m3s   172.18.0.5   myk8s-worker          &lt;none&gt;           &lt;none&gt;
 </span></span><span style="display:flex;"><span>speaker-w9946                                          3/4     Running   <span style="color:#ae81ff">0</span>          4m3s   172.18.0.2   myk8s-worker2         &lt;none&gt;           &lt;none&gt;
 </span></span><span style="display:flex;"><span>speaker-zgf46                                          4/4     Running   <span style="color:#ae81ff">0</span>          4m3s   172.18.0.4   myk8s-control-plane   &lt;none&gt;           &lt;none&gt;
-</span></span></code></pre></div><p><del>아직 끝난게 아니다!</del> 셋업이 덜 되서 바로 에러뜹니다.</p>
+</span></span></code></pre></div><p><del>아직 끝난게 아니다!</del> 셋업이 덜 되서 바로 에러뜹니다.<br>
+라기 보다는 concurrency 에러였군요. <code>--max-log-requests 6</code>로 늘리고 확인해보니 잘 나옵니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl logs -n metallb-system -l app<span style="color:#f92672">=</span>metallb -f
 </span></span><span style="display:flex;"><span>Defaulted container <span style="color:#e6db74">&#34;speaker&#34;</span> out of: speaker, frr, reloader, frr-metrics, cp-frr-files <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-reloader <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-metrics <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>Defaulted container <span style="color:#e6db74">&#34;speaker&#34;</span> out of: speaker, frr, reloader, frr-metrics, cp-frr-files <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-reloader <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>, cp-metrics <span style="color:#f92672">(</span>init<span style="color:#f92672">)</span>
@@ -585,10 +586,315 @@ speaker pods(<code>speaker-lorem</code>)가 보이지 않는데, 이거 BGP 같�
 </span></span><span style="display:flex;"><span>error: you are attempting to follow <span style="color:#ae81ff">6</span> log streams, but maximum allowed concurrency is 5, use --max-log-requests to increase the limit
 </span></span></code></pre></div><h3 id="e-metallb-configmap-생성">e. MetalLB ConfigMap 생성</h3>
 <p>그렇습니다. 이제 kind에서 사용하는 브리지(docker bridge)를 확인하고 이 대역을 잡아줘야합니다.</p>
-<p>근데 방전되서 있다 더 작성해볼께요.</p>
-<h2 id="9-뱀다리">9. 뱀다리</h2>
-<h3 id="a-docker-brigde-network-default-cidr">a. docker brigde network default cidr?</h3>
-<p>&hellip; 가만 생각해보니, 172.18.0.0 대역을 yaml에 지정도 안했는데 그눔의 Docker 문서에선 눈에 잘 안 띄네?를 2주 전부터 생각했었는데</p>
+<ul>
+<li>kind를 사용하면 기본값으로 <code>kind</code>라는 이름의 브리지를 사용합니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker network ls
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (sol0) kind alias 대신 Id(SHA256)으로 확인해도 됩니다. 다 같은 조회방법일 뿐.  </span>
+</span></span><span style="display:flex;"><span>docker network inspect kind
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (sol1) docker inspect kind</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (sol2) docker inspect &lt;Id&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (sol3) docker network inspect &lt;Id&gt;</span>
+</span></span></code></pre></div><ul>
+<li>IP CIDR 조회</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker ps -q | xargs docker inspect --format <span style="color:#e6db74">&#39;{{.Name}} {{.NetworkSettings.Networks.kind.IPAddress}}&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 위의 것 치기 귀찮으면?  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이건 각 Node에 할당 된 IP</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># docker inspect e8 | grep IPv4Address</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이건 브리지에 정의된 IP 대역</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># docker inspect e8 | grep Subnet</span>
+</span></span></code></pre></div><p>그렇군요</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ docker network ls
+</span></span><span style="display:flex;"><span>NETWORK ID     NAME      DRIVER    SCOPE
+</span></span><span style="display:flex;"><span>9a356b80a908   bridge    bridge    local
+</span></span><span style="display:flex;"><span>d2f5be011872   host      host      local
+</span></span><span style="display:flex;"><span>e8e5256f1aa7   kind      bridge    local
+</span></span><span style="display:flex;"><span>439c3626705a   none      null      local
+</span></span><span style="display:flex;"><span>❯ docker ps -q | xargs docker inspect --format <span style="color:#e6db74">&#39;{{.Name}} {{.NetworkSettings.Networks.kind.IPAddress}}&#39;</span>
+</span></span><span style="display:flex;"><span>/myk8s-worker 172.18.0.2
+</span></span><span style="display:flex;"><span>/myk8s-control-plane 172.18.0.5
+</span></span><span style="display:flex;"><span>/myk8s-worker2 172.18.0.4
+</span></span><span style="display:flex;"><span>/myk8s-worker3 172.18.0.3
+</span></span><span style="display:flex;"><span>❯ docker inspect e8 | grep Subnet
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;Subnet&#34;</span>: <span style="color:#e6db74">&#34;172.18.0.0/16&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;Subnet&#34;</span>: <span style="color:#e6db74">&#34;fc00:f853:ccd:e793::/64&#34;</span>,
+</span></span><span style="display:flex;"><span>❯ docker inspect e8 | grep IPv4Address
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;IPv4Address&#34;</span>: <span style="color:#e6db74">&#34;172.18.0.3/16&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;IPv4Address&#34;</span>: <span style="color:#e6db74">&#34;172.18.0.4/16&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;IPv4Address&#34;</span>: <span style="color:#e6db74">&#34;172.18.0.2/16&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;IPv4Address&#34;</span>: <span style="color:#e6db74">&#34;172.18.0.5/16&#34;</span>,
+</span></span></code></pre></div><p>앞서 CRD를 조회해보면,<br>
+<code>ipaddresspools.metallb.io</code>와<br>
+<code>l2advertisements.metallb.io</code>가 있었습니다.<br>
+왜 조회했었는지 알겠&hellip;죠?</p>
+<p>작성 방법 확인 방법</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl explain ipaddresspools.metallb.io
+</span></span><span style="display:flex;"><span>kubectl explain l2advertisements.metallb.io
+</span></span></code></pre></div><ul>
+<li>MetalLB ConfigMap: (1) IPAddressPool</li>
+</ul>
+<p>해당 서브넷에서 <code>설마 이 대역까지는 쓰지 않겠지?</code>란<br>
+경건한 마음으로 MetalLB용 서비스 IP 대역을 설정합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt; EOF &gt; metallb-ipaddresspool.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: metallb.io/v1beta1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: IPAddressPool
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: kkumtree-ippool
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: metallb-system
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  addresses:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - 172.18.255.200-172.18.255.254
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f metallb-ipaddresspool.yaml
+</span></span></code></pre></div><ul>
+<li>MetalLB ConfigMap: (2) L2Advertisement</li>
+</ul>
+<p>위에서 설정한 IPPool을 Layer2 Advertisement에 등록합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt; EOF &gt; metallb-l2advertisement.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: metallb.io/v1beta1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: L2Advertisement
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: kkumtree-l2adv
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: metallb-system
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ipAddressPools:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - kkumtree-ippool
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f metallb-l2advertisement.yaml
+</span></span></code></pre></div><p>그렇군요</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get ipaddresspools,l2advertisements -n metallb-system
+</span></span><span style="display:flex;"><span>NAME                                       AUTO ASSIGN   AVOID BUGGY IPS   ADDRESSES
+</span></span><span style="display:flex;"><span>ipaddresspool.metallb.io/kkumtree-ippool   true          false             <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;172.18.255.200-172.18.255.254&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                                        IPADDRESSPOOLS        IPADDRESSPOOL SELECTORS   INTERFACES
+</span></span><span style="display:flex;"><span>l2advertisement.metallb.io/kkumtree-l2adv   <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;kkumtree-ippool&#34;</span><span style="color:#f92672">]</span> 
+</span></span></code></pre></div><h2 id="6-테스트-서비스-생성">6. 테스트 서비스 생성</h2>
+<p>MetalLB에 대한 준비가 끝났으니, LB를 사용하는 서비스와 파드를 생성해봅시다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF&gt; metallb-test-svc.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: svc1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: svc1-webport
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: webpod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: LoadBalancer
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: svc2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: svc2-webport
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: webpod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: LoadBalancer
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: svc3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: svc3-webport
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: webpod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: LoadBalancer
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f metallb-test-svc.yaml
+</span></span></code></pre></div><ul>
+<li>생성 이후 새로운 터미널에서 ARP 스캔을 켜둡니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ docker exec -it myk8s-control-plane arp-scan --interfac<span style="color:#f92672">=</span>eth0 --localnet
+</span></span><span style="display:flex;"><span>Interface: eth0, type: EN10MB, MAC: 02:42:ac:12:00:05, IPv4: 172.18.0.5
+</span></span><span style="display:flex;"><span>Starting arp-scan 1.10.0 with <span style="color:#ae81ff">65536</span> hosts <span style="color:#f92672">(</span>https://github.com/royhills/arp-scan<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.1	02:42:01:57:ec:6f	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.2	02:42:ac:12:00:02	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.3	02:42:ac:12:00:03	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.4	02:42:ac:12:00:04	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span>
+</span></span></code></pre></div><ul>
+<li>LoadBalancer 타입의 서비스가 NodePort와 ClusterIP를 포함하는 것을 확인할 수 있습니다.
+<ul>
+<li>(default) <code>allocateLoadBalancerNodePorts : true</code></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get svc,ep
+</span></span><span style="display:flex;"><span>NAME                 TYPE           CLUSTER-IP     EXTERNAL-IP      PORT<span style="color:#f92672">(</span>S<span style="color:#f92672">)</span>        AGE
+</span></span><span style="display:flex;"><span>service/kubernetes   ClusterIP      10.200.1.1     &lt;none&gt;           443/TCP        2d20h
+</span></span><span style="display:flex;"><span>service/svc1         LoadBalancer   10.200.1.66    172.18.255.200   80:31865/TCP   2m42s
+</span></span><span style="display:flex;"><span>service/svc2         LoadBalancer   10.200.1.133   172.18.255.201   80:30199/TCP   2m42s
+</span></span><span style="display:flex;"><span>service/svc3         LoadBalancer   10.200.1.175   172.18.255.202   80:30462/TCP   2m42s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                   ENDPOINTS                   AGE
+</span></span><span style="display:flex;"><span>endpoints/kubernetes   172.18.0.5:6443             2d20h
+</span></span><span style="display:flex;"><span>endpoints/svc1         10.10.1.2:80,10.10.3.2:80   2m42s
+</span></span><span style="display:flex;"><span>endpoints/svc2         10.10.1.2:80,10.10.3.2:80   2m42s
+</span></span><span style="display:flex;"><span>endpoints/svc3         10.10.1.2:80,10.10.3.2:80   2m42s
+</span></span></code></pre></div><ul>
+<li>그 사이에 ARP 스캔 중인 터미널에서는 이렇게 바뀌어있네요</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ docker exec -it myk8s-control-plane arp-scan --interfac<span style="color:#f92672">=</span>eth0 --localnet
+</span></span><span style="display:flex;"><span>Interface: eth0, type: EN10MB, MAC: 02:42:ac:12:00:05, IPv4: 172.18.0.5
+</span></span><span style="display:flex;"><span>Starting arp-scan 1.10.0 with <span style="color:#ae81ff">65536</span> hosts <span style="color:#f92672">(</span>https://github.com/royhills/arp-scan<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.1	02:42:01:57:ec:6f	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.2	02:42:ac:12:00:02	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.3	02:42:ac:12:00:03	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.4	02:42:ac:12:00:04	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.1	02:42:01:57:ec:6f	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>DUP: 2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.2	02:42:ac:12:00:02	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>DUP: 2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.3	02:42:ac:12:00:03	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>DUP: 2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.4	02:42:ac:12:00:04	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>DUP: 2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.1	02:42:01:57:ec:6f	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>DUP: 3<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.255.200	02:42:ac:12:00:02	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.255.201	02:42:ac:12:00:02	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.255.202	02:42:ac:12:00:03	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.1	02:42:01:57:ec:6f	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>DUP: 4<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>172.18.0.1	02:42:01:57:ec:6f	<span style="color:#f92672">(</span>Unknown: locally administered<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>DUP: 5<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">14</span> packets received by filter, <span style="color:#ae81ff">0</span> packets dropped by kernel
+</span></span><span style="display:flex;"><span>Ending arp-scan 1.10.0: <span style="color:#ae81ff">65536</span> hosts scanned in 263.158 seconds <span style="color:#f92672">(</span>249.04 hosts/sec<span style="color:#f92672">)</span>. <span style="color:#ae81ff">7</span> responded
+</span></span></code></pre></div><ul>
+<li>
+<h2 id="그럼-어떤-노드에서-leader-역할을-하는지-살펴보겠습니다">그럼 어떤 노드에서 Leader 역할을 하는지 살펴보겠습니다.</h2>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl describe svc | grep Events: -A5
+</span></span><span style="display:flex;"><span>Events:                   &lt;none&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Name:                     svc1
+</span></span><span style="display:flex;"><span>Namespace:                default
+</span></span><span style="display:flex;"><span>Labels:                   &lt;none&gt;
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>Events:
+</span></span><span style="display:flex;"><span>  Type    Reason        Age   From                Message
+</span></span><span style="display:flex;"><span>  ----    ------        ----  ----                -------
+</span></span><span style="display:flex;"><span>  Normal  IPAllocated   11m   metallb-controller  Assigned IP <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;172.18.255.200&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>  Normal  nodeAssigned  11m   metallb-speaker     announcing from node <span style="color:#e6db74">&#34;myk8s-worker&#34;</span> with protocol <span style="color:#e6db74">&#34;layer2&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>Events:
+</span></span><span style="display:flex;"><span>  Type    Reason        Age                From                Message
+</span></span><span style="display:flex;"><span>  ----    ------        ----               ----                -------
+</span></span><span style="display:flex;"><span>  Normal  IPAllocated   11m                metallb-controller  Assigned IP <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;172.18.255.201&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>  Normal  nodeAssigned  11m <span style="color:#f92672">(</span>x2 over 11m<span style="color:#f92672">)</span>  metallb-speaker     announcing from node <span style="color:#e6db74">&#34;myk8s-worker&#34;</span> with protocol <span style="color:#e6db74">&#34;layer2&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>Events:
+</span></span><span style="display:flex;"><span>  Type    Reason        Age   From                Message
+</span></span><span style="display:flex;"><span>  ----    ------        ----  ----                -------
+</span></span><span style="display:flex;"><span>  Normal  IPAllocated   11m   metallb-controller  Assigned IP <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;172.18.255.202&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>  Normal  nodeAssigned  11m   metallb-speaker     announcing from node <span style="color:#e6db74">&#34;myk8s-worker3&#34;</span> with protocol <span style="color:#e6db74">&#34;layer2&#34;</span>
+</span></span></code></pre></div><p>물론, 이쯤되면 배포된 아무 서비스만 잡고 찍어보면 되겠죠?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl describe svc/svc2 | grep metallb-speaker
+</span></span><span style="display:flex;"><span>  Normal  nodeAssigned  13m <span style="color:#f92672">(</span>x2 over 13m<span style="color:#f92672">)</span>  metallb-speaker     announcing from node <span style="color:#e6db74">&#34;myk8s-worker&#34;</span> with protocol <span style="color:#e6db74">&#34;layer2&#34;</span>
+</span></span></code></pre></div><ul>
+<li>이제 각 노드에 파드를 붙여보겠습니다.
+<ul>
+<li>생각해보니 서비스 붙이기 전에 파드를 먼저 붙였어야했는데;</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT&gt; 3pod.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: webpod1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: webpod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  nodeName: myk8s-worker
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: traefik/whoami
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: webpod2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: webpod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  nodeName: myk8s-worker2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: traefik/whoami
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: webpod3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: webpod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  nodeName: myk8s-worker3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: container
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: traefik/whoami
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f 3pod.yaml
+</span></span></code></pre></div><ul>
+<li>어쨌거나 저쨌거나, kind 노드에서 접속해서 테스트 하지 않아도<br>
+metalLB로 생성된 EXTERNAL-IP로도 잘 접속되는 것을 확인했습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get svc
+</span></span><span style="display:flex;"><span>NAME         TYPE           CLUSTER-IP     EXTERNAL-IP      PORT<span style="color:#f92672">(</span>S<span style="color:#f92672">)</span>        AGE
+</span></span><span style="display:flex;"><span>kubernetes   ClusterIP      10.200.1.1     &lt;none&gt;           443/TCP        3d3h
+</span></span><span style="display:flex;"><span>svc1         LoadBalancer   10.200.1.66    172.18.255.200   80:31865/TCP   6h52m
+</span></span><span style="display:flex;"><span>svc2         LoadBalancer   10.200.1.133   172.18.255.201   80:30199/TCP   6h52m
+</span></span><span style="display:flex;"><span>svc3         LoadBalancer   10.200.1.175   172.18.255.202   80:30462/TCP   6h52m
+</span></span><span style="display:flex;"><span>❯ curl -s 172.18.255.200
+</span></span><span style="display:flex;"><span>Hostname: webpod2
+</span></span><span style="display:flex;"><span>IP: 127.0.0.1
+</span></span><span style="display:flex;"><span>IP: ::1
+</span></span><span style="display:flex;"><span>IP: 10.10.1.2
+</span></span><span style="display:flex;"><span>IP: fe80::b862:52ff:fed1:7cbb
+</span></span><span style="display:flex;"><span>RemoteAddr: 172.18.0.2:3343
+</span></span><span style="display:flex;"><span>GET / HTTP/1.1
+</span></span><span style="display:flex;"><span>Host: 172.18.255.200
+</span></span><span style="display:flex;"><span>User-Agent: curl/8.5.0
+</span></span><span style="display:flex;"><span>Accept: */*
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>❯ curl -s 172.18.255.201
+</span></span><span style="display:flex;"><span>Hostname: webpod1
+</span></span><span style="display:flex;"><span>IP: 127.0.0.1
+</span></span><span style="display:flex;"><span>IP: ::1
+</span></span><span style="display:flex;"><span>IP: 10.10.3.2
+</span></span><span style="display:flex;"><span>IP: fe80::d0fa:f1ff:fe03:49bf
+</span></span><span style="display:flex;"><span>RemoteAddr: 10.10.3.1:20630
+</span></span><span style="display:flex;"><span>GET / HTTP/1.1
+</span></span><span style="display:flex;"><span>Host: 172.18.255.201
+</span></span><span style="display:flex;"><span>User-Agent: curl/8.5.0
+</span></span><span style="display:flex;"><span>Accept: */*
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>❯ curl -s 172.18.255.202
+</span></span><span style="display:flex;"><span>Hostname: webpod2
+</span></span><span style="display:flex;"><span>IP: 127.0.0.1
+</span></span><span style="display:flex;"><span>IP: ::1
+</span></span><span style="display:flex;"><span>IP: 10.10.1.2
+</span></span><span style="display:flex;"><span>IP: fe80::b862:52ff:fed1:7cbb
+</span></span><span style="display:flex;"><span>RemoteAddr: 172.18.0.3:6166
+</span></span><span style="display:flex;"><span>GET / HTTP/1.1
+</span></span><span style="display:flex;"><span>Host: 172.18.255.202
+</span></span><span style="display:flex;"><span>User-Agent: curl/8.5.0
+</span></span><span style="display:flex;"><span>Accept: */*
+</span></span></code></pre></div><h2 id="7-뱀다리">7. 뱀다리</h2>
+<h3 id="a-docker-bridge-network-default-cidr">a. docker bridge network default cidr?</h3>
+<p>&hellip; 가만 생각해보니, 172.18.0.0 대역을 yaml에 지정도 안했는데 그눔의 Docker 문서에선 눈에 잘 안 띄네?를 2주 전부터 생각했었는데요</p>
 <p><a href="https://serverfault.com/questions/916941/configuring-docker-to-not-use-the-172-17-0-0-range">serverfault/916941</a>을 보고 기억났습니다.</p>
 <p>도커 네트워크 브릿지 설정 값을 보면 되는 것 &hellip; 분명 이거 덕분에 삽질을 좀 했던거로 아는데 안 적어두니 또륵.<br>
 도커가 이렇게나 위?험합니다.</p>
@@ -653,7 +959,37 @@ speaker pods(<code>speaker-lorem</code>)가 보이지 않는데, 이거 BGP 같�
 </span></span></span><span style="display:flex;"><span><span style="color:#e6db74">info: Adding user `kkumtree&#39;</span> to group <span style="color:#e6db74">`</span>docker<span style="color:#960050;background-color:#1e0010">&#39;</span> ...
 </span></span><span style="display:flex;"><span>❯ newgrp docker
 </span></span><span style="display:flex;"><span>❯ sudo service docker restart
-</span></span></code></pre></div>
+</span></span></code></pre></div><h3 id="c-metallb-설치-후-controller-및-speaker-확인">c. MetalLB 설치 후 Controller 및 Speaker 확인</h3>
+<p>다른 방법도 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get deployment -n metallb-system controller
+</span></span><span style="display:flex;"><span>NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+</span></span><span style="display:flex;"><span>controller   1/1     <span style="color:#ae81ff">1</span>            <span style="color:#ae81ff">1</span>           2d17h
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl get daemonset -n metallb-system speaker
+</span></span><span style="display:flex;"><span>NAME      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+</span></span><span style="display:flex;"><span>speaker   <span style="color:#ae81ff">4</span>         <span style="color:#ae81ff">4</span>         <span style="color:#ae81ff">4</span>       <span style="color:#ae81ff">4</span>            <span style="color:#ae81ff">4</span>           kubernetes.io/os<span style="color:#f92672">=</span>linux   2d17h
+</span></span></code></pre></div><h3 id="d-log-cuncurrency-에러">d. Log cuncurrency 에러</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl logs -n metallb-system -l app<span style="color:#f92672">=</span>metallb -f
+</span></span><span style="display:flex;"><span>error: you are attempting to follow <span style="color:#ae81ff">6</span> log streams, but maximum allowed concurrency is 5, use --max-log-requests to increase the limit
+</span></span></code></pre></div><p>그러면 하라는 대로 해야죠</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ kubectl logs -n metallb-system -l app<span style="color:#f92672">=</span>metallb -f --max-log-requests <span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (중략) 로그는 잘 나옵니다.</span>
+</span></span><span style="display:flex;"><span>failed to create fsnotify watcher: too many open files
+</span></span></code></pre></div><p>??? 그것 참 까칠한 친구네요. &hellip; 아 fd 문제인거 같은데요?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 1024인데 부족하다고?  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 아 다른거도 켜고 하고 있었구나</span>
+</span></span><span style="display:flex;"><span>❯ ulimit -n
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1024</span>
+</span></span></code></pre></div><p><code>/etc/security/limits.conf</code> 를 수정해서 아래처럼 값 넣고 활성화 할 수는 있는데, 제 노트북을 건드리려니 좀 께름칙하군요.<br>
+얌전히 기본값 쓰겠습니다(?).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#&lt;domain&gt; &lt;type&gt; &lt;item&gt; &lt;value&gt;</span>
+</span></span><span style="display:flex;"><span>* soft nofile <span style="color:#ae81ff">10000</span>
+</span></span><span style="display:flex;"><span>* hard nofile <span style="color:#ae81ff">30000</span>
+</span></span></code></pre></div><h2 id="reference">Reference</h2>
+<p>다 끝나갈 쯤에 발견한 건데, RedHat OpenShift Docs에 세상 친절하게 쓰여있었습니다&hellip;</p>
+<ul>
+<li><a href="https://docs.redhat.com/ko/documentation/openshift_container_platform/4.11/html/networking/load-balancing-with-metallb#nw-metallb-bgp-limitations_about-metallb-and-metallb-operator">OpenShift Container Platform ❯ 4.11 ❯ 네트워킹 ❯ 29장. MetalLB로 로드 밸런싱</a></li>
+</ul>
+
   </div>
   </section>
   <section class="p-strip">
