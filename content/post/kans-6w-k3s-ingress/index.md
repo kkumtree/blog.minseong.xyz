@@ -208,10 +208,16 @@ If TLS is enabled for the Ingress, a Secret containing the certificate and key m
   type: kubernetes.io/tls
 ```
 
-상태도 잘 잡힌거 같으니, 일단 여기서 잠시 쉬겠습니다. 
+```bash
+kubectl get all -n ingress
+kubectl describe svc -n ingress ingress-nginx-controller
+```
+
+그렇군요.
 
 
 ```bash
+# kubectl get all -n ingress
 NAME                                           READY   STATUS    RESTARTS   AGE
 pod/ingress-nginx-controller-979fc89cf-lk7th   1/1     Running   0          92s
 
@@ -228,3 +234,40 @@ replicaset.apps/ingress-nginx-controller-979fc89cf   1         1         1      
 NAME                       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
 ingress-nginx-controller   NodePort   10.10.200.235   <none>        80:30080/TCP,443:30443/TCP   92s
 ```
+
+NodePort를 사용하는 것을 알 수 있습니다.  
+~~IP Addr이 다른 이유는 EC2 끄고 다시켰더니, 오류나서 다시 올렸습니다.~~  
+
+```bash
+# kubectl describe svc -n ingress ingress-nginx-controller
+(전략)
+Type:                     NodePort
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.10.200.180
+IPs:                      10.10.200.180
+Port:                     http  80/TCP
+TargetPort:               http/TCP
+NodePort:                 http  30080/TCP
+Endpoints:                172.16.0.3:80
+Port:                     https  443/TCP
+TargetPort:               https/TCP
+NodePort:                 https  30443/TCP
+Endpoints:                172.16.0.3:443
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+```
+
+### (c) externalTrafficPolicy: Local
+
+컨트롤러에 `NodePort`를 사용하고, `externalTrafficPolicy: Local`을 사용하면,  
+클라이언트의 요청이 도착한 노드로 바로 전달되어, 노드의 로컬 IP로부터 응답을 받을 수 있다고 하는데  
+일단 켜보고 환경값 체크를 합니다.  
+
+```bash  
+kubectl patch svc ingress-nginx-controller -n ingress -p '{"spec":{"externalTrafficPolicy":"Local"}}'
+# service/ingress-nginx-controller patched
+kubectl get cm -n ingress ingress-nginx-controller
+kubectl exec deploy/ingress-nginx-controller -n ingress -it -- cat /etc/nginx/nginx.conf
+# (생략) 평소에 보던 Nginx.conf 가 이했나....?  
