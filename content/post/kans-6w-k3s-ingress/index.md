@@ -1,7 +1,6 @@
 ---
 date: 2024-10-10T22:12:57+09:00
-title: "제목"
-title: "Kubernetes Service(3): Ingress(ingress-nginx) w/k3s"
+title: "Kubernetes Service(3): Ingress(ingress-nginx) w/k3s (작성중)"
 tags:
  - kans
  - k3s
@@ -16,7 +15,7 @@ authors:
     github: kkumtree
     profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.png # 커버 이미지 URL
-draft: true # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
 지난 포스팅, [Kubernetes Service(2): LoadBalancer(MetalLB)](https://blog.minseong.xyz/post/kans-5w-metallb-loadbalancer/)에 이어 Ingress Type을 가볍게 살펴보고, Ingress-Nginx를 가볍게 붙여보겠습니다.  
@@ -429,4 +428,4 @@ kubectl apply -f nodeport-kbc.yaml
 kubectl apply -f default-echoserver.yaml
 ```
 
-```bash
+(방전이 되서 계속 업데이트 예정)
