@@ -96,6 +96,26 @@
 
             
             <div class="p-list__item">
+              <a href="/post/kans-6w-k3s-ingress/"><h2>Kubernetes Service(3): Ingress(ingress-nginx) w/k3s (작성중)</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-10T22:12:57&#43;09:00</u></p>
+              <p>지난 포스팅, Kubernetes Service(2): LoadBalancer(MetalLB)에 이어 Ingress Type을 가볍게 살펴보고, Ingress-Nginx를 가볍게 붙여보겠습니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. Ingress Type 이제, 신규 기능(New feature)은 Gateway API에 추가된다고 합니다.
+우선, Kubernetes가 헷갈리는 것 중 하나가,
+Ingress Type 과 LoadBalancer Type의 명확한 차이가 뭘까...?
+라는 점이라고 봅니다. 물론, 그거 외에도 k8s에는 알쏭달쏭한 것들이 아-주 많지만요.
+친절한 Docs에 따르면,
+클러스터 외부로 클러스터 내부 서비스에 대한 HTTP 및 HTTPS 라우팅을 노출하는 것이라고 합니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/kans-5w-metallb-loadbalancer/"><h2>Kubernetes Service(2): LoadBalancer(MetalLB)</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -164,23 +184,6 @@ Operator를 지지고 볶는 것 같아서 호기심에 정리해보았습니다
 참고로 Manifests를 사용하여 설치 시, 50개의 노드[1]를 초과하는 경우 Typha를 구성하여야 합니다.
 Calico 설치 환경 : AWS EC2(No EKS), kubeadm[2], pod-network-cidr=172.16.0.0/16, IPIP Mode
 1. Calico Routing Mode 위에 언급된 IPIP Mode를 이해하려면 Calico의 Routing Mode를 훑을 필요성이 있었습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/kans-3w-calico-overview/"><h2>Calico 및 메트릭 수집 구성</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-15T18:40:22&#43;09:00</u></p>
-              <p>CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-1. Calico 설치 스터디에서 AWS CF 및 Calico 설치 스크립트(Manifest)를 제공하였기에, 이 부분은 참고만 하시기 바랍니다.
-CNI가 설치되지 않았기에 NotReady 상태에 있다가, Calico 설치하면 CoreDNS가 설정되며, Ready 상태로 변경된다.
-Calico 설치 전
-# Control Plane and worker nodes are not ready (⎈|HomeLab:default) root@k8s-m:~# kubectl get nodes NAME STATUS ROLES AGE VERSION k8s-m NotReady control-plane 32m v1.30.5 k8s-w0 NotReady &lt;none&gt; 31m v1.</p>
             </div>
             
 <ol class="p-pagination">

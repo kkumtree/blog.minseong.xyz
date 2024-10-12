@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>k3s on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/k3s/</link>
+    <description>Recent content in k3s on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Thu, 10 Oct 2024 22:12:57 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/k3s/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kubernetes Service(3): Ingress(ingress-nginx) w/k3s (작성중)</title>
+      <link>https://blog.minseong.xyz/post/kans-6w-k3s-ingress/</link>
+      <pubDate>Thu, 10 Oct 2024 22:12:57 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/kans-6w-k3s-ingress/</guid>
+      <description>지난 포스팅, Kubernetes Service(2): LoadBalancer(MetalLB)에 이어 Ingress Type을 가볍게 살펴보고, Ingress-Nginx를 가볍게 붙여보겠습니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. Ingress Type 이제, 신규 기능(New feature)은 Gateway API에 추가된다고 합니다.
+우선, Kubernetes가 헷갈리는 것 중 하나가,
+Ingress Type 과 LoadBalancer Type의 명확한 차이가 뭘까...?
+라는 점이라고 봅니다. 물론, 그거 외에도 k8s에는 알쏭달쏭한 것들이 아-주 많지만요.
+친절한 Docs에 따르면,
+클러스터 외부로 클러스터 내부 서비스에 대한 HTTP 및 HTTPS 라우팅을 노출하는 것이라고 합니다.</description>
+    </item>
+    
+  </channel>
+</rss>

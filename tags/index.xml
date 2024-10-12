@@ -6,13 +6,49 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Wed, 02 Oct 2024 12:54:17 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 10 Oct 2024 22:12:57 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ingress</title>
+      <link>https://blog.minseong.xyz/tags/ingress/</link>
+      <pubDate>Thu, 10 Oct 2024 22:12:57 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/ingress/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>k3s</title>
+      <link>https://blog.minseong.xyz/tags/k3s/</link>
+      <pubDate>Thu, 10 Oct 2024 22:12:57 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/k3s/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>kans</title>
       <link>https://blog.minseong.xyz/tags/kans/</link>
-      <pubDate>Wed, 02 Oct 2024 12:54:17 +0900</pubDate>
+      <pubDate>Thu, 10 Oct 2024 22:12:57 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/kans/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kubernetes</title>
+      <link>https://blog.minseong.xyz/tags/kubernetes/</link>
+      <pubDate>Thu, 10 Oct 2024 22:12:57 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>nginx</title>
+      <link>https://blog.minseong.xyz/tags/nginx/</link>
+      <pubDate>Thu, 10 Oct 2024 22:12:57 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/nginx/</guid>
       <description></description>
     </item>
     
@@ -22,15 +58,6 @@
       <pubDate>Wed, 02 Oct 2024 12:54:17 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/kind/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>kubernetes</title>
-      <link>https://blog.minseong.xyz/tags/kubernetes/</link>
-      <pubDate>Wed, 02 Oct 2024 12:54:17 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/kubernetes/</guid>
       <description></description>
     </item>
     
