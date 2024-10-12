@@ -271,3 +271,162 @@ kubectl patch svc ingress-nginx-controller -n ingress -p '{"spec":{"externalTraf
 kubectl get cm -n ingress ingress-nginx-controller
 kubectl exec deploy/ingress-nginx-controller -n ingress -it -- cat /etc/nginx/nginx.conf
 # (생략) 평소에 보던 Nginx.conf 가 이했나....?  
+```
+
+버전 정보도 확인해보겠습니다. 
+
+```bash
+POD_NS=ingress
+POD_NAME=$(kubectl get pods -n $POD_NS -l app.kubernetes.io/name=ingress-nginx --field-selector=status.phase=Running -o name)
+kubectl exec $POD_NAME -n $POD_NS -- /nginx-ingress-controller --version
+```
+
+적당히 출력됩니다. 
+
+```bash
+-------------------------------------------------------------------------------
+NGINX Ingress controller
+  Release:       v1.11.2
+  Build:         46e76e5916813cfca2a9b0bfdc34b69a0000f6b9
+  Repository:    https://github.com/kubernetes/ingress-nginx
+  nginx version: nginx/1.25.5
+
+-------------------------------------------------------------------------------
+
+```
+
+## 5. 테스트 서비스 배포 (ClusterIP, NodePort)  
+
+Ingress 컨트롤러가 ClusterIP, NodePosrt 무관하게 외부에 노출시킬 수 있는지에 대해  
+테스트 실습을 해볼 겁니다. 
+
+| Service Type | Port | Test App |  
+|:--- |:--- |:--- |  
+| ClusterIP | 9001 | nginx |  
+| NodePort | 9002 | kubetnetes-bootcamp |  
+| 정의 없음(Default: ClusterIP) | 9003 | echoserver |  
+
+### (a) ClusterIP Service  
+
+```bash
+cat <<EOT> clusterip-nginx.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy1-websrv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: websrv
+  template:
+    metadata:
+      labels:
+        app: websrv
+    spec:
+      containers:
+      - name: pod-web
+        image: nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc1-web
+spec:
+  ports:
+    - name: web-port
+      port: 9001
+      targetPort: 80
+  selector:
+    app: websrv
+  type: ClusterIP
+EOT
+```
+
+### (b) NodePort Service  
+
+```bash
+cat <<EOT> nodeport-kbc.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy2-guestsrv
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: guestsrv
+  template:
+    metadata:
+      labels:
+        app: guestsrv
+    spec:
+      containers:
+      - name: pod-guest
+        image: gcr.io/google-samples/kubernetes-bootcamp:v1
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc2-guest
+spec:
+  ports:
+    - name: guest-port
+      port: 9002
+      targetPort: 8080
+  selector:
+    app: guestsrv
+  type: NodePort
+EOT
+```
+
+### (c) Default Service  
+
+```bash
+cat <<EOT> default-echoserver.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy2-guestsrv
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: guestsrv
+  template:
+    metadata:
+      labels:
+        app: guestsrv
+    spec:
+      containers:
+      - name: pod-guest
+        image: gcr.io/google-samples/kubernetes-bootcamp:v1
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc2-guest
+spec:
+  ports:
+    - name: guest-port
+      port: 9002
+      targetPort: 8080
+  selector:
+    app: guestsrv
+  type: NodePort
+EOT
+```
+
+### (d) 배포 및 확인  
+
+```bash
+kubectl apply -f clusterip-nginx.yaml
+kubectl apply -f nodeport-kbc.yaml
+kubectl apply -f default-echoserver.yaml
+```
+
+```bash
