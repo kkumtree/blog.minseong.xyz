@@ -6,10 +6,10 @@
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>Kubernetes Service(3): Ingress(ingress-nginx) w/k3s (작성중) | kkumtree</title>
+    <title>Kubernetes Service(3): Ingress(ingress-nginx) w/k3s | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="Kubernetes Service(3): Ingress(ingress-nginx) w/k3s (작성중)" />
+    <meta property="og:title" content="Kubernetes Service(3): Ingress(ingress-nginx) w/k3s" />
 
     
     <meta property="og:image" content='https://blog.minseong.xyz/post/kans-6w-k3s-ingress/cover.png' />
@@ -82,7 +82,7 @@
         
         <div class="col-6">
           <div class="p-card--overlay">
-            <h2>Kubernetes Service(3): Ingress(ingress-nginx) w/k3s (작성중)</h2>
+            <h2>Kubernetes Service(3): Ingress(ingress-nginx) w/k3s</h2>
             <ul class="p-card__content p-inline-list--middot">
               
               <li class="p-inline-list__item">
@@ -170,26 +170,26 @@
 </span></span></code></pre></div><p><code>kubeadm</code>을 많이 다루신 현업 분들께서는 좀 많이 익숙한 파라미터들이 보입니다.<br>
 다만, <code>--disable=traefik</code>이라는 파라미터가 k3s server 설치 스크립트에서 볼 수 있는데요,<br>
 k3s가 Ingress Controller로 Traefik을 사용하는데, Ingress-Nginx를 사용하기 위해 Traefik을 비활성화 시키는 것입니다.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">(</span>⎈|default:N/A<span style="color:#f92672">)</span> root@k3s-s:~# cat /etc/rancher/k3s/k3s.yaml
-</span></span><span style="display:flex;"><span>apiVersion: v1
-</span></span><span style="display:flex;"><span>clusters:
-</span></span><span style="display:flex;"><span>- cluster:
-</span></span><span style="display:flex;"><span>    certificate-authority-data: LS0tLS1CR<span style="color:#f92672">(</span>중략<span style="color:#f92672">)</span>LS0tLS0K
-</span></span><span style="display:flex;"><span>    server: https://127.0.0.1:6443
-</span></span><span style="display:flex;"><span>  name: default
-</span></span><span style="display:flex;"><span>contexts:
-</span></span><span style="display:flex;"><span>- context:
-</span></span><span style="display:flex;"><span>    cluster: default
-</span></span><span style="display:flex;"><span>    user: default
-</span></span><span style="display:flex;"><span>  name: default
-</span></span><span style="display:flex;"><span>current-context: default
-</span></span><span style="display:flex;"><span>kind: Config
-</span></span><span style="display:flex;"><span>preferences: <span style="color:#f92672">{}</span>
-</span></span><span style="display:flex;"><span>users:
-</span></span><span style="display:flex;"><span>- name: default
-</span></span><span style="display:flex;"><span>  user:
-</span></span><span style="display:flex;"><span>    client-certificate-data: LS0tLS1C<span style="color:#f92672">(</span>중략<span style="color:#f92672">)</span>LS0tLS0K
-</span></span><span style="display:flex;"><span>    client-key-data: LS0tLS1<span style="color:#f92672">(</span>중략<span style="color:#f92672">)</span>LS0tLQo<span style="color:#f92672">=</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">cat /etc/rancher/k3s/k3s.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">clusters</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">cluster</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">certificate-authority-data</span>: <span style="color:#ae81ff">LS0tLS1CR(중략)LS0tLS0K</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">server</span>: <span style="color:#ae81ff">https://127.0.0.1:6443</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">contexts</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">context</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">cluster</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">user</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">current-context</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Config</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">preferences</span>: {}
+</span></span><span style="display:flex;"><span><span style="color:#f92672">users</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">user</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">client-certificate-data</span>: <span style="color:#ae81ff">LS0tLS1C(중략)LS0tLS0K</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">client-key-data</span>: <span style="color:#ae81ff">LS0tLS1(중략)LS0tLQo=</span>
 </span></span></code></pre></div><p>k3s는 <code>SUSE</code>및 <code>Rancher</code>에서 개발되어, CNCF Sandbox Project로 등록되어있는,<br>
 IoT &amp; Edge Computing을 위한 k8s 배포도구이기에 rancher 폴더가 생겼음을 유추해볼 수 있습니다.</p>
 <h2 id="4-ingress-nginx-컨트롤러-배포-helm">4. Ingress-Nginx 컨트롤러 배포 (Helm)</h2>
@@ -200,23 +200,23 @@ IoT &amp; Edge Computing을 위한 k8s 배포도구이기에 rancher 폴더가 �
 <ul>
 <li>NodePort로 해당 서비스를 노출하기로 해봅시다.</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT&gt; ingress-nginx-values.yaml
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">controller:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  service:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    type: NodePort
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    nodePorts:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      http: 30080
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      https: 30443
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  nodeSelector:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    kubernetes.io/hostname: &#34;k3s-s&#34;
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  metrics:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceMonitor:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      enabled: true
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">cat &lt;&lt;EOT&gt; ingress-nginx-values.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">controller</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">type</span>: <span style="color:#ae81ff">NodePort</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">nodePorts</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">http</span>: <span style="color:#ae81ff">30080</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">https</span>: <span style="color:#ae81ff">30443</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">nodeSelector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kubernetes.io/hostname</span>: <span style="color:#e6db74">&#34;k3s-s&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">metrics</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">enabled</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">serviceMonitor</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">enabled</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOT</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">helm repo update</span>
 </span></span></code></pre></div><p><code>insecure</code> warning이 뜨지만, 이게 학습이라 그저 넘어가도록 합시다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /etc/rancher/k3s/k3s.yaml
 </span></span><span style="display:flex;"><span>WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /etc/rancher/k3s/k3s.yaml
@@ -231,7 +231,7 @@ IoT &amp; Edge Computing을 위한 k8s 배포도구이기에 rancher 폴더가 �
 </span></span><span style="display:flex;"><span>kubectl get all -n ingress
 </span></span><span style="display:flex;"><span>kubectl get svc -n ingress ingress-nginx-controller
 </span></span></code></pre></div><p><code>Warning</code>은 에?러가 아니니까, 대개 잘 잡히는 것 같습니다.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">(</span>⎈|default:N/A<span style="color:#f92672">)</span> root@k3s-s:~# kubectl create ns ingress
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create ns ingress
 </span></span><span style="display:flex;"><span>helm install ingress-nginx ingress-nginx/ingress-nginx -f ingress-nginx-values.yaml --namespace ingress --version 4.11.2
 </span></span><span style="display:flex;"><span>namespace/ingress created
 </span></span><span style="display:flex;"><span>WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /etc/rancher/k3s/k3s.yaml
@@ -379,114 +379,489 @@ IoT &amp; Edge Computing을 위한 k8s 배포도구이기에 rancher 폴더가 �
 </tbody>
 </table>
 <h3 id="a-clusterip-service">(a) ClusterIP Service</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT&gt; clusterip-nginx.yaml
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: deploy1-websrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: websrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: websrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: pod-web
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: nginx
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: svc1-web
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: web-port
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: 9001
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 80
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: websrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: ClusterIP
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">cat &lt;&lt;EOT&gt; clusterip-nginx.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">deploy1-websrv</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">websrv</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">websrv</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-web</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">svc1-web</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">web-port</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">9001</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">websrv</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">ClusterIP</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOT</span>
 </span></span></code></pre></div><h3 id="b-nodeport-service">(b) NodePort Service</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT&gt; nodeport-kbc.yaml
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: deploy2-guestsrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 2
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: guestsrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: guestsrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: pod-guest
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: gcr.io/google-samples/kubernetes-bootcamp:v1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        ports:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - containerPort: 8080
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: svc2-guest
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: guest-port
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: 9002
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 8080
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: guestsrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: NodePort
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">cat &lt;&lt;EOT&gt; nodeport-kbc.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">deploy2-guestsrv</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">guestsrv</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">guestsrv</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-guest</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">gcr.io/google-samples/kubernetes-bootcamp:v1</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">svc2-guest</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">guest-port</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">9002</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">guestsrv</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">NodePort</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOT</span>
 </span></span></code></pre></div><h3 id="c-default-service">(c) Default Service</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT&gt; default-echoserver.yaml
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: deploy2-guestsrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 2
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: guestsrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: guestsrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: pod-guest
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: gcr.io/google-samples/kubernetes-bootcamp:v1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        ports:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - containerPort: 8080
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: svc2-guest
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: guest-port
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: 9002
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 8080
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: guestsrv
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: NodePort
-</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">cat &lt;&lt;EOT&gt; default-echoserver.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">deploy3-adminsrv</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">adminsrv</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">adminsrv</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-admin</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">k8s.gcr.io/echoserver:1.5</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">svc3-admin</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">admin-port</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">9003</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">adminsrv</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOT</span>
 </span></span></code></pre></div><h3 id="d-배포-및-확인">(d) 배포 및 확인</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f clusterip-nginx.yaml
 </span></span><span style="display:flex;"><span>kubectl apply -f nodeport-kbc.yaml
 </span></span><span style="display:flex;"><span>kubectl apply -f default-echoserver.yaml
-</span></span></code></pre></div><p>(방전이 되서 계속 업데이트 예정)</p>
-
+</span></span></code></pre></div><h3 id="e-taint-설정-및-재배포-확인">(e) taint 설정 및 재배포 확인</h3>
+<p>현재는 Control Plane(Master) Node에 taint 설정이 없어서, pod가 배포된 것을 볼 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># kubectl get ingress,svc,ep,pod -owide</span>
+</span></span><span style="display:flex;"><span>NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT<span style="color:#f92672">(</span>S<span style="color:#f92672">)</span>          AGE     SELECTOR
+</span></span><span style="display:flex;"><span>service/kubernetes   ClusterIP   10.10.200.1     &lt;none&gt;        443/TCP          27h     &lt;none&gt;
+</span></span><span style="display:flex;"><span>service/svc1-web     ClusterIP   10.10.200.69    &lt;none&gt;        9001/TCP         3m22s   app<span style="color:#f92672">=</span>websrv
+</span></span><span style="display:flex;"><span>service/svc2-guest   NodePort    10.10.200.117   &lt;none&gt;        9002:30133/TCP   3m22s   app<span style="color:#f92672">=</span>guestsrv
+</span></span><span style="display:flex;"><span>service/svc3-admin   ClusterIP   10.10.200.249   &lt;none&gt;        9003/TCP         108s    app<span style="color:#f92672">=</span>adminsrv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                   ENDPOINTS                                         AGE
+</span></span><span style="display:flex;"><span>endpoints/kubernetes   192.168.10.10:6443                                27h
+</span></span><span style="display:flex;"><span>endpoints/svc1-web     172.16.1.3:80                                     3m22s
+</span></span><span style="display:flex;"><span>endpoints/svc2-guest   172.16.0.5:8080,172.16.3.3:8080                   3m22s
+</span></span><span style="display:flex;"><span>endpoints/svc3-admin   172.16.0.6:8080,172.16.2.3:8080,172.16.3.4:8080   108s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                                    READY   STATUS    RESTARTS   AGE     IP           NODE     NOMINATED NODE   READINESS GATES
+</span></span><span style="display:flex;"><span>pod/deploy1-websrv-5c6b88bd77-w5nph     1/1     Running   <span style="color:#ae81ff">0</span>          3m22s   172.16.1.3   k3s-w1   &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>pod/deploy2-guestsrv-649875f78b-4tj8d   1/1     Running   <span style="color:#ae81ff">0</span>          3m22s   172.16.0.5   k3s-s    &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>pod/deploy2-guestsrv-649875f78b-js862   1/1     Running   <span style="color:#ae81ff">0</span>          3m22s   172.16.3.3   k3s-w2   &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>pod/deploy3-adminsrv-7c8f8b8c87-4q8h6   1/1     Running   <span style="color:#ae81ff">0</span>          108s    172.16.3.4   k3s-w2   &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>pod/deploy3-adminsrv-7c8f8b8c87-6xwk5   1/1     Running   <span style="color:#ae81ff">0</span>          108s    172.16.0.6   k3s-s    &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>pod/deploy3-adminsrv-7c8f8b8c87-hvq7n   1/1     Running   <span style="color:#ae81ff">0</span>          108s    172.16.2.3   k3s-w3   &lt;none&gt;           &lt;none&gt;
+</span></span></code></pre></div><p>우린 이걸 용?납할 수 없기 때문에, taint를 걸고 어떻게 작동하나 확인해볼 것입니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl taint nodes k3s-s role<span style="color:#f92672">=</span>controlplane:NoSchedule
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># node/k3s-s tainted</span>
+</span></span></code></pre></div><p>대신 빠른 적용 확인을 위해, 각 Deployment 정의에 <code>terminationGracePeriodSeconds: 0</code>를 추가합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (중략)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-web</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">terminationGracePeriodSeconds</span>: <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (후략)</span>
+</span></span></code></pre></div><p>이후에 다시 적용(apply)하고 확인해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f clusterip-nginx.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f nodeport-kbc.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f default-echoserver.yaml
+</span></span></code></pre></div><p>Control Plane에 대한 Pod만 재배포 될 줄 알았는데, 생각해보니 <code>terminationGracePeriodSeconds: 0</code> spec이 추가되었기 때문에 각 deployment 전체가 재배포되었습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get ingress,svc,ep,pod -owide
+</span></span><span style="display:flex;"><span>NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT<span style="color:#f92672">(</span>S<span style="color:#f92672">)</span>          AGE   SELECTOR
+</span></span><span style="display:flex;"><span>service/kubernetes   ClusterIP   10.10.200.1     &lt;none&gt;        443/TCP          27h   &lt;none&gt;
+</span></span><span style="display:flex;"><span>service/svc1-web     ClusterIP   10.10.200.69    &lt;none&gt;        9001/TCP         16m   app<span style="color:#f92672">=</span>websrv
+</span></span><span style="display:flex;"><span>service/svc2-guest   NodePort    10.10.200.117   &lt;none&gt;        9002:30133/TCP   16m   app<span style="color:#f92672">=</span>guestsrv
+</span></span><span style="display:flex;"><span>service/svc3-admin   ClusterIP   10.10.200.249   &lt;none&gt;        9003/TCP         14m   app<span style="color:#f92672">=</span>adminsrv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                   ENDPOINTS                                         AGE
+</span></span><span style="display:flex;"><span>endpoints/kubernetes   192.168.10.10:6443                                27h
+</span></span><span style="display:flex;"><span>endpoints/svc1-web     172.16.1.4:80                                     16m
+</span></span><span style="display:flex;"><span>endpoints/svc2-guest   172.16.2.4:8080,172.16.3.6:8080                   16m
+</span></span><span style="display:flex;"><span>endpoints/svc3-admin   172.16.1.5:8080,172.16.2.5:8080,172.16.3.5:8080   14m
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NAME                                    READY   STATUS    RESTARTS   AGE   IP           NODE     NOMINATED NODE   READINESS GATES
+</span></span><span style="display:flex;"><span>pod/deploy1-websrv-69cb66b964-nppv5     1/1     Running   <span style="color:#ae81ff">0</span>          96s   172.16.1.4   k3s-w1   &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>pod/deploy2-guestsrv-cbb5d6665-jhbpm    1/1     Running   <span style="color:#ae81ff">0</span>          86s   172.16.3.6   k3s-w2   &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>pod/deploy2-guestsrv-cbb5d6665-sb67h    1/1     Running   <span style="color:#ae81ff">0</span>          95s   172.16.2.4   k3s-w3   &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>pod/deploy3-adminsrv-77b7c78b98-79pgl   1/1     Running   <span style="color:#ae81ff">0</span>          94s   172.16.3.5   k3s-w2   &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>pod/deploy3-adminsrv-77b7c78b98-vfbv5   1/1     Running   <span style="color:#ae81ff">0</span>          93s   172.16.1.5   k3s-w1   &lt;none&gt;           &lt;none&gt;
+</span></span><span style="display:flex;"><span>pod/deploy3-adminsrv-77b7c78b98-zvkgv   1/1     Running   <span style="color:#ae81ff">0</span>          95s   172.16.2.5   k3s-w3   &lt;none&gt;           &lt;none&gt;
+</span></span></code></pre></div><p>여기까지는 예상된대로, 서비스 포트 9001, 9002, 9003이 각각 배포되었음을 확인할 수 있습니다.<br>
+이 상태로는 http://&lt;EC2_PUBLIC_IP&gt;:30133/ 만 외부에서 접속할 수 있습니다.</p>
+<p><img src="images/only-nodeport-accessible.png" alt="only-nodeport-accessible"></p>
+<p>Ingress가 ClusterIP, NodePort 무관하게 외부에 서비스를 배포하게 만들어볼 것입니다.</p>
+<h2 id="6-ingress-리소스-생성">6. Ingress 리소스 생성</h2>
+<p>ALB(L7) Rule을 정하는 것과 유사합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">cat &lt;&lt;EOT&gt; ingress-nginx-rule-1.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ingress-rule-1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/rewrite-target: /</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingressClassName</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># - host: nginx.minseong.xyz</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#   http:</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#     paths:</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">svc1-web</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/kbc</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">svc2-guest</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/guest</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">svc3-admin</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOT</span>
+</span></span></code></pre></div><p>path 기반으로 서비스를 라우팅하려는 것을 확인할 수 있습니다.<br>
+서비스의 포트가 아닌 이름으로 지정할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># kubectl get ingress -owide  </span>
+</span></span><span style="display:flex;"><span>NAME                                       CLASS   HOSTS   ADDRESS         PORTS   AGE
+</span></span><span style="display:flex;"><span>ingress.networking.k8s.io/ingress-rule-1   nginx   *       10.10.200.180   <span style="color:#ae81ff">80</span>      43s
+</span></span></code></pre></div><p>Rule이 적용되었음을 알 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># kubectl describe ingress ingress-rule-1</span>
+</span></span><span style="display:flex;"><span>Name:             ingress-rule-1
+</span></span><span style="display:flex;"><span>Labels:           &lt;none&gt;
+</span></span><span style="display:flex;"><span>Namespace:        default
+</span></span><span style="display:flex;"><span>Address:          10.10.200.180
+</span></span><span style="display:flex;"><span>Ingress Class:    nginx
+</span></span><span style="display:flex;"><span>Default backend:  &lt;default&gt;
+</span></span><span style="display:flex;"><span>Rules:
+</span></span><span style="display:flex;"><span>  Host        Path  Backends
+</span></span><span style="display:flex;"><span>  ----        ----  --------
+</span></span><span style="display:flex;"><span>  *           
+</span></span><span style="display:flex;"><span>              /        svc1-web:80 <span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>              /kbc     svc2-guest:8080 <span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>              /guest   svc3-admin:8080 <span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>Annotations:  &lt;none&gt;
+</span></span><span style="display:flex;"><span>Events:
+</span></span><span style="display:flex;"><span>  Type    Reason  Age                From                      Message
+</span></span><span style="display:flex;"><span>  ----    ------  ----               ----                      -------
+</span></span><span style="display:flex;"><span>  Normal  Sync    22m <span style="color:#f92672">(</span>x2 over 23m<span style="color:#f92672">)</span>  nginx-ingress-controller  Scheduled <span style="color:#66d9ef">for</span> sync
+</span></span></code></pre></div><p>위의 룰이 컨트롤러에 어떻게 적용되어있는지 보도록 합시다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># kubectl exec deploy/ingress-nginx-controller -n ingress -it -- cat /etc/nginx/nginx.conf | grep &#39;location /&#39; -A5</span>
+</span></span><span style="display:flex;"><span>		location /guest/ <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>			
+</span></span><span style="display:flex;"><span>			set $namespace      <span style="color:#e6db74">&#34;default&#34;</span>;
+</span></span><span style="display:flex;"><span>			set $ingress_name   <span style="color:#e6db74">&#34;ingress-rule-1&#34;</span>;
+</span></span><span style="display:flex;"><span>			set $service_name   <span style="color:#e6db74">&#34;svc3-admin&#34;</span>;
+</span></span><span style="display:flex;"><span>			set $service_port   <span style="color:#e6db74">&#34;8080&#34;</span>;
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>  		location /kbc/ <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>			
+</span></span><span style="display:flex;"><span>			set $namespace      <span style="color:#e6db74">&#34;default&#34;</span>;
+</span></span><span style="display:flex;"><span>			set $ingress_name   <span style="color:#e6db74">&#34;ingress-rule-1&#34;</span>;
+</span></span><span style="display:flex;"><span>			set $service_name   <span style="color:#e6db74">&#34;svc2-guest&#34;</span>;
+</span></span><span style="display:flex;"><span>			set $service_port   <span style="color:#e6db74">&#34;8080&#34;</span>;
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>  		location / <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>			
+</span></span><span style="display:flex;"><span>			set $namespace      <span style="color:#e6db74">&#34;default&#34;</span>;
+</span></span><span style="display:flex;"><span>			set $ingress_name   <span style="color:#e6db74">&#34;ingress-rule-1&#34;</span>;
+</span></span><span style="display:flex;"><span>			set $service_name   <span style="color:#e6db74">&#34;svc1-web&#34;</span>;
+</span></span><span style="display:flex;"><span>			set $service_port   <span style="color:#e6db74">&#34;80&#34;</span>;
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>후략<span style="color:#f92672">)</span>
+</span></span></code></pre></div><h3 id="a-접속-확인">(a) 접속 확인</h3>
+<p>아래의 출력된 링크를 로컬의 웹브라우저로 접속해보면 아주 잘 접속됩니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Ingress1 sv1-web URL = http://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:30080&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ingress1 sv1-web URL = http://43.202.54.183:30080</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Ingress1 sv2-guest URL = http://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:30080/guest&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ingress1 sv2-guest URL = http://43.202.54.183:30080/guest</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Ingress1 sv3-admin URL = http://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:30080/kbc&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ingress1 sv3-admin URL = http://43.202.54.183:30080/kbc</span>
+</span></span></code></pre></div><h3 id="b-더-알아보기">(b) 더 알아보기</h3>
+<p>로컬 환경에서 좀 더 볼까요?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>EC2_MASTER_PUB_IP<span style="color:#f92672">=</span>&lt;EC2 Control Plane의 Public IP&gt;
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EC2_MASTER_PUB_IP=43.202.54.183</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i in <span style="color:#f92672">{</span>1..100<span style="color:#f92672">}</span>; <span style="color:#66d9ef">do</span> curl -s $EC2_MASTER_PUB_IP:30080/guest ; <span style="color:#66d9ef">done</span> | sort | uniq -c | sort -nr
+</span></span></code></pre></div><p>Nginx 기준, 뭔가 좀 익숙한 값들이 보입니다.</p>
+<p>특히 Ingress를 통해, 어디(로컬)에서 접근을 했는지 알 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>    <span style="color:#ae81ff">800</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	x-scheme<span style="color:#f92672">=</span>http
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	x-real-ip<span style="color:#f92672">=</span>&lt;로컬 환경의 공인 IP&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	x-forwarded-scheme<span style="color:#f92672">=</span>http
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	x-forwarded-proto<span style="color:#f92672">=</span>http
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	x-forwarded-port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	x-forwarded-host<span style="color:#f92672">=</span>43.202.54.183:30080
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	x-forwarded-for<span style="color:#f92672">=</span>&lt;로컬 환경의 공인 IP&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	user-agent<span style="color:#f92672">=</span>curl/8.5.0
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	server_version<span style="color:#f92672">=</span>nginx: 1.13.0 - lua: <span style="color:#ae81ff">10008</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> Server values:
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	request_version<span style="color:#f92672">=</span>1.1
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	request_uri<span style="color:#f92672">=</span>http://43.202.54.183:8080/guest
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> Request Information:
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> Request Headers:
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> Request Body:
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	real path<span style="color:#f92672">=</span>/guest
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	query<span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> Pod Information:
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	-no pod information available-
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	-no body in request-
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	method<span style="color:#f92672">=</span>GET
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	host<span style="color:#f92672">=</span>43.202.54.183:30080
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	client_address<span style="color:#f92672">=</span>172.16.0.3
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">100</span> 	accept<span style="color:#f92672">=</span>*/*
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">34</span> Hostname: deploy3-adminsrv-77b7c78b98-zvkgv
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">33</span> Hostname: deploy3-adminsrv-77b7c78b98-vfbv5
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">33</span> Hostname: deploy3-adminsrv-77b7c78b98-79pgl
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">1</span> 	x-request-id<span style="color:#f92672">=</span>fda5b56e29f9c0109124762aab619f3d
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">1</span> 	x-request-id<span style="color:#f92672">=</span>fc5161bd78bb6a82f578c854e79a6dd7
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">1</span> 	x-request-id<span style="color:#f92672">=</span>fb98bfdbf78a87071c5ad119c8f01c7c
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">1</span> 	x-request-id<span style="color:#f92672">=</span>f6e07d531bb0a54a029abb4c0657b55b
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">1</span> 	x-request-id<span style="color:#f92672">=</span>f4e66a64fac7e0f21df5577058c623c8
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">1</span> 	x-request-id<span style="color:#f92672">=</span>f050b3f7f7e22b55b1b80c7a794cb659
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>후략<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>필요한 정보만 보고 싶다면, 이렇게 할 수도 있겠네요.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -s $EC2_MASTER_PUB_IP:30080/guest | egrep <span style="color:#e6db74">&#39;(client_address|x-forwarded-for)&#39;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e"># client_address=172.16.0.3</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e"># x-forwarded-for=&lt;로컬 환경의 공인 IP&gt;</span>
+</span></span></code></pre></div><p>그럼 이 client_address는 어디서 튀어나온 걸까요?</p>
+<p>앞에서 4.-(a) 에서 helm으로 첫 배포 후 확인했을 때의 엔드포인트 입니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl describe svc -n ingress ingress-nginx-controller | grep Endpoints
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Endpoints:                172.16.0.3:80</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Endpoints:                172.16.0.3:443</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get -n ingress pods -owide
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME                                       READY   STATUS    RESTARTS   AGE   IP           NODE    NOMINATED NODE   READINESS GATES</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ingress-nginx-controller-979fc89cf-f24fk   1/1     Running   0          29h   172.16.0.3   k3s-s   &lt;none&gt;           &lt;none&gt;</span>
+</span></span></code></pre></div><h2 id="7-tls-termination-처리-맛보기">7. TLS Termination (처리) 맛보기</h2>
+<p><del>올해 초에 자동 갱신되어버린 테스트 도메인을 사용해봅시다.</del></p>
+<p>음 호스트 정보 제어를 통해 해봅시다.</p>
+<p>가상의 호스트 <code>kkumtree.xyz</code>가 있다고 해봅시다.</p>
+<h3 id="a-배포-준비">(a) 배포 준비</h3>
+<p>TLS 통신을 위한 인증서를 secret으로 저장하여 쓰는 것입니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">cat &lt;&lt;EOT&gt; tls-echoserver.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-https</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">https</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">k8s.gcr.io/echoserver:1.6</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">terminationGracePeriodSeconds</span>: <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">svc-https</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">https</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">port</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOT</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">cat &lt;&lt;EOT&gt; ssl-termination-ingress.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">https</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingressClassName</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">tls</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">hosts</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">kkumtree.abc</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">secretName</span>: <span style="color:#ae81ff">secret-https</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">host</span>: <span style="color:#ae81ff">kkumtree.abc</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">svc-https</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOT</span>
+</span></span></code></pre></div><h3 id="b-배포-및-인증서-생성">(b) 배포 및 인증서 생성</h3>
+<p>적용은 다음과 같이 합니다.</p>
+<ul>
+<li>테스트 POD 배포</li>
+<li>가상의 도메인 지정</li>
+<li>Ingress 리소스 생성</li>
+<li>인증서 생성 및 Secret 생성</li>
+<li>테스트</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>TEST_DNS<span style="color:#f92672">=</span>kkumtree.abc
+</span></span><span style="display:flex;"><span>kubectl apply -f tls-echoserver.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f ssl-termination-ingress.yaml
+</span></span><span style="display:flex;"><span>openssl req -x509 -nodes -days <span style="color:#ae81ff">365</span> -newkey rsa:2048 -keyout tls.key -out tls.crt -subj <span style="color:#e6db74">&#34;/CN=</span>$TEST_DNS<span style="color:#e6db74">/O=</span>$TEST_DNS<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>kubectl create secret tls secret-https --key tls.key --cert tls.crt
+</span></span><span style="display:flex;"><span>kubectl get secrets secret-https -o yaml
+</span></span></code></pre></div><p>참 쉽죠? <del>스터디 없었으면 99.99% 헤멤</del></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># (전략)</span>
+</span></span><span style="display:flex;"><span>secret/secret-https created
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>data:
+</span></span><span style="display:flex;"><span>  tls.crt: LS0tLS1C<span style="color:#f92672">(</span>중략<span style="color:#f92672">)</span>LS0tLQo<span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  tls.key: LS0tLS1C<span style="color:#f92672">(</span>중략<span style="color:#f92672">)</span>LS0tLS0K
+</span></span><span style="display:flex;"><span>kind: Secret
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  creationTimestamp: <span style="color:#e6db74">&#34;2024-10-13T08:33:44Z&#34;</span>
+</span></span><span style="display:flex;"><span>  name: secret-https
+</span></span><span style="display:flex;"><span>  namespace: default
+</span></span><span style="display:flex;"><span>  resourceVersion: <span style="color:#e6db74">&#34;81976&#34;</span>
+</span></span><span style="display:flex;"><span>  uid: 3cc3014e-<span style="color:#f92672">(</span>중략<span style="color:#f92672">)</span>-c8422a2197e3
+</span></span><span style="display:flex;"><span>type: kubernetes.io/tls
+</span></span></code></pre></div><h3 id="c-확인">(c) 확인</h3>
+<p>가짜 도메인은 직접 쓸 수 없기에 <code>/etc/hosts</code> 등록이나<br>
+로컬에서 아래와 같이 설정하여 확인합니다.</p>
+<blockquote>
+<p>옵션의 대소문자 유의</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>EC2_MASTER_PUB_IP<span style="color:#f92672">=</span>&lt;6.<span style="color:#f92672">(</span>b<span style="color:#f92672">)</span>에서 활용했음&gt;  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EC2_MASTER_PUB_IP=43.202.54.183  </span>
+</span></span><span style="display:flex;"><span>TEST_DNS<span style="color:#f92672">=</span>&lt;테스트용으로 지정한 가짜 도메인&gt;  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># TEST_DNS=kkumtree.abc</span>
+</span></span><span style="display:flex;"><span>curl -Lk -H <span style="color:#e6db74">&#34;host: </span>$TEST_DNS<span style="color:#e6db74">&#34;</span> https://$EC2_MASTER_PUB_IP:30443
+</span></span></code></pre></div><p>다음과 같이 나올 겁니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># curl -Lk -H &#34;host: $TEST_DNS&#34; https://$EC2_MASTER_PUB_IP:30443</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Hostname: pod-https
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Pod Information:
+</span></span><span style="display:flex;"><span>	-no pod information available-
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Server values:
+</span></span><span style="display:flex;"><span>	server_version<span style="color:#f92672">=</span>nginx: 1.13.1 - lua: <span style="color:#ae81ff">10008</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Request Information:
+</span></span><span style="display:flex;"><span>	client_address<span style="color:#f92672">=</span>172.16.0.3
+</span></span><span style="display:flex;"><span>	method<span style="color:#f92672">=</span>GET
+</span></span><span style="display:flex;"><span>	real path<span style="color:#f92672">=</span>/
+</span></span><span style="display:flex;"><span>	query<span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>	request_version<span style="color:#f92672">=</span>1.1
+</span></span><span style="display:flex;"><span>	request_uri<span style="color:#f92672">=</span>http://kkumtree.abc:8080/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Request Headers:
+</span></span><span style="display:flex;"><span>	accept<span style="color:#f92672">=</span>*/*
+</span></span><span style="display:flex;"><span>	host<span style="color:#f92672">=</span>kkumtree.abc
+</span></span><span style="display:flex;"><span>	user-agent<span style="color:#f92672">=</span>curl/8.5.0
+</span></span><span style="display:flex;"><span>	x-forwarded-for<span style="color:#f92672">=</span>&lt;로컬 환경의 공인 IP&gt;
+</span></span><span style="display:flex;"><span>	x-forwarded-host<span style="color:#f92672">=</span>kkumtree.abc
+</span></span><span style="display:flex;"><span>	x-forwarded-port<span style="color:#f92672">=</span><span style="color:#ae81ff">443</span>
+</span></span><span style="display:flex;"><span>	x-forwarded-proto<span style="color:#f92672">=</span>https
+</span></span><span style="display:flex;"><span>	x-forwarded-scheme<span style="color:#f92672">=</span>https
+</span></span><span style="display:flex;"><span>	x-real-ip<span style="color:#f92672">=</span>&lt;로컬 환경의 공인 IP&gt;
+</span></span><span style="display:flex;"><span>	x-request-id<span style="color:#f92672">=</span>0b3e51d89dfede6b31e72e8a1d09a25a
+</span></span><span style="display:flex;"><span>	x-scheme<span style="color:#f92672">=</span>https
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Request Body:
+</span></span><span style="display:flex;"><span>	-no body in request-
+</span></span></code></pre></div><h2 id="8-뱀다리">8. 뱀다리</h2>
+<ul>
+<li>Ngnix Ingress Annotation 예제들</li>
+</ul>
+<blockquote>
+<p>가끔은 눈을 감을 줄 알아야하나&hellip; 싶은&hellip;</p>
+</blockquote>
+<p>링크: <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/">Ingress-Nginx Controller</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/rewrite-target: /</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/ssl-redirect: &#34;false&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/upstream-hash-by: $remote_addr</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/affinity: &#34;cookie&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-name: &#34;route&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-hash: &#34;sha1&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-expires: &#34;172800&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-max-age: &#34;172800&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-path: &#34;/; Secure; HttpOnly&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-secure: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-samesite: &#34;Strict&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-domain: &#34;minseong.xyz&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-httponly: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-persistent: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-change-on-failure: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-change-on-edit: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-change-on-renew: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-change-on-renew-failure: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-change-on-renew-edit: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-change-on-renew-edit-failure: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-change-on-renew-edit-failure-renew: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-change-on-renew-edit-failure-renew-edit: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-change-on-renew-edit-failure-renew-edit-failure: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#nginx.ingress.kubernetes.io/session-cookie-change-on-renew-edit-failure-renew-edit-failure-renew: &#34;true&#34;</span>
+</span></span></code></pre></div>
   </div>
   </section>
   <section class="p-strip">
