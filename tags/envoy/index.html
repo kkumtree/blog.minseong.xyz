@@ -96,7 +96,7 @@
 
             
             <div class="p-list__item">
-              <a href="/post/kans-7w-envoy-config/"><h2>Kubernetes Service(4): envoy(L7 proxy) config</h2></a>
+              <a href="/post/kans-7w-envoy-config/"><h2>Kubernetes Service(4): envoy config</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
                 <li class="p-inline-list__item">
@@ -107,11 +107,28 @@
               <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-19T16:59:16&#43;09:00</u></p>
               <p>정적/동적 설정을 알아봅니다.
 traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 명료했습니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
 1. Static Configuration 아래와 같이 구성됩니다.
 static_resources listeners clusters (a) static_resources envoy의 시작과 함께, 정적으로 설정되는 모든 리소스를 포함한다고 합니다.
 실제로 envoy-demo.yaml 파일을 열어보면 최상단에 static_resources이 선언되어 있습니다.
 static_resources: listeners: (b) listeners envoy-demo.yaml 파일 기준,
-socket_address: 리스너는 포트 10000에서 수신하도록 설정되어 있습니다. route_config: 모든 경로에 대해 service_envoyproxy_io 클러스터로 라우팅합니다. # cat envoy-demo.yaml | grep -A 30 -B 2 listeners static_resources: listeners: - name: listener_0 address: socket_address: address: 0.</p>
+socket_address: 리스너는 포트 10000에서 수신하도록 설정되어 있습니다. route_config: 모든 경로에 대해 service_envoyproxy_io 클러스터로 라우팅합니다.</p>
+            </div>
+            
+            <div class="p-list__item">
+              <a href="/post/kans-7w-envoy-helloworld/"><h2>Kubernetes Service(4): envoy overview</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-15T10:16:38&#43;09:00</u></p>
+              <p>따로 슥 찾아보니, envoy는 Micro Service Architecture 등 구현된 단위 기능간의 통신을 위한 L7 Proxy 라고 합니다.
+Docker Compose 정도나 일반 서비스에서는 굳이 필요하지는 않을 것 같지만, Service Mesh 환경에서는 알아두면 좋을 것 같아 훝어봅니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. Envoy Installation Docs: Installing Envoy wget -O- https://apt.envoyproxy.io/signing.key | sudo gpg --dearmor -o /etc/apt/keyrings/envoy-keyring.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/envoy-keyring.gpg] https://apt.envoyproxy.io jammy main&#34; | sudo tee /etc/apt/sources.</p>
             </div>
             
 </div>
