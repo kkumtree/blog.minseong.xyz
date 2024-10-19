@@ -1,6 +1,6 @@
 ---
 date: 2024-10-19T16:59:16+09:00
-title: "Kubernetes Service(4): envoy(L7 proxy) config"
+title: "Kubernetes Service(4): envoy config"
 tags:
  - kans
  - envoy
@@ -19,6 +19,8 @@ draft: false # 글 초안 여부
 
 정적/동적 설정을 알아봅니다.  
 traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 명료했습니다.  
+
+[CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.  
 
 ### 1. Static Configuration
 
