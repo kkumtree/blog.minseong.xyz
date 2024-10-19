@@ -96,6 +96,19 @@
 
             
             <div class="p-list__item">
+              <a href="/post/making-dockerfile-for-node/"><h2>Node.js를 위한 Dockerfile 만들기</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-08T20:43:43&#43;09:00</u></p>
+              <p>새로 구축한 Dockerfile FROM public.ecr.aws/lts/ubuntu:22.04_stable ENV DEBIAN_FRONTEND=noninteractive # Set Preferred Variables ARG TZ=Asia/Seoul \ NODE_VER=18.x \ UBUNTU_DIST=jammy \ NPM_PKGS=&#34;cross-env pm2&#34; \ ADD_USG=kkumtree \ ADD_USR=kkumtree \ ADD_USR_LANG=C.UTF-8 ARG NODE_REPO=node_${NODE_VER} # Apply essentials RUN set -ex \ &amp;&amp; ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \ &amp;&amp; apt-get update -y &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; apt-get install -y --no-install-recommends apt-utils &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; apt-get install -y --no-install-recommends \ tzdata \ wget curl \ ca-certificates openssl \ lsb-release gnupg \ gcc g++ make \ zip unzip \ vim \ git \ &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; echo date # Install env for runtime # nodejs RUN set -ex \ &amp;&amp; curl -sLf -o /dev/null \ &#34;https://deb.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/how-to-request-spot-with-kops/"><h2>kops로 손쉽게 spot instance 요청하기</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 

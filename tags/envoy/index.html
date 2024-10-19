@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>envoy | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="envoy" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/tags/envoy/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/envoy/' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/envoy/' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+
+
+
+
+
+<main>
+  <section class="p-strip--suru main-slide main-strip">
+      <div class="row">
+        <div class="col-8 left-section">
+          <h1>envoy</h1>
+          <p></p>
+        </div>
+      </div>
+  </section>
+  <section class="p-strip">
+      <div class="row">
+        <div class="col-12">
+          <div class="p-list--divided">
+            
+            
+
+            
+            <div class="p-list__item">
+              <a href="/post/kans-7w-envoy-config/"><h2>Kubernetes Service(4): envoy(L7 proxy) config</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-19T16:59:16&#43;09:00</u></p>
+              <p>정적/동적 설정을 알아봅니다.
+traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 명료했습니다.
+1. Static Configuration 아래와 같이 구성됩니다.
+static_resources listeners clusters (a) static_resources envoy의 시작과 함께, 정적으로 설정되는 모든 리소스를 포함한다고 합니다.
+실제로 envoy-demo.yaml 파일을 열어보면 최상단에 static_resources이 선언되어 있습니다.
+static_resources: listeners: (b) listeners envoy-demo.yaml 파일 기준,
+socket_address: 리스너는 포트 10000에서 수신하도록 설정되어 있습니다. route_config: 모든 경로에 대해 service_envoyproxy_io 클러스터로 라우팅합니다. # cat envoy-demo.yaml | grep -A 30 -B 2 listeners static_resources: listeners: - name: listener_0 address: socket_address: address: 0.</p>
+            </div>
+            
+</div>
+        </div>
+      </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

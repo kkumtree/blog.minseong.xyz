@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>proxy on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/proxy/</link>
+    <description>Recent content in proxy on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Sat, 19 Oct 2024 16:59:16 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/proxy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kubernetes Service(4): envoy(L7 proxy) config</title>
+      <link>https://blog.minseong.xyz/post/kans-7w-envoy-config/</link>
+      <pubDate>Sat, 19 Oct 2024 16:59:16 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/kans-7w-envoy-config/</guid>
+      <description>정적/동적 설정을 알아봅니다.
+traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 명료했습니다.
+1. Static Configuration 아래와 같이 구성됩니다.
+static_resources listeners clusters (a) static_resources envoy의 시작과 함께, 정적으로 설정되는 모든 리소스를 포함한다고 합니다.
+실제로 envoy-demo.yaml 파일을 열어보면 최상단에 static_resources이 선언되어 있습니다.
+static_resources: listeners: (b) listeners envoy-demo.yaml 파일 기준,
+socket_address: 리스너는 포트 10000에서 수신하도록 설정되어 있습니다. route_config: 모든 경로에 대해 service_envoyproxy_io 클러스터로 라우팅합니다. # cat envoy-demo.yaml | grep -A 30 -B 2 listeners static_resources: listeners: - name: listener_0 address: socket_address: address: 0.</description>
+    </item>
+    
+  </channel>
+</rss>

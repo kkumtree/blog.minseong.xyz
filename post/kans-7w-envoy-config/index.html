@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Kubernetes Service(4): envoy(L7 proxy) config | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Kubernetes Service(4): envoy(L7 proxy) config" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/kans-7w-envoy-config/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/kans-7w-envoy-config/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/kans-7w-envoy-config/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Kubernetes Service(4): envoy(L7 proxy) config</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-19T16:59:16&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/kans" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kans</span>
+              </div>
+            </a>
+            
+            <a href="/tags/envoy" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">envoy</span>
+              </div>
+            </a>
+            
+            <a href="/tags/proxy" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">proxy</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kubernetes" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kubernetes</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>정적/동적 설정을 알아봅니다.<br>
+traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 명료했습니다.</p>
+<h3 id="1-static-configuration">1. Static Configuration</h3>
+<p>아래와 같이 구성됩니다.</p>
+<ul>
+<li>static_resources
+<ul>
+<li>listeners</li>
+<li>clusters</li>
+</ul>
+</li>
+</ul>
+<h4 id="a-static_resources">(a) static_resources</h4>
+<p>envoy의 시작과 함께, 정적으로 설정되는 모든 리소스를 포함한다고 합니다.<br>
+실제로 <code>envoy-demo.yaml</code> 파일을 열어보면 최상단에 <code>static_resources</code>이 선언되어 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">static_resources</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">listeners</span>:
+</span></span></code></pre></div><h4 id="b-listeners">(b) listeners</h4>
+<p><code>envoy-demo.yaml</code> 파일 기준,</p>
+<ul>
+<li><code>socket_address</code>: 리스너는 포트 10000에서 수신하도록 설정되어 있습니다.</li>
+<li><code>route_config</code>: 모든 경로에 대해 <code>service_envoyproxy_io</code> 클러스터로 라우팅합니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># cat envoy-demo.yaml | grep -A 30 -B 2 listeners</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">static_resources</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">listeners</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">listener_0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">address</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">socket_address</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">address</span>: <span style="color:#ae81ff">0.0.0.0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">port_value</span>: <span style="color:#ae81ff">10000</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">filter_chains</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">filters</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">envoy.filters.network.http_connection_manager</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">typed_config</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">stat_prefix</span>: <span style="color:#ae81ff">ingress_http</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">access_log</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">envoy.access_loggers.stdout</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">typed_config</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">http_filters</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">envoy.filters.http.router</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">typed_config</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.extensions.filters.http.router.v3.Router</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">route_config</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">local_route</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">virtual_hosts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">local_service</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">domains</span>: [<span style="color:#e6db74">&#34;*&#34;</span>]
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">routes</span>:
+</span></span><span style="display:flex;"><span>              - <span style="color:#f92672">match</span>:
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">prefix</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">route</span>:
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">host_rewrite_literal</span>: <span style="color:#ae81ff">www.envoyproxy.io</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">cluster</span>: <span style="color:#ae81ff">service_envoyproxy_io</span>
+</span></span></code></pre></div><h4 id="c-clusters">(c) clusters</h4>
+<p><code>envoy-demo.yaml</code> 파일 기준,</p>
+<ul>
+<li><code>service_envoyproxy_io</code> 클러스터는 <code>www.envoyproxy.io</code>로 프록시합니다.</li>
+<li><code>TLS</code>를 사용하여 프록시합니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># cat envoy-demo.yaml | grep -A 18 clusters</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">clusters</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">service_envoyproxy_io</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">type</span>: <span style="color:#ae81ff">LOGICAL_DNS</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Comment out the following line to test on v6 networks</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">dns_lookup_family</span>: <span style="color:#ae81ff">V4_ONLY</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">load_assignment</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">cluster_name</span>: <span style="color:#ae81ff">service_envoyproxy_io</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">endpoints</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">lb_endpoints</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">endpoint</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">address</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">socket_address</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">address</span>: <span style="color:#ae81ff">www.envoyproxy.io</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">port_value</span>: <span style="color:#ae81ff">443</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">transport_socket</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">envoy.transport_sockets.tls</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">typed_config</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">sni</span>: <span style="color:#ae81ff">www.envoyproxy.io</span>
+</span></span></code></pre></div><h3 id="2-xds-comprenhensive-overview">2. xDS Comprenhensive Overview</h3>
+<blockquote>
+<p>동적 설정으로 넘어가기 전에 envoy xDS를 이해하고자 하였습니다.</p>
+</blockquote>
+<p><a href="https://www.envoyproxy.io/docs/envoy/latest/api-docs/xds_protocol#xds-protocol">xDS</a> 프로토콜을 구현하는 파일들을 사용해서 동적 구성을 할 수 있다고 합니다.</p>
+<ul>
+<li><code>xDS</code> 프로토콜: envoy가 동적 리소스를 검색할 때 해당 서비스와 API를 xDS로 총칭합니다.</li>
+</ul>
+<p>(1) 관찰할 파일명을 명시하거나, (2) gRPC 스트림을 시작하거나, 혹은 (3) REST-JSON API를 폴링해서 구현합니다. 이 중, 1항의 방법을 제외하고는 [DiscoveryResquest] Proto Payload와 함께 요청을 보내어 구현됩니다.</p>
+<ul>
+<li>&lsquo;xDS&rsquo; 프로토콜의 구분</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:center">SotW</th>
+<th style="text-align:center">Incremental</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>separeted gRPC</td>
+<td style="text-align:center">(a)</td>
+<td style="text-align:center">(b)</td>
+</tr>
+<tr>
+<td>single gRPC</td>
+<td style="text-align:center">(c)</td>
+<td style="text-align:center">(d)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>SotW</strong>는 <code>Snapshot of the World</code>를 의미하며, 모든 리소스로 이해했습니다.</p>
+<p>(a) Basic xDS: 모든 리소스 유형에 대한, 별도의 gRPC 스트림
+(b) Incremental xDS: 각 리소스 유형에 대한 중분, 별도의 gRPC 스트림
+(c) Aggregated Discovery Service: 모든 리소스 유형에 대한, 단일 gRPC 스트림
+(d) Incremental ADS: 각 리소스 유형에 대한 중분, 단일 gRPC 스트림</p>
+<p>문서를 보고, 선명하게 이해가 오지 않아 매트릭스를 구성했는데도 뭔가 갸웃합니다.</p>
+<p>여하간, 증분을 사용하면 이전 상태와 상대 델타에만 적용할 수 있는 것 같습니다.<br>
+gRPC 단일 스트림은 최종 일관성(멱등성?) 모델을 제공하고, 다중 스트림은 리소스의 <a href="https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading">lazy loading</a>에 대응할 메커니즘이라고 합니다.<br>
+<del>야 이거 Firehose&hellip;. 음 아직도 좀 모호합니다</del></p>
+<h3 id="3-dynamic-configuration-from-filesystem">3. Dynamic Configuration (from filesystem)</h3>
+<p><a href="https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#updating-runtime-values-via-symbolic-link-swap">Runtime 값 런타임</a> 설명이 별도로 있는데 좀 난해하네요.</p>
+<p>아래와 같이 구성됩니다.</p>
+<ul>
+<li><code>node</code> : 프록시 서버 식별</li>
+<li><code>dynamic_resources</code> : 동적 구성의 위치를 명시
+<ul>
+<li>listeners</li>
+<li>clusters</li>
+</ul>
+</li>
+</ul>
+<p>아래와 같이, 데모 파일을 받아봅시다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/9a41bc513e17e885884b3deebf435d2a/envoy-dynamic-filesystem-demo.yaml
+</span></span></code></pre></div><h4 id="a-node">(a) node</h4>
+<p>반드시 <code>cluster</code>와 <code>id</code>를 설정해야 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># cat envoy-dynamic-filesystem-demo.yaml | grep -A 2 node:</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">node</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cluster</span>: <span style="color:#ae81ff">test-cluster</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">id</span>: <span style="color:#ae81ff">test-id</span>
+</span></span></code></pre></div><h4 id="b-dynamic_resources">(b) dynamic_resources</h4>
+<p>예제에서는 LDS와 CDS 데모파일을 사용합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/5cf56125ff834c0e2f21f71e1e8916f2/envoy-dynamic-lds-demo.yaml
+</span></span><span style="display:flex;"><span>curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/92bba5b0c48a649b4bc8663000cd097a/envoy-dynamic-cds-demo.yaml
+</span></span></code></pre></div><ul>
+<li>listeners: <code>envoy-dynamic-lds-demo.yaml</code></li>
+</ul>
+<p>포트 10000에서 <code>HTTP</code> 리스너를 구성합니다.<br>
+모든 도메인과 경로는 <code>service_envoyproxy_io</code> 클러스터로 라우팅합니다.<br>
+<code>host</code> 헤더는 <code>www.envoyproxy.io</code>로 덮여씁니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># cat envoy-dynamic-lds-demo.yaml </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.config.listener.v3.Listener</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">listener_0</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">address</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">socket_address</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">address</span>: <span style="color:#ae81ff">0.0.0.0</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port_value</span>: <span style="color:#ae81ff">10000</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">filter_chains</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">filters</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">envoy.http_connection_manager</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">typed_config</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">stat_prefix</span>: <span style="color:#ae81ff">ingress_http</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">http_filters</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">envoy.router</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">typed_config</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.extensions.filters.http.router.v3.Router</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">route_config</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">local_route</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">virtual_hosts</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">local_service</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">domains</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#e6db74">&#34;*&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">routes</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">match</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">prefix</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">route</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">host_rewrite_literal</span>: <span style="color:#ae81ff">www.envoyproxy.io</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">cluster</span>: <span style="color:#ae81ff">example_proxy_cluster</span>
+</span></span></code></pre></div><ul>
+<li>clusters: <code>envoy-dynamic-cds-demo.yaml</code></li>
+</ul>
+<p><code>example_proxy_cluster</code> 클러스터는 <code>www.envoyproxy.io</code>로 TLS프록시합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># cat envoy-dynamic-cds-demo.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.config.cluster.v3.Cluster</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">example_proxy_cluster</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">STRICT_DNS</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">typed_extension_protocol_options</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">envoy.extensions.upstreams.http.v3.HttpProtocolOptions</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">explicit_http_config</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">http2_protocol_options</span>: {}
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">load_assignment</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">cluster_name</span>: <span style="color:#ae81ff">example_proxy_cluster</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">endpoints</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">lb_endpoints</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">endpoint</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">address</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">socket_address</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">address</span>: <span style="color:#ae81ff">www.envoyproxy.io</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">port_value</span>: <span style="color:#ae81ff">443</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">transport_socket</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">envoy.transport_sockets.tls</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">typed_config</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">sni</span>: <span style="color:#ae81ff">www.envoyproxy.io</span>
+</span></span></code></pre></div><h3 id="4-dynamic-configuration-from-control-plane">4. Dynamic Configuration (from Control Plane)</h3>
+<p>컨트롤 플레인의 구성을 envoy에게 전달하도록 설정해야하기에 뭔가 더 길게 써있습니다.</p>
+<p>이때, 컨트롤플레인은 Envoy API와 호환되는 Gloo 및 Istio 등을 지칭합니다.</p>
+<p>아래와 같은 구성이 필요합니다.</p>
+<ul>
+<li><code>node</code> : 고유한 프록시 서버 식별</li>
+<li><code>dynamic_resources</code> : 동적으로 업데이트해야하는 구성을 envoy에게 명시</li>
+<li><code>static_resources</code> : 가져올 구성의 위치를 envoy에게 명시</li>
+</ul>
+<p>예제에서 사용할 데모 파일을 받아봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/fe2234c3a6762bdffb5300e299973700/envoy-dynamic-control-plane-demo.yaml
+</span></span></code></pre></div><ul>
+<li><code>node</code>: 3-a와 동일합니다.</li>
+<li><code>dynamic_resources</code> : 동적 구성과 이 업데이트를 연결할 <code>cluster</code>를 명시합니다.</li>
+</ul>
+<p>아래 예시에서는 각 xDS 유형의 설정에 의해 구성이 제공됩니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># cat envoy-dynamic-control-plane-demo.yaml | grep -A 2 dynamic_resources:</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">dynamic_resources</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ads_config</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">api_type</span>: <span style="color:#ae81ff">GRPC</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">grpc_services</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">envoy_grpc</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">cluster_name</span>: <span style="color:#ae81ff">xds_cluster</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cds_config</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ads</span>: {}
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">lds_config</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ads</span>: {}
+</span></span></code></pre></div><ul>
+<li><code>static_resources</code> : (말이 좀 이상하긴 한데) <code>동적</code>구성을 가져올 곳을 명시합니다.</li>
+</ul>
+<p>아래 예시에서는, <code>http://my-controle-plane:18000</code>에서 컨트롤 플레인을 찾도록 <code>xds_cluster</code> 에 정의되어 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># cat envoy-dynamic-control-plane-demo.yaml | grep -A 17 static_resources:</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">static_resources</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">clusters</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">type</span>: <span style="color:#ae81ff">STRICT_DNS</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">typed_extension_protocol_options</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">envoy.extensions.upstreams.http.v3.HttpProtocolOptions</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">explicit_http_config</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">http2_protocol_options</span>: {}
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">xds_cluster</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">load_assignment</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">cluster_name</span>: <span style="color:#ae81ff">xds_cluster</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">endpoints</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">lb_endpoints</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">endpoint</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">address</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">socket_address</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">address</span>: <span style="color:#ae81ff">my-control-plane</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">port_value</span>: <span style="color:#ae81ff">18000</span>
+</span></span></code></pre></div>
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/kans-6w-k3s-ingress/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Kubernetes Service(3): Ingress(ingress-nginx) w/k3s</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
