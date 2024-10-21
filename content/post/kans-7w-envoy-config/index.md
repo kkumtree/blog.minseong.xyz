@@ -22,7 +22,7 @@ traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 
 
 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.  
 
-### 1. Static Configuration
+## 1. Static Configuration
 
 아래와 같이 구성됩니다.  
 
@@ -30,7 +30,7 @@ traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 
   - listeners  
   - clusters  
 
-#### (a) static_resources
+### (a) static_resources
 
 envoy의 시작과 함께, 정적으로 설정되는 모든 리소스를 포함한다고 합니다.  
 실제로 `envoy-demo.yaml` 파일을 열어보면 최상단에 `static_resources`이 선언되어 있습니다.  
@@ -41,7 +41,7 @@ static_resources:
   listeners:
 ```
 
-#### (b) listeners  
+### (b) listeners  
 
 `envoy-demo.yaml` 파일 기준,  
 
@@ -85,7 +85,7 @@ static_resources:
                   cluster: service_envoyproxy_io
 ```
 
-#### (c) clusters
+### (c) clusters
 
 `envoy-demo.yaml` 파일 기준,  
 
@@ -115,7 +115,7 @@ static_resources:
         sni: www.envoyproxy.io
 ```
 
-### 2. xDS Comprenhensive Overview  
+## 2. xDS Comprenhensive Overview  
 
 > 동적 설정으로 넘어가기 전에 envoy xDS를 이해하고자 하였습니다.  
 
@@ -145,7 +145,7 @@ static_resources:
 gRPC 단일 스트림은 최종 일관성(멱등성?) 모델을 제공하고, 다중 스트림은 리소스의 [lazy loading](https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading)에 대응할 메커니즘이라고 합니다.  
 ~~야 이거 Firehose.... 음 아직도 좀 모호합니다~~  
 
-### 3. Dynamic Configuration (from filesystem)  
+## 3. Dynamic Configuration (from filesystem)  
 
 [Runtime 값 런타임](https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#updating-runtime-values-via-symbolic-link-swap) 설명이 별도로 있는데 좀 난해하네요.  
 
@@ -162,7 +162,7 @@ gRPC 단일 스트림은 최종 일관성(멱등성?) 모델을 제공하고, �
 curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/9a41bc513e17e885884b3deebf435d2a/envoy-dynamic-filesystem-demo.yaml
 ```
 
-#### (a) node
+### (a) node
 
 반드시 `cluster`와 `id`를 설정해야 합니다.
 
@@ -173,7 +173,7 @@ node:
   id: test-id
 ```
 
-#### (b) dynamic_resources
+### (b) dynamic_resources
 
 예제에서는 LDS와 CDS 데모파일을 사용합니다.  
 
@@ -252,7 +252,7 @@ resources:
       sni: www.envoyproxy.io
 ```  
 
-### 4. Dynamic Configuration (from Control Plane)
+## 4. Dynamic Configuration (from Control Plane)
 
 컨트롤 플레인의 구성을 envoy에게 전달하도록 설정해야하기에 뭔가 더 길게 써있습니다.  
 
