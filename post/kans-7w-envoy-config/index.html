@@ -127,7 +127,7 @@
   <p>정적/동적 설정을 알아봅니다.<br>
 traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 명료했습니다.</p>
 <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 <strong>K</strong>8s <strong>A</strong>dvanced <strong>N</strong>etwork <strong>S</strong>tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.</p>
-<h3 id="1-static-configuration">1. Static Configuration</h3>
+<h2 id="1-static-configuration">1. Static Configuration</h2>
 <p>아래와 같이 구성됩니다.</p>
 <ul>
 <li>static_resources
@@ -137,13 +137,13 @@ traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 
 </ul>
 </li>
 </ul>
-<h4 id="a-static_resources">(a) static_resources</h4>
+<h3 id="a-static_resources">(a) static_resources</h3>
 <p>envoy의 시작과 함께, 정적으로 설정되는 모든 리소스를 포함한다고 합니다.<br>
 실제로 <code>envoy-demo.yaml</code> 파일을 열어보면 최상단에 <code>static_resources</code>이 선언되어 있습니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">static_resources</span>:
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">listeners</span>:
-</span></span></code></pre></div><h4 id="b-listeners">(b) listeners</h4>
+</span></span></code></pre></div><h3 id="b-listeners">(b) listeners</h3>
 <p><code>envoy-demo.yaml</code> 파일 기준,</p>
 <ul>
 <li><code>socket_address</code>: 리스너는 포트 10000에서 수신하도록 설정되어 있습니다.</li>
@@ -183,7 +183,7 @@ traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 
 </span></span><span style="display:flex;"><span>                <span style="color:#f92672">route</span>:
 </span></span><span style="display:flex;"><span>                  <span style="color:#f92672">host_rewrite_literal</span>: <span style="color:#ae81ff">www.envoyproxy.io</span>
 </span></span><span style="display:flex;"><span>                  <span style="color:#f92672">cluster</span>: <span style="color:#ae81ff">service_envoyproxy_io</span>
-</span></span></code></pre></div><h4 id="c-clusters">(c) clusters</h4>
+</span></span></code></pre></div><h3 id="c-clusters">(c) clusters</h3>
 <p><code>envoy-demo.yaml</code> 파일 기준,</p>
 <ul>
 <li><code>service_envoyproxy_io</code> 클러스터는 <code>www.envoyproxy.io</code>로 프록시합니다.</li>
@@ -209,7 +209,7 @@ traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 
 </span></span><span style="display:flex;"><span>      <span style="color:#f92672">typed_config</span>:
 </span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#f92672">sni</span>: <span style="color:#ae81ff">www.envoyproxy.io</span>
-</span></span></code></pre></div><h3 id="2-xds-comprenhensive-overview">2. xDS Comprenhensive Overview</h3>
+</span></span></code></pre></div><h2 id="2-xds-comprenhensive-overview">2. xDS Comprenhensive Overview</h2>
 <blockquote>
 <p>동적 설정으로 넘어가기 전에 envoy xDS를 이해하고자 하였습니다.</p>
 </blockquote>
@@ -251,7 +251,7 @@ traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 
 <p>여하간, 증분을 사용하면 이전 상태와 상대 델타에만 적용할 수 있는 것 같습니다.<br>
 gRPC 단일 스트림은 최종 일관성(멱등성?) 모델을 제공하고, 다중 스트림은 리소스의 <a href="https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading">lazy loading</a>에 대응할 메커니즘이라고 합니다.<br>
 <del>야 이거 Firehose&hellip;. 음 아직도 좀 모호합니다</del></p>
-<h3 id="3-dynamic-configuration-from-filesystem">3. Dynamic Configuration (from filesystem)</h3>
+<h2 id="3-dynamic-configuration-from-filesystem">3. Dynamic Configuration (from filesystem)</h2>
 <p><a href="https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#updating-runtime-values-via-symbolic-link-swap">Runtime 값 런타임</a> 설명이 별도로 있는데 좀 난해하네요.</p>
 <p>아래와 같이 구성됩니다.</p>
 <ul>
@@ -265,13 +265,13 @@ gRPC 단일 스트림은 최종 일관성(멱등성?) 모델을 제공하고, �
 </ul>
 <p>아래와 같이, 데모 파일을 받아봅시다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/9a41bc513e17e885884b3deebf435d2a/envoy-dynamic-filesystem-demo.yaml
-</span></span></code></pre></div><h4 id="a-node">(a) node</h4>
+</span></span></code></pre></div><h3 id="a-node">(a) node</h3>
 <p>반드시 <code>cluster</code>와 <code>id</code>를 설정해야 합니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># cat envoy-dynamic-filesystem-demo.yaml | grep -A 2 node:</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">node</span>:
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">cluster</span>: <span style="color:#ae81ff">test-cluster</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">id</span>: <span style="color:#ae81ff">test-id</span>
-</span></span></code></pre></div><h4 id="b-dynamic_resources">(b) dynamic_resources</h4>
+</span></span></code></pre></div><h3 id="b-dynamic_resources">(b) dynamic_resources</h3>
 <p>예제에서는 LDS와 CDS 데모파일을 사용합니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/5cf56125ff834c0e2f21f71e1e8916f2/envoy-dynamic-lds-demo.yaml
 </span></span><span style="display:flex;"><span>curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/92bba5b0c48a649b4bc8663000cd097a/envoy-dynamic-cds-demo.yaml
@@ -339,7 +339,7 @@ gRPC 단일 스트림은 최종 일관성(멱등성?) 모델을 제공하고, �
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">typed_config</span>:
 </span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;@type&#34;: </span><span style="color:#ae81ff">type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext</span>
 </span></span><span style="display:flex;"><span>      <span style="color:#f92672">sni</span>: <span style="color:#ae81ff">www.envoyproxy.io</span>
-</span></span></code></pre></div><h3 id="4-dynamic-configuration-from-control-plane">4. Dynamic Configuration (from Control Plane)</h3>
+</span></span></code></pre></div><h2 id="4-dynamic-configuration-from-control-plane">4. Dynamic Configuration (from Control Plane)</h2>
 <p>컨트롤 플레인의 구성을 envoy에게 전달하도록 설정해야하기에 뭔가 더 길게 써있습니다.</p>
 <p>이때, 컨트롤플레인은 Envoy API와 호환되는 Gloo 및 Istio 등을 지칭합니다.</p>
 <p>아래와 같은 구성이 필요합니다.</p>
