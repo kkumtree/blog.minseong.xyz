@@ -61,6 +61,16 @@ BPF를 커널에 삽입하여, 패킷을 필터링(통제)할 수 있다고 하�
 
 ![what-bpf-do](images/what-bpf-do.png)  
 
+- [BPF: A Tour of Program Types](https://blogs.oracle.com/linux/post/bpf-a-tour-of-program-types)  
+- [BPF In Depth: Communicating with Userspace](https://blogs.oracle.com/linux/post/bpf-in-depth-communicating-with-userspace)  
+
+위의 포스팅에 자세히 나와있지만, 제가 이해하려고 아래와 같이 끄적였습니다.  
+
+- Syscall: `userspace` map interaction(상호작용)을 수행합니다.  
+- Sockmaps & Sockops  
+  - BPF Map은 BPF 프로그램이 다른 BPF프로그램 및 map 데이터를 볼 수 있는 다른 `userspace` 프로그램으로부터 정보를 얻는 데 쓰인다고 합니다.  
+  - Sockmap: BPF Map의 한 유형으로 보이며, 소켓을 저장하고 관리하는데 사용되는 것 같습니다.  
+
 ## 3. eBPF(Extended BPF)  
 
 그림판 실력보고 급 우울해져서 집에 가려고요.  
