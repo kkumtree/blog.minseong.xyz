@@ -63,15 +63,65 @@ BPF를 커널에 삽입하여, 패킷을 필터링(통제)할 수 있다고 하�
 
 - [BPF: A Tour of Program Types](https://blogs.oracle.com/linux/post/bpf-a-tour-of-program-types)  
 - [BPF In Depth: Communicating with Userspace](https://blogs.oracle.com/linux/post/bpf-in-depth-communicating-with-userspace)  
+- [bpftune - Using Reinforcement Learning in BPF](https://blogs.oracle.com/linux/post/bpftune-using-reinforcement-learning-in-bpf)  
 
 위의 포스팅에 자세히 나와있지만, 제가 이해하려고 아래와 같이 끄적였습니다.  
 
-- Syscall: `userspace` map interaction(상호작용)을 수행합니다.  
-- Sockmaps & Sockops  
-  - BPF Map은 BPF 프로그램이 다른 BPF프로그램 및 map 데이터를 볼 수 있는 다른 `userspace` 프로그램으로부터 정보를 얻는 데 쓰인다고 합니다.  
-  - Sockmap: BPF Map의 한 유형으로 보이며, 소켓을 저장하고 관리하는데 사용되는 것 같습니다.  
+- Syscall
+
+`userspace` map interaction(상호작용)을 수행합니다.  
+
+- Sockmap
+
+BPF Map의 한 유형으로 보이며, 소켓을 저장하고 관리하는데 사용되는 것 같습니다.  
+
+> BPF Map은 BPF 프로그램이 다른 BPF프로그램 및 map 데이터를 볼 수 있는 다른 `userspace` 프로그램으로부터 정보를 얻는 데 쓰인다고 합니다.  
+> 더 자세한 것은 [The Linux Kernel Docs](https://docs.kernel.org/6.10/bpf/map_sockmap.html)에서.  
+
+- Sockops: also called `TCP-BPF` mechanism that support setting TCP parameters.   
+
+> ~~ops라길래, xops인줄 알았는데~~ operand인 건에 대하여;  
+
+한번 찾아보니 좋은 글이 있었습니다. [eBPF系列-ebpf map之使用sockmap提升本地socket转发](https://jaegerw2016.github.io/posts/2022/11/25/Use-eBPF-map-sockmap-redir-localhost-socket.html)  
+[netdevconf/brakmo-tcpbpf-talk](https://netdevconf.info/2.2/papers/brakmo-tcpbpf-talk.pdf)와 병행해서 읽어본 바, 현재 이해한 사항은...  
+
+(1) SYN 수신 시 : BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB 히트  
+(2) SYN-ACK 수신 시 : BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB 히트  
+(3) 이 외에도 RTO 시간을 동적으로 조정가능하다는 것인데, 아래 블로그에 재미나'보이는' 예시가 있습니다. 언젠가 저 RTO를 왜 조작하는지 이유를 좀 더 알아봤으면 좋겠네요.  
+
+[Customize TCP initial RTO (retransmission timeout) with BPF](https://arthurchiao.art/blog/customize-tcp-initial-rto-with-bpf/)  
+
+- Cgroups / TC(Transmission Control) Hooks  
+
+> 사실 `TC가 트래픽 컨트롤 아닌가`, `IPv4, IPv6 는 cgroup 이죠?` 라는 질문을 받고,  
+> 뭔가 잘?못 되었다는 생각이 들어서 이 글을 통해 정말 조금만 더 파보기로 했습니다. (또 후회 중)  
+
+[OpenEuler/eBPF Introduction](https://www.openeuler.org/en/blog/MrRlu/2021-01-04-openEuler-eBPF-introduce.html)에 의하면 cgroup의 경우, 당연한 이야기겠지만 Permission 이야기로 생각이 되는데, [BPF_PROG_TYPE_CGROUP_DEVICE](https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_CGROUP_DEVICE/)처럼 쓸 수 있다고 생각되어 집니다.  
+
+[eunomia/eBPF Tutorial by Example 20: tc Traffic Control](https://eunomia.dev/tutorials/20-tc/)에서  
+tc(traffic control)과 TC(Transmission Control)을 구분하고 있는데,  
+결국 무엇인지는 아직 헷갈립니다. ~~전송하는건 똑같으니 그만 좀 생각해볼까~~  
+
+아직은 미제임으로 아래의 글과 함께 보류해보겠습니다.  
+[Whirl Offload/Understanding tc “direct action” mode for BPF](https://qmonnet.github.io/whirl-offload/2020/04/11/tc-bpf-direct-action/)  
+[man7/tc-bpf(8)#DESCRIPTION](https://www.man7.org/linux/man-pages/man8/tc.8.html#DESCRIPTION)  
+
+> 당연히 traffic control로 기재야 되어있겠지만, 설명을 읽어보니  
+> `(SHAPING) When traffic is shaped, its rate of transmission is under control.`  
+> 이렇게 적혀있어서, 결국 전송속도 제어이니 둘 다 맞는 말 같기도...?  
+> 여튼 shaping은 burst 완화에 도움이 되고, egress 에서 발생한다고 합니다.  
+
+- XDP
+
+요거도 다음 시간에 냥냥
 
 ## 3. eBPF(Extended BPF)  
 
+앞의 설명이 장황했는데, 아래의 그림을 조금은 이해할 수 있게 되었습니다.  
+
+![ebpf-explained-in-isitobservable](images/ebpf-explained-in-isitobservable.png)  
+> [Source: Is it Observable / How to observe your network with eBPF](https://isitobservable.io/observability/kubernetes/how-to-observe-your-network-with-ebpf)
+
 그림판 실력보고 급 우울해져서 집에 가려고요.  
 훌쩍  
+
