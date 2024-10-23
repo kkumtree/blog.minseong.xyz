@@ -1,6 +1,6 @@
 ---
 date: 2024-10-21T19:47:33+09:00
-title: "Wky eBPF?"
+title: "Why eBPF?"
 tags:
  - kans
  - ebpf
