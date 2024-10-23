@@ -13,7 +13,7 @@ authors:
     launchpad: mscho7969
     github: kkumtree
     profile: https://avatars.githubusercontent.com/u/52643858?v=4 
-image: cover.png # 커버 이미지 URL
+image: cover.png
 draft: false # 글 초안 여부
 ---
 
