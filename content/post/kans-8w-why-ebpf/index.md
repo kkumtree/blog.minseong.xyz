@@ -14,12 +14,13 @@ authors:
     github: kkumtree
     profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.png # 커버 이미지 URL
-draft: true # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
 어느덧 이번 스터디도 대망의 Cilium을 다루기 시작합니다.  
-Cilium에 이다지도 (저를 포함한) 모두가 열광하는지 알아보기 전에  
+Cilium에 이렇게도 (저를 포함한) 모?두가 열광하는지 알아보기 전에  
 근간이 되는 eBPF를 먼저 가볍게 알아보고 가려합니다.  
+~~이 때는 설마 했지만, 역시나 스불재 엔딩이었다~~  
 
 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 **K**8s **A**dvanced **N**etwork **S**tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.  
 
@@ -102,26 +103,74 @@ BPF Map의 한 유형으로 보이며, 소켓을 저장하고 관리하는데 �
 tc(traffic control)과 TC(Transmission Control)을 구분하고 있는데,  
 결국 무엇인지는 아직 헷갈립니다. ~~전송하는건 똑같으니 그만 좀 생각해볼까~~  
 
-아직은 미제임으로 아래의 글과 함께 보류해보겠습니다.  
-[Whirl Offload/Understanding tc “direct action” mode for BPF](https://qmonnet.github.io/whirl-offload/2020/04/11/tc-bpf-direct-action/)  
-[man7/tc-bpf(8)#DESCRIPTION](https://www.man7.org/linux/man-pages/man8/tc.8.html#DESCRIPTION)  
+아직은 확신을 하지 못했으므로 아래의 글과 함께 보류해보겠습니다.  
+> [Whirl Offload/Understanding tc “direct action” mode for BPF](https://qmonnet.github.io/whirl-offload/2020/04/11/tc-bpf-direct-action/)  
+> [man7/tc-bpf(8)#DESCRIPTION](https://www.man7.org/linux/man-pages/man8/tc.8.html#DESCRIPTION)  
 
 > 당연히 traffic control로 기재야 되어있겠지만, 설명을 읽어보니  
 > `(SHAPING) When traffic is shaped, its rate of transmission is under control.`  
 > 이렇게 적혀있어서, 결국 전송속도 제어이니 둘 다 맞는 말 같기도...?  
 > 여튼 shaping은 burst 완화에 도움이 되고, egress 에서 발생한다고 합니다.  
 
-- XDP
+- XDP(eXpress Data Path)
 
-요거도 다음 시간에 냥냥
+[Red Hat/Get started with XDP](https://developers.redhat.com/blog/2021/04/01/get-started-with-xdp)을 보니, 서두부터 learning curve가 심하다고 하는군요. ~~접을까~~  
+
+하위로 안내된 [Red Hat/Achieving high-performance, low-latency networking with XDP: Part I](https://developers.redhat.com/blog/2018/12/06/achieving-high-performance-low-latency-networking-with-xdp-part-1)를 살펴봅시다.  
+
+XDP 이전의 패킷 처리를 위한 커널 솔루션은 DPDK(Data Plane Development Kit)이라는 bypass 솔루션 대비 10배 이상 성능이 뒤쳐져있었다고 합니다.  
+
+하지만 XDP를 통해, 아래의 장점을 포함하여 XDP 지원 드라이버에서 14Mpps 이상을 처리할 수 있다고합니다. 
+
+(0) **커널 내 코드 추가 없이** 커널 동작 변경 및 확장: ??? 뭐라고?  
+(1) SKBs(socket buffers) 관리의 오버헤드 제거(?)  
+(2) 패킷당 메모리 관리 오버헤드 감소  
+(3) 더 효과적인 대량 처리 가능  
+
+음 써놓고도 다시 읽어보니 잘 모르겠네요. 
+
+여튼, 커널 내부의 저수준 hook에 BPF(eBPF) 프로그램을 붙일 수 있다고 합니다.   
+이 hook이 network device driver에 의해 구현되는 시점은  
+현재(current) 패킷에 소켓 버퍼가 할당되기 전이라고 합니다.  
+일반적으로 **NAPI 방식의** `poll()`과 같이,  
+ingress traffic proccessing function(인그레스 트래픽 처리 함수)내부에서 처리된다고 합니다.  
+
+> 와 장황하게 쓰니, 더 모르겠어!  
 
 ## 3. eBPF(Extended BPF)  
 
-앞의 설명이 장황했는데, 아래의 그림을 조금은 이해할 수 있게 되었습니다.  
+앞의 설명이 장황했는데, 아래의 그림을 조금은 이해할 수 있게 되었습니다. ~~과연~~  
 
 ![ebpf-explained-in-isitobservable](images/ebpf-explained-in-isitobservable.png)  
-> [Source: Is it Observable / How to observe your network with eBPF](https://isitobservable.io/observability/kubernetes/how-to-observe-your-network-with-ebpf)
+> [Source: Is it Observable/How to observe your network with eBPF](https://isitobservable.io/observability/kubernetes/how-to-observe-your-network-with-ebpf)
 
-그림판 실력보고 급 우울해져서 집에 가려고요.  
-훌쩍  
+앞선 내용에서도 eBPF가 간혹 나오는데 그야 BPF에서 확장된 것이니 기본원리는 같을 수 밖에 없을 것 같습니다.  
 
+- 핵심: 커널의 current feature(현재 기능)을 개선 할 수 있음.  
+  - 커널이 소켓 연결이나 다른 프로세스를 관리할 때, KPIs를 수집하는 프로세스를 추가
+  - ~~어째서 KPI를 여기서 보는 것인가~~  
+
+- 활용: 무궁무진  
+  - 네트워킹: 분석, 라우팅 등  
+  - 보안: 특정 규칙에 따라 트래픽 필터링 및 허용/차단 트래픽 보고
+  - 실행흐름 수집(execution flows):  
+    - scope: userspace ~ kernel instruction  
+    - purpose: tracing, profiling  
+  - Observability~~(관찰가능성...)~~:  
+    - **Not Pooling Information**: EFFECTIVE!!!  
+    - eBPF 프로그람은 측정이 필요할 때, 정확히 실행된다고 합니다.  
+
+- 과장 OR 오해: `브라우저에 JavaScript 있는 것`에 비견함;;;  
+
+아래 그림으로 급한 마무리를 시도해보겠습니다.  
+
+![bpf-compiler-collection](images/bpf-compiler-collection.png)
+
+> [Source: iovisor/bcc @github](https://github.com/iovisor/bcc)
+
+## 4. etc. 
+
+- 1000 Mpbs = 1488000 pps = 1.488 Mpps: 궁금해서 찾아본 것. 빠르네요.  
+  - 672 bit/s(=bps) = 1 Packet/s(=pps)  
+  - 1 Mbps = 1488 pps = 1.488 Kpps  
+  - Source: [inyong_pang @velog](https://velog.io/@inyong_pang/Network-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%8B%A8%EC%9C%84-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%EC%A0%84%EC%86%A1-%EB%8B%A8%EC%9C%84)
