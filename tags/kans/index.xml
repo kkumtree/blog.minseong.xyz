@@ -6,7 +6,22 @@
     <description>Recent content in kans on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sat, 19 Oct 2024 16:59:16 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/kans/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 21 Oct 2024 19:47:33 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/kans/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Wky eBPF?</title>
+      <link>https://blog.minseong.xyz/post/kans-8w-why-ebpf/</link>
+      <pubDate>Mon, 21 Oct 2024 19:47:33 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/kans-8w-why-ebpf/</guid>
+      <description>어느덧 이번 스터디도 대망의 Cilium을 다루기 시작합니다.
+Cilium에 이렇게도 (저를 포함한) 모?두가 열광하는지 알아보기 전에
+근간이 되는 eBPF를 먼저 가볍게 알아보고 가려합니다.
+이 때는 설마 했지만, 역시나 스불재 엔딩이었다
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. Linux Network Stack 스터디 1주차의 Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기에서 가볍게 맛을 보고 도망치기 바빴지만, 여튼 아래의 사항은 스쳐지나갔습니다.
+iptables: userspace 기반의 네트워킹 ufw, firewalld 등의 방화벽 프로그램이 이를 래핑하였다는 건 대충 넘어간다하더라도,</description>
+    </item>
+    
     <item>
       <title>Kubernetes Service(4): envoy config</title>
       <link>https://blog.minseong.xyz/post/kans-7w-envoy-config/</link>

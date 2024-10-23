@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Wky eBPF? | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Wky eBPF?" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/kans-8w-why-ebpf/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/kans-8w-why-ebpf/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/kans-8w-why-ebpf/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Wky eBPF?</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-21T19:47:33&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/kans" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kans</span>
+              </div>
+            </a>
+            
+            <a href="/tags/ebpf" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">ebpf</span>
+              </div>
+            </a>
+            
+            <a href="/tags/xdp" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">xdp</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kubernetes" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kubernetes</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>어느덧 이번 스터디도 대망의 Cilium을 다루기 시작합니다.<br>
+Cilium에 이렇게도 (저를 포함한) 모?두가 열광하는지 알아보기 전에<br>
+근간이 되는 eBPF를 먼저 가볍게 알아보고 가려합니다.<br>
+<del>이 때는 설마 했지만, 역시나 스불재 엔딩이었다</del></p>
+<p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 <strong>K</strong>8s <strong>A</strong>dvanced <strong>N</strong>etwork <strong>S</strong>tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.</p>
+<h2 id="1-linux-network-stack">1. Linux Network Stack</h2>
+<p>스터디 1주차의 <a href="https://blog.minseong.xyz/post/kans-1w-container-socket/">Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기</a>에서 가볍게 맛을 보고 도망치기 바빴지만, 여튼 아래의 사항은 스쳐지나갔습니다.</p>
+<ul>
+<li>iptables: userspace 기반의 네트워킹</li>
+</ul>
+<p>ufw, firewalld 등의 방화벽 프로그램이 이를 래핑하였다는 건 대충 넘어간다하더라도,<br>
+Linux 환경에서 userspace를 통해 제어를 한다는 것을 알아두었을 때,<br>
+이를 네트워킹 스텍으로 사용하고 있는 기존의 방식이 약간이라도 번거롭다는 것을 느낄 수 있습니다.</p>
+<p>그 의미는 yaml에 적용하면, 일일히 iptables를 수정하여 사용한다는 의미이기 때문입니다.</p>
+<p>이를 또 풀게되면&hellip;</p>
+<ul>
+<li>한번 규칙(rule)을 수정한다고 할때, 재생성=모든 규칙을 업데이트한다.</li>
+<li>Chaning 된 규칙은 연결리스트이기 때문에 모든 동작의 복잡도는 O(n).</li>
+<li>ACLs는 우선순위가 높은 규칙에서 순차적으로 적용됩니다.</li>
+<li>IP 및 포트를 기반으로 하며, L7 프로토콜에 대해서는 지원이 되지 않습니다.</li>
+<li>새로운 IP 혹은 포트가 추가되면, 규칙은 추가되어야하고 체이닝은 바뀌어야합니다.<br>
+즉 그때마다 모든 규칙을 업데이트해야하는 것입니다.</li>
+</ul>
+<p>결국 <code>kube-proxy</code>처럼 이를 활용한 Kubernetes에 있어 리소스 오버헤드가 발생한다고, <a href="https://www.youtube.com/watch?v=lrP7hk-EW4U">Youtube/FOSDEM2020</a>에 나와있습니다.</p>
+<ul>
+<li>일반적으로 iptables를 쓰는 것이 kernel 단의 netfilter를 조작하는 익숙한 방식이라 적용하기 효율적이었을 것이라 생각됩니다.</li>
+</ul>
+<p><img src="images/linux-network-stack.png" alt="linux-network-stack"></p>
+<h2 id="2-bpfberkeley-packet-filter-kernel-hooks">2. BPF(Berkeley Packet Filter) kernel hooks</h2>
+<p>BPF를 커널에 삽입하여, 패킷을 필터링(통제)할 수 있다고 하는데&hellip; 이걸로는 크게 와닿지 않고요.<br>
+<a href="https://blog.naver.com/kangdorr/222593265958">다른 글</a>에도 tcpdump를 대표적인 사용례로 소개하고 있습니다.</p>
+<p><a href="https://blog.insightbook.co.kr/2021/07/19/bpf-%EC%84%B1%EB%8A%A5-%EB%B6%84%EC%84%9D-%EB%8F%84%EA%B5%AC-bpf-%ED%8A%B8%EB%A0%88%EC%9D%B4%EC%8B%B1%EC%9D%84-%ED%86%B5%ED%95%9C-%EB%A6%AC%EB%88%85%EC%8A%A4-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EA%B4%80/">도서출판 인사이트</a>에 따르면, 패킷 필터링을 넘어 <code>고급 성능 분석 도구 등에 이용되는 다양한 분야에 사용가능한 범용 실행 엔진을 일컽는 독립적 기술</code>이라고 하는데, 커널의 내부를 들여다 볼 수 있는 초능력(매직!)을 준다고 합니다.</p>
+<p>컴퓨터과학에 초능력이라니, 처음엔 갸웃했는데 Cilium을 보면서 그저 믿는 수밖에 없었죠.</p>
+<p><img src="images/what-bpf-do.png" alt="what-bpf-do"></p>
+<ul>
+<li><a href="https://blogs.oracle.com/linux/post/bpf-a-tour-of-program-types">BPF: A Tour of Program Types</a></li>
+<li><a href="https://blogs.oracle.com/linux/post/bpf-in-depth-communicating-with-userspace">BPF In Depth: Communicating with Userspace</a></li>
+<li><a href="https://blogs.oracle.com/linux/post/bpftune-using-reinforcement-learning-in-bpf">bpftune - Using Reinforcement Learning in BPF</a></li>
+</ul>
+<p>위의 포스팅에 자세히 나와있지만, 제가 이해하려고 아래와 같이 끄적였습니다.</p>
+<ul>
+<li>Syscall</li>
+</ul>
+<p><code>userspace</code> map interaction(상호작용)을 수행합니다.</p>
+<ul>
+<li>Sockmap</li>
+</ul>
+<p>BPF Map의 한 유형으로 보이며, 소켓을 저장하고 관리하는데 사용되는 것 같습니다.</p>
+<blockquote>
+<p>BPF Map은 BPF 프로그램이 다른 BPF프로그램 및 map 데이터를 볼 수 있는 다른 <code>userspace</code> 프로그램으로부터 정보를 얻는 데 쓰인다고 합니다.<br>
+더 자세한 것은 <a href="https://docs.kernel.org/6.10/bpf/map_sockmap.html">The Linux Kernel Docs</a>에서.</p>
+</blockquote>
+<ul>
+<li>Sockops: also called <code>TCP-BPF</code> mechanism that support setting TCP parameters.</li>
+</ul>
+<blockquote>
+<p><del>ops라길래, xops인줄 알았는데</del> operand인 건에 대하여;</p>
+</blockquote>
+<p>한번 찾아보니 좋은 글이 있었습니다. <a href="https://jaegerw2016.github.io/posts/2022/11/25/Use-eBPF-map-sockmap-redir-localhost-socket.html">eBPF系列-ebpf map之使用sockmap提升本地socket转发</a><br>
+<a href="https://netdevconf.info/2.2/papers/brakmo-tcpbpf-talk.pdf">netdevconf/brakmo-tcpbpf-talk</a>와 병행해서 읽어본 바, 현재 이해한 사항은&hellip;</p>
+<p>(1) SYN 수신 시 : BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB 히트<br>
+(2) SYN-ACK 수신 시 : BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB 히트<br>
+(3) 이 외에도 RTO 시간을 동적으로 조정가능하다는 것인데, 아래 블로그에 재미나&rsquo;보이는&rsquo; 예시가 있습니다. 언젠가 저 RTO를 왜 조작하는지 이유를 좀 더 알아봤으면 좋겠네요.</p>
+<p><a href="https://arthurchiao.art/blog/customize-tcp-initial-rto-with-bpf/">Customize TCP initial RTO (retransmission timeout) with BPF</a></p>
+<ul>
+<li>Cgroups / TC(Transmission Control) Hooks</li>
+</ul>
+<blockquote>
+<p>사실 <code>TC가 트래픽 컨트롤 아닌가</code>, <code>IPv4, IPv6 는 cgroup 이죠?</code> 라는 질문을 받고,<br>
+뭔가 잘?못 되었다는 생각이 들어서 이 글을 통해 정말 조금만 더 파보기로 했습니다. (또 후회 중)</p>
+</blockquote>
+<p><a href="https://www.openeuler.org/en/blog/MrRlu/2021-01-04-openEuler-eBPF-introduce.html">OpenEuler/eBPF Introduction</a>에 의하면 cgroup의 경우, 당연한 이야기겠지만 Permission 이야기로 생각이 되는데, <a href="https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_CGROUP_DEVICE/">BPF_PROG_TYPE_CGROUP_DEVICE</a>처럼 쓸 수 있다고 생각되어 집니다.</p>
+<p><a href="https://eunomia.dev/tutorials/20-tc/">eunomia/eBPF Tutorial by Example 20: tc Traffic Control</a>에서<br>
+tc(traffic control)과 TC(Transmission Control)을 구분하고 있는데,<br>
+결국 무엇인지는 아직 헷갈립니다. <del>전송하는건 똑같으니 그만 좀 생각해볼까</del></p>
+<p>아직은 확신을 하지 못했으므로 아래의 글과 함께 보류해보겠습니다.</p>
+<blockquote>
+<p><a href="https://qmonnet.github.io/whirl-offload/2020/04/11/tc-bpf-direct-action/">Whirl Offload/Understanding tc “direct action” mode for BPF</a><br>
+<a href="https://www.man7.org/linux/man-pages/man8/tc.8.html#DESCRIPTION">man7/tc-bpf(8)#DESCRIPTION</a></p>
+</blockquote>
+<blockquote>
+<p>당연히 traffic control로 기재야 되어있겠지만, 설명을 읽어보니<br>
+<code>(SHAPING) When traffic is shaped, its rate of transmission is under control.</code><br>
+이렇게 적혀있어서, 결국 전송속도 제어이니 둘 다 맞는 말 같기도&hellip;?<br>
+여튼 shaping은 burst 완화에 도움이 되고, egress 에서 발생한다고 합니다.</p>
+</blockquote>
+<ul>
+<li>XDP(eXpress Data Path)</li>
+</ul>
+<p><a href="https://developers.redhat.com/blog/2021/04/01/get-started-with-xdp">Red Hat/Get started with XDP</a>을 보니, 서두부터 learning curve가 심하다고 하는군요. <del>접을까</del></p>
+<p>하위로 안내된 <a href="https://developers.redhat.com/blog/2018/12/06/achieving-high-performance-low-latency-networking-with-xdp-part-1">Red Hat/Achieving high-performance, low-latency networking with XDP: Part I</a>를 살펴봅시다.</p>
+<p>XDP 이전의 패킷 처리를 위한 커널 솔루션은 DPDK(Data Plane Development Kit)이라는 bypass 솔루션 대비 10배 이상 성능이 뒤쳐져있었다고 합니다.</p>
+<p>하지만 XDP를 통해, 아래의 장점을 포함하여 XDP 지원 드라이버에서 14Mpps 이상을 처리할 수 있다고합니다.</p>
+<p>(0) <strong>커널 내 코드 추가 없이</strong> 커널 동작 변경 및 확장: ??? 뭐라고?<br>
+(1) SKBs(socket buffers) 관리의 오버헤드 제거(?)<br>
+(2) 패킷당 메모리 관리 오버헤드 감소<br>
+(3) 더 효과적인 대량 처리 가능</p>
+<p>음 써놓고도 다시 읽어보니 잘 모르겠네요.</p>
+<p>여튼, 커널 내부의 저수준 hook에 BPF(eBPF) 프로그램을 붙일 수 있다고 합니다.<br>
+이 hook이 network device driver에 의해 구현되는 시점은<br>
+현재(current) 패킷에 소켓 버퍼가 할당되기 전이라고 합니다.<br>
+일반적으로 <strong>NAPI 방식의</strong> <code>poll()</code>과 같이,<br>
+ingress traffic proccessing function(인그레스 트래픽 처리 함수)내부에서 처리된다고 합니다.</p>
+<blockquote>
+<p>와 장황하게 쓰니, 더 모르겠어!</p>
+</blockquote>
+<h2 id="3-ebpfextended-bpf">3. eBPF(Extended BPF)</h2>
+<p>앞의 설명이 장황했는데, 아래의 그림을 조금은 이해할 수 있게 되었습니다. <del>과연</del></p>
+<p><img src="images/ebpf-explained-in-isitobservable.png" alt="ebpf-explained-in-isitobservable"></p>
+<blockquote>
+<p><a href="https://isitobservable.io/observability/kubernetes/how-to-observe-your-network-with-ebpf">Source: Is it Observable/How to observe your network with eBPF</a></p>
+</blockquote>
+<p>앞선 내용에서도 eBPF가 간혹 나오는데 그야 BPF에서 확장된 것이니 기본원리는 같을 수 밖에 없을 것 같습니다.</p>
+<ul>
+<li>
+<p>핵심: 커널의 current feature(현재 기능)을 개선 할 수 있음.</p>
+<ul>
+<li>커널이 소켓 연결이나 다른 프로세스를 관리할 때, KPIs를 수집하는 프로세스를 추가</li>
+<li><del>어째서 KPI를 여기서 보는 것인가</del></li>
+</ul>
+</li>
+<li>
+<p>활용: 무궁무진</p>
+<ul>
+<li>네트워킹: 분석, 라우팅 등</li>
+<li>보안: 특정 규칙에 따라 트래픽 필터링 및 허용/차단 트래픽 보고</li>
+<li>실행흐름 수집(execution flows):
+<ul>
+<li>scope: userspace ~ kernel instruction</li>
+<li>purpose: tracing, profiling</li>
+</ul>
+</li>
+<li>Observability~~(관찰가능성&hellip;)~~:
+<ul>
+<li><strong>Not Pooling Information</strong>: EFFECTIVE!!!</li>
+<li>eBPF 프로그람은 측정이 필요할 때, 정확히 실행된다고 합니다.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>과장 OR 오해: <code>브라우저에 JavaScript 있는 것</code>에 비견함;;;</p>
+</li>
+</ul>
+<p>아래 그림으로 급한 마무리를 시도해보겠습니다.</p>
+<p><img src="images/bpf-compiler-collection.png" alt="bpf-compiler-collection"></p>
+<blockquote>
+<p><a href="https://github.com/iovisor/bcc">Source: iovisor/bcc @github</a></p>
+</blockquote>
+<h2 id="4-etc">4. etc.</h2>
+<ul>
+<li>1000 Mpbs = 1488000 pps = 1.488 Mpps: 궁금해서 찾아본 것. 빠르네요.
+<ul>
+<li>672 bit/s(=bps) = 1 Packet/s(=pps)</li>
+<li>1 Mbps = 1488 pps = 1.488 Kpps</li>
+<li>Source: <a href="https://velog.io/@inyong_pang/Network-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%8B%A8%EC%9C%84-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%EC%A0%84%EC%86%A1-%EB%8B%A8%EC%9C%84">inyong_pang @velog</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/kans-7w-envoy-config/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Kubernetes Service(4): envoy config</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

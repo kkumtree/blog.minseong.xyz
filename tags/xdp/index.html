@@ -6,17 +6,17 @@
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>kans | kkumtree</title>
+    <title>xdp | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="kans" />
+    <meta property="og:title" content="xdp" />
 
     
-    <meta property="og:image" content='https://blog.minseong.xyz/tags/kans/' />
-    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/kans/' />
+    <meta property="og:image" content='https://blog.minseong.xyz/tags/xdp/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/xdp/' />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/kans/' />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/xdp/' />
 
     
     <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
@@ -82,7 +82,7 @@
   <section class="p-strip--suru main-slide main-strip">
       <div class="row">
         <div class="col-8 left-section">
-          <h1>kans</h1>
+          <h1>xdp</h1>
           <p></p>
         </div>
       </div>
@@ -96,7 +96,7 @@
 
             
             <div class="p-list__item">
-              <a href="/post/kans-2w-kind-installation-on-linux/"><h2>리눅스에 KIND 설치하기 w/golang</h2></a>
+              <a href="/post/kans-8w-why-ebpf/"><h2>Wky eBPF?</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
                 <li class="p-inline-list__item">
@@ -104,68 +104,16 @@
                 </li>
                 
               </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-02T00:33:19&#43;09:00</u></p>
-              <p>Helm 설치 추가
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)에 참여하게 되면서 기록을 남기고 있습니다.
-이번에는 kind(Kubernetes IN Docker)를 Golang을 통해 설치하면서 약간의 소?란이 있었던 부분만 다룹니다.
-1. KIND란? 아래 사진으로 대체합니다. 자세한 내용은 Docs/Initial_design에서 볼수 있습니다. 2. KIND 설치하기 Docs/Quick-start를 참고합니다. Linux의 경우, 패키지 관리자 설치가 없어 바이너리, 혹은 소스로 설치해야 합니다.
-아래 두 문장에 뭔가 발동하여 Go 언어로 설치를 해보기로 했습니다.
-If you are a go developer you may find the go install option convenient.</p>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-21T19:47:33&#43;09:00</u></p>
+              <p>어느덧 이번 스터디도 대망의 Cilium을 다루기 시작합니다.
+Cilium에 이렇게도 (저를 포함한) 모?두가 열광하는지 알아보기 전에
+근간이 되는 eBPF를 먼저 가볍게 알아보고 가려합니다.
+이 때는 설마 했지만, 역시나 스불재 엔딩이었다
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. Linux Network Stack 스터디 1주차의 Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기에서 가볍게 맛을 보고 도망치기 바빴지만, 여튼 아래의 사항은 스쳐지나갔습니다.
+iptables: userspace 기반의 네트워킹 ufw, firewalld 등의 방화벽 프로그램이 이를 래핑하였다는 건 대충 넘어간다하더라도,</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/kans-1w-container-socket/"><h2>Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-01T09:02:15&#43;09:00</u></p>
-              <p>최근 CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)에 참여하게 되었습니다.
-난이도를 생각하면 KH(Hardcore)NS가 더 맞아보이지만&hellip;
-k8s가 워낙 인기가 많기도 하지만, Pod 간 통신에는 많은 지식이 투여되기에 이번 기회에 살펴보기로 했습니다.
-첫 주차는, 바로 Kubernetes에 진입하지 않고 Containerization에 대한 이해를 먼저 다뤄주셨습니다.
-여타 쿠버네티스 강의와 달리 9주 간 매주 일요일에만 진행되는 세션인데도, 기반 기술을 다시 짚어주셔서 감사했습니다.
-1. AWS EC2 Instance 셋업 CloudFormation을 통해, EC2 및 제반사항을 구성하여 주셨습니다만, 취미 삼아 Terraform 변환 작업을 해보았습니다.</p>
-            </div>
-            
-<ol class="p-pagination">
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--previous" 
-        href="/tags/kans/" title="Previous page">
-        <i class="p-icon--contextual-menu">First page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--previous " 
-        href="/tags/kans/page/2/" title="Previous page">
-        <i class="p-icon--contextual-menu">Previous page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/tags/kans/">1</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/tags/kans/page/2/">2</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link  is-active" href="/tags/kans/page/3/">3</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--next  is-disabled"
-         title="Next page">
-        <i class="p-icon--contextual-menu">Next page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--next"
-        href="/tags/kans/page/3/" title="Last page">
-        <i class="p-icon--contextual-menu">Last page</i>
-    </a>
-  </li>
-</ol>
 </div>
         </div>
       </div>
