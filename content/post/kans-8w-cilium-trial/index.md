@@ -190,3 +190,5 @@ elm install cilium cilium/cilium --version 1.16.3 --namespace kube-system \
 ```
 
 이후 파라미터 설명
+
+집으로 가자
