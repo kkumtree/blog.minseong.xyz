@@ -89,7 +89,7 @@ Cloudformation YAML에 기본 정의된 `t3.xlarge`를 써보겠습니다.
 - [Virtualized instances
 /AWS](https://docs.aws.amazon.com/ec2/latest/instancetypes/ec2-nitro-instances.html#nitro-instance-types)
 
-### c. 배포 후 기본 체크  
+### c. 프로비저닝 후 기본 체크  
 
 - 스터디에서 제공된 대로, `kube-proxy` 없이 운용 테스트를 할 것이기에 확인을 해보겠습니다.  
 - 이미 `kubeadm` 배포 시, `--skip-phases=addon/kube-proxy` param이 적용되어 있습니다.  
@@ -174,11 +174,47 @@ MTU 및 RX/TX Queue 관련 채널 값을 바꿔야할 것으로 보입니다.
 
 ## 2. Cilium 설치
 
+- 설치 전에 미리 OS에서 파라미터 조정을 해보겠습니다.  
+
+### a. 파라미터 조정
+
+크게 두 가지 파라미터 조정해둡니다.  
+- Maxium MTU: 3498  
+  - 최신문서(v1.16.3)에서는 값이 더 낮아져서 3498로 조정합니다.  
+- RX/TX Queue: more than half  
+
+RX/TX Queue는 그렇다고 치고, MTU의 경우에는 왜 조정해야되는지 아래에도 설명되어있으니 참조하시면 됩니다.  
+- [NodPort on AWS/cilium](https://docs.cilium.io/en/stable/network/kubernetes/kubeproxy-free/#nodeport-xdp-on-aws)
+
+```bash
+# MTU
+ip link set dev ens5 mtu 3498
+ip link show ens5 | grep mtu
+2: ens5: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 3498 qdisc mq state UP mode DEFAULT group default qlen 1000
+
+# RX/TX Queue
+ethtool -L ens5 combined 1
+ethtool -l ens5
+# Channel parameters for ens5:
+# Pre-set maximums:
+# RX:		n/a
+# TX:		n/a
+# Other:		n/a
+# Combined:	4
+# Current hardware settings:
+# RX:		n/a
+# TX:		n/a
+# Other:		n/a
+# Combined:	1
+```
+
+### b. helm 배포  
+
 ```bash  
 helm repo add cilium https://helm.cilium.io/
 helm repo update
 
-elm install cilium cilium/cilium --version 1.16.3 --namespace kube-system \
+helm install cilium cilium/cilium --version 1.16.3 --namespace kube-system \
 --set k8sServiceHost=192.168.10.10 --set k8sServicePort=6443 --set debug.enabled=true \
 --set rollOutCiliumPods=true --set routingMode=native --set autoDirectNodeRoutes=true \
 --set bpf.masquerade=true --set bpf.hostRouting=true --set endpointRoutes.enabled=true \
@@ -189,6 +225,4 @@ elm install cilium cilium/cilium --version 1.16.3 --namespace kube-system \
 --set operator.replicas=1
 ```
 
-이후 파라미터 설명
 
-집으로 가자
