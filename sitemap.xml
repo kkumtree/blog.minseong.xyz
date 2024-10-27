@@ -2,23 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/cilium/</loc>
+    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/ebpf/</loc>
-    <lastmod>2024-10-21T19:47:33+09:00</lastmod>
+    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/kans/</loc>
-    <lastmod>2024-10-21T19:47:33+09:00</lastmod>
+    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2024-10-21T19:47:33+09:00</lastmod>
+    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/kubeadm/</loc>
+    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/kubernetes/</loc>
-    <lastmod>2024-10-21T19:47:33+09:00</lastmod>
+    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/kans-8w-cilium-trial/</loc>
+    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2024-10-21T19:47:33+09:00</lastmod>
+    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/</loc>
-    <lastmod>2024-10-21T19:47:33+09:00</lastmod>
+    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/kans-8w-why-ebpf/</loc>
     <lastmod>2024-10-21T19:47:33+09:00</lastmod>

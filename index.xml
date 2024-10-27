@@ -6,7 +6,21 @@
     <description>Recent content on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 21 Oct 2024 19:47:33 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 26 Oct 2024 01:35:59 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kubernetes Service(5): Cillium Quick-start w/Hubble UI</title>
+      <link>https://blog.minseong.xyz/post/kans-8w-cilium-trial/</link>
+      <pubDate>Sat, 26 Oct 2024 01:35:59 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/kans-8w-cilium-trial/</guid>
+      <description>그럼 매번 실패만 했던 Cilium 배포를 한번 해볼까요?
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. CSP VM 골라보기 이렇게 쓴 이유는 결국 네트워크를 잘 알아야하는데,
+작년에 할 때는 그런거 생각도 안하고 그냥 올려보려 했으니 당연히 안 돌아가겠죠?
+trying2adult/What Is XDP And How Do You Use It In Linux 그냥 곰곰히 오리duckduckgo랑 투닥거리다보니, 비록 연식이 되긴 했지만
+클릭을 안하고는 못배길 위의 블로그 제목이 눈에 띄였습니다.</description>
+    </item>
+    
     <item>
       <title>Why eBPF?</title>
       <link>https://blog.minseong.xyz/post/kans-8w-why-ebpf/</link>

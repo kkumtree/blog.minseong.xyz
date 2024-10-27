@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Kubernetes Service(5): Cillium Quick-start w/Hubble UI | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Kubernetes Service(5): Cillium Quick-start w/Hubble UI" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/kans-8w-cilium-trial/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/kans-8w-cilium-trial/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/kans-8w-cilium-trial/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Kubernetes Service(5): Cillium Quick-start w/Hubble UI</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-26T01:35:59&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/kans" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kans</span>
+              </div>
+            </a>
+            
+            <a href="/tags/ebpf" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">ebpf</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cilium" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">cilium</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kubeadm" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kubeadm</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kubernetes" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kubernetes</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>그럼 매번 실패만 했던 Cilium 배포를 한번 해볼까요?</p>
+<p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 <strong>K</strong>8s <strong>A</strong>dvanced <strong>N</strong>etwork <strong>S</strong>tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.</p>
+<h2 id="1-csp-vm-골라보기">1. CSP VM 골라보기</h2>
+<p>이렇게 쓴 이유는 결국 네트워크를 <code>잘</code> 알아야하는데,<br>
+작년에 할 때는 그런거 생각도 안하고 그냥 올려보려 했으니 당연히 안 돌아가겠죠?</p>
+<ul>
+<li><a href="https://trying2adult.com/what-is-xdp-and-how-do-you-use-it-in-linux-amazon-ec2-example/">trying2adult/What Is XDP And How Do You Use It In Linux</a></li>
+</ul>
+<p>그냥 곰곰히 오리<del>duckduckgo</del>랑 투닥거리다보니, 비록 연식이 되긴 했지만<br>
+클릭을 안하고는 못배길 위의 블로그 제목이 눈에 띄였습니다.</p>
+<h3 id="a-사전-조사">a. 사전 조사</h3>
+<ol>
+<li>커널:</li>
+</ol>
+<ul>
+<li>현재 리눅스 커널 버전이 마이너 버전은 못 외우겠지만, 대충 메이저가 6버전이니 PASS</li>
+</ul>
+<ol start="2">
+<li>NIC:</li>
+</ol>
+<ul>
+<li>ENA(Elastic Network Adapter) 드라이버 언급이 나온 것으로 봐선,<br>
+지원 인스턴스를 올리면 덜 헤멜 것 같은 느낌이 듭니다.</li>
+</ul>
+<ol start="3">
+<li>MTU 상한:</li>
+</ol>
+<ul>
+<li>cilium 최신 버전도 상한값이 3818인지 확인하면 좋을 듯합니다.</li>
+</ul>
+<ol start="4">
+<li>NIC channels for RX/TX Queue:</li>
+</ol>
+<ul>
+<li>절반 이상을 비워야한다는데, 채널 수 모르면 좀 많이 헤맬 것 같습니다.</li>
+</ul>
+<h3 id="b-aws-cli로-확인">b. AWS CLI로 확인</h3>
+<ul>
+<li>Docs:
+<ul>
+<li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking-ena.html#test-enhanced-networking-ena">Test whether enhanced networking is enabled</a></li>
+<li><a href="https://aws.amazon.com/blogs/compute/query-for-the-latest-amazon-linux-ami-ids-using-aws-systems-manager-parameter-store/">Query for the latest Amazon Linux AMI IDs using AWS Systems Manager Parameter Store</a></li>
+</ul>
+</li>
+</ul>
+<p>스터디에서 제공된 CloudFormation파일 중 AMI은<br>
+Canonical에서 관리하는 SSM 파라미터를 통해 최신화를 할 수 있었습니다.<br>
+그래서 그냥 이 SSM 파라미터를 통해 AMI ID를 얻어와 보죠.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>aws ssm get-parameters --names /aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id --region ap-northeast-2
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;Parameters&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;Name&#34;</span>: <span style="color:#e6db74">&#34;/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;Type&#34;</span>: <span style="color:#e6db74">&#34;String&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;Value&#34;</span>: <span style="color:#e6db74">&#34;ami-042e76978adeb8c48&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;Version&#34;</span>: <span style="color:#ae81ff">30</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;LastModifiedDate&#34;</span>: <span style="color:#e6db74">&#34;2024-09-27T13:11:50.127000+09:00&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;ARN&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:ssm:ap-northeast-2::parameter/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;DataType&#34;</span>: <span style="color:#e6db74">&#34;aws:ec2:image&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;InvalidParameters&#34;</span>: []
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>당연히 <code>enaSupport</code>가 <code>true</code>로 나오네요.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>aws ec2 describe-images --image-id ami-042e76978adeb8c48 --query <span style="color:#e6db74">&#34;Images[].EnaSupport&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     true</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ]</span>
+</span></span></code></pre></div><p>눈감고 <code>c5.16xlarge</code> 를 띄워볼까 싶긴한데, 아래 문서에서 Nitro v2 버전 탭에 T3도 있는 것을 확인했네요.<br>
+Cloudformation YAML에 기본 정의된 <code>t3.xlarge</code>를 써보겠습니다.</p>
+<ul>
+<li><a href="https://docs.aws.amazon.com/ec2/latest/instancetypes/ec2-nitro-instances.html#nitro-instance-types">Virtualized instances
+/AWS</a></li>
+</ul>
+<h3 id="c-프로비저닝-후-기본-체크">c. 프로비저닝 후 기본 체크</h3>
+<ul>
+<li>
+<p>스터디에서 제공된 대로, <code>kube-proxy</code> 없이 운용 테스트를 할 것이기에 확인을 해보겠습니다.</p>
+</li>
+<li>
+<p>이미 <code>kubeadm</code> 배포 시, <code>--skip-phases=addon/kube-proxy</code> param이 적용되어 있습니다.</p>
+</li>
+<li>
+<p>No <code>kube-proxy</code></p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Access to Control Plane Node</span>
+</span></span><span style="display:flex;"><span>ssh -i $Keypair ubuntu@$ControlPlaneIP  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Not ready because of no kube-proxy </span>
+</span></span><span style="display:flex;"><span>kubectl get nodes
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME     STATUS     ROLES           AGE   VERSION</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># k8s-s    NotReady   control-plane   14m   v1.30.6</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># k8s-w1   NotReady   &lt;none&gt;          13m   v1.30.6</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># k8s-w2   NotReady   &lt;none&gt;          13m   v1.30.6</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># No kube-proxy</span>
+</span></span><span style="display:flex;"><span>kubectl cluster-info
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Kubernetes control plane is running at https://192.168.10.10:6443</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CoreDNS is running at https://192.168.10.10:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># No kube-proxy  </span>
+</span></span><span style="display:flex;"><span>kubectl get pod -A
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAMESPACE     NAME                            READY   STATUS    RESTARTS   AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   coredns-55cb58b774-h9dnm        0/1     Pending   0          14m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   coredns-55cb58b774-vjzrk        0/1     Pending   0          14m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   etcd-k8s-s                      1/1     Running   0          14m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   kube-apiserver-k8s-s            1/1     Running   0          14m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   kube-controller-manager-k8s-s   1/1     Running   0          14m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   kube-scheduler-k8s-s            1/1     Running   0          14m</span>
+</span></span></code></pre></div><ul>
+<li>커널 확인: 안해도 되지만, 한번 보겠습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Kernel Version</span>
+</span></span><span style="display:flex;"><span>uname -a
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Linux k8s-s 6.8.0-1015-aws #16~22.04.1-Ubuntu SMP Mon Aug 19 19:38:17 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux</span>
+</span></span><span style="display:flex;"><span>hostnamectl | grep Kernel
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># Kernel: Linux 6.8.0-1015-aws</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># XDP Support</span>
+</span></span><span style="display:flex;"><span>grep -i CONFIG_XDP_SOCKETS /boot/config-<span style="color:#66d9ef">$(</span>uname -r<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CONFIG_XDP_SOCKETS=y</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CONFIG_XDP_SOCKETS_DIAG=m</span>
+</span></span></code></pre></div><ul>
+<li>NIC 확인</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>netplan status | grep ethernet
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ●  1: lo ethernet UNKNOWN/UP (unmanaged)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ●  2: ens5 ethernet UP (networkd: ens5)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># MTU</span>
+</span></span><span style="display:flex;"><span>ip link show ens5 | grep mtu
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2: ens5: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 9001 qdisc mq state UP mode DEFAULT group default qlen 1000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># RX/TX Queue</span>
+</span></span><span style="display:flex;"><span>ethtool -l ens5
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Channel parameters for ens5:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Pre-set maximums:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># RX:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># TX:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Other:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Combined:	4</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Current hardware settings:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># RX:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># TX:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Other:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Combined:	4</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Driver</span>
+</span></span><span style="display:flex;"><span>ethtool -i ens5 | grep ena
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># driver: ena</span>
+</span></span></code></pre></div><p>Cilium에서 요구사항을 따로 살펴봐야겠지만,<br>
+MTU 및 RX/TX Queue 관련 채널 값을 바꿔야할 것으로 보입니다.</p>
+<h2 id="2-cilium-설치">2. Cilium 설치</h2>
+<ul>
+<li>설치 전에 미리 OS에서 파라미터 조정을 해보겠습니다.</li>
+</ul>
+<h3 id="a-파라미터-조정">a. 파라미터 조정</h3>
+<p>크게 두 가지 파라미터 조정해둡니다.</p>
+<ul>
+<li>Maxium MTU: 3498
+<ul>
+<li>최신문서(v1.16.3)에서는 값이 더 낮아져서 3498로 조정합니다.</li>
+</ul>
+</li>
+<li>RX/TX Queue: more than half</li>
+</ul>
+<p>RX/TX Queue는 그렇다고 치고, MTU의 경우에는 왜 조정해야되는지 아래에도 설명되어있으니 참조하시면 됩니다.</p>
+<ul>
+<li><a href="https://docs.cilium.io/en/stable/network/kubernetes/kubeproxy-free/#nodeport-xdp-on-aws">NodPort on AWS/cilium</a></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># MTU</span>
+</span></span><span style="display:flex;"><span>ip link set dev ens5 mtu <span style="color:#ae81ff">3498</span>
+</span></span><span style="display:flex;"><span>ip link show ens5 | grep mtu
+</span></span><span style="display:flex;"><span>2: ens5: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span style="color:#ae81ff">3498</span> qdisc mq state UP mode DEFAULT group default qlen <span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># RX/TX Queue</span>
+</span></span><span style="display:flex;"><span>ethtool -L ens5 combined <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>ethtool -l ens5
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Channel parameters for ens5:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Pre-set maximums:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># RX:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># TX:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Other:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Combined:	4</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Current hardware settings:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># RX:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># TX:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Other:		n/a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Combined:	1</span>
+</span></span></code></pre></div><h3 id="b-cilium-cli-설치">b. Cilium CLI 설치</h3>
+<p>그냥 혹시 모르니 Cilium CLI 설치 미리 해두겠습니다. 아직 Major가 v1은 아닙니다.</p>
+<ul>
+<li>Docs: <a href="https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/#install-the-cilium-cli">Install the Cilium CLI</a></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># v0.16.19</span>
+</span></span><span style="display:flex;"><span>CILIUM_CLI_VERSION<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>CLI_ARCH<span style="color:#f92672">=</span>amd64
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>uname -m<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;aarch64&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span> CLI_ARCH<span style="color:#f92672">=</span>arm64; <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/<span style="color:#e6db74">${</span>CILIUM_CLI_VERSION<span style="color:#e6db74">}</span>/cilium-linux-<span style="color:#e6db74">${</span>CLI_ARCH<span style="color:#e6db74">}</span>.tar.gz<span style="color:#f92672">{</span>,.sha256sum<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>sha256sum --check cilium-linux-<span style="color:#e6db74">${</span>CLI_ARCH<span style="color:#e6db74">}</span>.tar.gz.sha256sum
+</span></span><span style="display:flex;"><span>sudo tar xzvfC cilium-linux-<span style="color:#e6db74">${</span>CLI_ARCH<span style="color:#e6db74">}</span>.tar.gz /usr/local/bin
+</span></span><span style="display:flex;"><span>rm cilium-linux-<span style="color:#e6db74">${</span>CLI_ARCH<span style="color:#e6db74">}</span>.tar.gz<span style="color:#f92672">{</span>,.sha256sum<span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>버전 확인을 안내대로 해봅시다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cilium version --client
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cilium-cli: v0.16.19 compiled with go1.23.1 on linux/amd64</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cilium image (default): v1.16.2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cilium image (stable): v1.16.3</span>
+</span></span></code></pre></div><h3 id="c-helm-배포">c. helm 배포</h3>
+<p>그냥 실패하면 cilium CLI로 설치하고 눈 감겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm repo add cilium https://helm.cilium.io/
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &#34;cilium&#34; has been added to your repositories</span>
+</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Hang tight while we grab the latest from your chart repositories...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ...Successfully got an update from the &#34;cilium&#34; chart repository</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Update Complete. ⎈Happy Helming!⎈</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>helm install cilium cilium/cilium --version 1.16.3 --namespace kube-system <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set k8sServiceHost<span style="color:#f92672">=</span>192.168.10.10 --set k8sServicePort<span style="color:#f92672">=</span><span style="color:#ae81ff">6443</span> --set debug.enabled<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set rollOutCiliumPods<span style="color:#f92672">=</span>true --set routingMode<span style="color:#f92672">=</span>native --set autoDirectNodeRoutes<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set bpf.masquerade<span style="color:#f92672">=</span>true --set bpf.hostRouting<span style="color:#f92672">=</span>true --set endpointRoutes.enabled<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set ipam.mode<span style="color:#f92672">=</span>kubernetes --set k8s.requireIPv4PodCIDR<span style="color:#f92672">=</span>true --set kubeProxyReplacement<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set ipv4NativeRoutingCIDR<span style="color:#f92672">=</span>192.168.0.0/16 --set installNoConntrackIptablesRules<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set hubble.ui.enabled<span style="color:#f92672">=</span>true --set hubble.relay.enabled<span style="color:#f92672">=</span>true --set prometheus.enabled<span style="color:#f92672">=</span>true --set operator.prometheus.enabled<span style="color:#f92672">=</span>true --set hubble.metrics.enableOpenMetrics<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set hubble.metrics.enabled<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{dns:query;ignoreAAAA,drop,tcp,flow,port-distribution,icmp,httpV2:exemplars=true;labelsContext=source_ip\,source_namespace\,source_workload\,destination_ip\,destination_namespace\,destination_workload\,traffic_direction}&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--set operator.replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><ul>
+<li>주요 파라미터 설명</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>파라미터</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>debug.enabled</td>
+<td>cilium 파드에 로그 레벨을 debug 설정</td>
+</tr>
+<tr>
+<td>autoDirectNodeRoutes</td>
+<td>동일 대역 내의 노드들 끼리는 상대 노드의 podCIDR 대역의 라우팅이 자동으로 설정</td>
+</tr>
+<tr>
+<td>endpointRoutes.enabled</td>
+<td>호스트에 endpoint(파드)별 개별 라우팅 설정</td>
+</tr>
+<tr>
+<td>hubble.relay.enabled</td>
+<td>hubble 활성화</td>
+</tr>
+<tr>
+<td>hubble.ui.enabled</td>
+<td>hubble UI 활성화</td>
+</tr>
+<tr>
+<td>ipam.mode</td>
+<td>k8s IPAM 활용</td>
+</tr>
+<tr>
+<td>k8s.requireIPv4PodCIDR</td>
+<td>k8s에서 IPv4 Pod CIDR를 요구</td>
+</tr>
+<tr>
+<td>kubeProxyReplacement</td>
+<td>kube-proxy 없이 (최대한) 대체할수 있수 있게</td>
+</tr>
+<tr>
+<td>ipv4NativeRoutingCIDR=192.168.0.0/16</td>
+<td>해당 대역과 통신 시 IP Masq 하지 않음, 보통 사내망 대역을 지정</td>
+</tr>
+<tr>
+<td>operator.replicas</td>
+<td>cilium-operator 파드 기본 1개</td>
+</tr>
+<tr>
+<td>enableIPv4Masquerade</td>
+<td>파드를 위한 Masquerade</td>
+</tr>
+<tr>
+<td>bpf.masquerade</td>
+<td>추가로 Masquerade 을 BPF 로 처리</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>NAME: cilium
+</span></span><span style="display:flex;"><span>LAST DEPLOYED: Sun Oct <span style="color:#ae81ff">27</span> 11:58:59 <span style="color:#ae81ff">2024</span>
+</span></span><span style="display:flex;"><span>NAMESPACE: kube-system
+</span></span><span style="display:flex;"><span>STATUS: deployed
+</span></span><span style="display:flex;"><span>REVISION: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>TEST SUITE: None
+</span></span><span style="display:flex;"><span>NOTES:
+</span></span><span style="display:flex;"><span>You have successfully installed Cilium with Hubble Relay and Hubble UI.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Your release version is 1.16.3.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>For any further help, visit https://docs.cilium.io/en/v1.16/gettinghelp
+</span></span></code></pre></div><p>&hellip; 스터디에서 안내해주신 파라미터를 넣어서 했습니다<del>만, 이게 왜 되지&hellip;?</del><br>
+이제, 추가 파라미터 주입안해도 정상적으로 해당 버전이 작동하고 있다고 확인할 수 있었습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cilium version
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cilium-cli: v0.16.19 compiled with go1.23.1 on linux/amd64</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cilium image (default): v1.16.2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cilium image (stable): v1.16.3</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cilium image (running): 1.16.3</span>
+</span></span></code></pre></div><h2 id="3-cilium-살펴보기">3. Cilium 살펴보기</h2>
+<h3 id="a-배포-이후-상태">a. 배포 이후 상태</h3>
+<p>이제 <code>kube-proxy</code> 없이도 각 Node가 Ready 상태임을 확인할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get nodes
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME     STATUS   ROLES           AGE   VERSION</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># k8s-s    Ready    control-plane   20h   v1.30.6</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># k8s-w1   Ready    &lt;none&gt;          20h   v1.30.6</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># k8s-w2   Ready    &lt;none&gt;          20h   v1.30.6</span>
+</span></span></code></pre></div><p><code>kube-proxy</code>는 없습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get pods -A
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAMESPACE     NAME                               READY   STATUS    RESTARTS   AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   cilium-2g4bh                       1/1     Running   0          91m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   cilium-522nn                       1/1     Running   0          91m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   cilium-csdd7                       1/1     Running   0          91m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   cilium-envoy-82drs                 1/1     Running   0          91m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   cilium-envoy-96vst                 1/1     Running   0          91m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   cilium-envoy-gnh2q                 1/1     Running   0          91m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   cilium-operator-76bb588dbc-57945   1/1     Running   0          91m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   coredns-55cb58b774-h9dnm           1/1     Running   0          20h</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   coredns-55cb58b774-vjzrk           1/1     Running   0          20h</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   etcd-k8s-s                         1/1     Running   0          20h</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   hubble-relay-88f7f89d4-r4ccq       1/1     Running   0          91m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   hubble-ui-59bb4cb67b-l5ttc         2/2     Running   0          91m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   kube-apiserver-k8s-s               1/1     Running   0          20h</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   kube-controller-manager-k8s-s      1/1     Running   0          20h</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   kube-scheduler-k8s-s               1/1     Running   0          20h</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get svc -A
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAMESPACE     NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># default       kubernetes       ClusterIP   10.10.0.1       &lt;none&gt;        443/TCP                  20h</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   cilium-envoy     ClusterIP   None            &lt;none&gt;        9964/TCP                 93m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   hubble-metrics   ClusterIP   None            &lt;none&gt;        9965/TCP                 93m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   hubble-peer      ClusterIP   10.10.161.48    &lt;none&gt;        443/TCP                  93m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   hubble-relay     ClusterIP   10.10.150.231   &lt;none&gt;        80/TCP                   93m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   hubble-ui        ClusterIP   10.10.183.16    &lt;none&gt;        80/TCP                   93m</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-system   kube-dns         ClusterIP   10.10.0.10      &lt;none&gt;        53/UDP,53/TCP,9153/TCP   20h</span>
+</span></span></code></pre></div><p>NAT 테이블에 설정된 모든 규칙을 알아봅시다: <code>iptables -t -nat -S</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>iptables -t nat -S
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -P PREROUTING ACCEPT</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -P INPUT ACCEPT</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -P OUTPUT ACCEPT</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -P POSTROUTING ACCEPT</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -N CILIUM_OUTPUT_nat</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -N CILIUM_POST_nat</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -N CILIUM_PRE_nat</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -N KUBE-KUBELET-CANARY</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -A PREROUTING -m comment --comment &#34;cilium-feeder: CILIUM_PRE_nat&#34; -j CILIUM_PRE_nat</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -A OUTPUT -m comment --comment &#34;cilium-feeder: CILIUM_OUTPUT_nat&#34; -j CILIUM_OUTPUT_nat</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -A POSTROUTING -m comment --comment &#34;cilium-feeder: CILIUM_POST_nat&#34; -j CILIUM_POST_nat</span>
+</span></span></code></pre></div><h3 id="b-cilium-cli-활용하기">b. Cilium CLI 활용하기</h3>
+<p><a href="https://sigridjin.medium.com/ebpf-and-cillum-cni-1c3ad2a1e4e9">Sigrid Jin</a>님의 가이드를 참조했습니다.</p>
+<p>Alias 설정을 해두면 편하게 사용할 수 있다고 하니, 일단 해봅시다.<br>
+helm 배포 시, <code>kube-proxy</code>를 대체하도록 설정하였으니,<br>
+마지막에 당연히 True가 나오긴 해야합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get -l k8s-app<span style="color:#f92672">=</span>cilium pods -n kube-system --field-selector spec.nodeName<span style="color:#f92672">=</span>k8s-s  -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.items[0].metadata.name}&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cilium-522nn</span>
+</span></span><span style="display:flex;"><span>export CILIUMPOD0<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get -l k8s-app<span style="color:#f92672">=</span>cilium pods -n kube-system --field-selector spec.nodeName<span style="color:#f92672">=</span>k8s-s  -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.items[0].metadata.name}&#39;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it $CILIUMPOD0 -n kube-system -c cilium-agent -- cilium status
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># KVStore:                 Ok   Disabled</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Kubernetes:              Ok   1.30 (v1.30.6) [linux/amd64]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Kubernetes APIs:         [&#34;EndpointSliceOrEndpoint&#34;, &#34;cilium/v2::CiliumClusterwideNetworkPolicy&#34;, &#34;cilium/v2::CiliumEndpoint&#34;, &#34;cilium/v2::CiliumNetworkPolicy&#34;, &#34;cilium/v2::CiliumNode&#34;, &#34;cilium/v2alpha1::CiliumCIDRGroup&#34;, &#34;core/v1::Namespace&#34;, &#34;core/v1::Pods&#34;, &#34;core/v1::Service&#34;, &#34;networking.k8s.io/v1::NetworkPolicy&#34;]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># KubeProxyReplacement:    True   [ens5   192.168.10.10 fe80::b1:11ff:feba:7ce9 (Direct Routing)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Host firewall:           Disabled</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SRv6:                    Disabled</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CNI Chaining:            none</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CNI Config file:         successfully wrote CNI configuration file to /host/etc/cni/net.d/05-cilium.conflist</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Cilium:                  Ok   1.16.3 (v1.16.3-f2217191)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NodeMonitor:             Listening for events on 4 CPUs with 64x4096 of shared memory</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Cilium health daemon:    Ok   </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IPAM:                    IPv4: 4/254 allocated from 172.16.0.0/24, </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IPv4 BIG TCP:            Disabled</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IPv6 BIG TCP:            Disabled</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># BandwidthManager:        Disabled</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Routing:                 Network: Native   Host: BPF</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Attach Mode:             TCX</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Device Mode:             veth</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Masquerading:            BPF   [ens5]   192.168.0.0/16 [IPv4: Enabled, IPv6: Disabled]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Controller Status:       29/29 healthy</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Proxy Status:            OK, ip 172.16.0.231, 0 redirects active on ports 10000-20000, Envoy: external</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Global Identity Range:   min 256, max 65535</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Hubble:                  Ok              Current/Max Flows: 4095/4095 (100.00%), Flows/s: 26.15   Metrics: Ok</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Encryption:              Disabled        </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Cluster health:          3/3 reachable   (2024-10-27T05:05:44Z)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Modules Health:          Stopped(0) Degraded(0) OK(45)</span>
+</span></span><span style="display:flex;"><span>alias c0<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;kubectl exec -it </span>$CILIUMPOD0<span style="color:#e6db74"> -n kube-system -c cilium-agent -- cilium&#34;</span>
+</span></span><span style="display:flex;"><span>c0 status | grep KubeProxyReplacement
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># KubeProxyReplacement:    True   [ens5   192.168.10.10 fe80::b1:11ff:feba:7ce9 (Direct Routing)]</span>
+</span></span></code></pre></div><p>iptables MASQ 대신 eBPF MASQ 사용을 아래와 같이 확인할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cilium config view | grep -i masq
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># enable-bpf-masquerade                             true</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># enable-ipv4-masquerade                            true</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># enable-ipv6-masquerade                            true</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># enable-masquerade-to-route-source                 false</span>
+</span></span></code></pre></div><h3 id="c-hubble-ui">c. Hubble UI</h3>
+<p>가시성이 있는 것을 다들 좋아하고, 저도&hellip; 살짝 께름칙하지만 좋아하기 때문에<br>
+Hublle UI를 띄워볼까요?</p>
+<p>이미 helm을 통해서, 해당 서비스가 올라와 있는 것을 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get -n kube-system svc hubble-ui
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># hubble-ui   ClusterIP   10.10.183.16   &lt;none&gt;        80/TCP    146m</span>
+</span></span></code></pre></div><p>이걸 <del>살짝 맘에는 안들지만</del> NodePort로 노출시켜봅시다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl patch -n kube-system svc hubble-ui -p <span style="color:#e6db74">&#39;{&#34;spec&#34;: {&#34;type&#34;: &#34;NodePort&#34;}}&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># service/hubble-ui patched</span>
+</span></span><span style="display:flex;"><span>b
+</span></span><span style="display:flex;"><span>HubbleUiNodePort<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get svc -n kube-system hubble-ui -o jsonpath<span style="color:#f92672">={</span>.spec.ports<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.nodePort<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 30401</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Hubble UI URL = http://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:</span>$HubbleUiNodePort<span style="color:#e6db74">&#34;</span>Port<span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># Hubble UI URL = http://13.125.233.122:30401
+</span></span></span></code></pre></div><p>우오오오&hellip; UI 잘 뜨네요.</p>
+<p><img src="images/hubble-ui-first-glance.png" alt="hubble-ui-first-glance"></p>
+<p>아무것도 안띄워서, <code>kube-system</code> 살펴보겠습니다.</p>
+<p><img src="images/hubble-in-kube-system.png" alt="hubble-in-kube-system"></p>
+<h2 id="9-뱀다리">9. 뱀다리</h2>
+<h3 id="a-netplan">a. Netplan</h3>
+<p>Ubuntu 에서는 언제부터인지 기억이 안나는데, 기본값으로 netplan을 네트워크 설정 도구로 사용합니다.<br>
+YAML로 네트워크 설정을 할 수 있다는 점을 포함해 많은 이점도 있고,<br>
+버전 엡데이트를 통해 개선이 많이 이루어져서 관심이 있다면 살펴보는 것도 좋을 것 같습니다.</p>
+<p><a href="https://netplan.io/design#design-overview">Design Overview/Netplan</a></p>
+<p>실제로도 Ubuntu 기반의 EC2를 살펴보면 다음과 같습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /etc/netplan/50-cloud-init.yaml 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># # This file is generated from information provided by the datasource.  Changes</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># # to it will not persist across an instance reboot.  To disable cloud-init&#39;s</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># # network configuration capabilities, write a file</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># # /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># # network: {config: disabled}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># network:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     ethernets:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         ens5:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             dhcp4: true</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             dhcp6: false</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             match:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#                 macaddress: 02:b1:11:ba:7c:e9</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             set-name: ens5</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     version: 2</span>
+</span></span></code></pre></div><h3 id="b-그래서-xdp는-어디에-있나요">b. 그래서 XDP는 어디에 있나요?</h3>
+<p>이 글에서 일단 helm으로 hubble UI까지 뜨는 것을 봤으니, 언젠가&hellip; 이어서 써보고 싶네요.</p>
+<h2 id="reference">Reference</h2>
+<p>중간에 언급된 Docs 외에 참고한 유용한 링크입니다.</p>
+<ul>
+<li><a href="https://nuguni.tistory.com/96">Bonding 인터페이스에서 Cilium XDP 활성화 하기/음하하</a></li>
+<li><a href="https://sigridjin.medium.com/ebpf-and-cillum-cni-1c3ad2a1e4e9">eBPF and Cillum CNI/Sigrid Jin@Medium</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/kans-8w-why-ebpf/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Why eBPF?</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
