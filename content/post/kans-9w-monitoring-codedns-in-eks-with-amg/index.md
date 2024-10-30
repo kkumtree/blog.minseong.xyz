@@ -15,7 +15,7 @@ authors:
     github: kkumtree  
     profile: https://avatars.githubusercontent.com/u/52643858?v=4  
 image: cover.png  
-draft: false # 글 초안 여부  
+draft: true # 글 초안 여부  
 ---
 
 > 안타?깝게도 Mercedes AMG는 아닙니다.  
