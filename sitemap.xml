@@ -2,16 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/amg/</loc>
+    <lastmod>2024-10-30T23:44:01+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/coredns/</loc>
+    <lastmod>2024-10-30T23:44:01+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/eks/</loc>
+    <lastmod>2024-10-30T23:44:01+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/kans/</loc>
+    <lastmod>2024-10-30T23:44:01+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2024-10-30T23:44:01+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/kans-9w-monitoring-codedns-in-eks-with-amg/</loc>
+    <lastmod>2024-10-30T23:44:01+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/otel/</loc>
+    <lastmod>2024-10-30T23:44:01+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2024-10-30T23:44:01+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2024-10-30T23:44:01+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/cilium/</loc>
     <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/ebpf/</loc>
-    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/kans/</loc>
-    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
     <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/kubeadm/</loc>
@@ -21,12 +42,6 @@
     <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/kans-8w-cilium-trial/</loc>
-    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/kans-8w-why-ebpf/</loc>
@@ -249,9 +264,6 @@
     <lastmod>2023-06-10T15:13:19+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/aws-eks-study-week7/</loc>
-    <lastmod>2023-06-10T15:13:19+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/eks/</loc>
     <lastmod>2023-06-10T15:13:19+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/flux/</loc>

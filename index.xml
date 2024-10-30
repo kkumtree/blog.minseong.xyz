@@ -6,7 +6,21 @@
     <description>Recent content on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sat, 26 Oct 2024 01:35:59 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 30 Oct 2024 23:44:01 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Monitoring CoreDNS in EKS with AMG</title>
+      <link>https://blog.minseong.xyz/post/kans-9w-monitoring-codedns-in-eks-with-amg/</link>
+      <pubDate>Wed, 30 Oct 2024 23:44:01 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/kans-9w-monitoring-codedns-in-eks-with-amg/</guid>
+      <description>안타?깝게도 Mercedes AMG는 아닙니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+이번 주차는 실감이 아직 안나는데, 스터디 마지막 주차입니다.
+그래서 여러분이 잘 알고, 매우 좋아하는 EKS를 통해, CoreDNS 이슈를 모니터링하는 Hands-on을 차근차근 따라해보려고합니다.
+AWS Cloud Operations Blog/Monitoring CoreDNS for DNS throttling issues using AWS Open source monitoring services 위의 Blog를 그대로 따라해볼 겁니다.
+0. EKS Cluster 생성 스터디에서 제공된 CloudFormation을 통해 EKS Cluster를 생성해볼까합니다.</description>
+    </item>
+    
     <item>
       <title>Kubernetes Service(5): Cillium Quick-start w/Hubble UI</title>
       <link>https://blog.minseong.xyz/post/kans-8w-cilium-trial/</link>
