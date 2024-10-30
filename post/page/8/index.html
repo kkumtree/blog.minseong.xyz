@@ -96,23 +96,6 @@
 
             
             <div class="p-list__item">
-              <a href="/post/aws-eks-study-week2/"><h2>AWS EKS 스터디 2주차 - Network</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-07T07:30:52&#43;09:00</u></p>
-              <p># 아쉽게도 신규 항목인 istio, kube-ops-view는 실습 실패 - istio: `myhome.yaml` 을 어떻게 생성할지 몰라서 중단 - kube-ops-view: A레코드에 제대로 잡히지 않음 지난 1주차에 이어, 이번 주에는 EKS의 네트워크 구성에 대해 알아보는 시간이었습니다.
-직전 스터디에서도 바로 광탈당하나?하며 밤과 주말을 하얗게 불태웠을 정도로
-가장 고난도라고 생각했던 네트워크를 다시 만나니 이제 1% 친근감이 느껴지고 있네요.
-자 그럼 해보도록 합시다.
-1. cloudformation을 활용한 EKS 원클릭 구성 학습을 위해, 이번에도 가시다님이 준비해주신 원클릭 배포 yaml을 활용하여 배포.</p>
-            </div>
-            
-            <div class="p-list__item">
               <a href="/post/aws-eks-study-week1/"><h2>AWS EKS 스터디 1주차</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -178,6 +161,22 @@ Ubuntu Pro란? Ubuntu Pro는 Ubuntu의 구독 상품으로, 보안 등의 지원
               </ul>
               <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-08T20:43:43&#43;09:00</u></p>
               <p>새로 구축한 Dockerfile FROM public.ecr.aws/lts/ubuntu:22.04_stable ENV DEBIAN_FRONTEND=noninteractive # Set Preferred Variables ARG TZ=Asia/Seoul \ NODE_VER=18.x \ UBUNTU_DIST=jammy \ NPM_PKGS=&#34;cross-env pm2&#34; \ ADD_USG=kkumtree \ ADD_USR=kkumtree \ ADD_USR_LANG=C.UTF-8 ARG NODE_REPO=node_${NODE_VER} # Apply essentials RUN set -ex \ &amp;&amp; ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime \ &amp;&amp; apt-get update -y &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; apt-get install -y --no-install-recommends apt-utils &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; apt-get install -y --no-install-recommends \ tzdata \ wget curl \ ca-certificates openssl \ lsb-release gnupg \ gcc g++ make \ zip unzip \ vim \ git \ &gt; /dev/null 2&gt;&amp;1 \ &amp;&amp; echo date # Install env for runtime # nodejs RUN set -ex \ &amp;&amp; curl -sLf -o /dev/null \ &#34;https://deb.</p>
+            </div>
+            
+            <div class="p-list__item">
+              <a href="/post/how-to-request-spot-with-kops/"><h2>kops로 손쉽게 spot instance 요청하기</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-06T18:43:51&#43;09:00</u></p>
+              <p>kops로 충분히 spot instance를 굴릴 수 있지 않을까? 란 생각을 pkos 스터디 내내 하고 있었습니다만,
+이미 t3.small 돌렸다가 제대로 노드들이 작동하지도 않았음을 맛봤기 때문에&hellip;
+우선순위는 주차별 과제 제출이었기 때문에 이제야 시범 테스트를 해보고, 글을 작성해봅니다. 요약하자면 복습용으로는 충분히 가능하다. 라는 판단입니다. 참고로, 손쉽게 === 야매 의 느낌으로 기술해보았습니다. 글 읽기 귀찮다! 싶으면 여기에서 원글을 확인하실 수 있습니다. 왜 스팟 인스턴스인가? 이미 이전 포스팅의 서두에서 언급한 바 있으나,
+아무리 클라우드 서비스가 합리적이어도 On-demand 인스턴스를 학습용으로 사용하기엔 살짝 비효율적이라는 생각이 들었습니다.</p>
             </div>
             
 <ol class="p-pagination">
