@@ -36,8 +36,8 @@ draft: true # 글 초안 여부
 
 음 아직은 기우였네요. 기억을 끄집어내보니 bation host에서 `eksctl` 을 사용해서 EKS Cluster 생성하는 것까지 스크립팅 되어 있다고, 말씀을 들었던 것 같습니다.  
 
-![about-15-mins-needed](images/eks-cluster-created.png)  
+![about-15-mins-needed](images/about-15-mins-later.png)  
 
 ![instances-from-cloudformation](images/instances-eks-bastion.png)  
 
-## ... 잘래
+## 1. 
