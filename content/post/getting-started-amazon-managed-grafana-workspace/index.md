@@ -1,6 +1,6 @@
 ---
 date: 2024-11-02T21:43:00+09:00
-title: "시작하세요, Amazon Managed Grafana Workspace"
+title: "SAML for using Amazon Managed Grafana Workspace (To-Do)"
 tags:
  - aws
  - grafana
@@ -12,10 +12,12 @@ authors:
     github: kkumtree  
     profile: https://avatars.githubusercontent.com/u/52643858?v=4  
 image: cover.png  
-draft: true # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
-[Monitoring CoreDNS in EKS with AMG](https://blog.mincloud.io/post/kans-9w-monitoring-codedns-in-eks-with-amg/)의 pre-requisite로, Amazon Managed Grafana Workspace를 간단히 만들어보았습니다.  
+> Organization의 이슈가 있어  `Amazon Managed Grafana Workspace`를 사용하려면 SAML 인증을 구성해야하는데, SAML 인증 제어가 되면 검토해보겠습니다.  
+
+<!-- [Monitoring CoreDNS in EKS with AMG](https://blog.mincloud.io/post/kans-9w-monitoring-codedns-in-eks-with-amg/)의 pre-requisite로, Amazon Managed Grafana Workspace를 훑어보았습니다.   -->
 
 당연히 거의 4년이 다되가니 [Amazon Managed Grafana – Getting Started](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/)와는 다른 인터페이스를 확인할 수 있었습니다.  
 
@@ -137,4 +139,4 @@ draft: true # 글 초안 여부
 
 ## 4. SAML 설정  
 
-SAML해야해서 종료  
+- SAML의 경우, 제가 Admin인 SAML이 없어서 나중에 검토해볼 생각입니다.  
