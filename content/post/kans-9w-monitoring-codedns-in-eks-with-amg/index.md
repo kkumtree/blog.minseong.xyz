@@ -100,7 +100,7 @@ eksctl get cluster
 # CLUSTER	NODEGROUP	STATUS	CREATED			MIN SIZE	MAX SIZEDESIRED CAPACITY	INSTANCE TYPE	IMAGE ID	ASG NAME		TYPE
 # myeks	ng1		ACTIVE	2024-11-02T09:55:58Z	3		3	3t3.medium	AL2_x86_64	eks-ng1-2cc97626-bf01-5bcc-d680-091e003bd586	managed
 export | egrep 'ACCOUNT|AWS_|CLUSTER|KUBERNETES|VPC|Subnet' | egrep -v 'SECRET|KEY'
-# declare -x ACCOUNT_ID="179746107155"
+# declare -x ACCOUNT_ID="<ACCOUNT-ID>"
 # declare -x AWS_DEFAULT_REGION="ap-northeast-2"
 # declare -x AWS_PAGER=""
 # declare -x AWS_REGION="ap-northeast-2"
@@ -122,10 +122,10 @@ kubectl get node --label-columns=node.kubernetes.io/instance-type,eks.amazonaws.
 
 eksctl get iamidentitymapping --cluster myeks
 # ARN											USERNAME				GROUPS					ACCOUNT
-# arn:aws:iam::179746107155:role/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-bU6W7Cr0ugY5	system:node:{{EC2PrivateDNSName}}	system:bootstrappers,system:nodes	
+# arn:aws:iam::<ACCOUNT-ID>:role/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-bU6W7Cr0ugY5	system:node:{{EC2PrivateDNSName}}	system:bootstrappers,system:nodes	
 eksctl get iamidentitymapping --cluster myeks
 # ARN											USERNAME				GROUPS					ACCOUNT
-# arn:aws:iam::179746107155:role/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-bU6W7Cr0ugY5	system:node:{{EC2PrivateDNSName}}	system:bootstrappers,system:nodes
+# arn:aws:iam::<ACCOUNT-ID>:role/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-bU6W7Cr0ugY5	system:node:{{EC2PrivateDNSName}}	system:bootstrappers,system:nodes
 ```
 
 ## 1. Hands-on을 위한 환경 구성  
@@ -368,7 +368,7 @@ aws eks create-addon --addon-name adot --addon-version v0.102.1-eksbuild.2 --clu
 #         "health": {
 #             "issues": []
 #         },
-#         "addonArn": "arn:aws:eks:ap-northeast-2:179746107155:addon/myeks/adot/eec977ee-84a1-85fe-ecbe-a2f51c90e9e7",
+#         "addonArn": "arn:aws:eks:ap-northeast-2:<ACCOUNT-ID>:addon/myeks/adot/eec977ee-84a1-85fe-ecbe-a2f51c90e9e7",
 #         "createdAt": "2024-11-03T11:31:33.678000+09:00",
 #         "modifiedAt": "2024-11-03T11:31:33.694000+09:00",
 #         "tags": {}
@@ -632,13 +632,13 @@ Creating a new trust policy
 An error occurred (NoSuchEntity) when calling the GetRole operation: The role with name EKS-GrafanaAgent-AMP-ServiceAccount-Role cannot be found.
 Appending to the existing trust policy
 
-An error occurred (NoSuchEntity) when calling the GetPolicy operation: Policy arn:aws:iam::179746107155:policy/AWSManagedPrometheusWriteAccessPolicy was not found.
+An error occurred (NoSuchEntity) when calling the GetPolicy operation: Policy arn:aws:iam::<ACCOUNT-ID>:policy/AWSManagedPrometheusWriteAccessPolicy was not found.
 Creating a new permission policy AWSManagedPrometheusWriteAccessPolicy
 {
     "Policy": {
         "PolicyName": "AWSManagedPrometheusWriteAccessPolicy",
         "PolicyId": "ANPASTWNT54JUITZSLWOX",
-        "Arn": "arn:aws:iam::179746107155:policy/AWSManagedPrometheusWriteAccessPolicy",
+        "Arn": "arn:aws:iam::<ACCOUNT-ID>:policy/AWSManagedPrometheusWriteAccessPolicy",
         "Path": "/",
         "DefaultVersionId": "v1",
         "AttachmentCount": 0,
@@ -651,7 +651,7 @@ Creating a new permission policy AWSManagedPrometheusWriteAccessPolicy
 
 An error occurred (NoSuchEntity) when calling the GetRole operation: The role with name EKS-GrafanaAgent-AMP-ServiceAccount-Role cannot be found.
 EKS-GrafanaAgent-AMP-ServiceAccount-Role role does not exist. Creating a new role with a trust and permission policy
-arn:aws:iam::179746107155:role/EKS-GrafanaAgent-AMP-ServiceAccount-Role
+arn:aws:iam::<ACCOUNT-ID>:role/EKS-GrafanaAgent-AMP-ServiceAccount-Role
 2024-11-03 12:16:16 [ℹ]  IAM Open ID Connect provider is already associated with cluster "myeks" in "ap-northeast-2"
 ```
 
@@ -665,7 +665,7 @@ arn:aws:iam::179746107155:role/EKS-GrafanaAgent-AMP-ServiceAccount-Role
 ```bash
 kubectl create namespace grafana-agent; \
 WORKSPACE="ws-0d032a51-2b98-43b1-90cb-f5069329f1af" \
-ROLE_ARN="arn:aws:iam::179746107155:role/EKS-GrafanaAgent-AMP-ServiceAccount-Role" \
+ROLE_ARN="arn:aws:iam::<ACCOUNT-ID>:role/EKS-GrafanaAgent-AMP-ServiceAccount-Role" \
 REGION="ap-northeast-2" \
 NAMESPACE="grafana-agent" \
 REMOTE_WRITE_URL="https://aps-workspaces.$REGION.amazonaws.com/workspaces/$WORKSPACE/api/v1/remote_write" \
