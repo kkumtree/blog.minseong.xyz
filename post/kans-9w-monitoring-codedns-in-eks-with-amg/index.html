@@ -201,7 +201,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># CLUSTER	NODEGROUP	STATUS	CREATED			MIN SIZE	MAX SIZEDESIRED CAPACITY	INSTANCE TYPE	IMAGE ID	ASG NAME		TYPE</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># myeks	ng1		ACTIVE	2024-11-02T09:55:58Z	3		3	3t3.medium	AL2_x86_64	eks-ng1-2cc97626-bf01-5bcc-d680-091e003bd586	managed</span>
 </span></span><span style="display:flex;"><span>export | egrep <span style="color:#e6db74">&#39;ACCOUNT|AWS_|CLUSTER|KUBERNETES|VPC|Subnet&#39;</span> | egrep -v <span style="color:#e6db74">&#39;SECRET|KEY&#39;</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x ACCOUNT_ID=&#34;179746107155&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x ACCOUNT_ID=&#34;&lt;ACCOUNT-ID&gt;&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x AWS_DEFAULT_REGION=&#34;ap-northeast-2&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x AWS_PAGER=&#34;&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x AWS_REGION=&#34;ap-northeast-2&#34;</span>
@@ -223,10 +223,10 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>eksctl get iamidentitymapping --cluster myeks
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># ARN											USERNAME				GROUPS					ACCOUNT</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># arn:aws:iam::179746107155:role/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-bU6W7Cr0ugY5	system:node:{{EC2PrivateDNSName}}	system:bootstrappers,system:nodes	</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># arn:aws:iam::&lt;ACCOUNT-ID&gt;:role/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-bU6W7Cr0ugY5	system:node:{{EC2PrivateDNSName}}	system:bootstrappers,system:nodes	</span>
 </span></span><span style="display:flex;"><span>eksctl get iamidentitymapping --cluster myeks
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># ARN											USERNAME				GROUPS					ACCOUNT</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># arn:aws:iam::179746107155:role/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-bU6W7Cr0ugY5	system:node:{{EC2PrivateDNSName}}	system:bootstrappers,system:nodes</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># arn:aws:iam::&lt;ACCOUNT-ID&gt;:role/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-bU6W7Cr0ugY5	system:node:{{EC2PrivateDNSName}}	system:bootstrappers,system:nodes</span>
 </span></span></code></pre></div><h2 id="1-hands-on을-위한-환경-구성">1. Hands-on을 위한 환경 구성</h2>
 <p>이제는 Hands-on에서 Pre-requisite로 요구하는 환경변수를 추가로 구성해보겠습니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export EKS_CLUSTER_NAME<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo $CLUSTER_NAME<span style="color:#66d9ef">)</span>  
@@ -428,7 +428,7 @@ prometheusservice-controller@GitHub</a></li>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;health&#34;: {</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">#             &#34;issues&#34;: []</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">#         },</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;addonArn&#34;: &#34;arn:aws:eks:ap-northeast-2:179746107155:addon/myeks/adot/eec977ee-84a1-85fe-ecbe-a2f51c90e9e7&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;addonArn&#34;: &#34;arn:aws:eks:ap-northeast-2:&lt;ACCOUNT-ID&gt;:addon/myeks/adot/eec977ee-84a1-85fe-ecbe-a2f51c90e9e7&#34;,</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;createdAt&#34;: &#34;2024-11-03T11:31:33.678000+09:00&#34;,</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;modifiedAt&#34;: &#34;2024-11-03T11:31:33.694000+09:00&#34;,</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;tags&#34;: {}</span>
@@ -675,13 +675,13 @@ prometheusservice-controller@GitHub</a></li>
 </span></span><span style="display:flex;"><span>An error occurred (NoSuchEntity) when calling the GetRole operation: The role with name EKS-GrafanaAgent-AMP-ServiceAccount-Role cannot be found.
 </span></span><span style="display:flex;"><span>Appending to the existing trust policy
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>An error occurred (NoSuchEntity) when calling the GetPolicy operation: Policy arn:aws:iam::179746107155:policy/AWSManagedPrometheusWriteAccessPolicy was not found.
+</span></span><span style="display:flex;"><span>An error occurred (NoSuchEntity) when calling the GetPolicy operation: Policy arn:aws:iam::&lt;ACCOUNT-ID&gt;:policy/AWSManagedPrometheusWriteAccessPolicy was not found.
 </span></span><span style="display:flex;"><span>Creating a new permission policy AWSManagedPrometheusWriteAccessPolicy
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    &#34;Policy&#34;: {
 </span></span><span style="display:flex;"><span>        &#34;PolicyName&#34;: &#34;AWSManagedPrometheusWriteAccessPolicy&#34;,
 </span></span><span style="display:flex;"><span>        &#34;PolicyId&#34;: &#34;ANPASTWNT54JUITZSLWOX&#34;,
-</span></span><span style="display:flex;"><span>        &#34;Arn&#34;: &#34;arn:aws:iam::179746107155:policy/AWSManagedPrometheusWriteAccessPolicy&#34;,
+</span></span><span style="display:flex;"><span>        &#34;Arn&#34;: &#34;arn:aws:iam::&lt;ACCOUNT-ID&gt;:policy/AWSManagedPrometheusWriteAccessPolicy&#34;,
 </span></span><span style="display:flex;"><span>        &#34;Path&#34;: &#34;/&#34;,
 </span></span><span style="display:flex;"><span>        &#34;DefaultVersionId&#34;: &#34;v1&#34;,
 </span></span><span style="display:flex;"><span>        &#34;AttachmentCount&#34;: 0,
@@ -694,7 +694,7 @@ prometheusservice-controller@GitHub</a></li>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>An error occurred (NoSuchEntity) when calling the GetRole operation: The role with name EKS-GrafanaAgent-AMP-ServiceAccount-Role cannot be found.
 </span></span><span style="display:flex;"><span>EKS-GrafanaAgent-AMP-ServiceAccount-Role role does not exist. Creating a new role with a trust and permission policy
-</span></span><span style="display:flex;"><span>arn:aws:iam::179746107155:role/EKS-GrafanaAgent-AMP-ServiceAccount-Role
+</span></span><span style="display:flex;"><span>arn:aws:iam::&lt;ACCOUNT-ID&gt;:role/EKS-GrafanaAgent-AMP-ServiceAccount-Role
 </span></span><span style="display:flex;"><span>2024-11-03 12:16:16 [ℹ]  IAM Open ID Connect provider is already associated with cluster &#34;myeks&#34; in &#34;ap-northeast-2&#34;
 </span></span></code></pre></div><h3 id="b-grafana-cloud-agent-배포">(b) Grafana Cloud Agent 배포</h3>
 <ul>
@@ -704,7 +704,7 @@ prometheusservice-controller@GitHub</a></li>
 <p>블로그처럼 해보려고 했는데, 해당 <code>install-sigv4.sh</code> 파일이 <code>v0.18.4</code> 까지만 지원하는 것이어서 해보고 안되면 종료하겠습니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create namespace grafana-agent; <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>WORKSPACE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ws-0d032a51-2b98-43b1-90cb-f5069329f1af&#34;</span> <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>ROLE_ARN<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;arn:aws:iam::179746107155:role/EKS-GrafanaAgent-AMP-ServiceAccount-Role&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>ROLE_ARN<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;arn:aws:iam::&lt;ACCOUNT-ID&gt;:role/EKS-GrafanaAgent-AMP-ServiceAccount-Role&#34;</span> <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>REGION<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ap-northeast-2&#34;</span> <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>NAMESPACE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;grafana-agent&#34;</span> <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>REMOTE_WRITE_URL<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://aps-workspaces.</span>$REGION<span style="color:#e6db74">.amazonaws.com/workspaces/</span>$WORKSPACE<span style="color:#e6db74">/api/v1/remote_write&#34;</span> <span style="color:#ae81ff">\
