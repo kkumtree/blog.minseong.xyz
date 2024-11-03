@@ -574,6 +574,7 @@ kubectl apply -f collector-config-amp.yaml
 
 - URL 예시: `https://aps-workspaces.ap-northeast-2.amazonaws.com/workspaces/ws-0d032a51-2b98-43b1-90cb-f5069329f1af`
   - 끝에 `/api/v1/query` 넣었다가 계속 에러나서 뭔가 했네요.  
+  - Docs: [Add the Prometheus data source in Grafana](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-onboard-query-standalone-grafana.html#AMP-onboard-query-standalone-grafana-datasource)
 
 ![datasource-url](images/datasource-url.png)
 
@@ -591,7 +592,7 @@ kubectl apply -f collector-config-amp.yaml
 
 ![query-in-grafana-cloud](images/query-in-grafana-cloud.png)
 
-블로그에 나온 대로, 정상 출력되는 것은 확인하였습니다. 
+블로그에 나온 대로, 정상 출력되는 것은 확인하였습니다.  
 
 ## 9. Vaporware
 
