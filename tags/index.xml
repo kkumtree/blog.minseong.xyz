@@ -26,6 +26,42 @@
     </item>
     
     <item>
+      <title>coredns</title>
+      <link>https://blog.minseong.xyz/tags/coredns/</link>
+      <pubDate>Wed, 30 Oct 2024 23:44:01 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/coredns/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>EKS</title>
+      <link>https://blog.minseong.xyz/tags/eks/</link>
+      <pubDate>Wed, 30 Oct 2024 23:44:01 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/eks/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kans</title>
+      <link>https://blog.minseong.xyz/tags/kans/</link>
+      <pubDate>Wed, 30 Oct 2024 23:44:01 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/kans/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>otel</title>
+      <link>https://blog.minseong.xyz/tags/otel/</link>
+      <pubDate>Wed, 30 Oct 2024 23:44:01 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/otel/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>cilium</title>
       <link>https://blog.minseong.xyz/tags/cilium/</link>
       <pubDate>Sat, 26 Oct 2024 01:35:59 +0900</pubDate>
@@ -40,15 +76,6 @@
       <pubDate>Sat, 26 Oct 2024 01:35:59 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/ebpf/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>kans</title>
-      <link>https://blog.minseong.xyz/tags/kans/</link>
-      <pubDate>Sat, 26 Oct 2024 01:35:59 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/kans/</guid>
       <description></description>
     </item>
     
@@ -481,15 +508,6 @@
       <pubDate>Sat, 10 Jun 2023 15:13:19 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/automation/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>EKS</title>
-      <link>https://blog.minseong.xyz/tags/eks/</link>
-      <pubDate>Sat, 10 Jun 2023 15:13:19 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/eks/</guid>
       <description></description>
     </item>
     

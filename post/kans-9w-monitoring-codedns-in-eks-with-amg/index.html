@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Monitoring CoreDNS in EKS with Grafana Cloud | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Monitoring CoreDNS in EKS with Grafana Cloud" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/kans-9w-monitoring-codedns-in-eks-with-amg/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/kans-9w-monitoring-codedns-in-eks-with-amg/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/kans-9w-monitoring-codedns-in-eks-with-amg/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Monitoring CoreDNS in EKS with Grafana Cloud</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-30T23:44:01&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/kans" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kans</span>
+              </div>
+            </a>
+            
+            <a href="/tags/eks" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">eks</span>
+              </div>
+            </a>
+            
+            <a href="/tags/grafana" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">grafana</span>
+              </div>
+            </a>
+            
+            <a href="/tags/otel" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">otel</span>
+              </div>
+            </a>
+            
+            <a href="/tags/coredns" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">coredns</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <blockquote>
+<p>Grafana Cloud 첫 사용기</p>
+</blockquote>
+<p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 <strong>K</strong>8s <strong>A</strong>dvanced <strong>N</strong>etwork <strong>S</strong>tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.</p>
+<p>이번 주차는 실감이 아직 안나는데, 스터디 마지막 주차입니다.<br>
+그래서 <strong>여러분이 잘 알고, 매우 좋아하는</strong> EKS를 통해, CoreDNS 이슈를 모니터링하는 Hands-on을 차근차근 따라해보려고합니다.</p>
+<ul>
+<li><a href="https://aws.amazon.com/ko/blogs/mt/monitoring-coredns-for-dns-throttling-issues-using-aws-open-source-monitoring-services/">AWS Cloud Operations Blog/Monitoring CoreDNS for DNS throttling issues using AWS Open source monitoring services</a></li>
+</ul>
+<p>위의 Blog를 그대로 따라해볼 겁니다.</p>
+<h2 id="0-eks-cluster-생성">0. EKS Cluster 생성</h2>
+<p>스터디에서 제공된 CloudFormation을 통해 EKS Cluster를 생성해볼까합니다.<br>
+<code>eksctl</code>이 언급되어 있어서 왠지&hellip; 나중에 롤백하고 태초마을부터 <code>eksctl</code> 기반 CloudFormation 배포를 할 것 같은 불안함이 있지만 해보죠(?).</p>
+<p>음 아직은 기우였네요. 기억을 끄집어내보니 bation host에서 <code>eksctl</code> 을 사용해서 EKS Cluster 생성하는 것까지 스크립팅 되어 있다고, 말씀을 들었던 것 같습니다.</p>
+<p><img src="images/about-15-mins-later.png" alt="about-15-mins-needed"></p>
+<p><img src="images/instances-eks-bastion.png" alt="instances-from-cloudformation"></p>
+<p>생성된 bastion에 접속해서, 환경변수 등을 확인해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh -i ~/.ssh/id_ed25519 ec2-user@43.201.85.169 <span style="color:#75715e"># BASTION-HOST-IP  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># The authenticity of host &#39;43.201.85.169 (43.201.85.169)&#39; can&#39;t be established.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ED25519 key fingerprint is SHA256:efFNF+24E7UUEzXzhqBDU0ss74yBmhGiaOI25XOVG9A.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># This key is not known by any other names.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Are you sure you want to continue connecting (yes/no/[fingerprint])? yes</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Warning: Permanently added &#39;43.201.85.169&#39; (ED25519) to the list of known hosts.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#    ,     #_</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#    ~\_  ####_        Amazon Linux 2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   ~~  \_#####\</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   ~~     \###|       AL2 End of Life is 2025-06-30.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   ~~       \#/ ___</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#    ~~       V~&#39; &#39;-&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     ~~~         /    A newer version of Amazon Linux is available!</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#       ~~._.   _/</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#          _/ _/       Amazon Linux 2023, GA and supported until 2028-03-15.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#        _/m/&#39;           https://aws.amazon.com/linux/amazon-linux-2023/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 10 package(s) needed for security, out of 13 available</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Run &#34;sudo yum update&#34; to apply all updates.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (cm112@myeks:N/A) [root@myeks-bastion ~]# clear</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tail -f /var/log/cloud-init-output.log <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span><span style="color:#75715e">#  66 †php8.1                   available    [ =stable ]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#  67  awscli1                  available    [ =stable ]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#  68 †php8.2                   available    [ =stable ]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#  69  dnsmasq                  available    [ =stable ]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#  70  unbound1.17              available    [ =stable ]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#  72  collectd-python3         available    [ =stable ]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># † Note on end-of-support. Use &#39;info&#39; subcommand.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/lib/systemd/system/docker.service.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cloudinit End!</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Cloud-init v. 19.3-46.amzn2.0.2 finished at Sat, 02 Nov 2024 09:44:24 +0000. Datasource DataSourceEc2.  Up 91.81 seconds</span>
+</span></span><span style="display:flex;"><span>^C
+</span></span><span style="display:flex;"><span>tail -f /root/create-eks.log
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;availabilityZones&#34;</span>: <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;ap-northeast-2c&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;ap-northeast-2b&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;ap-northeast-2a&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;cloudWatch&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;clusterLogging&#34;</span>: <span style="color:#f92672">{}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>^C
+</span></span><span style="display:flex;"><span>kubectl ns default
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Context &#34;cm112@myeks.ap-northeast-2.eksctl.io&#34; modified.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Active namespace is &#34;default&#34;.</span>
+</span></span><span style="display:flex;"><span>eksctl get cluster
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME	REGION		EKSCTL CREATED</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># myeks	ap-northeast-2	True</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># eksctl get nodegroup --cluster $CLUSTER_NAME</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CLUSTER	NODEGROUP	STATUS	CREATED			MIN SIZE	MAX SIZEDESIRED CAPACITY	INSTANCE TYPE	IMAGE ID	ASG NAME		TYPE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># myeks	ng1		ACTIVE	2024-11-02T09:55:58Z	3		3	3t3.medium	AL2_x86_64	eks-ng1-2cc97626-bf01-5bcc-d680-091e003bd586	managed</span>
+</span></span><span style="display:flex;"><span>export | egrep <span style="color:#e6db74">&#39;ACCOUNT|AWS_|CLUSTER|KUBERNETES|VPC|Subnet&#39;</span> | egrep -v <span style="color:#e6db74">&#39;SECRET|KEY&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x ACCOUNT_ID=&#34;179746107155&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x AWS_DEFAULT_REGION=&#34;ap-northeast-2&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x AWS_PAGER=&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x AWS_REGION=&#34;ap-northeast-2&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x CLUSTER_NAME=&#34;myeks&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x KUBERNETES_VERSION=&#34;1.30&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x PrivateSubnet1=&#34;subnet-044cf8b34576820ea&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x PrivateSubnet2=&#34;subnet-0ac2f3cd52e1ae640&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x PrivateSubnet3=&#34;subnet-0e5b144c0039c348b&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x PubSubnet1=&#34;subnet-0fef215562a97f319&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x PubSubnet2=&#34;subnet-0ca12b8db356bd486&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x PubSubnet3=&#34;subnet-01628d89d7c34590b&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># declare -x VPCID=&#34;vpc-0bcfa9363c4ff0069&#34;</span>
+</span></span><span style="display:flex;"><span>kubectl get node --label-columns<span style="color:#f92672">=</span>node.kubernetes.io/instance-type,eks.amazonaws.com/capacityType,topology.kubernetes.io/zone
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME                                               STATUS   ROLES    AGE   VERSION               INSTANCE-TYPE   CAPACITYTYPE   ZONE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ip-192-168-1-219.ap-northeast-2.compute.internal   Ready    &lt;none&gt;   12m   v1.30.4-eks-a737599   t3.medium       ON_DEMAND      ap-northeast-2a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ip-192-168-2-198.ap-northeast-2.compute.internal   Ready    &lt;none&gt;   12m   v1.30.4-eks-a737599   t3.medium       ON_DEMAND      ap-northeast-2b</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ip-192-168-3-85.ap-northeast-2.compute.internal    Ready    &lt;none&gt;   12m   v1.30.4-eks-a737599   t3.medium       ON_DEMAND      ap-northeast-2c</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>eksctl get iamidentitymapping --cluster myeks
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ARN											USERNAME				GROUPS					ACCOUNT</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># arn:aws:iam::179746107155:role/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-bU6W7Cr0ugY5	system:node:{{EC2PrivateDNSName}}	system:bootstrappers,system:nodes	</span>
+</span></span><span style="display:flex;"><span>eksctl get iamidentitymapping --cluster myeks
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ARN											USERNAME				GROUPS					ACCOUNT</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># arn:aws:iam::179746107155:role/eksctl-myeks-nodegroup-ng1-NodeInstanceRole-bU6W7Cr0ugY5	system:node:{{EC2PrivateDNSName}}	system:bootstrappers,system:nodes</span>
+</span></span></code></pre></div><h2 id="1-hands-on을-위한-환경-구성">1. Hands-on을 위한 환경 구성</h2>
+<p>이제는 Hands-on에서 Pre-requisite로 요구하는 환경변수를 추가로 구성해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export EKS_CLUSTER_NAME<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo $CLUSTER_NAME<span style="color:#66d9ef">)</span>  
+</span></span><span style="display:flex;"><span>export SERVICE<span style="color:#f92672">=</span>prometheusservice  
+</span></span><span style="display:flex;"><span>export ACK_SYSTEM_NAMESPACE<span style="color:#f92672">=</span>ack-system
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># export RELEASE_NAME=`curl -sL https://api.github.com/repos/aws-controllers-k8s/$SERVICE-controller/releases/latest | grep &#39;&#34;tag_name&#34;:&#39; | cut -d&#39;&#34;&#39; -f4`</span>
+</span></span></code></pre></div><p>여기서 오래된 포스팅의 이슈를 발견하게 되는데,<br>
+GitHub REST API가 더 안전해졌기 때문에, REALASE_NAME 가져오는 것이 불가능에 가까워졌습니다!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -sL https://api.github.com/repos/aws-controllers-k8s/$SERVICE-controller/releases/latest 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   &#34;message&#34;: &#34;Not Found&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   &#34;documentation_url&#34;: &#34;https://docs.github.com/rest/releases/releases#get-the-latest-release&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   &#34;status&#34;: &#34;404&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># }</span>
+</span></span></code></pre></div><p><del>배트맨! 초능력도 없는 우린 뭘 할 수 있죠?</del><br>
+<img src="images/meme-for-github-api.png" alt="rest-api-404"></p>
+<p>보통이면 레포를 당겨와서, <code>git tag</code>를 통해 확인하는게 맞는데, 핸즈온이니 링크를 열어서 최신 태그를 참고하시기 바랍니다.</p>
+<ul>
+<li><a href="https://github.com/aws-controllers-k8s/prometheusservice-controller/releases">aws-controllers-k8s/
+prometheusservice-controller@GitHub</a></li>
+</ul>
+<p>저도 번거로워서 <code>302 Found</code> 처리하여 태그 받아왔습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -sS -I -G  https://github.com/aws-controllers-k8s/$SERVICE-controller/releases/latest | grep -i location | awk -F<span style="color:#e6db74">&#39;/&#39;</span> <span style="color:#e6db74">&#39;{print $NF}&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># v1.2.15</span>
+</span></span><span style="display:flex;"><span>export RELEASE_NAME<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -sS -I -G  https://github.com/aws-controllers-k8s/$SERVICE-controller/releases/latest | grep -i location | awk -F<span style="color:#e6db74">&#39;/&#39;</span> <span style="color:#e6db74">&#39;{print $NF}&#39;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $RELEASE_NAME
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># v1.2.15</span>
+</span></span></code></pre></div><h2 id="2-hands-on-무작정-따라하기">2. Hands-On 무작정 따라하기</h2>
+<h3 id="a-amazon-managed-prometheus-workspace-생성">(a) Amazon Managed Prometheus Workspace 생성</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>aws amp create-workspace --alias blog-workspace --region $AWS_REGION
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     &#34;arn&#34;: &#34;arn:aws:aps:ap-northeast-2:&lt;ACCOUNT-ID&gt;:workspace/ws-0d032a51-2b98-43b1-90cb-f5069329f1af&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     &#34;status&#34;: {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;statusCode&#34;: &#34;CREATING&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     },</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     &#34;tags&#34;: {},</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     &#34;workspaceId&#34;: &#34;ws-0d032a51-2b98-43b1-90cb-f5069329f1af&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># }</span>
+</span></span></code></pre></div><p><img src="images/amazon-prometheus-workspace.png" alt="create-workspace"></p>
+<h3 id="b-prometheus-ethtool-exporter-배포">(b) Prometheus ethtool exporter 배포</h3>
+<ul>
+<li>안내된대로 exporter를 배포문을 작성해보겠습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">cat &lt;&lt; EOF &gt; ethtool-exporter.yaml</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">DaemonSet</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ethtool-exporter</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ethtool-exporter</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">updateStrategy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">rollingUpdate</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">maxUnavailable</span>: <span style="color:#ae81ff">100</span><span style="color:#ae81ff">%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ethtool-exporter</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">prometheus.io/scrape</span>: <span style="color:#e6db74">&#39;true&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">prometheus.io/port</span>: <span style="color:#e6db74">&#39;9417&#39;</span>      
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ethtool-exporter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">hostNetwork</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">terminationGracePeriodSeconds</span>: <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ethtool-exporter</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">IP</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">valueFrom</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">fieldRef</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">fieldPath</span>: <span style="color:#ae81ff">status.podIP      </span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">drdivano/ethtool-exporter@sha256:39e0916b16de07f62c2becb917c94cbb3a6e124a577e1325505e4d0cdd550d7b</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">command</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#e6db74">&#34;sh&#34;</span>
+</span></span><span style="display:flex;"><span>          - <span style="color:#e6db74">&#34;-exc&#34;</span>
+</span></span><span style="display:flex;"><span>          - <span style="color:#e6db74">&#34;python3 /ethtool-exporter.py -l \$(IP):9417 -I &#39;(eth|em|eno|ens|enp)[0-9s]+&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">9417</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">hostPort</span>: <span style="color:#ae81ff">9417</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">http</span>
+</span></span><span style="display:flex;"><span>          
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">limits</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">cpu</span>: <span style="color:#ae81ff">250m</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">memory</span>: <span style="color:#ae81ff">100Mi</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">requests</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">cpu</span>: <span style="color:#ae81ff">10m</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">memory</span>: <span style="color:#ae81ff">50Mi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">tolerations</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">effect</span>: <span style="color:#ae81ff">NoSchedule</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">key</span>: <span style="color:#ae81ff">node-role.kubernetes.io/master</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ethtool-exporter</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ethtool-exporter</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">clusterIP</span>: <span style="color:#ae81ff">None</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">http</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">9417</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ethtool-exporter</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOF</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f ethtool-exporter.yaml
+</span></span></code></pre></div><p>단순 exporter니까 배포는 잘 된 것 같습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get pods,svc -owide
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME                         READY   STATUS    RESTARTS   AGE   IP              NODE                                               NOMINATED NODE   READINESS GATES</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pod/ethtool-exporter-b62vt   1/1     Running   0          51s   192.168.2.198   ip-192-168-2-198.ap-northeast-2.compute.internal   &lt;none&gt;           &lt;none&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pod/ethtool-exporter-jbdlx   1/1     Running   0          51s   192.168.1.219   ip-192-168-1-219.ap-northeast-2.compute.internal   &lt;none&gt;           &lt;none&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># pod/ethtool-exporter-pj2r7   1/1     Running   0          51s   192.168.3.85    ip-192-168-3-85.ap-northeast-2.compute.internal    &lt;none&gt;           &lt;none&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME                       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE   SELECTOR</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># service/ethtool-exporter   ClusterIP   None         &lt;none&gt;        9417/TCP   51s   app=ethtool-exporter</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># service/kubernetes         ClusterIP   10.100.0.1   &lt;none&gt;        443/TCP    16h   &lt;none&gt;</span>
+</span></span></code></pre></div><h3 id="c-adotaws-distro-for-opentelemetry-collector-요구사항-체크">(c) ADOT(AWS Distro for OpenTelemetry) Collector 요구사항 체크</h3>
+<blockquote>
+<p>Pre-requisite 를 유의해야할 것 같습니다.</p>
+</blockquote>
+<ul>
+<li>
+<p>Docs: <a href="https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/requirements">Requirements for Getting Started with ADOT using EKS Add-Ons</a></p>
+</li>
+<li>
+<p>kubectl, eksctl, AWS CLI v2 : 설치 확인</p>
+</li>
+<li>
+<p>Cluster 버전 확인 : v1.21 이상 확인</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl version | grep <span style="color:#e6db74">&#34;Server Version&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Server Version: v1.30.6-eks-7f9249a</span>
+</span></span></code></pre></div><ul>
+<li>ADOT add-on 호환 버전 확인 : v0.62.1 이하 버전이 아니면 별도 작업 필요없음.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>aws eks describe-addon-versions --addon-name adot --kubernetes-version 1.30 --query <span style="color:#e6db74">&#39;addons[0].addonVersions[*].addonVersion&#39;</span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     &#34;v0.102.1-eksbuild.2&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     &#34;v0.102.1-eksbuild.1&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     &#34;v0.102.0-eksbuild.1&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ]</span>
+</span></span></code></pre></div><h3 id="d-adot-collector를-위한-cert-manager-설치">(d) ADOT Collector를 위한 cert-manager 설치</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.2/cert-manager.yaml  
+</span></span><span style="display:flex;"><span>kubectl get pod -n cert-manager  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME                                       READY   STATUS    RESTARTS   AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cert-manager-cainjector-5dbdc949c4-r2wpn   1/1     Running   0          29s</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cert-manager-d68cffc95-wsx5c               1/1     Running   0          29s</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cert-manager-webhook-759ddb6555-fzl24      1/1     Running   0          29s</span>
+</span></span></code></pre></div><h3 id="e-adot-collector를-위한-irsa-생성">(e) ADOT Collector를 위한 IRSA 생성</h3>
+<blockquote>
+<p>해당 Policy ARN이 실제 존재하는지 정도는 체크하고 생성하면 정신건강에 좋습니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo :$AWS_REGION:$EKS_CLUSTER_NAME:
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># :ap-northeast-2:myeks:</span>
+</span></span><span style="display:flex;"><span>eksctl create iamserviceaccount <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--name adot-collector <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--namespace default <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--region $AWS_REGION <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--cluster $EKS_CLUSTER_NAME <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--attach-policy-arn arn:aws:iam::aws:policy/AmazonPrometheusRemoteWriteAccess <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--approve <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--override-existing-serviceaccounts
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2024-11-03 11:27:22 [ℹ]  1 iamserviceaccount (default/adot-collector) was included (based on the include/exclude rules)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2024-11-03 11:27:22 [!]  metadata of serviceaccounts that exist in Kubernetes will be updated, as --override-existing-serviceaccounts was set</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2024-11-03 11:27:22 [ℹ]  1 task: { </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     2 sequential sub-tasks: { </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         create IAM role for serviceaccount &#34;default/adot-collector&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         create serviceaccount &#34;default/adot-collector&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     } }2024-11-03 11:27:22 [ℹ]  building iamserviceaccount stack &#34;eksctl-myeks-addon-iamserviceaccount-default-adot-collector&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2024-11-03 11:27:22 [ℹ]  deploying stack &#34;eksctl-myeks-addon-iamserviceaccount-default-adot-collector&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2024-11-03 11:27:22 [ℹ]  waiting for CloudFormation stack &#34;eksctl-myeks-addon-iamserviceaccount-default-adot-collector&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2024-11-03 11:27:52 [ℹ]  waiting for CloudFormation stack &#34;eksctl-myeks-addon-iamserviceaccount-default-adot-collector&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2024-11-03 11:27:52 [ℹ]  created serviceaccount &#34;default/adot-collector&#34;</span>
+</span></span></code></pre></div><h3 id="f-adot-add-on-설치">(f) ADOT add-on 설치</h3>
+<p>이미 버전 체크를 해보았지만, 다시 해봅시다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>aws eks describe-addon-versions --addon-name adot --kubernetes-version 1.30 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--query <span style="color:#e6db74">&#34;addons[].addonVersions[].[addonVersion, compatibilities[].defaultVersion]&#34;</span> --output text  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># v0.102.1-eksbuild.2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># True</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># v0.102.1-eksbuild.1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># False</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># v0.102.0-eksbuild.1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># False</span>
+</span></span><span style="display:flex;"><span>aws eks create-addon --addon-name adot --addon-version v0.102.1-eksbuild.2 --cluster-name $EKS_CLUSTER_NAME
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     &#34;addon&#34;: {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;addonName&#34;: &#34;adot&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;clusterName&#34;: &#34;myeks&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;status&#34;: &#34;CREATING&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;addonVersion&#34;: &#34;v0.102.1-eksbuild.2&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;health&#34;: {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             &#34;issues&#34;: []</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         },</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;addonArn&#34;: &#34;arn:aws:eks:ap-northeast-2:179746107155:addon/myeks/adot/eec977ee-84a1-85fe-ecbe-a2f51c90e9e7&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;createdAt&#34;: &#34;2024-11-03T11:31:33.678000+09:00&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;modifiedAt&#34;: &#34;2024-11-03T11:31:33.694000+09:00&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         &#34;tags&#34;: {}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     }</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># }</span>
+</span></span></code></pre></div><p>제대로 배포되었나 체크해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get po -n opentelemetry-operator-system
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME                                     READY   STATUS    RESTARTS   AGE</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># opentelemetry-operator-b7dbbdf7c-tqvfl   2/2     Running   0          64s</span>
+</span></span></code></pre></div><h3 id="g-adot-collector-구성">(g) ADOT Collector 구성</h3>
+<p>아래와 같이 <code>collector-config-amp.yaml</code>을 작성하고, 배포합니다.</p>
+<ul>
+<li>환경변수 잘 체크해야합니다.
+<ul>
+<li><code>AMP_REMOTE_WRITE_ENDPOINT</code> : 먼저 생성했던 그거 맞습니다.</li>
+<li><code>AWS_REGION</code></li>
+<li><code>EKS_CLUSTER_NAME</code></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># export AMP_REMOTE_WRITE_ENDPOINT=&lt;AMP_REMOTE_WRITE_ENDPOINT&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">export AMP_REMOTE_WRITE_ENDPOINT=https://aps-workspaces.ap-northeast-2.amazonaws.com/workspaces/ws-0d032a51-2b98-43b1-90cb-f5069329f1af/api/v1/remote_write</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">echo $AMP_REMOTE_WRITE_ENDPOINT</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># https://aps-workspaces.ap-northeast-2.amazonaws.com/workspaces/ws-0d032a51-2b98-43b1-90cb-f5069329f1af/api/v1/remote_write</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">cat &gt; collector-config-amp.yaml &lt;&lt;EOF</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">opentelemetry.io/v1alpha1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">OpenTelemetryCollector</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-collector-amp</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">mode</span>: <span style="color:#ae81ff">deployment</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">serviceAccount</span>: <span style="color:#ae81ff">adot-collector</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">podAnnotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">prometheus.io/scrape</span>: <span style="color:#e6db74">&#39;true&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">prometheus.io/port</span>: <span style="color:#e6db74">&#39;8888&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requests</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">cpu</span>: <span style="color:#e6db74">&#34;1&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">limits</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">cpu</span>: <span style="color:#e6db74">&#34;1&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">config</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    extensions:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      sigv4auth:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        region: $AWS_REGION
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        service: &#34;aps&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    receivers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      #
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # Scrape configuration for the Prometheus Receiver
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # This is the same configuration used when Prometheus is installed using the community Helm chart
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      prometheus:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        config:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          global:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            scrape_interval: 60s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            scrape_timeout: 30s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            external_labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              cluster: $EKS_CLUSTER_NAME
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          scrape_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - job_name: kubernetes-pods
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            scrape_interval: 15s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            scrape_timeout: 5s
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            kubernetes_sd_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - role: pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            relabel_configs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - action: keep
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              regex: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              source_labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - action: replace
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              regex: (https?)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              source_labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              - __meta_kubernetes_pod_annotation_prometheus_io_scheme
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              target_label: __scheme__
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - action: replace
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              regex: (.+)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              source_labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              - __meta_kubernetes_pod_annotation_prometheus_io_path
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              target_label: __metrics_path__
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - action: replace
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              regex: ([^:]+)(?::\d+)?;(\d+)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              replacement: \$\$1:\$\$2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              source_labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              - __address__
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              - __meta_kubernetes_pod_annotation_prometheus_io_port
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              target_label: __address__
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - action: labelmap
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              replacement: __param_\$\$1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - action: labelmap
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              regex: __meta_kubernetes_pod_label_(.+)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - action: replace
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              source_labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              - __meta_kubernetes_namespace
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              target_label: kubernetes_namespace
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - action: replace
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              source_labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              - __meta_kubernetes_pod_name
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              target_label: kubernetes_pod_name
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - action: drop
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              regex: Pending|Succeeded|Failed|Completed
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              source_labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              - __meta_kubernetes_pod_phase
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                                
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    processors:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      batch/metrics:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        timeout: 60s         
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    exporters:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      prometheusremotewrite:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        endpoint: $AMP_REMOTE_WRITE_ENDPOINT
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        auth:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          authenticator: sigv4auth
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      extensions: [sigv4auth]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      pipelines:   
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        metrics:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          receivers: [prometheus]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          processors: [batch/metrics]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          exporters: [prometheusremotewrite]</span>    
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRole</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">otel-prometheus-role</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">nodes</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">nodes/proxy</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">services</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">endpoints</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">pods</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">extensions</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">ingresses</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">nonResourceURLs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">/metrics</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRoleBinding</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">otel-prometheus-role-binding</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">roleRef</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">apiGroup</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRole</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">otel-prometheus-role</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">subjects</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">adot-collector</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">EOF</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">cat collector-config-amp.yaml | grep remote_write</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># endpoint: https://aps-workspaces.ap-northeast-2.amazonaws.com/workspaces/ws-0d032a51-2b98-43b1-90cb-f5069329f1af/api/v1/remote_write</span>
+</span></span></code></pre></div><ul>
+<li>배포&hellip;!</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f collector-config-amp.yaml
+</span></span></code></pre></div><h2 id="3-grafana-cloud-구성">3. Grafana Cloud 구성</h2>
+<blockquote>
+<p>AMG 대신 Grafana Cloud를 사용해보겠습니다. 사용방법은 매우 간단!</p>
+</blockquote>
+<ul>
+<li><a href="https://grafana.com/grafana/plugins/grafana-amazonprometheus-datasource/">Plugin: Amazon Managed Service for Prometheus@Grafana Labs</a></li>
+</ul>
+<h3 id="a-grafana-cloud-가입">(a) Grafana Cloud 가입</h3>
+<p>네 이거 가입해본 적이 없어서 적어보았습니다.</p>
+<h3 id="b-플러그인-활성화-with-딸깍">(b) 플러그인 활성화 with <code>딸깍</code></h3>
+<p><img src="images/just-click-to-use-amp-as-datasource.png" alt="just-click-to-use-amp-as-datasource"></p>
+<h3 id="c-prometheus-datasource-설정">(c) Prometheus Datasource 설정</h3>
+<ul>
+<li>
+<p>경로: Home &gt; Connections &gt; Data sources &gt; grafana-amazonprometheus-datasource</p>
+</li>
+<li>
+<p>URL 예시: <code>https://aps-workspaces.ap-northeast-2.amazonaws.com/workspaces/ws-0d032a51-2b98-43b1-90cb-f5069329f1af</code></p>
+<ul>
+<li>끝에 <code>/api/v1/query</code> 넣었다가 계속 에러나서 뭔가 했네요.</li>
+</ul>
+</li>
+</ul>
+<p><img src="images/datasource-url.png" alt="datasource-url"></p>
+<ul>
+<li>Auth: AWS의 SigV4를 지원합니다.
+<ul>
+<li>Access Key ID / Secret Access Key 입력.</li>
+<li>Assume Role의 경우, Preview를 위한 티켓을 하기엔 시간이 없어 Skip.</li>
+</ul>
+</li>
+</ul>
+<p><img src="images/datasource-key.png" alt="datasource-key"></p>
+<ul>
+<li>Additional: 리전과 TLS 설정</li>
+</ul>
+<p><img src="images/datasource-additional.png" alt="datasource-additional"></p>
+<h2 id="4-query-작성-후-확인">4. Query 작성 후 확인</h2>
+<p><img src="images/query-in-grafana-cloud.png" alt="query-in-grafana-cloud"></p>
+<p>블로그에 나온 대로, 정상 출력되는 것은 확인하였습니다.</p>
+<h2 id="9-vaporware">9. Vaporware</h2>
+<blockquote>
+<p>중간에 패닉이 걸려서, Grafana Cloud와 연결 목적으로 Grafana Cloud Agent를 배포해야하나 했는데, 기우였습니다. 그렇게 필요는 없어보입니다.</p>
+</blockquote>
+<ul>
+<li><a href="https://aws.amazon.com/blogs/opensource/configuring-grafana-cloud-agent-for-amazon-managed-service-for-prometheus/">Configuring Grafana Cloud Agent for Amazon Managed Service for Prometheus/AWS Open Source Blog</a></li>
+<li><a href="https://grafana.com/grafana/plugins/grafana-amazonprometheus-datasource/">Amazon Managed Service for Prometheus/Grafana Labs Plugins</a></li>
+</ul>
+<h3 id="a-권한-부여-작업">(a) 권한 부여 작업</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl https://gist.githubusercontent.com/rfratto/b6c5888e89faed3b04fa2533e0bec1a2/raw/bb9aa5e560009e98b48861d0b2ce54fc8a4303e6/script.bash -o agent-permissions-aks.bash
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#34;s/YOUR_EKS_CLUSTER_NAME/</span><span style="color:#e6db74">${</span>EKS_CLUSTER_NAME<span style="color:#e6db74">}</span><span style="color:#e6db74">/g&#34;</span> agent-permissions-aks.bash
+</span></span><span style="display:flex;"><span>cat agent-permissions-aks.bash | head -n <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ##!/bin/bash</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CLUSTER_NAME=myeks # SEE THIS LINE IF CHANGED TO YOUR CLUSTER NAME  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query &#34;Account&#34; --output text)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># OIDC_PROVIDER=$(aws eks describe-cluster --name $CLUSTER_NAME --query &#34;cluster.identity.oidc.issuer&#34; --output text | sed -e &#34;s/^https:\/\///&#34;)</span>
+</span></span></code></pre></div><p>실행합시다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls -al agent-permissions-aks.bash 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -rw-r--r-- 1 root root 4341 Nov  3 12:09 agent-permissions-aks.bash</span>
+</span></span><span style="display:flex;"><span>chmod u+x agent-permissions-aks.bash
+</span></span><span style="display:flex;"><span>ls -al agent-permissions-aks.bash
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -rwxr--r-- 1 root root 4341 Nov  3 12:09 agent-permissions-aks.bash</span>
+</span></span><span style="display:flex;"><span>./agent-permissions-aks.bash
+</span></span></code></pre></div><p>중간 중간, <code>error</code>에 섬찟했지만, 생성은 된거 같습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span># ./agent-permissions-aks.bash
+</span></span><span style="display:flex;"><span>Creating a new trust policy
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>An error occurred (NoSuchEntity) when calling the GetRole operation: The role with name EKS-GrafanaAgent-AMP-ServiceAccount-Role cannot be found.
+</span></span><span style="display:flex;"><span>Appending to the existing trust policy
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>An error occurred (NoSuchEntity) when calling the GetPolicy operation: Policy arn:aws:iam::179746107155:policy/AWSManagedPrometheusWriteAccessPolicy was not found.
+</span></span><span style="display:flex;"><span>Creating a new permission policy AWSManagedPrometheusWriteAccessPolicy
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    &#34;Policy&#34;: {
+</span></span><span style="display:flex;"><span>        &#34;PolicyName&#34;: &#34;AWSManagedPrometheusWriteAccessPolicy&#34;,
+</span></span><span style="display:flex;"><span>        &#34;PolicyId&#34;: &#34;ANPASTWNT54JUITZSLWOX&#34;,
+</span></span><span style="display:flex;"><span>        &#34;Arn&#34;: &#34;arn:aws:iam::179746107155:policy/AWSManagedPrometheusWriteAccessPolicy&#34;,
+</span></span><span style="display:flex;"><span>        &#34;Path&#34;: &#34;/&#34;,
+</span></span><span style="display:flex;"><span>        &#34;DefaultVersionId&#34;: &#34;v1&#34;,
+</span></span><span style="display:flex;"><span>        &#34;AttachmentCount&#34;: 0,
+</span></span><span style="display:flex;"><span>        &#34;PermissionsBoundaryUsageCount&#34;: 0,
+</span></span><span style="display:flex;"><span>        &#34;IsAttachable&#34;: true,
+</span></span><span style="display:flex;"><span>        &#34;CreateDate&#34;: &#34;2024-11-03T03:16:10+00:00&#34;,
+</span></span><span style="display:flex;"><span>        &#34;UpdateDate&#34;: &#34;2024-11-03T03:16:10+00:00&#34;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>An error occurred (NoSuchEntity) when calling the GetRole operation: The role with name EKS-GrafanaAgent-AMP-ServiceAccount-Role cannot be found.
+</span></span><span style="display:flex;"><span>EKS-GrafanaAgent-AMP-ServiceAccount-Role role does not exist. Creating a new role with a trust and permission policy
+</span></span><span style="display:flex;"><span>arn:aws:iam::179746107155:role/EKS-GrafanaAgent-AMP-ServiceAccount-Role
+</span></span><span style="display:flex;"><span>2024-11-03 12:16:16 [ℹ]  IAM Open ID Connect provider is already associated with cluster &#34;myeks&#34; in &#34;ap-northeast-2&#34;
+</span></span></code></pre></div><h3 id="b-grafana-cloud-agent-배포">(b) Grafana Cloud Agent 배포</h3>
+<ul>
+<li><a href="https://github.com/grafana/agent/tree/v0.18.4/production/kubernetes">grafana/agent@v0.18.4</a></li>
+<li><a href="https://github.com/grafana/agent/commit/254819f1e4ee99e351533cf6366893871cf593b2">Clean up K8s deployment methods (#749)</a></li>
+</ul>
+<p>블로그처럼 해보려고 했는데, 해당 <code>install-sigv4.sh</code> 파일이 <code>v0.18.4</code> 까지만 지원하는 것이어서 해보고 안되면 종료하겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create namespace grafana-agent; <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>WORKSPACE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ws-0d032a51-2b98-43b1-90cb-f5069329f1af&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>ROLE_ARN<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;arn:aws:iam::179746107155:role/EKS-GrafanaAgent-AMP-ServiceAccount-Role&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>REGION<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ap-northeast-2&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>NAMESPACE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;grafana-agent&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>REMOTE_WRITE_URL<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://aps-workspaces.</span>$REGION<span style="color:#e6db74">.amazonaws.com/workspaces/</span>$WORKSPACE<span style="color:#e6db74">/api/v1/remote_write&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>/bin/bash -c <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>curl -fsSL https://raw.githubusercontent.com/grafana/agent/v0.18.4/production/kubernetes/install-sigv4.sh<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> | kubectl apply -f -
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># namespace/grafana-agent created</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># serviceaccount/grafana-agent created</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># configmap/grafana-agent created</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># configmap/grafana-agent-deployment created</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># daemonset.apps/grafana-agent created</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># deployment.apps/grafana-agent-deployment created</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># resource mapping not found for name: &#34;grafana-agent&#34; namespace: &#34;&#34; from &#34;STDIN&#34;: no matches for kind &#34;ClusterRole&#34; in version &#34;rbac.authorization.k8s.io/v1beta1&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ensure CRDs are installed first</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># resource mapping not found for name: &#34;grafana-agent&#34; namespace: &#34;&#34; from &#34;STDIN&#34;: no matches for kind &#34;ClusterRoleBinding&#34; in version &#34;rbac.authorization.k8s.io/v1beta1&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ensure CRDs are installed first</span>
+</span></span></code></pre></div><p>그래서 아래와 같이 수동으로 재구성해서 배포 다시 했습니다.</p>
+<ul>
+<li>수정된 부분
+<ul>
+<li>기존: v1beta1</li>
+<li>수정: v1</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRole</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">grafana-agent</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">nodes</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">nodes/proxy</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">services</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">endpoints</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">pods</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">nonResourceURLs</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">/metrics</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRoleBinding</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">grafana-agent</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">roleRef</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">apiGroup</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRole</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">grafana-agent</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">subjects</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">grafana-agent</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">grafana-agent</span>
+</span></span></code></pre></div>
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/kans-8w-cilium-trial/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Kubernetes Service(5): Cillium Quick-start w/Hubble UI</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/post/getting-started-amazon-managed-grafana-workspace/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">SAML for using Amazon Managed Grafana Workspace (To-Do)</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
