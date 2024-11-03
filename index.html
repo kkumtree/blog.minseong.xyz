@@ -97,6 +97,23 @@
 
             
             <div class="p-list__item">
+              <a href="/post/getting-started-amazon-managed-grafana-workspace/"><h2>SAML for using Amazon Managed Grafana Workspace (To-Do)</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-11-02T21:43:00&#43;09:00</u></p>
+              <p>Organization의 이슈가 있어 Amazon Managed Grafana Workspace를 사용하려면 SAML 인증을 구성해야하는데, SAML 인증 제어가 되면 검토해보겠습니다.
+당연히 거의 4년이 다되가니 Amazon Managed Grafana – Getting Started와는 다른 인터페이스를 확인할 수 있었습니다.
+현재 제 권한으로는 Organization을 생성할 수 없어서, Workspace만 생성해보았습니다.
+즉, 매우 느슨한 권한으로 Workspace를 만들어주겠다 이것입니다.
+1. &lsquo;딸깍&rsquo;으로 시작하기 Getting Started with 딸깍 이름만 짓고, 넘어가 보겠습니다. AWS IIC IAM Identity Center (구, AWS SSO)를 활용하겠습니다. 신경써야할게 많네요 딸~깍, 유저를 만들어봅시다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/kans-8w-cilium-trial/"><h2>Kubernetes Service(5): Cillium Quick-start w/Hubble UI</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -167,26 +184,6 @@ socket_address: 리스너는 포트 10000에서 수신하도록 설정되어 있
 Docker Compose 정도나 일반 서비스에서는 굳이 필요하지는 않을 것 같지만, Service Mesh 환경에서는 알아두면 좋을 것 같아 훝어봅니다.
 CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
 1. Envoy Installation Docs: Installing Envoy wget -O- https://apt.envoyproxy.io/signing.key | sudo gpg --dearmor -o /etc/apt/keyrings/envoy-keyring.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/envoy-keyring.gpg] https://apt.envoyproxy.io jammy main&#34; | sudo tee /etc/apt/sources.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/kans-6w-k3s-ingress/"><h2>Kubernetes Service(3): Ingress(ingress-nginx) w/k3s</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-10T22:12:57&#43;09:00</u></p>
-              <p>지난 포스팅, Kubernetes Service(2): LoadBalancer(MetalLB)에 이어 Ingress Type을 가볍게 살펴보고, Ingress-Nginx를 가볍게 붙여보겠습니다.
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-1. Ingress Type 이제, 신규 기능(New feature)은 Gateway API에 추가된다고 합니다.
-우선, Kubernetes가 헷갈리는 것 중 하나가,
-Ingress Type 과 LoadBalancer Type의 명확한 차이가 뭘까...?
-라는 점이라고 봅니다. 물론, 그거 외에도 k8s에는 알쏭달쏭한 것들이 아-주 많지만요.
-친절한 Docs에 따르면,
-클러스터 외부로 클러스터 내부 서비스에 대한 HTTP 및 HTTPS 라우팅을 노출하는 것이라고 합니다.</p>
             </div>
             
 <ol class="p-pagination">

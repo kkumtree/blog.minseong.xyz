@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/aws/</loc>
+    <lastmod>2024-11-02T21:43:00+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/grafana/</loc>
+    <lastmod>2024-11-02T21:43:00+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2024-11-02T21:43:00+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2024-11-02T21:43:00+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/getting-started-amazon-managed-grafana-workspace/</loc>
+    <lastmod>2024-11-02T21:43:00+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2024-11-02T21:43:00+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/cilium/</loc>
     <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
@@ -11,9 +29,6 @@
     <loc>https://blog.minseong.xyz/tags/kans/</loc>
     <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
-  </url><url>
     <loc>https://blog.minseong.xyz/tags/kubeadm/</loc>
     <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
@@ -21,12 +36,6 @@
     <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/kans-8w-cilium-trial/</loc>
-    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2024-10-26T01:35:59+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2024-10-26T01:35:59+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/kans-8w-why-ebpf/</loc>
@@ -70,9 +79,6 @@
   </url><url>
     <loc>https://blog.minseong.xyz/tags/metallb/</loc>
     <lastmod>2024-10-02T12:54:17+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/grafana/</loc>
-    <lastmod>2024-09-29T13:35:13+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/iptables/</loc>
     <lastmod>2024-09-29T13:35:13+09:00</lastmod>
@@ -157,9 +163,6 @@
   </url><url>
     <loc>https://blog.minseong.xyz/post/visualizing-google-cloud-101-book-review/</loc>
     <lastmod>2023-11-21T13:51:29+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/aws/</loc>
-    <lastmod>2023-10-15T00:10:33+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/cloudnet@/</loc>
     <lastmod>2023-10-15T00:10:33+09:00</lastmod>
