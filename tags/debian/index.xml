@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>debian on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/debian/</link>
+    <description>Recent content in debian on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Mon, 04 Nov 2024 21:24:49 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/debian/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The following signatures were invalid: EXPKEYSIG</title>
+      <link>https://blog.minseong.xyz/post/apt-expkeysig-troubleshooting/</link>
+      <pubDate>Mon, 04 Nov 2024 21:24:49 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/apt-expkeysig-troubleshooting/</guid>
+      <description>매번 수정하기 귀찮아서, 나중에 찾아서 쓰려고 끄적이는 메모
+보통 GPG키 지우고 다시 받으면 된다.
+그런 날이 있다. 무심결에 sudo apt-get update를 실행하는 순간, 에러가 뜨는 날.
+W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.31/deb InRelease: The following signatures were invalid: EXPKEYSIG 234654DA9A296436 isv:kubernetes OBS Project &amp;lt;isv:kubernetes@build.opensuse.org&amp;gt; W: Failed to fetch https://pkgs.k8s.io/core:/stable:/v1.31/deb/InRelease The following signatures were invalid: EXPKEYSIG 234654DA9A296436 isv:kubernetes OBS Project &amp;lt;isv:kubernetes@build.</description>
+    </item>
+    
+  </channel>
+</rss>

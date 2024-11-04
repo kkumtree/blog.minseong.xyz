@@ -6,17 +6,17 @@
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>ubuntu | kkumtree</title>
+    <title>apt | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="ubuntu" />
+    <meta property="og:title" content="apt" />
 
     
-    <meta property="og:image" content='https://blog.minseong.xyz/tags/ubuntu/' />
-    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/ubuntu/' />
+    <meta property="og:image" content='https://blog.minseong.xyz/tags/apt/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/apt/' />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/ubuntu/' />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/apt/' />
 
     
     <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
@@ -82,7 +82,7 @@
   <section class="p-strip--suru main-slide main-strip">
       <div class="row">
         <div class="col-8 left-section">
-          <h1>ubuntu</h1>
+          <h1>apt</h1>
           <p></p>
         </div>
       </div>
@@ -109,79 +109,6 @@
 보통 GPG키 지우고 다시 받으면 된다.
 그런 날이 있다. 무심결에 sudo apt-get update를 실행하는 순간, 에러가 뜨는 날.
 W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.31/deb InRelease: The following signatures were invalid: EXPKEYSIG 234654DA9A296436 isv:kubernetes OBS Project &lt;isv:kubernetes@build.opensuse.org&gt; W: Failed to fetch https://pkgs.k8s.io/core:/stable:/v1.31/deb/InRelease The following signatures were invalid: EXPKEYSIG 234654DA9A296436 isv:kubernetes OBS Project &lt;isv:kubernetes@build.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/terraform-hello-world-tfenv/"><h2>Terraform 시작하기 w/Minimal Ubuntu</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-08-31T22:21:08&#43;09:00</u></p>
-              <p>이번에는 CloudNet@에서 진행하는 Terraform 스터디(이하, T101)에 참여했습니다.
-Terraform을 쓰면 왜 좋은지는 자세하고 전문적인 글이 있으므로, 참고하시면 좋을 것 같습니다. (링크: 44bits)
-예전에 테라폼을 썼던 적이 있지만, Module화가 어렵기도 하고
-이번 기회에 테라폼 신간을 다시 복기하는 마음으로 참여했습니다.
-사용한 교재는 [테라폼으로 시작하는 IaC] 입니다.
-이번에는 Terraform 초기 셋업에 대해, 살펴보고
-시험삼아 Canonical 공식 Minimal Ubuntu(ARM64) AMI를 설치해보겠습니다.
-Terraform 설치 tfenv 사용과 .tf 작성 따라하기 Hello World in terraform Terraform 써보기 순으로 진행합니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/"><h2>Release file for URL is not valid yet 해결 방법</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-29T02:28:34&#43;09:00</u></p>
-              <p>최근 WSL를 쓰게 되면서, 한 가지 이슈가 생겼다.
-APT repo를 업데이트 하면 아래와 같은 에러가 발생한다.
-이것저것 손대보고 해결법을 적어보고자 한다.
-E: Release file for http://ports.ubuntu.com/ubuntu-ports/dists/jammy/InRelease is not valid yet (invalid for another 5min 1s). Updates for this repository will not be applied. 오류 증상은 릴리스 파일이 존재하지 않는데, 5분 1초동안 유효하지 않는다고 한다.
-무슨 말인가 싶은데, 5분 있다가 업데이트 해보라는 것이다.
-원인 오랫동안 절전모드로 두어서 시간 동기화가 안된 것으로 보인다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/runlevel-in-linux/"><h2>Linux Runlevel - 런레벨/부트레벨</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-22T16:07:05&#43;09:00</u></p>
-              <p>CPU를 1600X에서 5700X로 업그레이드를 진행하기에 앞서,
-RunLevel(런레벨/부트레벨)에 대해 한번 메모하고자 함.
-Runlevel 7가지 레벨이 존재
-man runlevel 참고 Level 5을 제외하고는, cli 환경에서만 구동
-Linux Standard Base 기준
-ls -l /lib/systemd/system/runlevel?.target 명령어로 확인 가능 RunLevel EN 설명 비고 0 Power Off 시스템 종료(중단/Halt) 1 Rescue 시스템 복구 단일 사용자 모드 2 Multi-User 다중 사용자(텍스트 모드, 네트워크 서비스 X) 사용 X (사용자 정의 가능) 3 Multi-User 다중 사용자(텍스트 모드) 4 Multi-User 상동 사용 X (사용자 정의 가능) 5 Graphical 다중 사용자 모드 (그래픽 모드) X-window 기반 6 Reboot 시스템 리부팅 운영체제(Ubuntu 22.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/how-to-apply-ubuntu-pro/"><h2>Ubuntu Pro를 적용하고 사용해보기</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-17T11:14:50&#43;09:00</u></p>
-              <p>튜토리얼 레벨의 게시물입니다. 모든 정보는 https://ubuntu.com/pro/tutorial 에 기초합니다. 기타 초기 구성 중 이슈는 아래도 참고하시기 바랍니다. https://canonical-ubuntu-pro-client.readthedocs-hosted.com/en/latest/index.html 계기 필자가 개인 데스크탑으로 사용하는 Ubuntu 버전이 22.10 (Kinetic Kudu), 23.04 (Lunar Lobster) 이기에, Ubuntu Pro를 적용해볼 기회가 없었다.
-이번에 지인 분으로부터 제공받은 엑세스랩(XSLAB)사의 ARM 기반 Vraptor SQ nano를
-클린설치하고 나니 Ubuntu 20.04.6 LTS (Focal Fossa) 버전이었기에, Ubuntu Pro를 적용해보기로 했다.
-해당 제품은 보라몰/voramall에서도 만나볼 수 있다.
-Ubuntu Pro란? Ubuntu Pro는 Ubuntu의 구독 상품으로, 보안 등의 지원 기능을 추가한 서비스로 사전에 보안 취약점을 빠르게 보완해서 데이터를 보호하는게 여러모로 절감되지 않을 까 싶기에 인상 깊었던 프로덕트였다.</p>
             </div>
             
 </div>
