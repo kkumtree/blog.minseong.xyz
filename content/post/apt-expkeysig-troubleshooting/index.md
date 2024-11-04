@@ -77,7 +77,7 @@ sudo rm /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 설치 가이드대로 얌전히 다시 키 받아서 dearmor하고, 경로에 두자.  
 
-![follow-what-kubernetes-says](images/follow-what-kubernetes-says.png)
+![follow-what-kubernetes-says](images/follow-what-kubenetes-says.png)  
 
 ```bash
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
