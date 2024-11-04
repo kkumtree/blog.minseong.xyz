@@ -166,7 +166,7 @@
 <p>슥삭 지운다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo rm /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 </span></span></code></pre></div><p>설치 가이드대로 얌전히 다시 키 받아서 dearmor하고, 경로에 두자.</p>
-<p><img src="images/follow-what-kubernetes-says.png" alt="follow-what-kubernetes-says"></p>
+<p><img src="images/follow-what-kubenetes-says.png" alt="follow-what-kubernetes-says"></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 </span></span><span style="display:flex;"><span>sudo chmod <span style="color:#ae81ff">644</span> /etc/apt/keyrings/kubernetes-apt-keyring.gpg <span style="color:#75715e"># allow unprivileged APT programs to read this keyring</span>
 </span></span></code></pre></div><p>그저 잘된다.</p>
