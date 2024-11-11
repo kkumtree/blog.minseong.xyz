@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2024-11-11T20:59:03+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/obs/</loc>
+    <lastmod>2024-11-11T20:59:03+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2024-11-11T20:59:03+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2024-11-11T20:59:03+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/install-obs-studio-ubuntu/</loc>
+    <lastmod>2024-11-11T20:59:03+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/utility/</loc>
+    <lastmod>2024-11-11T20:59:03+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/apt/</loc>
     <lastmod>2024-11-04T21:24:49+09:00</lastmod>
   </url><url>
@@ -9,15 +27,6 @@
     <lastmod>2024-11-04T21:24:49+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/expkeysig/</loc>
-    <lastmod>2024-11-04T21:24:49+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2024-11-04T21:24:49+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2024-11-04T21:24:49+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2024-11-04T21:24:49+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/apt-expkeysig-troubleshooting/</loc>

@@ -96,7 +96,7 @@
 
             
             <div class="p-list__item">
-              <a href="/post/kans-2w-kind-installation-on-linux/"><h2>리눅스에 KIND 설치하기 w/golang</h2></a>
+              <a href="/post/traefik-with-minikube-in-m1/"><h2>Traefik을 활용한 minikube 예제 구현시도 w/Apple Silicon</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
                 <li class="p-inline-list__item">
@@ -104,88 +104,8 @@
                 </li>
                 
               </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-02T00:33:19&#43;09:00</u></p>
-              <p>Helm 설치 추가
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)에 참여하게 되면서 기록을 남기고 있습니다.
-이번에는 kind(Kubernetes IN Docker)를 Golang을 통해 설치하면서 약간의 소?란이 있었던 부분만 다룹니다.
-1. KIND란? 아래 사진으로 대체합니다. 자세한 내용은 Docs/Initial_design에서 볼수 있습니다. 2. KIND 설치하기 Docs/Quick-start를 참고합니다. Linux의 경우, 패키지 관리자 설치가 없어 바이너리, 혹은 소스로 설치해야 합니다.
-아래 두 문장에 뭔가 발동하여 Go 언어로 설치를 해보기로 했습니다.
-If you are a go developer you may find the go install option convenient.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/kans-1w-container-socket/"><h2>Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-01T09:02:15&#43;09:00</u></p>
-              <p>최근 CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)에 참여하게 되었습니다.
-난이도를 생각하면 KH(Hardcore)NS가 더 맞아보이지만&hellip;
-k8s가 워낙 인기가 많기도 하지만, Pod 간 통신에는 많은 지식이 투여되기에 이번 기회에 살펴보기로 했습니다.
-첫 주차는, 바로 Kubernetes에 진입하지 않고 Containerization에 대한 이해를 먼저 다뤄주셨습니다.
-여타 쿠버네티스 강의와 달리 9주 간 매주 일요일에만 진행되는 세션인데도, 기반 기술을 다시 짚어주셔서 감사했습니다.
-1. AWS EC2 Instance 셋업 CloudFormation을 통해, EC2 및 제반사항을 구성하여 주셨습니다만, 취미 삼아 Terraform 변환 작업을 해보았습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/maintanence-in-2024/"><h2>Blog maintanence in 2024</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-08-26T00:02:49&#43;09:00</u></p>
-              <p>Before starting group study, I decided to update my blog.
-Very small things, but I have some needs about it.
-One is GitHub Actions&rsquo; dependency update and another is Licences.
-Cause, Blog is deployed via Github Actions, I need to check dependencies in Github Actions&rsquo; workflow.
-What I use is actions/checkout, actions/setup-go, and actions/setup-node.
-Name Prev. Version Latest Version Purpose checkout actions/checkoutv3 actions/checkoutv4 Src. and Dest. Branch setup-go actions/setup-go@v4 actions/setup-go@v5 Hugo setup-node actions/setup-node@v3 actions/setup-node@v4 Vanila Framework commit 5d4c9b9 Another thing is Licences.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/visualizing-google-cloud-101-book-review/"><h2>그림으로 배우는 구글 클라우드 101 리뷰</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-11-21T13:51:29&#43;09:00</u></p>
-              <p>Jpub에서 최근 출판한 그림으로 배우는 구글 클라우드 101 - 제이펍 홈페이지에 대해,
-짧막하게 소개하는 글입니다.
-《그림으로 배우는 구글 클라우드 101》 서평단으로 본 도서를 제공받아 작성하였습니다. 최근 AWS 프로젝트를 진행하고 있습니다. Terraform을 활용하여, IaC 기반의 인프라 구성을 하고 있는데요.
-작년부터 DR(DR, Disaster Recovery)이 급격하게 화두가 되면서,
-Multi-AZ, Multi-Region을 넘어 Multi-Cloud도 고려의 대상이 되는 것 같습니다.
-관심이 있는지라 이번 프로젝트가 끝나면, AWS 외에도 GCP같은 다양한 CSP를 다시금 다뤄보고 싶다는 생각이 들었습니다.
-물론 GCP를 주력으로 쓰고 있다면 이야기가 다르겠지만,</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/notification-about-terraform-cloud-drift/"><h2>TFC(Terraform Cloud) drift 알림 설정</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-10-15T00:10:33&#43;09:00</u></p>
-              <p>CloudNet@에서의 Terraform 스터디가 끝나고 나서,
-테라폼을 실제 운영 상황에 도입하면서 마주할 수 밖에 없는 드리프트(drift) 상황에 대해
-이해해보는 시간을 가졌습니다.
-참고) TFC에서의 Drift Detection 기능은 현재 TFC Plus 에디션에서 지원됩니다. 1. 용어 이해해보기 사실은 작년부터 테라폼을 접하고나서, IaC라는 개념에 꽂히기만 했지
-운영 입장에서 마주했었던 수많은 시행착오들을 흔한 유저에러로만 생각해왔었습니다.
-스터디에 참여하면서 종종 &lsquo;드리프트&rsquo;라는 단어를 듣고, 찾아보니
-상당부분이 이에 속하는 상황이라는 것을 알 수 있었습니다.
-(1) Drift? 글 작성을 위해 찾아본 기술적 Drift는 본래 주행에 있어서의 그것과</p>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-02-05T04:54:06&#43;09:00</u></p>
+              <p>주변으로부터 피드백을 받은 내용이 있어 새로운 글로 보완예정입니다. - colima는 containerd처럼 cri가 아닌, Docker engine과 containerd 사이의 물건으로 추정됩니다. - 도커 엔진은 현재 containerd를 통해 프로세스를 관리. - colima도 docker shim 구조는 탈피했을 거라고 추측 중. - 도커 엔진과 containerd 사이의 컨테이너 엔진(관리도구?)로 보임 - colima 시작 시, 특정 런타임을 선택할 수 있습니다. 문서를 잘 읽어봅시다. `colima start --runtime containerd` - k8s를 위한 colima 시작 명령어는 별도로 있습니다. colima github를 참고해주세요.</p>
             </div>
             
 <ol class="p-pagination">
@@ -197,7 +117,7 @@ Multi-AZ, Multi-Region을 넘어 Multi-Cloud도 고려의 대상이 되는 것 �
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous " 
-        href="/post/page/3/" title="Previous page">
+        href="/post/page/9/" title="Previous page">
         <i class="p-icon--contextual-menu">Previous page</i>
     </a>
   </li>
@@ -210,21 +130,18 @@ Multi-AZ, Multi-Region을 넘어 Multi-Cloud도 고려의 대상이 되는 것 �
   <li class="p-pagination__item">
     <a class="p-pagination__link " href="/post/page/3/">3</a>
   </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link  is-active" href="/post/page/4/">4</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/5/">5</a>
-  </li>
   <li class="p-pagination__item p-pagination__item--truncation">
     …
   </li>
   <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/10/">10</a>
+    <a class="p-pagination__link " href="/post/page/9/">9</a>
   </li>
   <li class="p-pagination__item">
-    <a class="p-pagination__link--next "
-        href="/post/page/5/" title="Next page">
+    <a class="p-pagination__link  is-active" href="/post/page/10/">10</a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--next  is-disabled"
+         title="Next page">
         <i class="p-icon--contextual-menu">Next page</i>
     </a>
   </li>
