@@ -15,8 +15,9 @@
       <guid>https://blog.minseong.xyz/post/how-to-manage-microsoft-packages-with-apt-manager/</guid>
       <description>Microsoft gave us a lot of programs as Ubuntu/Debian packages.
 In this post, I will show you how to manage Edge and VSCode packages with APT package manager.
+APT is stands for Advanced Package Tool.
 Why? Simple. I want to upgrade them easily with APT package manager rather than using dpkg command.
-sudo apt-get update -y &amp;amp;&amp;amp; sudo apt-get upgrade -y When I installed Microsoft Edge and Visual Studio Code, I used dpkg command. But, It is little burdensome to manage packages with dpkg command in Update/Upgrade.</description>
+sudo apt-get update -y &amp;amp;&amp;amp; sudo apt-get upgrade -y When I installed Microsoft Edge and Visual Studio Code, I used dpkg command.</description>
     </item>
     
   </channel>
