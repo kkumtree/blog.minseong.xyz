@@ -15,7 +15,7 @@ authors:
     launchpad: mscho7969
     github: kkumtree
     profile: https://avatars.githubusercontent.com/u/52643858?v=4 
-image: cover.png # 커버 이미지 URL
+image: images/how-apt-package-manager-works.png # 커버 이미지 URL
 draft: false # 글 초안 여부
 ---
 
@@ -47,7 +47,7 @@ As I'm just one of Ubuntu users, I'm little bit understood about how APT package
 
 And, I summarized them as below.  
 
-![interaction-with-microsoft-repos](images/how-apt-packege-manager-works.png)
+![interaction-with-microsoft-repos](images/how-apt-package-manager-works.png)
 
 > If you have more idea about this, please let me know via comments. It will be helpful for newbie, me. :)  
 
