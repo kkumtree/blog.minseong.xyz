@@ -169,6 +169,7 @@ Version: BSN Pgp v1.0.0.0
 
 ## References  
 
+- <https://packages.microsoft.com/>  
 - [Microsoft Learn/Microsoft Linux Repositories](https://learn.microsoft.com/en-us/linux/packages)  
 - [GitHub/Microsoft Linux Repositories](https://github.com/microsoft/linux-package-repositories)  
 - [phoenixNAP/How to Install Visual Studio Code on Ubuntu](https://phoenixnap.com/kb/install-vscode-ubuntu)  
