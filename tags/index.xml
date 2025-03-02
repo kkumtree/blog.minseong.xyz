@@ -6,7 +6,61 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Mon, 11 Nov 2024 20:59:03 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 02 Mar 2025 22:31:49 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>apt</title>
+      <link>https://blog.minseong.xyz/tags/apt/</link>
+      <pubDate>Sun, 02 Mar 2025 22:31:49 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/apt/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>debian</title>
+      <link>https://blog.minseong.xyz/tags/debian/</link>
+      <pubDate>Sun, 02 Mar 2025 22:31:49 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/debian/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>edge</title>
+      <link>https://blog.minseong.xyz/tags/edge/</link>
+      <pubDate>Sun, 02 Mar 2025 22:31:49 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/edge/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>microsoft</title>
+      <link>https://blog.minseong.xyz/tags/microsoft/</link>
+      <pubDate>Sun, 02 Mar 2025 22:31:49 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/microsoft/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ubuntu</title>
+      <link>https://blog.minseong.xyz/tags/ubuntu/</link>
+      <pubDate>Sun, 02 Mar 2025 22:31:49 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/ubuntu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>VSCode</title>
+      <link>https://blog.minseong.xyz/tags/vscode/</link>
+      <pubDate>Sun, 02 Mar 2025 22:31:49 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/vscode/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>obs</title>
       <link>https://blog.minseong.xyz/tags/obs/</link>
@@ -26,38 +80,11 @@
     </item>
     
     <item>
-      <title>apt</title>
-      <link>https://blog.minseong.xyz/tags/apt/</link>
-      <pubDate>Mon, 04 Nov 2024 21:24:49 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/apt/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>debian</title>
-      <link>https://blog.minseong.xyz/tags/debian/</link>
-      <pubDate>Mon, 04 Nov 2024 21:24:49 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/debian/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>expkeysig</title>
       <link>https://blog.minseong.xyz/tags/expkeysig/</link>
       <pubDate>Mon, 04 Nov 2024 21:24:49 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/expkeysig/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ubuntu</title>
-      <link>https://blog.minseong.xyz/tags/ubuntu/</link>
-      <pubDate>Mon, 04 Nov 2024 21:24:49 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/ubuntu/</guid>
       <description></description>
     </item>
     
@@ -499,15 +526,6 @@
       <pubDate>Tue, 04 Jul 2023 09:57:14 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/bdia/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>VSCode</title>
-      <link>https://blog.minseong.xyz/tags/vscode/</link>
-      <pubDate>Tue, 04 Jul 2023 09:57:14 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/vscode/</guid>
       <description></description>
     </item>
     

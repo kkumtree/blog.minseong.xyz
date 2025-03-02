@@ -2,16 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2024-11-11T20:59:03+09:00</lastmod>
+    <loc>https://blog.minseong.xyz/tags/apt/</loc>
+    <lastmod>2025-03-02T22:31:49+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/tags/obs/</loc>
-    <lastmod>2024-11-11T20:59:03+09:00</lastmod>
+    <loc>https://blog.minseong.xyz/tags/debian/</loc>
+    <lastmod>2025-03-02T22:31:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/edge/</loc>
+    <lastmod>2025-03-02T22:31:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/how-to-manage-microsoft-packages-with-apt-manager/</loc>
+    <lastmod>2025-03-02T22:31:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2025-03-02T22:31:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/microsoft/</loc>
+    <lastmod>2025-03-02T22:31:49+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2024-11-11T20:59:03+09:00</lastmod>
+    <lastmod>2025-03-02T22:31:49+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2025-03-02T22:31:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/ubuntu/</loc>
+    <lastmod>2025-03-02T22:31:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/vscode/</loc>
+    <lastmod>2025-03-02T22:31:49+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/obs/</loc>
     <lastmod>2024-11-11T20:59:03+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/install-obs-studio-ubuntu/</loc>
@@ -20,19 +41,10 @@
     <loc>https://blog.minseong.xyz/tags/utility/</loc>
     <lastmod>2024-11-11T20:59:03+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/tags/apt/</loc>
-    <lastmod>2024-11-04T21:24:49+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/debian/</loc>
-    <lastmod>2024-11-04T21:24:49+09:00</lastmod>
-  </url><url>
     <loc>https://blog.minseong.xyz/tags/expkeysig/</loc>
     <lastmod>2024-11-04T21:24:49+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/apt-expkeysig-troubleshooting/</loc>
-    <lastmod>2024-11-04T21:24:49+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/ubuntu/</loc>
     <lastmod>2024-11-04T21:24:49+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/aws/</loc>
@@ -252,9 +264,6 @@
     <lastmod>2023-07-25T00:40:14+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/bdia/</loc>
-    <lastmod>2023-07-04T09:57:14+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/vscode/</loc>
     <lastmod>2023-07-04T09:57:14+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/windows/</loc>
