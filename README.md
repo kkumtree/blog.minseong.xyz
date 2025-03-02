@@ -19,7 +19,7 @@ Licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4
 # 용량 절감
 git clone https://github.com/kkumtree/blog.minseong.xyz.git --depth 1  
 # 포스팅 추가
-hugo new --kind post post/<session-name>/index.md
+hugo new --kind post post/<article-name>/index.md
 # 예시: "UbuCon Asia 2023 후기" 라는 제목의 글 추가
 hugo new --kind post post/ubucon-asia-2023-review/index.md
 
