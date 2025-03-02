@@ -23,6 +23,8 @@ Microsoft gave us a lot of programs as Ubuntu/Debian packages.
 
 In this post, I will show you how to manage Edge and VSCode packages with APT package manager.  
 
+> APT is stands for `Advanced Package Tool`.  
+
 ## Why?  
 
 Simple. I want to upgrade them easily with APT package manager rather than using `dpkg` command.  
