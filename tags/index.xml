@@ -6,7 +6,25 @@
     <description>Recent content in Tags on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sun, 02 Mar 2025 22:31:49 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 17 Oct 2025 20:53:27 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>docker</title>
+      <link>https://blog.minseong.xyz/tags/docker/</link>
+      <pubDate>Fri, 17 Oct 2025 20:53:27 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/docker/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ubuntu</title>
+      <link>https://blog.minseong.xyz/tags/ubuntu/</link>
+      <pubDate>Fri, 17 Oct 2025 20:53:27 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/ubuntu/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>apt</title>
       <link>https://blog.minseong.xyz/tags/apt/</link>
@@ -40,15 +58,6 @@
       <pubDate>Sun, 02 Mar 2025 22:31:49 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/microsoft/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ubuntu</title>
-      <link>https://blog.minseong.xyz/tags/ubuntu/</link>
-      <pubDate>Sun, 02 Mar 2025 22:31:49 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/ubuntu/</guid>
       <description></description>
     </item>
     
@@ -328,15 +337,6 @@
       <pubDate>Mon, 02 Sep 2024 00:33:19 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/installation/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>docker</title>
-      <link>https://blog.minseong.xyz/tags/docker/</link>
-      <pubDate>Sun, 01 Sep 2024 09:02:15 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/docker/</guid>
       <description></description>
     </item>
     

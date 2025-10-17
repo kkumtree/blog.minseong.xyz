@@ -96,6 +96,23 @@
 
             
             <div class="p-list__item">
+              <a href="/post/how-to-backup-gpg-key-to-personal-media/"><h2>GnuPG 키 백업하기</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-27T18:29:18&#43;09:00</u></p>
+              <p>23/05/30 GPG 키 복원방법 및 출처 추가 망가진 PC 메인보드를 교체하고, 서둘러 GPG key를 백업하였습니다.
+용량이 그리 큰편은 아니니, 왠만한 USB 메모리에도 충분히 백업이 가능합니다.
+(어째서 안했었을꼬&hellip;)
+출처는 마지막 referenece를 참조해주시기 바랍니다.
+1. Backup # tree로 ~/.gnupg 확인 tree ~/.gnupg # 현재 사용중인 키 확인 gpg --list-secret-keys --keyid-format LONG # 키 백업 ## public 키 백업 gpg --export --export-options backup --output ~/public_mscho.gpg ## private 키 백업 (암호 입력 필요) gpg --export-secret-keys --export-options backup --output ~/private_mscho.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/aws-eks-study-week5/"><h2>AWS EKS 스터디 5주차 - Autoscaling</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -163,23 +180,6 @@ HPA: Horizontal Pod Autoscaler VPA: Vertical Pod Autoscaler CA: Cluster Autoscal
 주요한 내용은&hellip;
 NodeAffinity를 이용한 라벨링 AWS EBS controller의 경우, AWS managed policy를 활용 AWS Volume SnapShots Controller를 통한 볼륨 백업 AWS EFS controller에서의 동적 프로비저닝 AWS EKS 신규 노드그룹 생성 별도로 kube-ops-view의 경우, 웹으로 확인할 수 있을 때까지 시간이 소요된다는 점이 있습니다.
 1. 실습 환경 배포 2주차에 실습했던 내용들을 미리 배포 AWS LB ExternalDNS kube-ops-view context 이름 변경 지난 번까지 pkos가 뜨는 현상이 있었는데, 닉네임을 별도 지정할 수 있음 EFS 생성 관련 cloudformation이 추가되었음 EFS FS ID 조회를 하기 위해 aws-cli 필터 활용 (출처: AWS Docs) # 실습 YAML 파일 curl -O https://s3.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/aws-eks-study-week2/"><h2>AWS EKS 스터디 2주차 - Network</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-07T07:30:52&#43;09:00</u></p>
-              <p># 아쉽게도 신규 항목인 istio, kube-ops-view는 실습 실패 - istio: `myhome.yaml` 을 어떻게 생성할지 몰라서 중단 - kube-ops-view: A레코드에 제대로 잡히지 않음 지난 1주차에 이어, 이번 주에는 EKS의 네트워크 구성에 대해 알아보는 시간이었습니다.
-직전 스터디에서도 바로 광탈당하나?하며 밤과 주말을 하얗게 불태웠을 정도로
-가장 고난도라고 생각했던 네트워크를 다시 만나니 이제 1% 친근감이 느껴지고 있네요.
-자 그럼 해보도록 합시다.
-1. cloudformation을 활용한 EKS 원클릭 구성 학습을 위해, 이번에도 가시다님이 준비해주신 원클릭 배포 yaml을 활용하여 배포.</p>
             </div>
             
 <ol class="p-pagination">

@@ -6,7 +6,17 @@
     <description>Recent content in docker on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sun, 01 Sep 2024 09:02:15 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 17 Oct 2025 20:53:27 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ubuntu Docker 설치</title>
+      <link>https://blog.minseong.xyz/post/docker-installation-in-ubuntu/</link>
+      <pubDate>Fri, 17 Oct 2025 20:53:27 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/docker-installation-in-ubuntu/</guid>
+      <description>Docker 사용을 위한 기본적인 설치 방법 메모
+Install Docker Engine on Ubuntu | Docker Documentation 0. 이전 버전 제거 (선택) 진행 중인 Docker 관련 작업이 없어, prune 명령어를 통해 기존 Docker의 리소스들을 삭제 진행하였습니다. docker system prune -a 공식 문서에 따라, 아래 커맨드로 삭제를 진행합니다. (겸사겸사 autoremove도 진행합니다.) for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done sudo apt-get autoremove # ❯ for pkg in docker.</description>
+    </item>
+    
     <item>
       <title>Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기</title>
       <link>https://blog.minseong.xyz/post/kans-1w-container-socket/</link>
@@ -19,16 +29,6 @@ k8s가 워낙 인기가 많기도 하지만, Pod 간 통신에는 많은 지식�
 첫 주차는, 바로 Kubernetes에 진입하지 않고 Containerization에 대한 이해를 먼저 다뤄주셨습니다.
 여타 쿠버네티스 강의와 달리 9주 간 매주 일요일에만 진행되는 세션인데도, 기반 기술을 다시 짚어주셔서 감사했습니다.
 1. AWS EC2 Instance 셋업 CloudFormation을 통해, EC2 및 제반사항을 구성하여 주셨습니다만, 취미 삼아 Terraform 변환 작업을 해보았습니다.</description>
-    </item>
-    
-    <item>
-      <title>Ubuntu Docker 설치</title>
-      <link>https://blog.minseong.xyz/post/docker-installation-in-ubuntu/</link>
-      <pubDate>Sun, 30 Apr 2023 03:00:15 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/post/docker-installation-in-ubuntu/</guid>
-      <description>Docker 사용을 위한 기본적인 설치 방법 메모
-Install Docker Engine on Ubuntu | Docker Documentation 0. 이전 버전 제거 (선택) 진행 중인 Docker 관련 작업이 없어, prune 명령어를 통해 기존 Docker의 리소스들을 삭제 진행하였습니다. docker system prune -a 공식 문서에 따라, 아래 커맨드로 삭제를 진행합니다. (겸사겸사 autoremove도 진행합니다.) for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done sudo apt-get autoremove # ❯ for pkg in docker.</description>
     </item>
     
   </channel>
