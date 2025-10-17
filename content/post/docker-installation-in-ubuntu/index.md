@@ -1,5 +1,5 @@
 ---
-date: 2023-04-30T03:00:15+09:00
+date: 2025-10-17T20:53:27+09:00
 title: "Ubuntu Docker 설치"
 tags:
   - docker
