@@ -77,6 +77,16 @@ ls -l /lib/systemd/system/runlevel?.target 명령어로 확인 가능 RunLevel E
     </item>
     
     <item>
+      <title>Ubuntu Docker 설치</title>
+      <link>https://blog.minseong.xyz/post/docker-installation-in-ubuntu/</link>
+      <pubDate>Sun, 30 Apr 2023 03:00:15 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/docker-installation-in-ubuntu/</guid>
+      <description>Docker 사용을 위한 기본적인 설치 방법 메모
+Install Docker Engine on Ubuntu | Docker Documentation 0. 이전 버전 제거 (선택) 진행 중인 Docker 관련 작업이 없어, prune 명령어를 통해 기존 Docker의 리소스들을 삭제 진행하였습니다. docker system prune -a 공식 문서에 따라, 아래 커맨드로 삭제를 진행합니다. (겸사겸사 autoremove도 진행합니다.) for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done sudo apt-get autoremove # ❯ for pkg in docker.</description>
+    </item>
+    
+    <item>
       <title>Ubuntu Pro를 적용하고 사용해보기</title>
       <link>https://blog.minseong.xyz/post/how-to-apply-ubuntu-pro/</link>
       <pubDate>Fri, 17 Mar 2023 11:14:50 +0900</pubDate>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Ubuntu Docker 설치 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Ubuntu Docker 설치" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/docker-installation-in-ubuntu/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/docker-installation-in-ubuntu/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/docker-installation-in-ubuntu/cover.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Ubuntu Docker 설치</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-04-30T03:00:15&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/docker" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">docker</span>
+              </div>
+            </a>
+            
+            <a href="/tags/ubuntu" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">ubuntu</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <blockquote>
+<p>Docker 사용을 위한 기본적인 설치 방법 메모</p>
+</blockquote>
+<ul>
+<li><a href="https://docs.docker.com/engine/install/ubuntu/">Install Docker Engine on Ubuntu | Docker Documentation</a></li>
+</ul>
+<h2 id="0-이전-버전-제거-선택">0. 이전 버전 제거 (선택)</h2>
+<ul>
+<li>진행 중인 Docker 관련 작업이 없어, prune 명령어를 통해 기존 Docker의 리소스들을 삭제 진행하였습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker system prune -a
+</span></span></code></pre></div><p><img src="image.png" alt="docker system prune -a"></p>
+<ul>
+<li>공식 문서에 따라, 아래 커맨드로 삭제를 진행합니다.
+(겸사겸사 <code>autoremove</code>도 진행합니다.)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; <span style="color:#66d9ef">do</span> sudo apt-get remove $pkg; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>sudo apt-get autoremove
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ❯ for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [sudo] password for kkumtree: </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Reading package lists... Done</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Building dependency tree... Done</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Reading state information... Done</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># The following packages were automatically installed and are no longer required:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   bridge-utils containerd pigz runc ubuntu-fan</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Use &#39;sudo apt autoremove&#39; to remove them.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># The following packages will be REMOVED:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   docker.io</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># After this operation, 126 MB disk space will be freed.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Do you want to continue? [Y/n] Y</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (Reading database ... 465886 files and directories currently installed.)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Removing docker.io (27.5.1-0ubuntu3~24.04.2) ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &#39;/usr/share/docker.io/contrib/nuke-graph-directory.sh&#39; -&gt; &#39;/var/lib/docker/nuke-graph-directory.sh&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Stopping &#39;docker.service&#39;, but its triggering units are still active:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># docker.socket</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Processing triggers for man-db (2.12.0-4build2) ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (...)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Removing containerd (1.7.28-0ubuntu1~24.04.1) ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Processing triggers for man-db (2.12.0-4build2) ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Reading package lists... Done</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Building dependency tree... Done</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Reading state information... Done</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># The following packages were automatically installed and are no longer required:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   bridge-utils pigz ubuntu-fan</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Use &#39;sudo apt autoremove&#39; to remove them.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># The following packages will be REMOVED:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   runc</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># After this operation, 34.3 MB disk space will be freed.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Do you want to continue? [Y/n] Y</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (Reading database ... 465640 files and directories currently installed.)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Removing runc (1.3.0-0ubuntu2~24.04.1) ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Processing triggers for man-db (2.12.0-4build2) ...</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ❯ sudo apt-get autoremove</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Reading package lists... Done</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Building dependency tree... Done</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Reading state information... Done</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># The following packages will be REMOVED:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   bridge-utils pigz ubuntu-fan</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># After this operation, 421 kB disk space will be freed.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Do you want to continue? [Y/n] Y</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (Reading database ... 465612 files and directories currently installed.)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Removing ubuntu-fan (0.12.16+24.04.1) ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ubuntu-fan: removing default /etc/network/fan configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Removing bridge-utils (1.7.1-1ubuntu2) ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Removing pigz (2.8-1) ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Processing triggers for man-db (2.12.0-4build2) ...</span>
+</span></span></code></pre></div><h2 id="1-docker-공식-gpg-key와-apt-레포지토리-추가">1. Docker 공식 GPG key와 APT 레포지토리 추가</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Add Docker&#39;s official GPG key:</span>
+</span></span><span style="display:flex;"><span>sudo apt-get update
+</span></span><span style="display:flex;"><span>sudo apt-get install ca-certificates curl
+</span></span><span style="display:flex;"><span>sudo install -m <span style="color:#ae81ff">0755</span> -d /etc/apt/keyrings
+</span></span><span style="display:flex;"><span>sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+</span></span><span style="display:flex;"><span>sudo chmod a+r /etc/apt/keyrings/docker.asc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Add the repository to Apt sources:</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  <span style="color:#e6db74">&#34;deb [arch=</span><span style="color:#66d9ef">$(</span>dpkg --print-architecture<span style="color:#66d9ef">)</span><span style="color:#e6db74"> signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  </span><span style="color:#66d9ef">$(</span>. /etc/os-release <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>UBUNTU_CODENAME<span style="color:#66d9ef">:-</span>$VERSION_CODENAME<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span><span style="color:#e6db74"> stable&#34;</span> | <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+</span></span><span style="display:flex;"><span>sudo apt-get update
+</span></span></code></pre></div><p><img src="image-1.png" alt="alt text"></p>
+<h2 id="2-docker-패키지를-설치합니다">2. Docker 패키지를 설치합니다</h2>
+<h3 id="1-최신-버전">(1) 최신 버전</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+</span></span></code></pre></div><h3 id="2-특정-버전">(2) 특정 버전</h3>
+<ul>
+<li>APT repository에서 받을 수 있는 버전을 조회합니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># List the available versions:</span>
+</span></span><span style="display:flex;"><span>apt-cache madison docker-ce | awk <span style="color:#e6db74">&#39;{ print $3 }&#39;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ❯ apt-cache madison docker-ce | awk &#39;{ print $3 }&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5:28.5.1-1~ubuntu.24.04~noble</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5:28.5.0-1~ubuntu.24.04~noble</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5:28.4.0-1~ubuntu.24.04~noble</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5:28.3.3-1~ubuntu.24.04~noble</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5:28.3.2-1~ubuntu.24.04~noble</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5:28.3.1-1~ubuntu.24.04~noble</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5:28.3.0-1~ubuntu.24.04~noble</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (...)</span>
+</span></span></code></pre></div><ul>
+<li>이후, 원하는 버전을 환경변수로 설정하여 설치합니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>VERSION_STRING<span style="color:#f92672">=</span>5:28.5.1-1~ubuntu.24.04~noble
+</span></span><span style="display:flex;"><span>sudo apt-get install docker-ce<span style="color:#f92672">=</span>$VERSION_STRING docker-ce-cli<span style="color:#f92672">=</span>$VERSION_STRING containerd.io docker-buildx-plugin docker-compose-plugin
+</span></span></code></pre></div><h2 id="3-권한-상승-설정-선택">3. 권한 상승 설정 (선택)</h2>
+<blockquote>
+<p>docker 그룹은 사용자에게 루트 수준의 권한을 부여합니다.
+<a href="https://docs.docker.com/engine/security/#docker-daemon-attack-surface">https://docs.docker.com/engine/security/#docker-daemon-attack-surface</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo groupadd docker
+</span></span><span style="display:flex;"><span>sudo usermod -aG docker $USER
+</span></span></code></pre></div><ul>
+<li>로그아웃, 혹은 새로운 터미널에서 접속합니다.
+혹은 아래 커맨드로 그룹을 활성화할 수 있습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>newgrp docker
+</span></span></code></pre></div><h2 id="9-warning-error-loading-config-file-troubleshooting">9. WARNING: Error loading config file (Troubleshooting)</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># WARNING: Error loading config file: /home/user/.docker/config.json -</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># stat /home/user/.docker/config.json: permission denied</span>
+</span></span></code></pre></div><ul>
+<li>이 오류는 <code>sudo</code> 명령을 이전에 사용했기 때문에 <code>~/.docker/</code> 디렉터리에 대한 권한 설정이 잘못되었음을 나타냅니다.</li>
+</ul>
+<ol>
+<li><code>~/.docker/</code> 디렉터리를 제거하거나(자동 생성되지만, 사용자 지정 설정은 삭제됩니다.)</li>
+<li>아래와 같이, 소유권 및 권한을 변경합니다.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo chown <span style="color:#e6db74">&#34;</span>$USER<span style="color:#e6db74">&#34;</span>:<span style="color:#e6db74">&#34;</span>$USER<span style="color:#e6db74">&#34;</span> /home/<span style="color:#e6db74">&#34;</span>$USER<span style="color:#e6db74">&#34;</span>/.docker -R
+</span></span><span style="display:flex;"><span>sudo chmod g+rwx <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.docker&#34;</span> -R
+</span></span></code></pre></div><h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://docs.docker.com/engine/install/ubuntu/">Ubuntu | Docker Docs</a></li>
+<li><a href="https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user">Manage Docker as a non-root user | Docker Docs</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/fix-error-526-in-cloudflare-with-github-page/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">GitHub Pages가 고장났나? (Cloudflare 526 Error)</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/post/aws-eks-study-week1/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">AWS EKS 스터디 1주차</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
