@@ -1,5 +1,5 @@
 ---
-date: 2023-04-30T03:00:15+09:00
+date: 2025-10-19T20:50:46+09:00
 title: "VSCode DevContainer - CI/CD 스터디 1주차"
 tags:
   - vscode  
@@ -14,7 +14,7 @@ authors:
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: cover.png # 커버 이미지 URL
-draft: true # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
 한가위 연휴의 끝과 함께, [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 CI/CD Study에 참여하게 되었습니다. 
@@ -204,7 +204,37 @@ tail -n 4 ~/.bash_profile
 
 ### (2) 컨테이너에서 기존 폴더 열어보기
 
-todo
+그러면 Host의 기존 소스 코드를 사용해서, 기존 소스 코드의 언어를 위한 Dev Container를 설정해보겠습니다.  
+
+> 기존의 Go 언어 소스코드가 있기에, Go언어에 대해 완비된 개발 환경을 설정해보겠습니다.  
+
+- `F1`로 명령 팔레트를 호출하여(상위 검색 바를 클릭 후, `>`를 입력하는 것과 같은 효과), `Dev Containers: Open Folder in Container...` 를 실행합니다.  
+  ![init from project](image-27.png)
+- 이후, 대상 프로젝트 폴더를 선택한 후, `Open`을 클릭합니다.  
+  ![select folder](image-34.png) 
+- 이번에는 `Add configuration to user data folder`를 선택하여, 로컬에 설정을 저장합니다.
+  ![select where config will be saved in](image-29.png)
+  - 로컬 설정값의 경로: `$HOME/.config/Code/User/globalStorage/ms-vscode-remote.remote-containers/configs`  
+    ![whereis local devcontainer.json](image-35.png)
+- 이후, 추천받은 Go 컨테이너를 선택해봅니다.  
+  ![select suggested container about golang](image-28.png)
+- 기존 소스코드가 go1.22 버전 기반이었기에, `1.22-bookworm`을 선택해봅니다.  
+  ![select golang version](image-30.png)
+- (선택) 그외에 다양한 부가 기능을 선택하여 미리 추가할 수 있습니다. 이번에는 생략합니다.  
+  ![skip additional feature selection](image-31.png)
+- (선택) dependabot.yml 생성. 무해하기에 선택해서 생성해보았습니다.  
+  ![using dependabot.yml](image-32.png)
+
+- 그러면 Dev Container 구성을 시작합니다.  
+  ![preparing dev container](image-33.png)
+
+- Go 1.22가 미리 구성된 Dev Container 환경 내에서 VSCode로 코드를 편집, 테스트할 수 있습니다.  
+  또한, 컨테이너 환경에서 소스코드 수정을 하면, Host에서도 변경된 소스코드를 확인할 수 있습니다.  
+  ![go version check](image-37.png)  
+
+### (3) 격리된 컨테이너 볼륨에서 Git 레포지토 또는 GitHub PR 열기  
+
+PR 검토를 위한, Git 레포지토리 격리된 복사본을 사용하거나 작업에 영향을 주지 않고 다른 브랜치를 조사하려는 경우
 
 <!-- > 아래는 현재와 달라서 주석 처리
 
