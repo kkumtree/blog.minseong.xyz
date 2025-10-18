@@ -96,6 +96,24 @@
 
             
             <div class="p-list__item">
+              <a href="/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/"><h2>Release file for URL is not valid yet 해결 방법</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-29T02:28:34&#43;09:00</u></p>
+              <p>최근 WSL를 쓰게 되면서, 한 가지 이슈가 생겼다.
+APT repo를 업데이트 하면 아래와 같은 에러가 발생한다.
+이것저것 손대보고 해결법을 적어보고자 한다.
+E: Release file for http://ports.ubuntu.com/ubuntu-ports/dists/jammy/InRelease is not valid yet (invalid for another 5min 1s). Updates for this repository will not be applied. 오류 증상은 릴리스 파일이 존재하지 않는데, 5분 1초동안 유효하지 않는다고 한다.
+무슨 말인가 싶은데, 5분 있다가 업데이트 해보라는 것이다.
+원인 오랫동안 절전모드로 두어서 시간 동기화가 안된 것으로 보인다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/runlevel-in-linux/"><h2>Linux Runlevel - 런레벨/부트레벨</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -161,25 +179,6 @@ curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S
 급히 벤치마킹해서 올린거라, 부족한 점은 많지만 가장 중요한 댓글 기능이 없어서 아쉬웠다.
 원래는 댓글을 달지 않으려고 했는데,
 부족한 부분에 대해서 조언도 받아보고 싶고 추가로 궁금한 점이나 이해가 안되는 부분에 대해서 피드백도 받고 싶었다. 다른 블로그에서 답을 찾으려고 검색엔진을 돌리면, 뭔가 2% 부족하거나 / 내가 원하는 해답이 아니거나 / 매번 이모티콘으로 끝나는 특유의 허탈감으로 짜증이 밀려와서 번역기 돌려가며 국외 포스트나 문서를 보다보니, 반대로 내 글도 큰 도움이 되지 못할 경우도 있겠다 싶었다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/aws-eks-study-week6/"><h2>AWS EKS 스터디 6주차 - Security</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-04T06:56:52&#43;09:00</u></p>
-              <p>이번에는 보안을 위한 인증 및 인가, 그리고 IRSA를 중심으로 EKS의 보안에 대해 학습해보았습니다.
-kops 스터디 때에는 잘 몰랐는데, RBAC 뿐만 아니라 복기하다보니&hellip;
-[4-1] projected Volume [4-2] AWS Load Balancer Controller IRSA 및 LB Pod mutating 위의 두 가지가 중요한 파트를 차지하고 있었음을 알 수 있었습니다.
-Network(2주차)가 매번 뭔가 일부가 아리송하였다면
-Security는 복기하다가 이론적으로는 간단(과연?)해보여도
-실제 구동방식 이해 자체가 초반에 안되서, 사흘 남짓 걸린 덕에 더 어려웠던 것 같습니다.
-그 외 myeks-bastion-2에 접속 시, 함께 진행할 때는 ssh {Public IP}로 잘 접속되는 걸 봤는데 정작 혼자 할 땐 접속이 되지않았습니다.</p>
             </div>
             
 <ol class="p-pagination">

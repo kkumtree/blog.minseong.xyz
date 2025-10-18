@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>devcontainer on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/devcontainer/</link>
+    <description>Recent content in devcontainer on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Sun, 19 Oct 2025 20:50:46 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/devcontainer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>VSCode DevContainer - CI/CD 스터디 1주차</title>
+      <link>https://blog.minseong.xyz/post/vscode-devcontainer-usage/</link>
+      <pubDate>Sun, 19 Oct 2025 20:50:46 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/vscode-devcontainer-usage/</guid>
+      <description>한가위 연휴의 끝과 함께, CloudNet@에서 진행하고 있는 CI/CD Study에 참여하게 되었습니다.
+이번에는 핸즈온용으로 즐겨쓰는 GitHub CodeSpace와 연관된, Visual Studio 상에서의 Dev Containers 활용에 대해 다뤄보고자 합니다.
+사용 OS환경은 Ubuntu Desktop 24.04 LTS 이며, 아래의 문서에서 안내된대로 차근차근 따라해보며 좀 더 이해를 해보고자 합니다.
+Developing inside a Container
+0. Docker 설치 내용이 길어, 아래의 포스트로 나누었습니다.
+Ubuntu Docker 설치 작성 기준, Dev Container는 Ubuntu Snap 패키지(snapcraft)로 설치된 Docker에는 지원되지 않는다고 합니다. 사용자($USER)를 docker 그룹에 추가하여야합니다.</description>
+    </item>
+    
+  </channel>
+</rss>

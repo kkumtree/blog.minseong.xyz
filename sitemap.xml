@@ -2,17 +2,29 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/tags/cloudnet@/</loc>
+    <lastmod>2025-10-19T20:50:46+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/devcontainer/</loc>
+    <lastmod>2025-10-19T20:50:46+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/docker/</loc>
-    <lastmod>2025-10-17T20:53:27+09:00</lastmod>
+    <lastmod>2025-10-19T20:50:46+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2025-10-17T20:53:27+09:00</lastmod>
+    <lastmod>2025-10-19T20:50:46+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2025-10-17T20:53:27+09:00</lastmod>
+    <lastmod>2025-10-19T20:50:46+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/</loc>
-    <lastmod>2025-10-17T20:53:27+09:00</lastmod>
+    <lastmod>2025-10-19T20:50:46+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/vscode/</loc>
+    <lastmod>2025-10-19T20:50:46+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/vscode-devcontainer-usage/</loc>
+    <lastmod>2025-10-19T20:50:46+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/ubuntu/</loc>
     <lastmod>2025-10-17T20:53:27+09:00</lastmod>
@@ -33,9 +45,6 @@
     <lastmod>2025-03-02T22:31:49+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/microsoft/</loc>
-    <lastmod>2025-03-02T22:31:49+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/vscode/</loc>
     <lastmod>2025-03-02T22:31:49+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/obs/</loc>
@@ -214,9 +223,6 @@
   </url><url>
     <loc>https://blog.minseong.xyz/post/visualizing-google-cloud-101-book-review/</loc>
     <lastmod>2023-11-21T13:51:29+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/cloudnet@/</loc>
-    <lastmod>2023-10-15T00:10:33+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/drift/</loc>
     <lastmod>2023-10-15T00:10:33+09:00</lastmod>

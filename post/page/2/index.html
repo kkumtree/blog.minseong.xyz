@@ -96,6 +96,23 @@
 
             
             <div class="p-list__item">
+              <a href="/post/getting-started-amazon-managed-grafana-workspace/"><h2>SAML for using Amazon Managed Grafana Workspace (To-Do)</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-11-02T21:43:00&#43;09:00</u></p>
+              <p>Organization의 이슈가 있어 Amazon Managed Grafana Workspace를 사용하려면 SAML 인증을 구성해야하는데, SAML 인증 제어가 되면 검토해보겠습니다.
+당연히 거의 4년이 다되가니 Amazon Managed Grafana – Getting Started와는 다른 인터페이스를 확인할 수 있었습니다.
+현재 제 권한으로는 Organization을 생성할 수 없어서, Workspace만 생성해보았습니다.
+즉, 매우 느슨한 권한으로 Workspace를 만들어주겠다 이것입니다.
+1. &lsquo;딸깍&rsquo;으로 시작하기 Getting Started with 딸깍 이름만 짓고, 넘어가 보겠습니다. AWS IIC IAM Identity Center (구, AWS SSO)를 활용하겠습니다. 신경써야할게 많네요 딸~깍, 유저를 만들어봅시다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/kans-9w-monitoring-codedns-in-eks-with-grafana-cloud/"><h2>Monitoring CoreDNS in EKS with Grafana Cloud</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -168,22 +185,6 @@ static_resources listeners clusters (a) static_resources envoy의 시작과 함�
 실제로 envoy-demo.yaml 파일을 열어보면 최상단에 static_resources이 선언되어 있습니다.
 static_resources: listeners: (b) listeners envoy-demo.yaml 파일 기준,
 socket_address: 리스너는 포트 10000에서 수신하도록 설정되어 있습니다. route_config: 모든 경로에 대해 service_envoyproxy_io 클러스터로 라우팅합니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/kans-7w-envoy-helloworld/"><h2>Kubernetes Service(4): envoy overview</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-15T10:16:38&#43;09:00</u></p>
-              <p>따로 슥 찾아보니, envoy는 Micro Service Architecture 등 구현된 단위 기능간의 통신을 위한 L7 Proxy 라고 합니다.
-Docker Compose 정도나 일반 서비스에서는 굳이 필요하지는 않을 것 같지만, Service Mesh 환경에서는 알아두면 좋을 것 같아 훝어봅니다.
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-1. Envoy Installation Docs: Installing Envoy wget -O- https://apt.envoyproxy.io/signing.key | sudo gpg --dearmor -o /etc/apt/keyrings/envoy-keyring.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/envoy-keyring.gpg] https://apt.envoyproxy.io jammy main&#34; | sudo tee /etc/apt/sources.</p>
             </div>
             
 <ol class="p-pagination">
