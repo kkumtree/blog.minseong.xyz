@@ -104,8 +104,14 @@ EOF
 - type: 차트의 타입 (optional)  
   - `application`(기본값) 혹은 `library` 택 1.
   - `library`: 재사용 가능한 차트. 배포 되지 않는 일종의 템플릿.  
-- appVersion:  
+- appVersion: 
+  - `version`과 독립적.  
+  - 권장표기: "<APPLICATION_VERSION>"  
 <!-- https://helm.sh/docs/topics/charts/#chart-types -->
+
+### (2) templates/deployments.yaml  
+
+> 
 
 ```bash
 # 2w/shells/helm/2-helm-deployment.yaml
@@ -141,6 +147,8 @@ spec:
               protocol: TCP
 EOF
 ```
+
+
 
 ```bash
 # 2w/shells/helm/3-helm-service.yaml
