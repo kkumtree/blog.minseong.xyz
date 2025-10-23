@@ -1,6 +1,6 @@
 ---
 date: 2025-10-24T01:17:39+09:00
-title: "Helm - CI/CD 스터디 2주차"
+title: "Helm 101 - CI/CD 스터디 2주차"
 tags:
   - helm
   - CICD
