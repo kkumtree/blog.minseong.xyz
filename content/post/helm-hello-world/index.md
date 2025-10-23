@@ -1,5 +1,5 @@
 ---
-date: 2025-10-19T20:50:46+09:00
+date: 2025-10-24T01:17:39+09:00
 title: "Helm - CI/CD 스터디 2주차"
 tags:
   - helm
@@ -12,8 +12,8 @@ authors:
       launchpad: mscho7969
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
-image: cover.png # 커버 이미지 URL
-draft: true # 글 초안 여부
+image: image-6.png # 커버 이미지 URL
+draft: false # 글 초안 여부
 ---
 
 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 CI/CD Study 2주차에는 Helm과 Tekton을 다뤘습니다.  
@@ -300,7 +300,38 @@ helm get notes pacman
   - manifest: chart에 의해 생성된 k8s 리소스의 표현 (YAML 형식)  
   - notes: 해당 릴리스에 대한 노트(메모)  
 
-![check chart metadata](image-8.png)
+![check chart metadata](image-8.png)  
+
+- chart의 `secret`의 경우, 아래 사진과 같은 base64로 인코딩된 값을 가집니다.  
+
+![secret which chart have](image-9.png)  
+
+- 이 값을 `2번` 디코딩했을때는 아래와 같이 출력됩니다.  
+
+```bash
+kubectl get secrets sh.helm.release.v1.pacman.v1 -o jsonpath='{.data.release}' | base64 -d | base64 -d | gzip -d | jq  
+```
+
+![decode twice chart secret](image-11.png)  
+
+- `secret`이 갖고있던 메타데이터 키값들을 확인해봅니다.  
+
+```bash
+kubectl get secret sh.helm.release.v1.pacman.v3 -o jsonpath='{.data.release}' | base64 -d | base64 -d | gzip -d | jq -r 'paths(scalars) | join(".")'
+```
+
+![Dot-notation](image-10.png)
+
+## 5. chart 삭제 후 확인  
+
+```bash
+helm uninstall pacman
+kubectl get secret
+```
+
+- chart를 삭제하면, 변화를 기록하던 시크릿도 다 함께 사라진 것을 확인할 수 있습니다.  
+
+![all secret remove after chart deleted](image-12.png)
 
 ## 8. Chart API v1 -> v2 변화점 (Helm v2 to v3)
 
@@ -355,4 +386,5 @@ helm get notes pacman
 - [Helm | Charts](https://helm.sh/docs/topics/charts/)  
 - [Semantic Versioning](https://semver.org)  
 - [Sprig Function Documentation](https://masterminds.github.io/sprig/)  
+- [Decoding Helm3 resources in secrets](https://gist.github.com/DzeryCZ/c4adf39d4a1a99ae6e594a183628eaee)  
 - [리눅스에 KIND 설치하기 w/golang](../kans-2w-kind-installation-on-linux/)  
