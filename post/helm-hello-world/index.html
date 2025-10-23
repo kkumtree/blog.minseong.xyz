@@ -119,7 +119,7 @@
   <section class="p-strip">
   <div class="row">
   <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 CI/CD Study 2주차에는 Helm과 Tekton을 다뤘습니다.</p>
-<p>이번에는 Helm을 다루도록 하겠습니다.</p>
+<p>이번에는 Helm의 기본적인 부분을 다루도록 하겠습니다.</p>
 <h2 id="1-helm의-역할과-실습-준비사항">1. Helm의 역할과 실습 준비사항</h2>
 <h3 id="helm">Helm?</h3>
 <p>템플릿 기반 솔루션. 즉, 버전 관리 및 공유, 배포가 가능한 아티팩트를 생성하도록 돕습니다.</p>
@@ -437,17 +437,55 @@ Helm이 차트의 상태를 복구하거나 rollback 할 때 이 데이터를 �
 </ul>
 <p><img src="image-12.png" alt="all secret remove after chart deleted"></p>
 <h2 id="8-chart-api-v1---v2-변화점-helm-v2-to-v3">8. Chart API v1 -&gt; v2 변화점 (Helm v2 to v3)</h2>
+<blockquote>
+<p>A <code>dependencies</code> field defining chart dependencies, which were located in a separate <code>requirements.yaml</code> file for v1 charts. The type field, discriminating application and library charts.</p>
+</blockquote>
 <ul>
-<li>A <code>dependencies</code> field defining chart dependencies, which were located in a separate <code>requirements.yaml</code> file for v1 charts.</li>
-<li>The type field, discriminating application and library charts.</li>
+<li>기존 <code>requirements.yaml</code>에 분리되어 있던 <code>dependencies</code> 필드는, <code>Chart.yaml</code>에서 정의됩니다.</li>
+<li><code>type</code> 필드 도입을 통해서 일반적인 애플리케이션용인지, 직접 배포되지 않아야하는 라이브러리인지 식별하는데 도움을 줍니다.</li>
 </ul>
 <h2 id="9-template-관련">9. Template 관련</h2>
-<p>| No. | 기능 | 표현 | 설명 | 참고 |
-| :&mdash; | :&mdash;: | :&mdash;: | :&mdash;: |
-| 1 | Whitespace Control | <code>{{-</code> | 앞의 공백문자(<code>\n</code>포함) 제거 | <code>{{</code> |<br>
-| 2 | newline indent | <code>nindent</code> | 앞에 개행 추가 | <code>indent</code> |<br>
-| 3 | 함수 호출(권장) | {{ <code>toYaml</code> &hellip; }} | 템플릿 함수 | [sprig]<a href="https://masterminds.github.io/sprig/">https://masterminds.github.io/sprig/</a> |<br>
-| 9 | template 호출 | {{ <code>include &quot;toYaml&quot;</code> &hellip; }} | toYaml이라는 템플릿 호출 <code>{{ define &quot;toYaml&quot; }}</code> | <code>_helpers.tpl</code>등에 정의 (과거) |</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">No.</th>
+<th style="text-align:center">기능</th>
+<th style="text-align:center">표현</th>
+<th style="text-align:center">설명</th>
+<th style="text-align:center">참고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:center">Whitespace Control</td>
+<td style="text-align:center"><code>{{-</code></td>
+<td style="text-align:center">앞의 공백문자(<code>\n</code>포함) 제거</td>
+<td style="text-align:center"><code>{{</code></td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:center">newline indent</td>
+<td style="text-align:center"><code>nindent</code></td>
+<td style="text-align:center">앞에 개행 추가</td>
+<td style="text-align:center"><code>indent</code></td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:center">함수 호출(권장)</td>
+<td style="text-align:center">{{ <code>toYaml</code> &hellip; }}</td>
+<td style="text-align:center">템플릿 함수</td>
+<td style="text-align:center"><a href="https://masterminds.github.io/sprig/">sprig</a></td>
+</tr>
+<tr>
+<td style="text-align:left">9</td>
+<td style="text-align:center">template 호출</td>
+<td style="text-align:center">{{ <code>include &quot;toYaml&quot;</code> &hellip; }}</td>
+<td style="text-align:center">toYaml이라는 템플릿 호출 <code>{{ define &quot;toYaml&quot; }}</code></td>
+<td style="text-align:center"><code>_helpers.tpl</code>등에 정의 (과거)</td>
+</tr>
+</tbody>
+</table>
 <ul>
 <li>
 <p>조건문 및 쌍따옴표 처리</p>
