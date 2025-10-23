@@ -18,7 +18,7 @@ draft: false # 글 초안 여부
 
 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 CI/CD Study 2주차에는 Helm과 Tekton을 다뤘습니다.  
 
-이번에는 Helm을 다루도록 하겠습니다.  
+이번에는 Helm의 기본적인 부분을 다루도록 하겠습니다.  
 
 ## 1. Helm의 역할과 실습 준비사항  
 
@@ -335,16 +335,18 @@ kubectl get secret
 
 ## 8. Chart API v1 -> v2 변화점 (Helm v2 to v3)
 
-- A `dependencies` field defining chart dependencies, which were located in a separate `requirements.yaml` file for v1 charts.  
-- The type field, discriminating application and library charts.  
+> A `dependencies` field defining chart dependencies, which were located in a separate `requirements.yaml` file for v1 charts. The type field, discriminating application and library charts.  
+
+- 기존 `requirements.yaml`에 분리되어 있던 `dependencies` 필드는, `Chart.yaml`에서 정의됩니다.  
+- `type` 필드 도입을 통해서 일반적인 애플리케이션용인지, 직접 배포되지 않아야하는 라이브러리인지 식별하는데 도움을 줍니다.  
 
 ## 9. Template 관련  
 
-| No. | 기능 | 표현 | 설명 | 참고 |
-| :--- | :---: | :---: | :---: |
+| No. | 기능 | 표현 | 설명 | 참고 |  
+| :--- | :---: | :---: | :---: | :---: |  
 | 1 | Whitespace Control | `{{-` | 앞의 공백문자(`\n`포함) 제거 | `{{` |  
 | 2 | newline indent | `nindent` | 앞에 개행 추가 | `indent` |  
-| 3 | 함수 호출(권장) | {{ `toYaml` ... }} | 템플릿 함수 | [sprig]<https://masterminds.github.io/sprig/> |  
+| 3 | 함수 호출(권장) | {{ `toYaml` ... }} | 템플릿 함수 | [sprig](https://masterminds.github.io/sprig/) |  
 | 9 | template 호출 | {{ `include "toYaml"` ... }} | toYaml이라는 템플릿 호출 `{{ define "toYaml" }}` | `_helpers.tpl`등에 정의 (과거) |  
 
 - 조건문 및 쌍따옴표 처리
