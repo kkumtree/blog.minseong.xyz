@@ -37,28 +37,40 @@ draft: true # 글 초안 여부
 
 ### 실습 준비  
 
-> kind 설치의 경우 다음 포스트를 참고할 수 있습니다.  
-> [리눅스에 KIND 설치하기 w/golang](../kans-2w-kind-installation-on-linux/)  
-> Docs: <https://kind.sigs.k8s.io/>  
+1. kind  
 
-kind를 통해, 로컬 환경에 k8s를 배포해보겠습니다.  
+    > kind 설치의 경우 다음 포스트를 참고할 수 있습니다.  
+    > [리눅스에 KIND 설치하기 w/golang](../kans-2w-kind-installation-on-linux/)  
+    > Docs: <https://kind.sigs.k8s.io/>  
 
-```bash
-# 2w/shells/kind/up-kind.sh
-kind create cluster --name myk8s --image kindest/node:v1.32.8 --config - <<EOF
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-- role: control-plane
-  extraPortMappings:
-  - containerPort: 30000
-    hostPort: 30000
-  - containerPort: 30001
-    hostPort: 30001
-EOF
-```  
+  kind를 통해, 로컬 환경에 k8s를 배포해보겠습니다.  
 
-![preparing handson](image.png)  
+  ```bash
+  # 2w/shells/kind/up-kind.sh
+  kind create cluster --name myk8s --image kindest/node:v1.32.8 --config - <<EOF
+  kind: Cluster
+  apiVersion: kind.x-k8s.io/v1alpha4
+  nodes:
+  - role: control-plane
+    extraPortMappings:
+    - containerPort: 30000
+      hostPort: 30000
+    - containerPort: 30001
+      hostPort: 30001
+  EOF
+  ```  
+
+  ![preparing handson](image.png)  
+2. Helm 설치  
+
+  > Snap패키지(snapcraft)로도 설치가 가능하니,  
+  > 이 방법으로 설치해보겠습니다.  
+
+  ```bash
+  sudo snap install helm --classic
+  ```
+
+  ![install helm by snapcraft](image-2.png)
 
 ## 2. Helm Project 101
 
@@ -75,9 +87,9 @@ EOF
 
 > 해당 구성들은 아래 GitHub에 탑재되어 있습니다.  
 > <https://github.com/kkumtree/ci-cd-cloudnet-study>  
-> helm의 구성파일들은 `2w/pacman` 폴더에 있습니다.  
+> Helm의 구성파일들은 `2w/pacman` 폴더에 있습니다.  
 
-![create basic helm chart](image-1.png)
+![create basic Helm chart](image-1.png)
 
 ### (1) Chart.yaml  
 
@@ -97,7 +109,7 @@ EOF
 ```  
 
 - apiVersion: chart API 버전  
-  - helm 2는 `V1`, helm 3는 `V2` 값을 갖습니다.  
+  - Helm 2는 `V1`, Helm 3는 `V2` 값을 갖습니다.  
 - name: 차트에 대한 이름  
 - version: 차트 에 대한 버전 ([SemVer](https://semver.org), 시맨틱 버전 규칙)  
   - 차트 정의가 바뀌면 업데이트  
@@ -204,9 +216,91 @@ securityContext: {}
 EOF
 ```  
 
-- image.* 및 replicaCount, securityContext(`{}`, 속성 비움) 확인  
+- 템플릿 정의 부분 확인  
+  - image.*  
+  - replicaCount  
+  - securityContext: `{}` (속성 비움)  
 
-## 3. Check  
+## 3. Local rendering to YAML
+
+- 로컬에서 렌더링을 해봅니다.  
+
+```bash
+helm template .  
+```
+
+- Chart.yaml과 values.yaml을 제외한, YAML 파일들의 렌더링 확인  
+
+![local rendering to yaml](image-3.png)  
+
+### 기본값 재정의 후, 렌더링 (--set)  
+
+> 기본값을 변경(override)하여 정상 적용되는지 확인해봅니다.  
+> `values.yaml`의 `replicaCount`를 변경해보겠습니다.  
+
+```bash
+# # 기존(deployment.yaml)  
+# # spec.replicas: 1  
+# helm template . | grep "replicas:" -B9
+helm template --set replicaCount=3 . | grep "replicas:" -B9
+```
+
+![change default value with set params](image-4.png)
+
+## 4. kind(k8s)에 chart 배포 및 helm 확인  
+
+> 실제로 k8s에 배포 후, 확인을 합니다.  
+
+```bash
+helm install pacman .
+helm list
+kubectl get deploy,pod,service,ep
+helm history pacman
+kubectl get pod -o yaml | grep securityContext -A1
+# secret도 보겠습니다.  
+kubectl get secret
+```
+
+- Secret 생성 이유? `sh.helm.release.v1.pacman.v1`
+  Helm은 배포 릴리스에 대한 metadata를 저장하기 위해, 자동으로 Secret 리소스를 생성합니다.  
+  Helm이 차트의 상태를 복구하거나 rollback 할 때 이 데이터를 이용
+
+![provisioning helm chart](image-5.png)  
+
+- 이번엔 replicaCount 값을 재설정하여, 배포를 합니다.  
+  - `--reuse-values`: 업그레이드 진행시, 최신 릴리스의 값에 CLI Override(`--set 및 -f)값과 합쳐 적용.  
+
+```bash  
+helm upgrade pacman --reuse-values --set replicaCount=2 .  
+kubectl get pod
+```
+
+![helm upgrade](image-6.png)
+
+- 히스토리와 시크릿은 upgrade 할 때마다 누적되는 것을 확인할 수 있습니다.  
+
+```bash
+kubectl get secret
+helm history pacman
+```
+
+![increased secrets and history via upgrade chart](image-7.png)
+
+- 이외에도 chart의 배포 정보, 즉 metadata를 살펴보겠습니다.  
+
+```bash
+helm get all pacman  
+helm get values pacman  
+helm get manifest pacman
+helm get notes pacman
+```
+
+- all: 아래 내용에 대한 전체 사항  
+  - values: `USER-SUPPLIED VALUES`(사용자 지정 값)  
+  - manifest: chart에 의해 생성된 k8s 리소스의 표현 (YAML 형식)  
+  - notes: 해당 릴리스에 대한 노트(메모)  
+
+![check chart metadata](image-8.png)
 
 ## 8. Chart API v1 -> v2 변화점 (Helm v2 to v3)
 
@@ -257,6 +351,7 @@ EOF
 
 ## Reference
 
+- [Install helm on Linux | Snap Store](https://snapcraft.io/helm)  
 - [Helm | Charts](https://helm.sh/docs/topics/charts/)  
 - [Semantic Versioning](https://semver.org)  
 - [Sprig Function Documentation](https://masterminds.github.io/sprig/)  
