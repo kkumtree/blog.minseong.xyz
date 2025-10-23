@@ -6,17 +6,17 @@
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>Posts | kkumtree</title>
+    <title>helm | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="Posts" />
+    <meta property="og:title" content="helm" />
 
     
-    <meta property="og:image" content='https://blog.minseong.xyz/post/' />
-    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/' />
+    <meta property="og:image" content='https://blog.minseong.xyz/tags/helm/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/helm/' />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content='https://blog.minseong.xyz/post/' />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/helm/' />
 
     
     <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
@@ -82,7 +82,7 @@
   <section class="p-strip--suru main-slide main-strip">
       <div class="row">
         <div class="col-8 left-section">
-          <h1>Posts</h1>
+          <h1>helm</h1>
           <p></p>
         </div>
       </div>
@@ -113,115 +113,6 @@ Helm chart(차트)
 애플리케이션의 설정값은 일반적으로 k8s의 ConfigMap에 대응되는 속성입니다. ConfigMap: 수정되어도 애플리케이션의 롤링 없데이트 전, 즉 애플리케이션을 수동 재시작 하기 전까지는 값이 적용되지 않습니다.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/vscode-devcontainer-usage/"><h2>VSCode DevContainer - CI/CD 스터디 1주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-19T20:50:46&#43;09:00</u></p>
-              <p>한가위 연휴의 끝과 함께, CloudNet@에서 진행하고 있는 CI/CD Study에 참여하게 되었습니다.
-이번에는 핸즈온용으로 즐겨쓰는 GitHub CodeSpace와 연관된,
-Visual Studio 상에서의 Dev Containers 활용에 대해 다뤄보고자 합니다.
-사용 OS환경은 Ubuntu Desktop 24.04 LTS 이며,
-아래의 문서에서 안내된대로 차근차근 따라해보며 좀 더 이해를 해보고자 합니다.
-Developing inside a Container
-0. Docker 설치 내용이 길어, 아래의 포스트로 나누었습니다.
-Ubuntu Docker 설치 작성 기준, Dev Container는 Ubuntu Snap 패키지(snapcraft)로 설치된 Docker에는 지원되지 않는다고 합니다. 사용자($USER)를 docker 그룹에 추가하여야합니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/docker-installation-in-ubuntu/"><h2>Ubuntu Docker 설치</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-17T20:53:27&#43;09:00</u></p>
-              <p>Docker 사용을 위한 기본적인 설치 방법 메모
-Install Docker Engine on Ubuntu | Docker Documentation 0. 이전 버전 제거 (선택) 진행 중인 Docker 관련 작업이 없어, prune 명령어를 통해 기존 Docker의 리소스들을 삭제 진행하였습니다. docker system prune -a 공식 문서에 따라, 아래 커맨드로 삭제를 진행합니다. (겸사겸사 autoremove도 진행합니다.) for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done sudo apt-get autoremove # ❯ for pkg in docker.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/how-to-manage-microsoft-packages-with-apt-manager/"><h2>How to manage Microsoft packages with APT manager</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-03-02T22:31:49&#43;09:00</u></p>
-              <p>Microsoft gave us a lot of programs as Ubuntu/Debian packages.
-In this post, I will show you how to manage Edge and VSCode packages with APT package manager.
-APT is stands for Advanced Package Tool.
-Why? Simple. I want to upgrade them easily with APT package manager rather than using dpkg command.
-sudo apt-get update -y &amp;&amp; sudo apt-get upgrade -y When I installed Microsoft Edge and Visual Studio Code, I used dpkg command.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/install-obs-studio-ubuntu/"><h2>Ubuntu에 OBS Studio 설치하기</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-11-11T20:59:03&#43;09:00</u></p>
-              <p>뭔가 내가 알려줘야하는데, 글로 쓰기 싫은 그런 날이 있다.
-그래서 있는 OBS Studio.
-Ubuntu도 22.04 LTS (Jammy Jellyfish) 이후부터는 OBS Studio를 APT repository를 통해 설치를 할 수 있다고 하여, 도전.
-Installation: https://obsproject.com/download sudo add-apt-repository ppa:obsproject/obs-studio sudo apt update sudo apt install ffmpeg obs-studio 생각보다 오래 걸린다.
-sudo add-apt-repository ppa:obsproject/obs-studio # [sudo] password for kkumtree: # Repository: &#39;Types: deb # URIs: https://ppa.launchpadcontent.net/obsproject/obs-studio/ubuntu/ # Suites: noble # Components: main # &#39; # Description: # Latest stable release of OBS Studio # More info: https://launchpad.</p>
-            </div>
-            
-<ol class="p-pagination">
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--previous" 
-        href="/post/" title="Previous page">
-        <i class="p-icon--contextual-menu">First page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--previous  is-disabled" 
-         title="Previous page">
-        <i class="p-icon--contextual-menu">Previous page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link  is-active" href="/post/">1</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/2/">2</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/3/">3</a>
-  </li>
-  <li class="p-pagination__item p-pagination__item--truncation">
-    …
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/10/">10</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--next "
-        href="/post/page/2/" title="Next page">
-        <i class="p-icon--contextual-menu">Next page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--next"
-        href="/post/page/10/" title="Last page">
-        <i class="p-icon--contextual-menu">Last page</i>
-    </a>
-  </li>
-</ol>
 </div>
         </div>
       </div>

@@ -96,6 +96,22 @@
 
             
             <div class="p-list__item">
+              <a href="/post/apt-expkeysig-troubleshooting/"><h2>The following signatures were invalid: EXPKEYSIG</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-11-04T21:24:49&#43;09:00</u></p>
+              <p>매번 수정하기 귀찮아서, 나중에 찾아서 쓰려고 끄적이는 메모
+보통 GPG키 지우고 다시 받으면 된다.
+그런 날이 있다. 무심결에 sudo apt-get update를 실행하는 순간, 에러가 뜨는 날.
+W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.31/deb InRelease: The following signatures were invalid: EXPKEYSIG 234654DA9A296436 isv:kubernetes OBS Project &lt;isv:kubernetes@build.opensuse.org&gt; W: Failed to fetch https://pkgs.k8s.io/core:/stable:/v1.31/deb/InRelease The following signatures were invalid: EXPKEYSIG 234654DA9A296436 isv:kubernetes OBS Project &lt;isv:kubernetes@build.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/getting-started-amazon-managed-grafana-workspace/"><h2>SAML for using Amazon Managed Grafana Workspace (To-Do)</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -165,26 +181,6 @@ Cilium에 이렇게도 (저를 포함한) 모?두가 열광하는지 알아보�
 이 때는 설마 했지만, 역시나 스불재 엔딩이었다
 CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
 1. Linux Network Stack 스터디 1주차의 Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기에서 가볍게 맛을 보고 도망치기 바빴지만, 여튼 아래의 사항은 스쳐지나갔습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/kans-7w-envoy-config/"><h2>Kubernetes Service(4): envoy config</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-19T16:59:16&#43;09:00</u></p>
-              <p>정적/동적 설정을 알아봅니다.
-traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 명료했습니다.
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-1. Static Configuration 아래와 같이 구성됩니다.
-static_resources listeners clusters (a) static_resources envoy의 시작과 함께, 정적으로 설정되는 모든 리소스를 포함한다고 합니다.
-실제로 envoy-demo.yaml 파일을 열어보면 최상단에 static_resources이 선언되어 있습니다.
-static_resources: listeners: (b) listeners envoy-demo.yaml 파일 기준,
-socket_address: 리스너는 포트 10000에서 수신하도록 설정되어 있습니다. route_config: 모든 경로에 대해 service_envoyproxy_io 클러스터로 라우팅합니다.</p>
             </div>
             
 <ol class="p-pagination">

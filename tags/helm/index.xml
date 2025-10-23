@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>helm on kkumtree</title>
+    <link>https://blog.minseong.xyz/tags/helm/</link>
+    <description>Recent content in helm on kkumtree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Fri, 24 Oct 2025 01:17:39 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/helm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Helm 101 - CI/CD 스터디 2주차</title>
+      <link>https://blog.minseong.xyz/post/helm-hello-world/</link>
+      <pubDate>Fri, 24 Oct 2025 01:17:39 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/helm-hello-world/</guid>
+      <description>CloudNet@에서 진행하고 있는 CI/CD Study 2주차에는 Helm과 Tekton을 다뤘습니다.
+이번에는 Helm을 다루도록 하겠습니다.
+1. Helm의 역할과 실습 준비사항 Helm? 템플릿 기반 솔루션. 즉, 버전 관리 및 공유, 배포가 가능한 아티팩트를 생성하도록 돕습니다.
+Helm chart(차트)
+공유 가능한 Kubernetes(쿠버네티스, 이하 k8s) 패키지며, 차트 간 의존성 등 다양한 요소를 포함합니다. k8s를 다루면 Helm을 많이 사용하게 되는데, 그 이유 중 하나가 chart 개념입니다. Rolling Update for ConfigMap
+애플리케이션의 설정값은 일반적으로 k8s의 ConfigMap에 대응되는 속성입니다. ConfigMap: 수정되어도 애플리케이션의 롤링 없데이트 전, 즉 애플리케이션을 수동 재시작 하기 전까지는 값이 적용되지 않습니다.</description>
+    </item>
+    
+  </channel>
+</rss>

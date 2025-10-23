@@ -97,6 +97,24 @@
 
             
             <div class="p-list__item">
+              <a href="/post/helm-hello-world/"><h2>Helm 101 - CI/CD 스터디 2주차</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-24T01:17:39&#43;09:00</u></p>
+              <p>CloudNet@에서 진행하고 있는 CI/CD Study 2주차에는 Helm과 Tekton을 다뤘습니다.
+이번에는 Helm을 다루도록 하겠습니다.
+1. Helm의 역할과 실습 준비사항 Helm? 템플릿 기반 솔루션. 즉, 버전 관리 및 공유, 배포가 가능한 아티팩트를 생성하도록 돕습니다.
+Helm chart(차트)
+공유 가능한 Kubernetes(쿠버네티스, 이하 k8s) 패키지며, 차트 간 의존성 등 다양한 요소를 포함합니다. k8s를 다루면 Helm을 많이 사용하게 되는데, 그 이유 중 하나가 chart 개념입니다. Rolling Update for ConfigMap
+애플리케이션의 설정값은 일반적으로 k8s의 ConfigMap에 대응되는 속성입니다. ConfigMap: 수정되어도 애플리케이션의 롤링 없데이트 전, 즉 애플리케이션을 수동 재시작 하기 전까지는 값이 적용되지 않습니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/vscode-devcontainer-usage/"><h2>VSCode DevContainer - CI/CD 스터디 1주차</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -162,22 +180,6 @@ sudo apt-get update -y &amp;&amp; sudo apt-get upgrade -y When I installed Micro
 Ubuntu도 22.04 LTS (Jammy Jellyfish) 이후부터는 OBS Studio를 APT repository를 통해 설치를 할 수 있다고 하여, 도전.
 Installation: https://obsproject.com/download sudo add-apt-repository ppa:obsproject/obs-studio sudo apt update sudo apt install ffmpeg obs-studio 생각보다 오래 걸린다.
 sudo add-apt-repository ppa:obsproject/obs-studio # [sudo] password for kkumtree: # Repository: &#39;Types: deb # URIs: https://ppa.launchpadcontent.net/obsproject/obs-studio/ubuntu/ # Suites: noble # Components: main # &#39; # Description: # Latest stable release of OBS Studio # More info: https://launchpad.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/apt-expkeysig-troubleshooting/"><h2>The following signatures were invalid: EXPKEYSIG</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-11-04T21:24:49&#43;09:00</u></p>
-              <p>매번 수정하기 귀찮아서, 나중에 찾아서 쓰려고 끄적이는 메모
-보통 GPG키 지우고 다시 받으면 된다.
-그런 날이 있다. 무심결에 sudo apt-get update를 실행하는 순간, 에러가 뜨는 날.
-W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.31/deb InRelease: The following signatures were invalid: EXPKEYSIG 234654DA9A296436 isv:kubernetes OBS Project &lt;isv:kubernetes@build.opensuse.org&gt; W: Failed to fetch https://pkgs.k8s.io/core:/stable:/v1.31/deb/InRelease The following signatures were invalid: EXPKEYSIG 234654DA9A296436 isv:kubernetes OBS Project &lt;isv:kubernetes@build.</p>
             </div>
             
 <ol class="p-pagination">
