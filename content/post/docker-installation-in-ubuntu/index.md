@@ -21,7 +21,7 @@ draft: false # 글 초안 여부
 
 ## 0. 이전 버전 제거 (선택)
 
-- 진행 중인 Docker 관련 작업이 없어, prune 명령어를 통해 기존 Docker의 리소스들을 삭제 진행하였습니다. 
+- 진행 중인 Docker 관련 작업이 없어, prune 명령어를 통해 기존 Docker의 리소스들을 삭제 진행하였습니다.  
 
 ```bash
 docker system prune -a
@@ -124,7 +124,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 
 ### (2) 특정 버전
 
-- APT repository에서 받을 수 있는 버전을 조회합니다. 
+- APT repository에서 받을 수 있는 버전을 조회합니다.  
 
 ```bash
 # List the available versions:
@@ -143,14 +143,14 @@ apt-cache madison docker-ce | awk '{ print $3 }'
 # (...)
 ```
 
-- 이후, 원하는 버전을 환경변수로 설정하여 설치합니다. 
+- 이후, 원하는 버전을 환경변수로 설정하여 설치합니다.  
 
 ```bash
 VERSION_STRING=5:28.5.1-1~ubuntu.24.04~noble
 sudo apt-get install docker-ce=$VERSION_STRING docker-ce-cli=$VERSION_STRING containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
-## 3. 권한 상승 설정 (선택) 
+## 3. 권한 상승 설정 (선택)  
 
 > docker 그룹은 사용자에게 루트 수준의 권한을 부여합니다.
 > <https://docs.docker.com/engine/security/#docker-daemon-attack-surface>
@@ -160,7 +160,7 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
-- 로그아웃, 혹은 새로운 터미널에서 접속합니다. 
+- 로그아웃, 혹은 새로운 터미널에서 접속합니다.  
   혹은 아래 커맨드로 그룹을 활성화할 수 있습니다.
 
 ```bash
@@ -174,9 +174,9 @@ newgrp docker
 # stat /home/user/.docker/config.json: permission denied
 ```
 
-- 이 오류는 `sudo` 명령을 이전에 사용했기 때문에 `~/.docker/` 디렉터리에 대한 권한 설정이 잘못되었음을 나타냅니다. 
+- 이 오류는 `sudo` 명령을 이전에 사용했기 때문에 `~/.docker/` 디렉터리에 대한 권한 설정이 잘못되었음을 나타냅니다.  
 
-1. `~/.docker/` 디렉터리를 제거하거나(자동 생성되지만, 사용자 지정 설정은 삭제됩니다.) 
+1. `~/.docker/` 디렉터리를 제거하거나(자동 생성되지만, 사용자 지정 설정은 삭제됩니다.)  
 2. 아래와 같이, 소유권 및 권한을 변경합니다.
 
 ```bash
@@ -187,4 +187,4 @@ sudo chmod g+rwx "$HOME/.docker" -R
 ## Reference
 
 - [Ubuntu | Docker Docs](https://docs.docker.com/engine/install/ubuntu/)
-- [Manage Docker as a non-root user | Docker Docs](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+- [Manage Docker as a non-root user | Docker Docs](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)  
