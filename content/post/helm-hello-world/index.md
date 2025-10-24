@@ -32,7 +32,7 @@ draft: false # 글 초안 여부
 
 - Rolling Update for ConfigMap
   - 애플리케이션의 설정값은 일반적으로 k8s의 ConfigMap에 대응되는 속성입니다.  
-  - ConfigMap: 수정되어도 애플리케이션의 롤링 없데이트 전, 즉 애플리케이션을 수동 재시작 하기 전까지는 값이 적용되지 않습니다.  
+  - ConfigMap: 수정되어도 애플리케이션의 롤링 업데이트 전, 즉 애플리케이션을 수동 재시작 하기 전까지는 값이 적용되지 않습니다.  
     - Helm은 ConfigMap이 변경되면, 자동으로 Rolling Update가 이루어지는 기능들을 제공합니다.  
 
 ### 실습 준비  
