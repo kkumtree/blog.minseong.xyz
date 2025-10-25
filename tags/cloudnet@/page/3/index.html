@@ -96,6 +96,24 @@
 
             
             <div class="p-list__item">
+              <a href="/post/aws-eks-study-week5/"><h2>AWS EKS 스터디 5주차 - Autoscaling</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-22T19:23:37&#43;09:00</u></p>
+              <p>이번 주차는 오토스케일링을 메인으로 하여, 수평/수직 프로비저닝을 학습해보았습니다.
+마지막에는 고성능 오토스케일러인 Karpenter를 별도로 실습해보았습니다. 특히..
+HPA custom metrics(사용자 정의 메트릭) 적용
+YAML 설정값을 CPU로 맞춘 것을 잊고, 프로비저닝을 잘못 예측한 것도 함께 공유합니다.
+AutoScaling
+HPA: Horizontal Pod Autoscaler VPA: Vertical Pod Autoscaler CA: Cluster Autoscaler 각 CSP 의존적, 워커 노드 레벨에서의 오토스케일링 1. 실습 환경 배포 4주차의 초기 배포 내용에 p8s 및 Grafana를 추가하여 배포 verticalPodAutoscaler 활성화 추천 대시보드: 15757, 17900, 15172 curl -O https://s3.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/aws-eks-study-week4/"><h2>AWS EKS 스터디 4주차 - Observability</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -163,22 +181,6 @@ k8s가 워낙 인기가 많기도 하지만, 지난 kOps 스터디를 통해 관
 EKS(Elastic Kubernetes Service)를 이번 기회에 살펴보기로 했습니다.
 EKS 사용에 있어 고려사항 EKS는 관리형 서비스(managed service)이기에 아래와 같은 장점이 있습니다.
 클러스터링을 위한 Control Plane(일명, 마스터 노드)을 AWS에서 관리해줍니다. 워커노드는 사용자가 AMI를 구성하여 이를 사용 AWS에서 제공하는 Fargate로 VM을 할당하여 사용 kOps와도 유사하지만, 다른 AWS 서비스와의 연동이 용이합니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/how-to-request-spot-with-kops/"><h2>kops로 손쉽게 spot instance 요청하기</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-03-06T18:43:51&#43;09:00</u></p>
-              <p>kops로 충분히 spot instance를 굴릴 수 있지 않을까? 란 생각을 pkos 스터디 내내 하고 있었습니다만,
-이미 t3.small 돌렸다가 제대로 노드들이 작동하지도 않았음을 맛봤기 때문에&hellip;
-우선순위는 주차별 과제 제출이었기 때문에 이제야 시범 테스트를 해보고, 글을 작성해봅니다. 요약하자면 복습용으로는 충분히 가능하다. 라는 판단입니다. 참고로, 손쉽게 === 야매 의 느낌으로 기술해보았습니다. 글 읽기 귀찮다! 싶으면 여기에서 원글을 확인하실 수 있습니다. 왜 스팟 인스턴스인가? 이미 이전 포스팅의 서두에서 언급한 바 있으나,
-아무리 클라우드 서비스가 합리적이어도 On-demand 인스턴스를 학습용으로 사용하기엔 살짝 비효율적이라는 생각이 들었습니다.</p>
             </div>
             
 <ol class="p-pagination">

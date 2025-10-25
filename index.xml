@@ -6,7 +6,22 @@
     <description>Recent content on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Fri, 24 Oct 2025 01:17:39 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 26 Oct 2025 03:16:04 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</title>
+      <link>https://blog.minseong.xyz/post/helm-template-reusing-statements/</link>
+      <pubDate>Sun, 26 Oct 2025 03:16:04 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/helm-template-reusing-statements/</guid>
+      <description>이번에는 재사용성을 위해서 _helpers.tpl 파일을 활용해보겠습니다.
+기존의 Helm 101 - CI/CD 스터디 2주차에서 이어집니다.
+1. _helpers.tpl을 통한 공통 변수 재사용 (1) 공통사항 숙지 이전에 생성한 deployment.yaml과 service.yaml의 selector 부분에 공통점이 있습니다.
+# `{{ .Values.replicaCount }} ## deployment.yaml spec.selector.matchLabels spec.template.metadata.labels ## service.yaml spec.selector (2) 템플릿 생성 해당 label을 추가/삭제하려면, 여러 필드를 업데이트를 하여야합니다.
+대신 _helpers.tpl파일을 생성하여 구성읋 합니다.
+_helpers.tpl 뿐만 아니라, 맨 앞에 _로 시작하기만 하면 되며,
+이 파일은 k8s manifest 파일로 취급되지 않습니다.</description>
+    </item>
+    
     <item>
       <title>Helm 101 - CI/CD 스터디 2주차</title>
       <link>https://blog.minseong.xyz/post/helm-hello-world/</link>

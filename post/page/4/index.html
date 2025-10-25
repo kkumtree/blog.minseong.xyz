@@ -96,6 +96,22 @@
 
             
             <div class="p-list__item">
+              <a href="/post/kans-4w-iptables-grafana/"><h2>iptables monitoring with Grafana (Not Completed)</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-29T13:35:13&#43;09:00</u></p>
+              <p>iptables를 수집하여 Grafana로 표현하는 방법을 알아봅니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+0. 환경 구성 (kind) 작성시간 이슈로 featureGates, ConfigPatches, networking 설정 설명은 스킵&hellip;합니다.
+a. 1 Master, 3 Slave 환경 구성 cat &lt;&lt;EOT&gt; kind-svc-1w.yaml kind: Cluster apiVersion: kind.x-k8s.io/v1alpha4 featureGates: &#34;InPlacePodVerticalScaling&#34;: true &#34;MultiCIDRServiceAllocator&#34;: true nodes: - role: control-plane labels: mynode: control-plane topology.kubernetes.io/zone: ap-northeast-2a extraPortMappings: - containerPort: 30000 hostPort: 30000 - containerPort: 30001 hostPort: 30001 - containerPort: 30002 hostPort: 30002 kubeadmConfigPatches: - | kind: ClusterConfiguration apiServer: extraArgs: runtime-config: api/all=true controllerManager: extraArgs: bind-address: 0.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/kans-4w-clusterip-nodeport/"><h2>Kubernetes Service(1): ClusterIP/NodePort</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -168,24 +184,6 @@ CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 
 ❯ find ~/.kube -maxdepth 2 -type f -exec ls -ld &#34;{}&#34; \; -rw------- 1 kkumtree kkumtree 44 Sep 3 21:31 /home/kkumtree/.kube/config ❯ find ~/.kube -maxdepth 2 -type d -exec ls -ld &#34;{}&#34; \; drwxr-x--- 3 kkumtree kkumtree 4096 Sep 3 21:31 /home/kkumtree/.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/kans-2w-kind-installation-on-linux/"><h2>리눅스에 KIND 설치하기 w/golang</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-02T00:33:19&#43;09:00</u></p>
-              <p>Helm 설치 추가
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)에 참여하게 되면서 기록을 남기고 있습니다.
-이번에는 kind(Kubernetes IN Docker)를 Golang을 통해 설치하면서 약간의 소?란이 있었던 부분만 다룹니다.
-1. KIND란? 아래 사진으로 대체합니다. 자세한 내용은 Docs/Initial_design에서 볼수 있습니다. 2. KIND 설치하기 Docs/Quick-start를 참고합니다. Linux의 경우, 패키지 관리자 설치가 없어 바이너리, 혹은 소스로 설치해야 합니다.
-아래 두 문장에 뭔가 발동하여 Go 언어로 설치를 해보기로 했습니다.
-If you are a go developer you may find the go install option convenient.</p>
-            </div>
-            
 <ol class="p-pagination">
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous" 
@@ -218,7 +216,7 @@ If you are a go developer you may find the go install option convenient.</p>
     …
   </li>
   <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/10/">10</a>
+    <a class="p-pagination__link " href="/post/page/11/">11</a>
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next "
@@ -228,7 +226,7 @@ If you are a go developer you may find the go install option convenient.</p>
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next"
-        href="/post/page/10/" title="Last page">
+        href="/post/page/11/" title="Last page">
         <i class="p-icon--contextual-menu">Last page</i>
     </a>
   </li>

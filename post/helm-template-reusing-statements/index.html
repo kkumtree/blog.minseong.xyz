@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/helm-template-reusing-statements/image-15.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/helm-template-reusing-statements/image-15.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/helm-template-reusing-statements/image-15.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-15.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-26T03:16:04&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/helm" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">helm</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cicd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CICD</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>이번에는 재사용성을 위해서 <code>_helpers.tpl</code> 파일을 활용해보겠습니다.</p>
+<blockquote>
+<p>기존의 <a href="../helm-hello-world/">Helm 101 - CI/CD 스터디 2주차</a>에서 이어집니다.</p>
+</blockquote>
+<h2 id="1-_helperstpl을-통한-공통-변수-재사용">1. <code>_helpers.tpl</code>을 통한 공통 변수 재사용</h2>
+<h3 id="1-공통사항-숙지">(1) 공통사항 숙지</h3>
+<p>이전에 생성한 <code>deployment.yaml</code>과 <code>service.yaml</code>의 <code>selector</code> 부분에 공통점이 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># `{{ .Values.replicaCount }}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## deployment.yaml  </span>
+</span></span><span style="display:flex;"><span>spec.selector.matchLabels
+</span></span><span style="display:flex;"><span>spec.template.metadata.labels
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## service.yaml  </span>
+</span></span><span style="display:flex;"><span>spec.selector
+</span></span></code></pre></div><h3 id="2-템플릿-생성">(2) 템플릿 생성</h3>
+<p>해당 label을 추가/삭제하려면, 여러 필드를 업데이트를 하여야합니다.<br>
+대신 <code>_helpers.tpl</code>파일을 생성하여 구성읋 합니다.</p>
+<blockquote>
+<p><code>_helpers.tpl</code> 뿐만 아니라, 맨 앞에 <code>_</code>로 시작하기만 하면 되며,<br>
+이 파일은 k8s manifest 파일로 취급되지 않습니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 2w/sh## 2w/shells/helm-template/2-mv-and-create-new-tpl-dir.sh  ells/helm-template/1-create-helm-helpers.sh</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt; EOF &gt; templates/_helpers.tpl
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">{{- define &#34;pacman.selectorLabels&#34; -}}   
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">app.kubernetes.io/name: {{ .Chart.Name}} 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">{{- end }}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><ul>
+<li>위와 같이 함수를 정의하는 형태를 가집니다.</li>
+</ul>
+<p><img src="image.png" alt="create helpers template"></p>
+<h3 id="3-기존-템플릿-변수-변경">(3) 기존 템플릿 변수 변경</h3>
+<p>기존의 파일들을 변경합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">## 2w/shells/helm-template/2-helm-deployment.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 2w/shells/helm-template/3-helm-service.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># deployment.yaml 수정</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>...<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  replicas: <span style="color:#f92672">{{</span> .Values.replicaCount <span style="color:#f92672">}}</span>
+</span></span><span style="display:flex;"><span>  selector:
+</span></span><span style="display:flex;"><span>    matchLabels:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">{{</span>- include <span style="color:#e6db74">&#34;pacman.selectorLabels&#34;</span> . | nindent <span style="color:#ae81ff">6</span> <span style="color:#f92672">}}</span>  
+</span></span><span style="display:flex;"><span>  template:
+</span></span><span style="display:flex;"><span>    metadata:
+</span></span><span style="display:flex;"><span>      labels:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{{</span>- include <span style="color:#e6db74">&#34;pacman.selectorLabels&#34;</span> . | nindent <span style="color:#ae81ff">8</span> <span style="color:#f92672">}}</span>  
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># service.yaml 수정</span>
+</span></span><span style="display:flex;"><span>  selector:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{{</span>- include <span style="color:#e6db74">&#34;pacman.selectorLabels&#34;</span> . | nindent <span style="color:#ae81ff">6</span> <span style="color:#f92672">}}</span>  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>...<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>이후 <code>_helpers.tpl</code>에 정의한 공통 변수가 정상적으로 들어갔는지 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm template .  
+</span></span></code></pre></div><p><img src="image-1.png" alt="change yaml files"></p>
+<h2 id="2-컨테이너-image-파일-업데이트">2. 컨테이너 image 파일 업데이트</h2>
+<p>배포 파일에서 컨테이너 이미지를 갱신하고, 실핼 중인 인스턴스를 업그레이드 해보겠습니다.</p>
+<h3 id="1-배포">(1) 배포</h3>
+<p>우선 다시 배포해봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm install pacman .
+</span></span><span style="display:flex;"><span>helm history pacman 
+</span></span><span style="display:flex;"><span>kubectl get deploy -owide
+</span></span></code></pre></div><p><img src="image-2.png" alt="check before image update"></p>
+<h3 id="2-image-태그-갱신">(2) image 태그 갱신</h3>
+<p><code>values.yaml</code> 및 <code>Chart.yaml</code>에서 image 태그를 갱신해봅니다.</p>
+<p><img src="image-3.png" alt="change iamge tag"></p>
+<h3 id="3-helm-upgrade로-배포">(3) helm upgrade로 배포</h3>
+<p>아래와 같이 upgrade 명령어로 배포 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm upgrade pacman .  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Release &#34;pacman&#34; has been upgraded. Happy Helming!</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME: pacman</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># LAST DEPLOYED: Sat Oct 25 23:58:23 2025</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAMESPACE: default</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># STATUS: deployed</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># REVISION: 3 ## 리비전 번호가 하나 올라갑니다.  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># TEST SUITE: None</span>
+</span></span><span style="display:flex;"><span>helm history pacman  
+</span></span><span style="display:flex;"><span>kubectl get secret  
+</span></span><span style="display:flex;"><span>kubectl get deploy.replicaset -owide
+</span></span></code></pre></div><p><img src="image-4.png" alt="check after upgrade"></p>
+<ul>
+<li><code>tag</code> 및 <code>appVersion</code> 으로 필드가 나뉘어 있으나, 배포 상황에 맞게 취사선택하여 전략을 취할 수 있습니다.</li>
+<li><code>appVersion</code>과 <code>version</code>은 서로 관계가 없음!
+<ul>
+<li><code>appVersion</code>: 애플리케이션을 변경할 때마다 업데이트 해야 함.</li>
+<li><code>version</code>: 차트 버전이르모, 차트의 구조 등 정의가 변경되면 갱신함.</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-rollback">(3) rollback</h3>
+<p>이전 버전으로 롤백합니다.<br>
+image 태그가 1.0.0으로 지정된 리비전이 1이었으므로 1로 롤백해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm history pacman
+</span></span><span style="display:flex;"><span>helm rollback pacman <span style="color:#ae81ff">1</span> <span style="color:#f92672">&amp;&amp;</span> kubectl get pod -w
+</span></span><span style="display:flex;"><span>helm history pacman
+</span></span><span style="display:flex;"><span>kubectl get secret
+</span></span><span style="display:flex;"><span>kubectl get deployment -owide
+</span></span><span style="display:flex;"><span>kubectl get replicaset -owide
+</span></span></code></pre></div><p>롤백을 하였어도, 기존 버전들은 남아있음을 알 수 있습니다.</p>
+<p><img src="image-5.png" alt="rollback revision"></p>
+<h2 id="3-chart-패키징-해보기">3. chart 패키징 해보기</h2>
+<p>헬름 차트를 배포하기 위해, 패키징을 해봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm package .
+</span></span><span style="display:flex;"><span>tree
+</span></span><span style="display:flex;"><span>helm repo index .
+</span></span><span style="display:flex;"><span>cat index.yaml
+</span></span></code></pre></div><p><img src="image-20.png" alt="packaging-and-make-index-html"></p>
+<p>해당 차트를 차트 저장소(repository)에 게시하여 공유를 할 수 있는데,<br>
+차트 저장소는 HTTP 서버이며,<br>
+(1) 차트 및 (2)<code>.tgz</code> 파일,<br>
+(3) 차트에 대한 메타데이터 정보를 담은, index.html 파일이 있어야한다고 합니다.</p>
+<p>차트를 저장소에 게시하려면 index.html 파일에 새 메타데이터 정보로 업데이트하고<br>
+해당 아티팩트를 업로드해야 한다고 합니다.</p>
+<h2 id="4-리포지토리의-chart-배포">4. 리포지토리의 chart 배포</h2>
+<p>리포지토리에서 helm chart를 가져와 배포해보겠습니다.</p>
+<h3 id="1-chart-가져오기">(1) chart 가져오기</h3>
+<p>bitnami의 리포지토리를 등록하고, postgresql 차트를 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm repo add bitnami https://charts.bitnami.com/bitnami
+</span></span><span style="display:flex;"><span>helm repo list
+</span></span><span style="display:flex;"><span>helm search repo postgresql
+</span></span><span style="display:flex;"><span>helm search repo postgresql -o json | jq
+</span></span></code></pre></div><p><img src="image-6.png" alt="get chart from repository"></p>
+<h3 id="2-배포해보기">(2) 배포해보기</h3>
+<p>앞서 확인한 bitnami/postgresql 차트를 배포해봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  helm install my-db <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --set postgresql.postgresqlUsername<span style="color:#f92672">=</span>my-default,postgresql.postgresqlPassword<span style="color:#f92672">=</span>postgres,postgresql.postgresqlDatabase<span style="color:#f92672">=</span>mydb,postgresql.persistence.enabled<span style="color:#f92672">=</span>false <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  bitnami/postgresql  
+</span></span></code></pre></div><p>해당 리포지토리의 지원 관련 경고와 함께 배포되었음을 확인할 수 있습니다.</p>
+<p><img src="image-7.png" alt="deploying repository chart"></p>
+<p>배포 현황을 확인해봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm list  
+</span></span><span style="display:flex;"><span>kubectl get sts,pod,svc,ep,secret  
+</span></span></code></pre></div><p><img src="image-8.png" alt="check deployment"></p>
+<h3 id="4-values-확인-및-실습-정리">(4) values 확인 및 실습 정리</h3>
+<p>기본값(default values)는 <code>helm show</code>를 통해 확인 가능합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># helm get values my-db ## 기본값 확인 불가능  </span>
+</span></span><span style="display:flex;"><span>helm show values bitnami/postgresql  
+</span></span></code></pre></div><p><img src="image-9.png" alt="check default values"></p>
+<p>아래 방법으로 조금 더 간소하게 확인할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm show values bitnami/postgresql | grep -v <span style="color:#e6db74">&#39;#&#39;</span>  
+</span></span></code></pre></div><p><img src="image-10.png" alt="remove annotations in values.yaml"></p>
+<p>리소스를 정리합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm uninstall my-db
+</span></span></code></pre></div><p><img src="image-11.png" alt="clean the chart"></p>
+<h2 id="5-chart간-의존성-설정하기">5. chart간 의존성 설정하기</h2>
+<p>이제는 직전에 배포해봤던 bitnami/postgresql 차트와<br>
+java 애플리케이션 차트 간의 의존성을 설정하여 배포해보겠습니다.</p>
+<h3 id="1-배포-파일-구성">(1) 배포 파일 구성</h3>
+<blockquote>
+<p>해당 구성들은 아래 GitHub에 탑재되어 있습니다.<br>
+<a href="https://github.com/kkumtree/ci-cd-cloudnet-study">https://github.com/kkumtree/ci-cd-cloudnet-study</a><br>
+Helm의 구성파일들은 <code>2w/music</code> 폴더에 있습니다.</p>
+</blockquote>
+<p>아래와 같이 차트를 구성했습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">## 2w/shells/helm-dependency 폴더의 쉘 파일을 활용  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ❯ tree</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># .</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># |____values.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># |____Chart.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># |____templates</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># | |____deployment.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># | |____service.yaml</span>
+</span></span></code></pre></div><p>다른 점은 <code>Chart.yaml</code>에 <code>dependencies</code> 설정이 있다는 점입니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tail -n <span style="color:#ae81ff">4</span> Chart.yaml
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># dependencies:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   - name: postgresql</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     version: 18.0.17</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     repository: &#34;https://charts.bitnami.com/bitnami&#34;</span>
+</span></span></code></pre></div><p><img src="image-12.png" alt="preparation"></p>
+<h3 id="2-의존성-차트-다운로드">(2) 의존성 차트 다운로드</h3>
+<p>차트를 다운로드 하면, <code>.tgz</code> 압축파일을 확인할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm dependency update <span style="color:#f92672">&amp;&amp;</span> tree
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># |____values.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># |____Chart.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># |____charts</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># | |____postgresql-18.0.17.tgz</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># |____Chart.lock</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># |____templates</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># | |____deployment.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># | |____service.yaml</span>
+</span></span></code></pre></div><p>더불어, Chart.lock 파일도 생성되었음을 확인할 수 있습니다.</p>
+<p><img src="image-13.png" alt="download dependency"></p>
+<h3 id="3-배포-및-확인">(3) 배포 및 확인</h3>
+<p>배포를 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm install music-db .  
+</span></span></code></pre></div><p>아래와 같이 PostgreSQL Pod 내에서, values.yaml에 지정한</p>
+<ul>
+<li>username, <code>my-default</code>를 생성</li>
+<li>database, <code>mydb</code>를 생성 후, <code>my-default</code>에 접근권한을 생성</li>
+</ul>
+<p>하는 로그를 확인할 수 있습니다.</p>
+<p><img src="image-15.png" alt="log in postgresql"></p>
+<p>Java 애플리케이션에서도, DB에 접근이 가능해지자 SQL문을 통해 테이블을 생성하고 레코드를 삽입하는 것을 볼 수 있었습니다.</p>
+<p><img src="image-16.png" alt="log in application"></p>
+<h3 id="4-정상-작동-확인">(4) 정상 작동 확인</h3>
+<p>해당 service에 port-forward 설정 후, 새로운 탭에서 호출하여 응답을 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 탭 1</span>
+</span></span><span style="display:flex;"><span>kubectl port-forward service/music 8080:8080
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 탭 2</span>
+</span></span><span style="display:flex;"><span>curl -s http://localhost:8080/song
+</span></span></code></pre></div><p><img src="image-17.png" alt="port-forward setting"></p>
+<p><img src="image-18.png" alt="curl test in another tab"></p>
+<h3 id="참고-valuesyaml-변수-설정">(참고) values.yaml 변수 설정</h3>
+<p>해당 image의 버전이 <code>10.y.z</code> 에서 <code>18.y.z</code>로 오면서,<br>
+chart 변수 지정 방법이 바뀌었습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># values.yaml</span>
+</span></span><span style="display:flex;"><span>postgresql:
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># postgresqlUsername: my-default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># postgresqlPassword: postgres</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># postgresqlDatabase: mydb</span>
+</span></span><span style="display:flex;"><span>  secretName: music-db-postgresql
+</span></span><span style="display:flex;"><span>  secretKey: postgres-password
+</span></span><span style="display:flex;"><span>  auth:
+</span></span><span style="display:flex;"><span>    username: my-default
+</span></span><span style="display:flex;"><span>    password: password
+</span></span><span style="display:flex;"><span>    database: mydb
+</span></span></code></pre></div><ul>
+<li><code>auth.username</code>: 사용자 정의 유저를 생성</li>
+<li><code>auth.password</code>: 해당 <code>secret</code>(이 경우, music-db-postgresql)의 key 값 지정</li>
+<li><code>auth.database</code>: 사용자 정의 유저가 접근할 database명</li>
+</ul>
+<p>참고로 Database 이미지이므로, helm uninstall 로 차트를 제거했을지라도<br>
+PVC/PV는 남아있으니, 이후에 확인 후 제거하면 됩니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm uninstall music-db
+</span></span><span style="display:flex;"><span>kubectl get pvc
+</span></span><span style="display:flex;"><span>kubectl get pv
+</span></span><span style="display:flex;"><span>kubectl delete pvc data-music-db-postgresql-0
+</span></span><span style="display:flex;"><span>kubeclt get pvc,pv
+</span></span></code></pre></div><p><img src="image-19.png" alt="removing pv,pvc"></p>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://github.com/bitnami/charts/tree/main/bitnami/postgresql">Bitnami package for PostgreSQL</a></li>
+<li><a href="../helm-hello-world/">Helm 101 - CI/CD 스터디 2주차</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/helm-hello-world/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Helm 101 - CI/CD 스터디 2주차</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

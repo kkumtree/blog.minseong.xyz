@@ -96,6 +96,29 @@
 
             
             <div class="p-list__item">
+              <a href="/post/terraform-cloud-with-iam-sts/"><h2>IAM STS를 이용한 Terraform Cloud 권한 부여</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-09-13T20:54:28&#43;09:00</u></p>
+              <p>이번에는 Terraform Cloud가 얼마나 좋은지 더 알아보기 위해,
+스터디에서 지속적으로 장점이 강조되어 왔던 Terraform Cloud에
+IAM STS를 이용한 권한 부여 도전 및 적용 성공에 대해 써보려고 합니다.
+Terraform의 상태 저장을 위해 보통 AWS S3를 사용하는데,
+알다시피 S3 기록은 무료지만, 불러오는 것은 유료입니다.
+(전기는 국산이지만, 원료는 수입입니다)
+그래서 스터디용으로는 Terraform을 불러올 때마다,
+상태 값을 S3말고, 로컬에 저장했었는데요.
+밖에서는 노트북, 집에서는 데스크탑으로 하려니
+이걸 GitHub의 Private Repo에 저장할까? 하다가
+Terraform Cloud를 써보기로 했습니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/terraform-basic-resource-concept/"><h2>Terraform resource 이해하기 w/AWS VPC</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -166,24 +189,6 @@ Network(2주차)가 매번 뭔가 일부가 아리송하였다면
 Security는 복기하다가 이론적으로는 간단(과연?)해보여도
 실제 구동방식 이해 자체가 초반에 안되서, 사흘 남짓 걸린 덕에 더 어려웠던 것 같습니다.
 그 외 myeks-bastion-2에 접속 시, 함께 진행할 때는 ssh {Public IP}로 잘 접속되는 걸 봤는데 정작 혼자 할 땐 접속이 되지않았습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/aws-eks-study-week5/"><h2>AWS EKS 스터디 5주차 - Autoscaling</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-22T19:23:37&#43;09:00</u></p>
-              <p>이번 주차는 오토스케일링을 메인으로 하여, 수평/수직 프로비저닝을 학습해보았습니다.
-마지막에는 고성능 오토스케일러인 Karpenter를 별도로 실습해보았습니다. 특히..
-HPA custom metrics(사용자 정의 메트릭) 적용
-YAML 설정값을 CPU로 맞춘 것을 잊고, 프로비저닝을 잘못 예측한 것도 함께 공유합니다.
-AutoScaling
-HPA: Horizontal Pod Autoscaler VPA: Vertical Pod Autoscaler CA: Cluster Autoscaler 각 CSP 의존적, 워커 노드 레벨에서의 오토스케일링 1. 실습 환경 배포 4주차의 초기 배포 내용에 p8s 및 Grafana를 추가하여 배포 verticalPodAutoscaler 활성화 추천 대시보드: 15757, 17900, 15172 curl -O https://s3.</p>
             </div>
             
 <ol class="p-pagination">
