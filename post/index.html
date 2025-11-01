@@ -96,6 +96,28 @@
 
             
             <div class="p-list__item">
+              <a href="/post/jenkins-ci-cd-kubernetes/"><h2>Jenkins, git and kubernetes - CI/CD 스터디 3주차</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-30T01:17:39&#43;09:00</u></p>
+              <p>CloudNet@에서 진행하고 있는 CI/CD Study 3주차에는 Jenkins와 ArgoCD을 다뤘습니다.
+이번에는 kubernetes(이하, k8s)에 self-host Git과 Jenkins를 배포 후 CI/CD 부분을 다루도록 하겠습니다.
+0. 실습 준비 (1) kind kind 설치의 경우 다음 포스트를 참고할 수 있습니다.
+리눅스에 KIND 설치하기 w/golang
+Docs: https://kind.sigs.k8s.io/
+kind를 통해, 로컬 환경에 k8s를 배포해보겠습니다.
+networking.apiServerAddress:
+ControlPlane에 접속하기 위한 주소 지정 nodes.extraPortMappings:
+호스트의 포트를 kind의 각 노드 포트로 직접 연결 설정.
+이를 통해, 호스트에서 kind 내부의 NodePort 서비스에 접근 가능 # 3w/shells/kind/up-kind.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/helm-template-reusing-statements/"><h2>Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -164,23 +186,6 @@ Ubuntu Docker 설치 작성 기준, Dev Container는 Ubuntu Snap 패키지(snapc
               <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-17T20:53:27&#43;09:00</u></p>
               <p>Docker 사용을 위한 기본적인 설치 방법 메모
 Install Docker Engine on Ubuntu | Docker Documentation 0. 이전 버전 제거 (선택) 진행 중인 Docker 관련 작업이 없어, prune 명령어를 통해 기존 Docker의 리소스들을 삭제 진행하였습니다. docker system prune -a 공식 문서에 따라, 아래 커맨드로 삭제를 진행합니다. (겸사겸사 autoremove도 진행합니다.) for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done sudo apt-get autoremove # ❯ for pkg in docker.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/how-to-manage-microsoft-packages-with-apt-manager/"><h2>How to manage Microsoft packages with APT manager</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-03-02T22:31:49&#43;09:00</u></p>
-              <p>Microsoft gave us a lot of programs as Ubuntu/Debian packages.
-In this post, I will show you how to manage Edge and VSCode packages with APT package manager.
-APT is stands for Advanced Package Tool.
-Why? Simple. I want to upgrade them easily with APT package manager rather than using dpkg command.
-sudo apt-get update -y &amp;&amp; sudo apt-get upgrade -y When I installed Microsoft Edge and Visual Studio Code, I used dpkg command.</p>
             </div>
             
 <ol class="p-pagination">

@@ -6,7 +6,25 @@
     <description>Recent content in CloudNet@ on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sun, 26 Oct 2025 03:16:04 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/cloudnet@/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 30 Oct 2025 01:17:39 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/cloudnet@/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Jenkins, git and kubernetes - CI/CD 스터디 3주차</title>
+      <link>https://blog.minseong.xyz/post/jenkins-ci-cd-kubernetes/</link>
+      <pubDate>Thu, 30 Oct 2025 01:17:39 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/jenkins-ci-cd-kubernetes/</guid>
+      <description>CloudNet@에서 진행하고 있는 CI/CD Study 3주차에는 Jenkins와 ArgoCD을 다뤘습니다.
+이번에는 kubernetes(이하, k8s)에 self-host Git과 Jenkins를 배포 후 CI/CD 부분을 다루도록 하겠습니다.
+0. 실습 준비 (1) kind kind 설치의 경우 다음 포스트를 참고할 수 있습니다.
+리눅스에 KIND 설치하기 w/golang
+Docs: https://kind.sigs.k8s.io/
+kind를 통해, 로컬 환경에 k8s를 배포해보겠습니다.
+networking.apiServerAddress:
+ControlPlane에 접속하기 위한 주소 지정 nodes.extraPortMappings:
+호스트의 포트를 kind의 각 노드 포트로 직접 연결 설정.
+이를 통해, 호스트에서 kind 내부의 NodePort 서비스에 접근 가능 # 3w/shells/kind/up-kind.</description>
+    </item>
+    
     <item>
       <title>Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</title>
       <link>https://blog.minseong.xyz/post/helm-template-reusing-statements/</link>
