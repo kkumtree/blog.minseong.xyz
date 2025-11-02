@@ -579,7 +579,7 @@ NodePort로 열어두며, namespace를 jenkins로 지정해둡니다.</p>
 </span></span><span style="display:flex;"><span>export NODE_PORT<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get --namespace jenkins -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.spec.ports[0].nodePort}&#34;</span> services jenkins<span style="color:#66d9ef">)</span>  
 </span></span><span style="display:flex;"><span>export NODE_IP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get nodes --namespace jenkins -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.items[0].status.addresses[0].address}&#34;</span><span style="color:#66d9ef">)</span>  
 </span></span><span style="display:flex;"><span>echo http://$NODE_IP:$NODE_PORT
-</span></span></code></pre></div><p><img src="image-43.png" alt="alt text"></p>
+</span></span></code></pre></div><p><img src="image-43.png" alt="deploy jenkins with helm"></p>
 <p>마지막 출력 값을 주소창에 넣어 접속합니다.</p>
 <h3 id="2-jenkins-내부-설정">(2) Jenkins 내부 설정</h3>
 <p>리버스 프록시에 문제가 있으므로 다시 Jenkins URL을 <code>http://$NODE_IP:$NODE_PORT</code>로 수정합니다.<br>
@@ -594,11 +594,14 @@ NodePort로 열어두며, namespace를 jenkins로 지정해둡니다.</p>
 </ul>
 <h2 id="reference">Reference</h2>
 <ul>
+<li><a href="https://www.jenkins.io/doc/book/installing/docker/#on-macos-and-linux">Docker/Jenkins</a></li>
+<li><a href="https://www.cloudbees.com/blog/how-to-install-and-run-jenkins-with-docker-compose">How to Install and Run Jenkins With Docker Compose/CloudBees</a></li>
+<li><a href="https://itnext.io/docker-inside-docker-for-jenkins-d906b7b5f527">Docker inside Docker for Jenkins/ITNEXT</a></li>
 <li><a href="https://github.com/NelsonMaty/docker-outside-of-docker-example">Jenkins Docker-outside-of-Docker with Nexus Registry/NelsonMaty</a></li>
 <li><a href="https://www.tmvtech.com/ubuntu-tutorial-jenkins-gitea-docker/">Ubuntu Tutorial: Jenkins + Gitea + Docker/TMVTech</a></li>
 <li><a href="https://mike42.me/blog/2019-05-how-to-integrate-gitea-and-jenkins">How to integrate Gitea and Jenkins/mike42.me</a></li>
-<li><a href="https://www.jenkins.io/doc/book/installing/docker/#on-macos-and-linux">Docker/jenkins.io</a></li>
-<li><a href="https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3">Kubernetes/jenkins.io</a></li>
+<li><a href="https://principaloftech.medium.com/so-kind-of-helm-using-kind-kubernetes-in-docker-helm-for-quick-jenkins-setup-587252d787f6">Quick Jenkins Setup with Kubernetes in Docker(kind) and Helm in 5 minutes/PrincipalOfTech</a></li>
+<li><a href="https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3">Kubernetes/Jenkins</a></li>
 </ul>
 
   </div>
