@@ -28,6 +28,9 @@ draft: false # 글 초안 여부
 - Gitea와 Multibranch Pipeline의 결합
 - Local PV의 Taint 및 Node 지정
 
+> 해당 구성들은 아래 GitHub에 탑재되어 있습니다.  
+> <https://github.com/kkumtree/ci-cd-cloudnet-study> 의 3w 폴더  
+
 ## 0. 실습 준비  
 
 ### (1) kind  
@@ -240,7 +243,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 apt-get -qq update >/dev/null
 DEBIAN_FRONTEND=noninteractive apt-get -y -qq install docker-ce-cli curl tree jq yq wget >/dev/null
 
-## jenkins 유저에도 docker 실행권한 부여
+## jenkins 유저에도 Docker 실행권한 부여
 # 작성 중 휴먼에러로, Docker 소켓의 권한이 바뀌어 롤백 후 아래와 같이 수정하였습니다.  
 stat -c '%g' /var/run/docker.sock
 groupadd -g $(stat -c '%g' /var/run/docker.sock) -f docker  
@@ -277,10 +280,12 @@ Host의 GID와 맞추지 않을 경우, Host 소켓도 사용 불능이 되어, 
 
 ```bash
 grep localhost /etc/hosts
-# 127.0.0.1	localhost
+# 127.0.0.1 localhost
 # ::1     ip6-localhost ip6-loopback
 open "http://127.0.0.1:3000"
 ```
+
+당장의 접속은 localhost, 즉 `127.0.0.1`로도 무방합니다.  
 
 ![set gitea with host ip](image-14.png)
 
@@ -345,6 +350,19 @@ git clone http://172.27.0.1:3000/kkumtree/dev-app.git test # ID/PW 정상 입력
 ![git clone from gitea](image-18.png)  
 
 Host IDE(VSCode)를 통해, 파일을 추가했습니다.  
+
+```bash
+## 실습파일 
+## 3w/cicd-labs/dev-app 
+# tree -a
+# .
+# ├── Dockerfile
+# ├── .gitignore  # repo 생성 시, 함께 생성  
+# ├── Jenkinsfile
+# ├── README.md
+# ├── server.py
+# └── VERSION
+```
 
 ![add python sample app](image-19.png)  
 
@@ -438,6 +456,18 @@ Docker Hub에도 정상 게시된 것을 확인할 수 있습니다.
 
 해당 이미지를 가지고 Helm 파일로 만들어 배포를 해보았습니다.  
 
+> 실습 파일들은 `/3w/helm` 에 있습니다.  
+
+```bash
+# tree
+# .
+# ├── Chart.yaml
+# ├── templates
+# │   ├── deployment.yaml
+# │   └── service.yaml
+# └── values.yaml
+```
+
 ```bash
 helm install timeserver .
 ```
@@ -488,6 +518,18 @@ helm upgrade timeserver --reuse-values --set image.tag="0.0.2" .
 대부분은 Jenkins의 문서를 참조하였습니다만,  
 로컬(Kind)환경에 구성하다보니 다소 손을 봐야하는 부분을 다루어야 합니다.  
 
+> 실습 파일들은 `/3w/jenkins-on-kind` 에 있습니다.  
+
+```bash
+# tree
+# .
+# ├── jenkins-01-volume.yaml
+# ├── jenkins-01-volume.yaml.default  # 변경 비교를 위한 파일
+# ├── jenkins-02-sa.yaml
+# ├── jenkins-values.yaml
+# └── jenkins-values.yaml.default     # 변경 비교를 위한 파일
+```
+
 ### (1) Helm 템플릿 다운로드 및 배포  
 
 ```bash
@@ -503,10 +545,10 @@ cp jenkins-values.yaml jenkins-values.yaml.default
 1. Local PV 폴더 생성 후, 권한 부여합니다.
   jenkins-01-volume.yaml에 의해서, 로컬 볼륨을 /data/jenkins-volume 으로 지정
 
-```bash
-sudo mkdir -p /data/jenkins-volume
-sudo chown -R 1000:1000 /data/jenkins-volume
-```
+    ```bash
+    sudo mkdir -p /data/jenkins-volume
+    sudo chown -R 1000:1000 /data/jenkins-volume
+    ```
 
 2. local로 바꾸고, nodeAffinity를 부여하여 Control Plane Taint 에러를 해소합니다.  
   이 경우에는 Worker Node를 특정하여, 해당 노드에만 Jenkins가 배포되게 지정했습니다.  
@@ -528,7 +570,8 @@ diff jenkins-01-volume.yaml jenkins-01-volume.yaml.default
 # <             - myk8s-worker
 ```
 
-3. values.yaml 수정  
+### (2) values.yaml 수정  
+
   앞서 PV 및 SA를 생성하였으므로 values에 이를 비활성화 하고,  
   NodePort로 열어두며, namespace를 jenkins로 지정해둡니다.  
 
@@ -542,7 +585,7 @@ diff jenkins-values.yaml jenkins-values.yaml.default
 # ---
 # >   serviceType: ClusterIP
 # 236c234
-# <   nodePort: 30003
+# <   nodePort: 30003           # kind 배포 시, 열어두었던 nodePort 사용  
 # ---
 # >   nodePort:
 # 1273c1271
@@ -560,7 +603,7 @@ diff jenkins-values.yaml jenkins-values.yaml.default
 # >   name:
 ```
 
-4. 배포 및 진입  
+### (3) 배포 및 진입  
 
 ```bash
 # Helm Chart 추가
@@ -591,10 +634,17 @@ echo http://$NODE_IP:$NODE_PORT
 
 ![edit Jenkins URL](image-44.png)  
 
-플러그인은 이렇게 설치합니다. 
+플러그인은 이렇게 설치합니다.  
 
 - [Docker Pipeline](https://plugins.jenkins.io/docker-workflow/)  
 - [Pipeline: Stage View](https://plugins.jenkins.io/pipeline-stage-view/)  
 - [Gitea](https://plugins.jenkins.io/gitea/)  
 - [Gitea PAT Kubernetes Credentials](https://plugins.jenkins.io/gitea-pat-kubernetes-credentials/)  
 
+## Reference
+
+- [Jenkins Docker-outside-of-Docker with Nexus Registry/NelsonMaty](https://github.com/NelsonMaty/docker-outside-of-docker-example)  
+- [Ubuntu Tutorial: Jenkins + Gitea + Docker/TMVTech](https://www.tmvtech.com/ubuntu-tutorial-jenkins-gitea-docker/)  
+- [How to integrate Gitea and Jenkins/mike42.me](https://mike42.me/blog/2019-05-how-to-integrate-gitea-and-jenkins)  
+- [Docker/jenkins.io](https://www.jenkins.io/doc/book/installing/docker/#on-macos-and-linux)  
+- [Kubernetes/jenkins.io](https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3)  
