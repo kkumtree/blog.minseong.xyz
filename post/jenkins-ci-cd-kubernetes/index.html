@@ -138,6 +138,7 @@
 <li>Gitea와 Multibranch Pipeline의 결합</li>
 <li>Local PV의 Taint 및 Node 지정</li>
 </ul>
+<p>더불어, Gitea에 대해 Basic Auth를 통한 CLI 접근을 막아보는 것도 새로이 해보았습니다.</p>
 <blockquote>
 <p>해당 구성들은 아래 GitHub에 탑재되어 있습니다.<br>
 <a href="https://github.com/kkumtree/ci-cd-cloudnet-study">https://github.com/kkumtree/ci-cd-cloudnet-study</a> 의 3w 폴더</p>
@@ -592,6 +593,31 @@ NodePort로 열어두며, namespace를 jenkins로 지정해둡니다.</p>
 <li><a href="https://plugins.jenkins.io/gitea/">Gitea</a></li>
 <li><a href="https://plugins.jenkins.io/gitea-pat-kubernetes-credentials/">Gitea PAT Kubernetes Credentials</a></li>
 </ul>
+<h2 id="9-gitea-basic-auth-차단">9. (Gitea) Basic Auth 차단</h2>
+<p>앞서, ID 및 PW로 접속이 가능한 점을 확인했으니<br>
+이러한 Basic Auth 로 git에 접근하는 것만 차단해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker compose exec gitea sh -c <span style="color:#e6db74">&#39;echo $GITEA_CUSTOM&#39;</span>
+</span></span><span style="display:flex;"><span>ls
+</span></span><span style="display:flex;"><span>grep -F <span style="color:#e6db74">&#39;gitea-data:&#39;</span> docker-compose.yaml -n -B1
+</span></span><span style="display:flex;"><span>ls ./gitea-data/gitea/conf/app.ini
+</span></span><span style="display:flex;"><span>grep -F <span style="color:#e6db74">&#39;[service]&#39;</span> gitea-data/gitea/conf/app.ini -n -A <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>grep ENABLE_BASIC_AUTHENTICATION gitea-data/gitea/conf/app.ini  <span style="color:#75715e"># 환경변수가 없음을 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 해당 환경 변수 추가에 대해 dryrun 후 apply</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/\[service\]/a ENABLE_BASIC_AUTHENTICATION = false&#39;</span> gitea-data/gitea/conf/app.ini | <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  grep -F <span style="color:#e6db74">&#39;[service]&#39;</span> -n -A <span style="color:#ae81ff">2</span>  
+</span></span><span style="display:flex;"><span>cp ./gitea-data/gitea/conf/app.ini ./gitea-data/gitea/conf/app.ini.bak.251102 <span style="color:#75715e"># 백업본 생성</span>
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;/\[service\]/a ENABLE_BASIC_AUTHENTICATION = false&#39;</span> gitea-data/gitea/conf/app.ini
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이후, gitea 재시작하여 설정 값 적용</span>
+</span></span><span style="display:flex;"><span>docker compose restart gitea
+</span></span></code></pre></div><p><img src="image-45.png" alt="disable gitea basic auth"></p>
+<p>다시 시도하면, IP와 PW로 접근하는 것은 차단되었음을 확인하였습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone http://172.27.0.1:3000/kkumtree/dev-app.git basic-auth-test
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Cloning into &#39;basic-auth-test&#39;...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Username for &#39;http://172.27.0.1:3000&#39;: kkumtree</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Password for &#39;http://kkumtree@172.27.0.1:3000&#39;: </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># remote: Unauthorized</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># fatal: Authentication failed for &#39;http://172.27.0.1:3000/cicd-labs/dev-app/&#39;</span>
+</span></span></code></pre></div><p><img src="image-46.png" alt="confirm basic auth is blocked"></p>
 <h2 id="reference">Reference</h2>
 <ul>
 <li><a href="https://www.jenkins.io/doc/book/installing/docker/#on-macos-and-linux">Docker/Jenkins</a></li>
@@ -602,6 +628,7 @@ NodePort로 열어두며, namespace를 jenkins로 지정해둡니다.</p>
 <li><a href="https://mike42.me/blog/2019-05-how-to-integrate-gitea-and-jenkins">How to integrate Gitea and Jenkins/mike42.me</a></li>
 <li><a href="https://principaloftech.medium.com/so-kind-of-helm-using-kind-kubernetes-in-docker-helm-for-quick-jenkins-setup-587252d787f6">Quick Jenkins Setup with Kubernetes in Docker(kind) and Helm in 5 minutes/PrincipalOfTech</a></li>
 <li><a href="https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3">Kubernetes/Jenkins</a></li>
+<li><a href="https://docs.gitea.com/administration/config-cheat-sheet#service-service">Configuration Cheat Sheet/Gitea Documentation</a></li>
 </ul>
 
   </div>
