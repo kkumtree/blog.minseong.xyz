@@ -1,5 +1,5 @@
 ---
-date: 2025-10-30T01:17:39+09:00
+date: 2025-11-02T08:51:39+09:00
 title: "Jenkins, git and kubernetes - CI/CD 스터디 3주차"
 tags:
   - jenkins
@@ -21,6 +21,12 @@ draft: false # 글 초안 여부
 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 CI/CD Study 3주차에는 Jenkins와 ArgoCD을 다뤘습니다.  
 
 이번에는 kubernetes(이하, k8s)에 self-host Git과 Jenkins를 배포 후 CI/CD 부분을 다루도록 하겠습니다.  
+
+하다보니 개인적으로, 아래 3가지가 주로 기억에 남았던 것 같습니다.  
+
+- Docker UDS의 GID  
+- Gitea와 Multibranch Pipeline의 결합
+- Local PV의 Taint 및 Node 지정
 
 ## 0. 실습 준비  
 
@@ -291,12 +297,6 @@ open "http://127.0.0.1:3000"
 
 `dckr_pat_<난수>_<난수>` 형태를 가지며, 이 또한 메모해둡니다.  
 
-### (5) Jenkins Plugin 설정  
-
-Jenkins 파이프라인 구성을 위해, 몇가지 플러그인을 설치할 것입니다.  
-
-
-
 ## 2. 간단 배포 구성  
 
 Jenkins 컨테이너가 Gitea와 DockerHub에서 리소스를 받고,  
@@ -340,7 +340,7 @@ git clone git@172.27.0.1:kkumtree/dev-app.git test # 차단됨 확인
 git clone http://172.27.0.1:3000/kkumtree/dev-app.git test # ID/PW 정상 입력시 받음  
 ```  
 
-마지막 케이스의 경우 ID/PW로 접근이 가능한데, 마지막에서 막아보겠습니다.  
+마지막 케이스의 경우 ID/PW로 접근이 가능한데, 추후 막아보겠습니다.  
 
 ![git clone from gitea](image-18.png)  
 
@@ -483,8 +483,118 @@ helm upgrade timeserver --reuse-values --set image.tag="0.0.2" .
 
 ![rolling updated with helm](image-42.png)  
 
-## 3. kind cluster에 jenkins 배포해보기  
+## 3. kind cluster에 Jenkins 배포해보기  
 
-> 배포 성공 확인 후 작성 중...  
+대부분은 Jenkins의 문서를 참조하였습니다만,  
+로컬(Kind)환경에 구성하다보니 다소 손을 봐야하는 부분을 다루어야 합니다.  
+
+### (1) Helm 템플릿 다운로드 및 배포  
+
+```bash
+curl https://raw.githubusercontent.com/jenkins-infra/jenkins.io/master/content/doc/tutorials/kubernetes/installing-jenkins-on-kubernetes/jenkins-01-volume.yaml -o jenkins-01-volume.yaml
+curl https://raw.githubusercontent.com/jenkins-infra/jenkins.io/master/content/doc/tutorials/kubernetes/installing-jenkins-on-kubernetes/jenkins-02-sa.yaml -o jenkins-02-sa.yaml
+curl https://raw.githubusercontent.com/jenkinsci/helm-charts/main/charts/jenkins/values.yaml -o jenkins-values.yaml
+cp jenkins-01-volume.yaml jenkins-01-volume.yaml.default
+cp jenkins-values.yaml jenkins-values.yaml.default
+```
+
+아래와 같이 부분적으로 변경하여야합니다.  
+
+1. Local PV 폴더 생성 후, 권한 부여합니다.
+  jenkins-01-volume.yaml에 의해서, 로컬 볼륨을 /data/jenkins-volume 으로 지정
+
+```bash
+sudo mkdir -p /data/jenkins-volume
+sudo chown -R 1000:1000 /data/jenkins-volume
+```
+
+2. local로 바꾸고, nodeAffinity를 부여하여 Control Plane Taint 에러를 해소합니다.  
+  이 경우에는 Worker Node를 특정하여, 해당 노드에만 Jenkins가 배포되게 지정했습니다.  
+
+```bash
+diff jenkins-01-volume.yaml jenkins-01-volume.yaml.default
+# 13c13
+# <   local:
+# ---
+# >   hostPath:
+# 15,22d14
+# <   nodeAffinity:
+# <     required:
+# <       nodeSelectorTerms:
+# <       - matchExpressions:
+# <         - key: kubernetes.io/hostname
+# <           operator: In
+# <           values:
+# <             - myk8s-worker
+```
+
+3. values.yaml 수정  
+  앞서 PV 및 SA를 생성하였으므로 values에 이를 비활성화 하고,  
+  NodePort로 열어두며, namespace를 jenkins로 지정해둡니다.  
+
+```bash
+diff jenkins-values.yaml jenkins-values.yaml.default
+# 4d3
+# < name: jenkins
+# 226,227c225
+# <   serviceType: NodePort
+# <   # serviceType: ClusterIP
+# ---
+# >   serviceType: ClusterIP
+# 236c234
+# <   nodePort: 30003
+# ---
+# >   nodePort:
+# 1273c1271
+# <   storageClass: jenkins-pv
+# ---
+# >   storageClass:
+# 1339,1340c1337
+# <   create: false
+# <   # create: true
+# ---
+# >   create: true
+# 1344c1341
+# <   name: jenkins
+# ---
+# >   name:
+```
+
+4. 배포 및 진입  
+
+```bash
+# Helm Chart 추가
+helm repo add jenkinsci https://charts.jenkins.io
+helm repo update
+
+kubectl apply -f jenkins-01-volume.yaml
+kubectl apply -f jenkins-02-sa.yaml
+helm install jenkins -n jenkins -f jenkins-values.yaml jenkinsci/jenkins
+
+# 출력 암호
+kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+
+# 노드 포트 및 IP 주소를 통해 주소 획득
+export NODE_PORT=$(kubectl get --namespace jenkins -o jsonpath="{.spec.ports[0].nodePort}" services jenkins)  
+export NODE_IP=$(kubectl get nodes --namespace jenkins -o jsonpath="{.items[0].status.addresses[0].address}")  
+echo http://$NODE_IP:$NODE_PORT
+```
 
 ![alt text](image-43.png)  
+
+마지막 출력 값을 주소창에 넣어 접속합니다.  
+
+### (2) Jenkins 내부 설정  
+
+리버스 프록시에 문제가 있으므로 다시 Jenkins URL을 `http://$NODE_IP:$NODE_PORT`로 수정합니다.  
+(관리 > System > Jenkins URL )
+
+![edit Jenkins URL](image-44.png)  
+
+플러그인은 이렇게 설치합니다. 
+
+- [Docker Pipeline](https://plugins.jenkins.io/docker-workflow/)  
+- [Pipeline: Stage View](https://plugins.jenkins.io/pipeline-stage-view/)  
+- [Gitea](https://plugins.jenkins.io/gitea/)  
+- [Gitea PAT Kubernetes Credentials](https://plugins.jenkins.io/gitea-pat-kubernetes-credentials/)  
+
