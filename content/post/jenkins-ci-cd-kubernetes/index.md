@@ -623,7 +623,7 @@ export NODE_IP=$(kubectl get nodes --namespace jenkins -o jsonpath="{.items[0].s
 echo http://$NODE_IP:$NODE_PORT
 ```
 
-![alt text](image-43.png)  
+![deploy jenkins with helm](image-43.png)  
 
 마지막 출력 값을 주소창에 넣어 접속합니다.  
 
@@ -643,8 +643,11 @@ echo http://$NODE_IP:$NODE_PORT
 
 ## Reference
 
+- [Docker/Jenkins](https://www.jenkins.io/doc/book/installing/docker/#on-macos-and-linux)  
+- [How to Install and Run Jenkins With Docker Compose/CloudBees](https://www.cloudbees.com/blog/how-to-install-and-run-jenkins-with-docker-compose)  
+- [Docker inside Docker for Jenkins/ITNEXT](https://itnext.io/docker-inside-docker-for-jenkins-d906b7b5f527)  
 - [Jenkins Docker-outside-of-Docker with Nexus Registry/NelsonMaty](https://github.com/NelsonMaty/docker-outside-of-docker-example)  
 - [Ubuntu Tutorial: Jenkins + Gitea + Docker/TMVTech](https://www.tmvtech.com/ubuntu-tutorial-jenkins-gitea-docker/)  
 - [How to integrate Gitea and Jenkins/mike42.me](https://mike42.me/blog/2019-05-how-to-integrate-gitea-and-jenkins)  
-- [Docker/jenkins.io](https://www.jenkins.io/doc/book/installing/docker/#on-macos-and-linux)  
-- [Kubernetes/jenkins.io](https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3)  
+- [Quick Jenkins Setup with Kubernetes in Docker(kind) and Helm in 5 minutes/PrincipalOfTech](https://principaloftech.medium.com/so-kind-of-helm-using-kind-kubernetes-in-docker-helm-for-quick-jenkins-setup-587252d787f6)  
+- [Kubernetes/Jenkins](https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3)  
