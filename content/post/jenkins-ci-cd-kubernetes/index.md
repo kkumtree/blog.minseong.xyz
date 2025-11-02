@@ -28,6 +28,8 @@ draft: false # 글 초안 여부
 - Gitea와 Multibranch Pipeline의 결합
 - Local PV의 Taint 및 Node 지정
 
+더불어, Gitea에 대해 Basic Auth를 통한 CLI 접근을 막아보는 것도 새로이 해보았습니다.  
+
 > 해당 구성들은 아래 GitHub에 탑재되어 있습니다.  
 > <https://github.com/kkumtree/ci-cd-cloudnet-study> 의 3w 폴더  
 
@@ -641,6 +643,42 @@ echo http://$NODE_IP:$NODE_PORT
 - [Gitea](https://plugins.jenkins.io/gitea/)  
 - [Gitea PAT Kubernetes Credentials](https://plugins.jenkins.io/gitea-pat-kubernetes-credentials/)  
 
+## 9. (Gitea) Basic Auth 차단
+
+앞서, ID 및 PW로 접속이 가능한 점을 확인했으니  
+이러한 Basic Auth 로 git에 접근하는 것만 차단해보겠습니다.  
+
+```bash
+docker compose exec gitea sh -c 'echo $GITEA_CUSTOM'
+ls
+grep -F 'gitea-data:' docker-compose.yaml -n -B1
+ls ./gitea-data/gitea/conf/app.ini
+grep -F '[service]' gitea-data/gitea/conf/app.ini -n -A 1
+grep ENABLE_BASIC_AUTHENTICATION gitea-data/gitea/conf/app.ini  # 환경변수가 없음을 확인
+# 해당 환경 변수 추가에 대해 dryrun 후 apply
+sed '/\[service\]/a ENABLE_BASIC_AUTHENTICATION = false' gitea-data/gitea/conf/app.ini | \
+  grep -F '[service]' -n -A 2  
+cp ./gitea-data/gitea/conf/app.ini ./gitea-data/gitea/conf/app.ini.bak.251102 # 백업본 생성
+sed -i '/\[service\]/a ENABLE_BASIC_AUTHENTICATION = false' gitea-data/gitea/conf/app.ini
+# 이후, gitea 재시작하여 설정 값 적용
+docker compose restart gitea
+```
+
+![disable gitea basic auth](image-45.png)
+
+다시 시도하면, IP와 PW로 접근하는 것은 차단되었음을 확인하였습니다.  
+
+```bash
+git clone http://172.27.0.1:3000/kkumtree/dev-app.git basic-auth-test
+# Cloning into 'basic-auth-test'...
+# Username for 'http://172.27.0.1:3000': kkumtree
+# Password for 'http://kkumtree@172.27.0.1:3000': 
+# remote: Unauthorized
+# fatal: Authentication failed for 'http://172.27.0.1:3000/cicd-labs/dev-app/'
+```
+
+![confirm basic auth is blocked](image-46.png)
+
 ## Reference
 
 - [Docker/Jenkins](https://www.jenkins.io/doc/book/installing/docker/#on-macos-and-linux)  
@@ -651,3 +689,4 @@ echo http://$NODE_IP:$NODE_PORT
 - [How to integrate Gitea and Jenkins/mike42.me](https://mike42.me/blog/2019-05-how-to-integrate-gitea-and-jenkins)  
 - [Quick Jenkins Setup with Kubernetes in Docker(kind) and Helm in 5 minutes/PrincipalOfTech](https://principaloftech.medium.com/so-kind-of-helm-using-kind-kubernetes-in-docker-helm-for-quick-jenkins-setup-587252d787f6)  
 - [Kubernetes/Jenkins](https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3)  
+- [Configuration Cheat Sheet/Gitea Documentation](https://docs.gitea.com/administration/config-cheat-sheet#service-service)  
