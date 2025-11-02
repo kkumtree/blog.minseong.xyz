@@ -90,7 +90,7 @@
               </li>
               
             </ul>
-            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-30T01:17:39&#43;09:00</u></p>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-02T08:51:39&#43;09:00</u></p>
             <p class="p-card__content"></p>
             
             <a href="/tags/jenkins" class="tag">
@@ -132,6 +132,12 @@
   <div class="row">
   <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 CI/CD Study 3주차에는 Jenkins와 ArgoCD을 다뤘습니다.</p>
 <p>이번에는 kubernetes(이하, k8s)에 self-host Git과 Jenkins를 배포 후 CI/CD 부분을 다루도록 하겠습니다.</p>
+<p>하다보니 개인적으로, 아래 3가지가 주로 기억에 남았던 것 같습니다.</p>
+<ul>
+<li>Docker UDS의 GID</li>
+<li>Gitea와 Multibranch Pipeline의 결합</li>
+<li>Local PV의 Taint 및 Node 지정</li>
+</ul>
 <h2 id="0-실습-준비">0. 실습 준비</h2>
 <h3 id="1-kind">(1) kind</h3>
 <blockquote>
@@ -336,8 +342,6 @@ Host의 GID와 맞추지 않을 경우, Host 소켓도 사용 불능이 되어, 
 (Read, Write, Delete 모든 권한을 부여했습니다)</p>
 <p><img src="image-21.png" alt="create personal access token"></p>
 <p><code>dckr_pat_&lt;난수&gt;_&lt;난수&gt;</code> 형태를 가지며, 이 또한 메모해둡니다.</p>
-<h3 id="5-jenkins-plugin-설정">(5) Jenkins Plugin 설정</h3>
-<p>Jenkins 파이프라인 구성을 위해, 몇가지 플러그인을 설치할 것입니다.</p>
 <h2 id="2-간단-배포-구성">2. 간단 배포 구성</h2>
 <p>Jenkins 컨테이너가 Gitea와 DockerHub에서 리소스를 받고,<br>
 빌드 후 kind 클러스터에 배포하도록 해봅니다.</p>
@@ -367,7 +371,7 @@ Host의 GID와 맞추지 않을 경우, Host 소켓도 사용 불능이 되어, 
 </span></span><span style="display:flex;"><span>git clone http://$TOKEN_NAME:$TOKEN@$HOSTIP:3000/kkumtree/dev-app.git  
 </span></span><span style="display:flex;"><span>git clone git@172.27.0.1:kkumtree/dev-app.git test <span style="color:#75715e"># 차단됨 확인  </span>
 </span></span><span style="display:flex;"><span>git clone http://172.27.0.1:3000/kkumtree/dev-app.git test <span style="color:#75715e"># ID/PW 정상 입력시 받음  </span>
-</span></span></code></pre></div><p>마지막 케이스의 경우 ID/PW로 접근이 가능한데, 마지막에서 막아보겠습니다.</p>
+</span></span></code></pre></div><p>마지막 케이스의 경우 ID/PW로 접근이 가능한데, 추후 막아보겠습니다.</p>
 <p><img src="image-18.png" alt="git clone from gitea"></p>
 <p>Host IDE(VSCode)를 통해, 파일을 추가했습니다.</p>
 <p><img src="image-19.png" alt="add python sample app"></p>
@@ -460,11 +464,101 @@ git push 이후 <code>Scan Multibranch Pipeline Now</code>를 클릭하면 Docke
 새로운 버전의 Pod가 생성된 뒤, 기존 버전의 Pod가 순차적으로 사라짐을 확인하였습니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm upgrade timeserver --reuse-values --set image.tag<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0.0.2&#34;</span> .
 </span></span></code></pre></div><p><img src="image-42.png" alt="rolling updated with helm"></p>
-<h2 id="3-kind-cluster에-jenkins-배포해보기">3. kind cluster에 jenkins 배포해보기</h2>
-<blockquote>
-<p>배포 성공 확인 후 작성 중&hellip;</p>
-</blockquote>
-<p><img src="image-43.png" alt="alt text"></p>
+<h2 id="3-kind-cluster에-jenkins-배포해보기">3. kind cluster에 Jenkins 배포해보기</h2>
+<p>대부분은 Jenkins의 문서를 참조하였습니다만,<br>
+로컬(Kind)환경에 구성하다보니 다소 손을 봐야하는 부분을 다루어야 합니다.</p>
+<h3 id="1-helm-템플릿-다운로드-및-배포">(1) Helm 템플릿 다운로드 및 배포</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl https://raw.githubusercontent.com/jenkins-infra/jenkins.io/master/content/doc/tutorials/kubernetes/installing-jenkins-on-kubernetes/jenkins-01-volume.yaml -o jenkins-01-volume.yaml
+</span></span><span style="display:flex;"><span>curl https://raw.githubusercontent.com/jenkins-infra/jenkins.io/master/content/doc/tutorials/kubernetes/installing-jenkins-on-kubernetes/jenkins-02-sa.yaml -o jenkins-02-sa.yaml
+</span></span><span style="display:flex;"><span>curl https://raw.githubusercontent.com/jenkinsci/helm-charts/main/charts/jenkins/values.yaml -o jenkins-values.yaml
+</span></span><span style="display:flex;"><span>cp jenkins-01-volume.yaml jenkins-01-volume.yaml.default
+</span></span><span style="display:flex;"><span>cp jenkins-values.yaml jenkins-values.yaml.default
+</span></span></code></pre></div><p>아래와 같이 부분적으로 변경하여야합니다.</p>
+<ol>
+<li>Local PV 폴더 생성 후, 권한 부여합니다.
+jenkins-01-volume.yaml에 의해서, 로컬 볼륨을 /data/jenkins-volume 으로 지정</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mkdir -p /data/jenkins-volume
+</span></span><span style="display:flex;"><span>sudo chown -R 1000:1000 /data/jenkins-volume
+</span></span></code></pre></div><ol start="2">
+<li>local로 바꾸고, nodeAffinity를 부여하여 Control Plane Taint 에러를 해소합니다.<br>
+이 경우에는 Worker Node를 특정하여, 해당 노드에만 Jenkins가 배포되게 지정했습니다.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>diff jenkins-01-volume.yaml jenkins-01-volume.yaml.default
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 13c13</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   local:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   hostPath:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 15,22d14</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   nodeAffinity:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;     required:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;       nodeSelectorTerms:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;       - matchExpressions:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;         - key: kubernetes.io/hostname</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;           operator: In</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;           values:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;             - myk8s-worker</span>
+</span></span></code></pre></div><ol start="3">
+<li>values.yaml 수정<br>
+앞서 PV 및 SA를 생성하였으므로 values에 이를 비활성화 하고,<br>
+NodePort로 열어두며, namespace를 jenkins로 지정해둡니다.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>diff jenkins-values.yaml jenkins-values.yaml.default
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4d3</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt; name: jenkins</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 226,227c225</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   serviceType: NodePort</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   # serviceType: ClusterIP</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   serviceType: ClusterIP</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 236c234</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   nodePort: 30003</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   nodePort:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1273c1271</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   storageClass: jenkins-pv</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   storageClass:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1339,1340c1337</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   create: false</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   # create: true</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   create: true</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1344c1341</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   name: jenkins</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   name:</span>
+</span></span></code></pre></div><ol start="4">
+<li>배포 및 진입</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Helm Chart 추가</span>
+</span></span><span style="display:flex;"><span>helm repo add jenkinsci https://charts.jenkins.io
+</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f jenkins-01-volume.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f jenkins-02-sa.yaml
+</span></span><span style="display:flex;"><span>helm install jenkins -n jenkins -f jenkins-values.yaml jenkinsci/jenkins
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 출력 암호</span>
+</span></span><span style="display:flex;"><span>kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password <span style="color:#f92672">&amp;&amp;</span> echo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 포트 및 IP 주소를 통해 주소 획득</span>
+</span></span><span style="display:flex;"><span>export NODE_PORT<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get --namespace jenkins -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.spec.ports[0].nodePort}&#34;</span> services jenkins<span style="color:#66d9ef">)</span>  
+</span></span><span style="display:flex;"><span>export NODE_IP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get nodes --namespace jenkins -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.items[0].status.addresses[0].address}&#34;</span><span style="color:#66d9ef">)</span>  
+</span></span><span style="display:flex;"><span>echo http://$NODE_IP:$NODE_PORT
+</span></span></code></pre></div><p><img src="image-43.png" alt="alt text"></p>
+<p>마지막 출력 값을 주소창에 넣어 접속합니다.</p>
+<h3 id="2-jenkins-내부-설정">(2) Jenkins 내부 설정</h3>
+<p>리버스 프록시에 문제가 있으므로 다시 Jenkins URL을 <code>http://$NODE_IP:$NODE_PORT</code>로 수정합니다.<br>
+(관리 &gt; System &gt; Jenkins URL )</p>
+<p><img src="image-44.png" alt="edit Jenkins URL"></p>
+<p>플러그인은 이렇게 설치합니다.</p>
+<ul>
+<li><a href="https://plugins.jenkins.io/docker-workflow/">Docker Pipeline</a></li>
+<li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline: Stage View</a></li>
+<li><a href="https://plugins.jenkins.io/gitea/">Gitea</a></li>
+<li><a href="https://plugins.jenkins.io/gitea-pat-kubernetes-credentials/">Gitea PAT Kubernetes Credentials</a></li>
+</ul>
 
   </div>
   </section>

@@ -104,17 +104,16 @@
                 </li>
                 
               </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-30T01:17:39&#43;09:00</u></p>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-02T08:51:39&#43;09:00</u></p>
               <p>CloudNet@에서 진행하고 있는 CI/CD Study 3주차에는 Jenkins와 ArgoCD을 다뤘습니다.
 이번에는 kubernetes(이하, k8s)에 self-host Git과 Jenkins를 배포 후 CI/CD 부분을 다루도록 하겠습니다.
-0. 실습 준비 (1) kind kind 설치의 경우 다음 포스트를 참고할 수 있습니다.
+하다보니 개인적으로, 아래 3가지가 주로 기억에 남았던 것 같습니다.
+Docker UDS의 GID Gitea와 Multibranch Pipeline의 결합 Local PV의 Taint 및 Node 지정 0. 실습 준비 (1) kind kind 설치의 경우 다음 포스트를 참고할 수 있습니다.
 리눅스에 KIND 설치하기 w/golang
 Docs: https://kind.sigs.k8s.io/
 kind를 통해, 로컬 환경에 k8s를 배포해보겠습니다.
 networking.apiServerAddress:
-ControlPlane에 접속하기 위한 주소 지정 nodes.extraPortMappings:
-호스트의 포트를 kind의 각 노드 포트로 직접 연결 설정.
-이를 통해, 호스트에서 kind 내부의 NodePort 서비스에 접근 가능 # 3w/shells/kind/up-kind.</p>
+ControlPlane에 접속하기 위한 주소 지정 nodes.</p>
             </div>
             
             <div class="p-list__item">
