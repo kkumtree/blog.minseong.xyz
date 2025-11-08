@@ -1,6 +1,6 @@
 ---
-date: 2025-11-07T23:03:15+09:00
-title: " - CI/CD 스터디 4주차"
+date: 2025-11-09T08:44:34+09:00
+title: "ArgoCD 101 - CI/CD 스터디 4주차"
 tags:
   - helm
   - CICD
@@ -12,8 +12,8 @@ authors:
       launchpad: mscho7969
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
-image: image-15.png # 커버 이미지 URL
-draft: true # 글 초안 여부
+image: image-14.png # 커버 이미지 URL
+draft: false # 글 초안 여부
 ---
 
 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 CI/CD Study 4주차에는 ArgoCD를 다루기 시작했습니다.  
@@ -196,12 +196,23 @@ RBAC을 포함한 활성화 설정으로, 웹 콘솔에서 현재 배포된 Pod�
 kubectl get configmap argocd-cm -n argocd -o yaml | grep exec.enabled
 kubectl patch configmap argocd-cm -n argocd --type merge -p '{"data":{"exec.enabled":"true"}}'
 kubectl get configmap argocd-cm -n argocd -o yaml | grep exec.enabled # 활성화 확인
-# 
 
+# (RBAC) CR에 pods/exec 생성권한 추가  
+kubectl rolesum -n argocd argocd-server | head -n 5 # argocd-server의 Role Binding 확인
+kubectl describe clusterroles.rbac.authorization.k8s.io argocd-server | grep pods # pods/exec 없음 확인
+
+kubectl patch clusterrole argocd-server --type='json' \
+  -p='[{"op": "add", "path": "/rules/-", "value": {"apiGroups": [""], "resources": ["pods/exec"], "verbs": ["create"]}}]'
+
+kubectl describe clusterroles.rbac.authorization.k8s.io argocd-server | grep pods # pods/exec create 확인
 ```
 
-![alt text](image-13.png)
-![alt text](image-12.png)
+![enable exec in argocd-server](image-13.png)
+![add pods exec rbac for argocd-server](image-12.png)
+
+이후에 웹 콘솔로 접속 시, Pod에 대해 웹 Terminal로 접근이 가능한 점을 확인할 수 있습니다.  
+
+![web based terminal](image-14.png)
 
 ### (4) Testing with sample app  
 
@@ -256,3 +267,19 @@ argocd app list
 
 ![login with argocd cli to communicate via api](image-10.png)  
 
+## 3. ArgoCD Autopilot  
+
+> <https://github.com/argoproj-labs/argocd-autopilot>  
+> [Argo CD Autopilot Introduction/Codefresh](https://codefresh.io/blog/launching-argo-cd-autopilot-opinionated-way-manage-applications-across-environments-using-gitops-scale/)  
+
+Jenkins가 되었든 ArgoCD가 되었든, 자기 자신을 자동으로 sync 관리 하기가 어려운 경우가 있습니다.  
+이번에는 ArgoCD Autopilot을 가볍에 알아보겠습니다.  
+
+![arch in proposal](image-16.png)
+
+제안 문서도 참고하여 확인 후 살펴봤을 때, Autopilot의 목적은 ArgoCD를 Bootstrap화 하는 것으로 이해했습니다.  
+배포하면서 Argo CD에 대한 템플릿도 git 레포에 업로드한 후, 이 또한 ArgoCD가 조회하며 sync를 맞추는 것으로 파악됩니다.  
+
+![proposal](image-15.png)  
+
+다양한 제안이 있는 것으로 보이며, 앞으로도 업데이트 될 사안이 많아 보였습니다.  
