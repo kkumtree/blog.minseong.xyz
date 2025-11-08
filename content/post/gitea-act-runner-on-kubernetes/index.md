@@ -186,7 +186,24 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 ![check argocd initial secret](image-7.png)
 
-### (3) Testing with sample app  
+### (3) ArgoCD 웹 콘솔에서 Pod Terminal 사용 활성화  
+
+Jenkins의 경우에는 웹 콘솔에서 Pod에 접속할 터미널이 없었던 것으로 알고있는데,  
+RBAC을 포함한 활성화 설정으로, 웹 콘솔에서 현재 배포된 Pod의 내부에 접근할 수 있습니다.  
+
+```bash
+# (ArgoCD Pod) exec 기능 활성화
+kubectl get configmap argocd-cm -n argocd -o yaml | grep exec.enabled
+kubectl patch configmap argocd-cm -n argocd --type merge -p '{"data":{"exec.enabled":"true"}}'
+kubectl get configmap argocd-cm -n argocd -o yaml | grep exec.enabled # 활성화 확인
+# 
+
+```
+
+![alt text](image-13.png)
+![alt text](image-12.png)
+
+### (4) Testing with sample app  
 
 샘플 어플리케이션 `guestbook`을 배포 후, ArgoCD 대시보드를 통해 변화를 관찰해봅니다.  
 
@@ -219,7 +236,7 @@ kubectl get svc -n guestbook
 
 ![try enabling nodeport before self healing disabled](image-11.png)  
 
-### (4) ArgoCD CLI  
+### (5) ArgoCD CLI  
 
 유사시, 커맨드라인으로 ArgoCD와 API 통신을 하기 위해 ArgoCD CLI를 설치 후 사용해봅니다.  
 (Linux/Curl방식: [Download With Curl](https://argo-cd.readthedocs.io/en/stable/cli_installation/#download-latest-version))  
