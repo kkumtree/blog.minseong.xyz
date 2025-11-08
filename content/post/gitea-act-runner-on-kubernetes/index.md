@@ -157,7 +157,7 @@ kubectl get sa -n argocd
 권한도 보겠습니다.  
 
 > 아래 커맨드를 위해서 krew 플러그인 매니저가 설치되어 있어야 합니다.  
-> `4w/shells/krew/install-krew-bash-zsh.sh` 스크립트로 설치할 수 있습니다.  
+> `4w/shells/krew/install-krew-bash-zsh.sh` 스크립트로도 설치할 수 있습니다.  
 
 ```bash
 # kubectl krew install rolesum  
@@ -166,4 +166,76 @@ kubectl rolesum -k Group system:masters
 ```  
 
 ![rolesum for check rbac](image-5.png)  
+
+Role Binding / Cluster Role Binding 도 확인해봅니다  
+
+```bash
+kubectl rolesum -n argocd argocd-server
+# kubectl rolesum -n argocd argocd-application-controller
+# kubectl rolesum -n argocd argocd-applicationset-controller
+# kubectl rolesum -n argocd argocd-repo-server
+```
+
+![rbac about argocd-server](image-6.png)  
+
+ArgoCD 최초 암호 확인은 아래와 같이 합니다.  
+
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d ;echo
+```
+
+![check argocd initial secret](image-7.png)
+
+### (3) Testing with sample app  
+
+샘플 어플리케이션 `guestbook`을 배포 후, ArgoCD 대시보드를 통해 변화를 관찰해봅니다.  
+
+```bash
+# 4w/yaml/guestbook 폴더로 이동
+kubectl apply -f guestbook.yaml
+```
+
+![apply sample application](image-8.png)
+
+<!-- > 이번에는 krew 플러그인 중 하나인 `neat`를 설치 후 활용해보겠습니다.  
+
+```bash
+# kubectl krew install neat
+```
+
+![alt text](image-9.png) -->  
+
+해당 서비스가 kind 클러스터의 노출된 30003 포트로 접근 가능하도록 시도해보겠습니다.  
+
+```bash
+kubectl get svc -n guestbook
+kubectl patch svc -n guestbook guestbook-helm-guestbook -p '{"spec":{"type":"NodePort","ports":[{"port":80,"targetPort":80,"nodePort":30003}]}}'
+kubectl get svc -n guestbook
+kubectl patch svc -n guestbook guestbook-helm-guestbook -p '{"spec":{"type":"NodePort","ports":[{"port":80,"targetPort":80,"nodePort":30003}]}}'
+kubectl get svc -n guestbook
+```
+
+변화가 없는 것을 확인할 수 있습니다.  
+
+![try enabling nodeport before self healing disabled](image-11.png)  
+
+### (4) ArgoCD CLI  
+
+유사시, 커맨드라인으로 ArgoCD와 API 통신을 하기 위해 ArgoCD CLI를 설치 후 사용해봅니다.  
+(Linux/Curl방식: [Download With Curl](https://argo-cd.readthedocs.io/en/stable/cli_installation/#download-latest-version))  
+
+> 초기 비밀번호로 사용하는 것은 권장되는 방법은 아니나  
+> 원격으로 해당 클러스터에 붙어서 실습 중이었기에, 편의 상 아래와 같이 진행했습니다.  
+
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d ;echo
+argocd login 127.0.0.1:30002 --plaintext
+argocd account list
+argocd proj list
+argocd repo list
+argocd cluster list
+argocd app list
+```
+
+![login with argocd cli to communicate via api](image-10.png)  
 
