@@ -97,6 +97,24 @@
 
             
             <div class="p-list__item">
+              <a href="/post/argocd-hello-world/"><h2>ArgoCD 101 - CI/CD 스터디 4주차</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-09T08:44:34&#43;09:00</u></p>
+              <p>CloudNet@에서 진행하고 있는 CI/CD Study 4주차에는 ArgoCD를 다루기 시작했습니다.
+Kubernetes(이하, k8s) 상에서 ArgoCD는 Controller보다는 Operator에 가까운 포지션을 갖는다고 하여,
+이번 기회에 실습을 하면서 체감을 하는 것에 목적을 두었습니다.
+Controller: live state(실제 상태)와 desired state(원하는 상태)가 일치하는지 관찰 및 지속적 조정 Operator: Controller가 k8s 내부 object에서 동작한다면, Operator는 k8s 외의 것들도 다룰 수 있음 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
+https://github.com/kkumtree/ci-cd-cloudnet-study 의 4w 폴더
+0. 실습 준비 이전 게시물, Jenkins, git and kubernetes의 kind 및 kube-ops-view 설정과 동일하여 생략합니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/jenkins-ci-cd-kubernetes/"><h2>Jenkins, git and kubernetes - CI/CD 스터디 3주차</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -170,20 +188,6 @@ Visual Studio 상에서의 Dev Containers 활용에 대해 다뤄보고자 합�
 Developing inside a Container
 0. Docker 설치 내용이 길어, 아래의 포스트로 나누었습니다.
 Ubuntu Docker 설치 작성 기준, Dev Container는 Ubuntu Snap 패키지(snapcraft)로 설치된 Docker에는 지원되지 않는다고 합니다. 사용자($USER)를 docker 그룹에 추가하여야합니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/docker-installation-in-ubuntu/"><h2>Ubuntu Docker 설치</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-17T20:53:27&#43;09:00</u></p>
-              <p>Docker 사용을 위한 기본적인 설치 방법 메모
-Install Docker Engine on Ubuntu | Docker Documentation 0. 이전 버전 제거 (선택) 진행 중인 Docker 관련 작업이 없어, prune 명령어를 통해 기존 Docker의 리소스들을 삭제 진행하였습니다. docker system prune -a 공식 문서에 따라, 아래 커맨드로 삭제를 진행합니다. (겸사겸사 autoremove도 진행합니다.) for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done sudo apt-get autoremove # ❯ for pkg in docker.</p>
             </div>
             
 <ol class="p-pagination">

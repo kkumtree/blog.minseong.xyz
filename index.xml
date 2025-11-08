@@ -6,7 +6,21 @@
     <description>Recent content on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sun, 02 Nov 2025 08:51:39 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 09 Nov 2025 08:44:34 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ArgoCD 101 - CI/CD 스터디 4주차</title>
+      <link>https://blog.minseong.xyz/post/argocd-hello-world/</link>
+      <pubDate>Sun, 09 Nov 2025 08:44:34 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/argocd-hello-world/</guid>
+      <description>CloudNet@에서 진행하고 있는 CI/CD Study 4주차에는 ArgoCD를 다루기 시작했습니다.
+Kubernetes(이하, k8s) 상에서 ArgoCD는 Controller보다는 Operator에 가까운 포지션을 갖는다고 하여,
+이번 기회에 실습을 하면서 체감을 하는 것에 목적을 두었습니다.
+Controller: live state(실제 상태)와 desired state(원하는 상태)가 일치하는지 관찰 및 지속적 조정 Operator: Controller가 k8s 내부 object에서 동작한다면, Operator는 k8s 외의 것들도 다룰 수 있음 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
+https://github.com/kkumtree/ci-cd-cloudnet-study 의 4w 폴더
+0. 실습 준비 이전 게시물, Jenkins, git and kubernetes의 kind 및 kube-ops-view 설정과 동일하여 생략합니다.</description>
+    </item>
+    
     <item>
       <title>Jenkins, git and kubernetes - CI/CD 스터디 3주차</title>
       <link>https://blog.minseong.xyz/post/jenkins-ci-cd-kubernetes/</link>

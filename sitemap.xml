@@ -2,31 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.minseong.xyz/post/argocd-hello-world/</loc>
+    <lastmod>2025-11-09T08:44:34+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/tags/cicd/</loc>
-    <lastmod>2025-11-02T08:51:39+09:00</lastmod>
+    <lastmod>2025-11-09T08:44:34+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/cloudnet@/</loc>
-    <lastmod>2025-11-02T08:51:39+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/gitea/</loc>
-    <lastmod>2025-11-02T08:51:39+09:00</lastmod>
+    <lastmod>2025-11-09T08:44:34+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/helm/</loc>
+    <lastmod>2025-11-09T08:44:34+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/</loc>
+    <lastmod>2025-11-09T08:44:34+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/</loc>
+    <lastmod>2025-11-09T08:44:34+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/</loc>
+    <lastmod>2025-11-09T08:44:34+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/gitea/</loc>
     <lastmod>2025-11-02T08:51:39+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/jenkins/</loc>
     <lastmod>2025-11-02T08:51:39+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/jenkins-ci-cd-kubernetes/</loc>
-    <lastmod>2025-11-02T08:51:39+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/</loc>
-    <lastmod>2025-11-02T08:51:39+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/post/</loc>
-    <lastmod>2025-11-02T08:51:39+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/</loc>
     <lastmod>2025-11-02T08:51:39+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/post/helm-template-reusing-statements/</loc>
