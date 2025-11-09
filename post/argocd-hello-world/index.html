@@ -236,7 +236,24 @@ k8s yaml 매니페스트로 변환하여 배포하는 도구로 정리될 수 �
 <p>ArgoCD 최초 암호 확인은 아래와 같이 합니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.data.password}&#34;</span> | base64 -d ;echo
 </span></span></code></pre></div><p><img src="image-7.png" alt="check argocd initial secret"></p>
-<h3 id="3-argocd-웹-콘솔에서-pod-terminal-사용-활성화">(3) ArgoCD 웹 콘솔에서 Pod Terminal 사용 활성화</h3>
+<h3 id="3-testing-with-sample-app">(3) Testing with sample app</h3>
+<p>샘플 어플리케이션 <code>guestbook</code>을 배포 후, ArgoCD 대시보드를 통해 변화를 관찰해봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 4w/yaml/guestbook 폴더로 이동</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f guestbook.yaml
+</span></span></code></pre></div><p><img src="image-8.png" alt="apply sample application"></p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>해당 서비스가 kind 클러스터의 노출된 30003 포트로 접근 가능하도록 시도해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get svc -n guestbook
+</span></span><span style="display:flex;"><span>kubectl patch svc -n guestbook guestbook-helm-guestbook -p <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;type&#34;:&#34;NodePort&#34;,&#34;ports&#34;:[{&#34;port&#34;:80,&#34;targetPort&#34;:80,&#34;nodePort&#34;:30003}]}}&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl get svc -n guestbook
+</span></span><span style="display:flex;"><span>kubectl patch svc -n guestbook guestbook-helm-guestbook -p <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;type&#34;:&#34;NodePort&#34;,&#34;ports&#34;:[{&#34;port&#34;:80,&#34;targetPort&#34;:80,&#34;nodePort&#34;:30003}]}}&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl get svc -n guestbook
+</span></span></code></pre></div><p>변화가 없는 것을 확인할 수 있습니다.</p>
+<p><img src="image-11.png" alt="try enabling nodeport before self healing disabled"></p>
+<p>왜냐하면, ArgoCD의 <code>Self healing</code>으로 동기화되고 있기 때문입니다.</p>
+<p>이를 바꾸기위해, 웹 콘솔에서 Self healing을 비활성화하고 사용하면 됩니다.</p>
+<h3 id="4-argocd-웹-콘솔에서-pod-terminal-사용-활성화">(4) ArgoCD 웹 콘솔에서 Pod Terminal 사용 활성화</h3>
 <p>Jenkins의 경우에는 웹 콘솔에서 Pod에 접속할 터미널이 없었던 것으로 알고있는데,<br>
 RBAC을 포함한 활성화 설정으로, 웹 콘솔에서 현재 배포된 Pod의 내부에 접근할 수 있습니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># (ArgoCD Pod) exec 기능 활성화</span>
@@ -256,21 +273,6 @@ RBAC을 포함한 활성화 설정으로, 웹 콘솔에서 현재 배포된 Pod�
 <img src="image-12.png" alt="add pods exec rbac for argocd-server"></p>
 <p>이후에 웹 콘솔로 접속 시, Pod에 대해 웹 Terminal로 접근이 가능한 점을 확인할 수 있습니다.</p>
 <p><img src="image-14.png" alt="web based terminal"></p>
-<h3 id="4-testing-with-sample-app">(4) Testing with sample app</h3>
-<p>샘플 어플리케이션 <code>guestbook</code>을 배포 후, ArgoCD 대시보드를 통해 변화를 관찰해봅니다.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 4w/yaml/guestbook 폴더로 이동</span>
-</span></span><span style="display:flex;"><span>kubectl apply -f guestbook.yaml
-</span></span></code></pre></div><p><img src="image-8.png" alt="apply sample application"></p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<p>해당 서비스가 kind 클러스터의 노출된 30003 포트로 접근 가능하도록 시도해보겠습니다.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get svc -n guestbook
-</span></span><span style="display:flex;"><span>kubectl patch svc -n guestbook guestbook-helm-guestbook -p <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;type&#34;:&#34;NodePort&#34;,&#34;ports&#34;:[{&#34;port&#34;:80,&#34;targetPort&#34;:80,&#34;nodePort&#34;:30003}]}}&#39;</span>
-</span></span><span style="display:flex;"><span>kubectl get svc -n guestbook
-</span></span><span style="display:flex;"><span>kubectl patch svc -n guestbook guestbook-helm-guestbook -p <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;type&#34;:&#34;NodePort&#34;,&#34;ports&#34;:[{&#34;port&#34;:80,&#34;targetPort&#34;:80,&#34;nodePort&#34;:30003}]}}&#39;</span>
-</span></span><span style="display:flex;"><span>kubectl get svc -n guestbook
-</span></span></code></pre></div><p>변화가 없는 것을 확인할 수 있습니다.</p>
-<p><img src="image-11.png" alt="try enabling nodeport before self healing disabled"></p>
 <h3 id="5-argocd-cli">(5) ArgoCD CLI</h3>
 <p>유사시, 커맨드라인으로 ArgoCD와 API 통신을 하기 위해 ArgoCD CLI를 설치 후 사용해봅니다.<br>
 (Linux/Curl방식: <a href="https://argo-cd.readthedocs.io/en/stable/cli_installation/#download-latest-version">Download With Curl</a>)</p>
