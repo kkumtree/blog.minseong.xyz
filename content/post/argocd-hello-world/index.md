@@ -186,35 +186,7 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 ![check argocd initial secret](image-7.png)
 
-### (3) ArgoCD 웹 콘솔에서 Pod Terminal 사용 활성화  
-
-Jenkins의 경우에는 웹 콘솔에서 Pod에 접속할 터미널이 없었던 것으로 알고있는데,  
-RBAC을 포함한 활성화 설정으로, 웹 콘솔에서 현재 배포된 Pod의 내부에 접근할 수 있습니다.  
-
-```bash
-# (ArgoCD Pod) exec 기능 활성화
-kubectl get configmap argocd-cm -n argocd -o yaml | grep exec.enabled
-kubectl patch configmap argocd-cm -n argocd --type merge -p '{"data":{"exec.enabled":"true"}}'
-kubectl get configmap argocd-cm -n argocd -o yaml | grep exec.enabled # 활성화 확인
-
-# (RBAC) CR에 pods/exec 생성권한 추가  
-kubectl rolesum -n argocd argocd-server | head -n 5 # argocd-server의 Role Binding 확인
-kubectl describe clusterroles.rbac.authorization.k8s.io argocd-server | grep pods # pods/exec 없음 확인
-
-kubectl patch clusterrole argocd-server --type='json' \
-  -p='[{"op": "add", "path": "/rules/-", "value": {"apiGroups": [""], "resources": ["pods/exec"], "verbs": ["create"]}}]'
-
-kubectl describe clusterroles.rbac.authorization.k8s.io argocd-server | grep pods # pods/exec create 확인
-```
-
-![enable exec in argocd-server](image-13.png)
-![add pods exec rbac for argocd-server](image-12.png)
-
-이후에 웹 콘솔로 접속 시, Pod에 대해 웹 Terminal로 접근이 가능한 점을 확인할 수 있습니다.  
-
-![web based terminal](image-14.png)
-
-### (4) Testing with sample app  
+### (3) Testing with sample app  
 
 샘플 어플리케이션 `guestbook`을 배포 후, ArgoCD 대시보드를 통해 변화를 관찰해봅니다.  
 
@@ -246,6 +218,38 @@ kubectl get svc -n guestbook
 변화가 없는 것을 확인할 수 있습니다.  
 
 ![try enabling nodeport before self healing disabled](image-11.png)  
+
+왜냐하면, ArgoCD의 `Self healing`으로 동기화되고 있기 때문입니다.  
+
+이를 바꾸기위해, 웹 콘솔에서 Self healing을 비활성화하고 사용하면 됩니다.  
+
+### (4) ArgoCD 웹 콘솔에서 Pod Terminal 사용 활성화  
+
+Jenkins의 경우에는 웹 콘솔에서 Pod에 접속할 터미널이 없었던 것으로 알고있는데,  
+RBAC을 포함한 활성화 설정으로, 웹 콘솔에서 현재 배포된 Pod의 내부에 접근할 수 있습니다.  
+
+```bash
+# (ArgoCD Pod) exec 기능 활성화
+kubectl get configmap argocd-cm -n argocd -o yaml | grep exec.enabled
+kubectl patch configmap argocd-cm -n argocd --type merge -p '{"data":{"exec.enabled":"true"}}'
+kubectl get configmap argocd-cm -n argocd -o yaml | grep exec.enabled # 활성화 확인
+
+# (RBAC) CR에 pods/exec 생성권한 추가  
+kubectl rolesum -n argocd argocd-server | head -n 5 # argocd-server의 Role Binding 확인
+kubectl describe clusterroles.rbac.authorization.k8s.io argocd-server | grep pods # pods/exec 없음 확인
+
+kubectl patch clusterrole argocd-server --type='json' \
+  -p='[{"op": "add", "path": "/rules/-", "value": {"apiGroups": [""], "resources": ["pods/exec"], "verbs": ["create"]}}]'
+
+kubectl describe clusterroles.rbac.authorization.k8s.io argocd-server | grep pods # pods/exec create 확인
+```
+
+![enable exec in argocd-server](image-13.png)
+![add pods exec rbac for argocd-server](image-12.png)
+
+이후에 웹 콘솔로 접속 시, Pod에 대해 웹 Terminal로 접근이 가능한 점을 확인할 수 있습니다.  
+
+![web based terminal](image-14.png)
 
 ### (5) ArgoCD CLI  
 
