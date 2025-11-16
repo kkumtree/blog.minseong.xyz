@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>ArgoCD with Ingress - CI/CD 스터디 5주차 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="ArgoCD with Ingress - CI/CD 스터디 5주차" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/argocd-ingress/image-14.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/argocd-ingress/image-14.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/argocd-ingress/image-14.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src="/img/BlogWhite.svg" alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+     
+     <ul class="p-navigation__items">
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🌏
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+            
+            
+          </ul>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-14.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>ArgoCD with Ingress - CI/CD 스터디 5주차</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-16T17:38:34&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/helm" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">helm</span>
+              </div>
+            </a>
+            
+            <a href="/tags/argocd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">argocd</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cicd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CICD</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 CI/CD Study 5주차에는 ArgoCD를 좀더 다루었습니다.</p>
+<h2 id="0-실습-준비">0. 실습 준비</h2>
+<p>우선 80/443 포트를 사용할 수 있는지 확인하여야합니다. 아닌 경우, 다른 포트를 사용해야합니다.</p>
+<p>실제로 해보았을 경우 tailscale이 포트를 사용하는 것으로 보여 해당 서비스를 중지했습니다만,<br>
+kind yaml을 잘못 작성한 것으로 보입니다.</p>
+<p><img src="image-8.png" alt="stop other processes"></p>
+<h3 id="1-kind-및-kube-ops-view">(1) kind 및 kube-ops-view</h3>
+<p>이번에는 Ingress의 배포를 하기 위한 밑작업으로<br>
+Control Node에 라벨링을 진행합니다.<br>
+이는 다음에 이어질 <code>ingress-nginx</code> 배포 시, nodeSeletor 조건으로 사용합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 5w/shells/kind/up-kind.sh</span>
+</span></span><span style="display:flex;"><span>kind: Cluster
+</span></span><span style="display:flex;"><span>apiVersion: kind.x-k8s.io/v1alpha4
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># networking:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   apiServerAddress: &#34;0.0.0.0&#34;</span>
+</span></span><span style="display:flex;"><span>nodes:
+</span></span><span style="display:flex;"><span>- role: control-plane
+</span></span><span style="display:flex;"><span>  labels:
+</span></span><span style="display:flex;"><span>    ingress-ready: true
+</span></span><span style="display:flex;"><span>  extraPortMappings:
+</span></span><span style="display:flex;"><span>  - containerPort: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>    hostPort: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>    protocol: TCP
+</span></span><span style="display:flex;"><span>  - containerPort: <span style="color:#ae81ff">443</span>
+</span></span><span style="display:flex;"><span>    hostPort: <span style="color:#ae81ff">443</span>
+</span></span><span style="display:flex;"><span>    protocol: TCP
+</span></span><span style="display:flex;"><span>  - containerPort: <span style="color:#ae81ff">30000</span>
+</span></span><span style="display:flex;"><span>    hostPort: <span style="color:#ae81ff">30000</span>
+</span></span><span style="display:flex;"><span>  - containerPort: <span style="color:#ae81ff">30001</span>
+</span></span><span style="display:flex;"><span>    hostPort: <span style="color:#ae81ff">30001</span>
+</span></span><span style="display:flex;"><span>  - containerPort: <span style="color:#ae81ff">30002</span>
+</span></span><span style="display:flex;"><span>    hostPort: <span style="color:#ae81ff">30002</span>
+</span></span><span style="display:flex;"><span>  - containerPort: <span style="color:#ae81ff">30003</span>
+</span></span><span style="display:flex;"><span>    hostPort: <span style="color:#ae81ff">30003</span>
+</span></span><span style="display:flex;"><span>- role: worker
+</span></span></code></pre></div><p>kube-ops-view의 경우에는, 기존과 같습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># kube-ops-view</span>
+</span></span><span style="display:flex;"><span>helm repo add geek-cookbook https://geek-cookbook.github.io/charts/
+</span></span><span style="display:flex;"><span>helm install kube-ops-view geek-cookbook/kube-ops-view --version 1.2.2 --set service.main.type<span style="color:#f92672">=</span>NodePort,service.main.ports.http.nodePort<span style="color:#f92672">=</span><span style="color:#ae81ff">30001</span> --set env.TZ<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Asia/Seoul&#34;</span> --namespace kube-system
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-ops-view 접속 URL 확인  </span>
+</span></span><span style="display:flex;"><span>open <span style="color:#e6db74">&#34;http://127.0.0.1:30001/#scale=2&#34;</span> <span style="color:#75715e"># 배율 2x</span>
+</span></span></code></pre></div><p>사용자 라벨링 관련하여 문서가 갱신되어 지금은 확인하기가 어렵지만, 기존 문서(<a href="https://github.com/kubernetes-sigs/kind/issues/2889#issuecomment-1321001072">issues#2889/kind</a>)에는 아래와 같이 Taint toleration(예외 처리, 허용)을 해주고, 노드에 사용자 라벨링하도록 안내되어 있었다고 합니다.</p>
+<blockquote>
+<p>The manifests contains kind specific patches to forward the hostPorts to the ingress controller, set taint tolerations and schedule it to the custom labelled node.</p>
+</blockquote>
+<h3 id="2-ingress-nginx-배포">(2) Ingress Nginx 배포</h3>
+<p>먼저 Control Node의 라벨을 확인하여, 지정한 사용자 라벨이 정상적으로 있는지 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get nodes myk8s-control-plane -o jsonpath<span style="color:#f92672">={</span>.metadata.labels<span style="color:#f92672">}</span> | jq
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   &#34;beta.kubernetes.io/arch&#34;: &#34;amd64&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   &#34;beta.kubernetes.io/os&#34;: &#34;linux&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   &#34;ingress-ready&#34;: &#34;true&#34;,        # 이 값이 확인되어야 합니다. </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   &#34;kubernetes.io/arch&#34;: &#34;amd64&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   &#34;kubernetes.io/hostname&#34;: &#34;myk8s-control-plane&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   &#34;kubernetes.io/os&#34;: &#34;linux&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   &#34;node-role.kubernetes.io/control-plane&#34;: &#34;&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   &#34;node.kubernetes.io/exclude-from-external-load-balancers&#34;: &#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># }</span>
+</span></span></code></pre></div><p>이후, 배포를 진행합니다.</p>
+<p>해당 YAML에는 kind 배포 시 열어두었던 80/443 포트를 활용하는 것을 확인하였고,<br>
+master 및 control-plane에 대한 taint toleration도 확인하였습니다.</p>
+<blockquote>
+<p>(Deployment 항목) tolerations.[node-role.kubernetes.io/control-plane].effect=NoSchedule</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+</span></span></code></pre></div><p>ingress 컨트롤러에서 <code>--publish-status-address=localhost</code> 환경변수를 확인할 수 있습니다.</p>
+<p><img src="image.png" alt="deploy ingress-nginx in kind"></p>
+<p>더불어, Control plane 내에서 IPTABLES도 확인해봅니다.<br>
+ingress-nginx 파드에 대한 엔드포인트 IP로 검색했을 때 전달되는 것을 확인하였습니다.</p>
+<p><img src="image-1.png" alt="DNAT from control plane to ingress"></p>
+<h3 id="3-ssl-passthrough-flag-활성화">(3) SSL Passthrough flag 활성화</h3>
+<p>Argo CD의 경우 OpenSSL의 self-signed 인증서와 Secrets를 생성, 즉 자체 TLS 인증서를 쓰기 때문에<br>
+Nginx가 중간에서 TCP 프록시 처리를 하고 HTTPS 트래픽을 종료(TLS Termination)하여 <code>too many redirects</code> 오류가 발생합니다.</p>
+<p>그래서 이 부분도 수정해두도록 하겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># nginx-ingress-controller의 환경변수 체크</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it -n ingress-nginx deployments/ingress-nginx-controller -- /nginx-ingress-controller --help | grep ssl  
+</span></span></code></pre></div><p><img src="image-2.png" alt="parameter check"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 에디터를 지정하여 수정 (vi, nano 등)</span>
+</span></span><span style="display:flex;"><span>KUBE_EDITOR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;vi&#34;</span> kubectl edit -n ingress-nginx deployments/ingress-nginx-controller
+</span></span></code></pre></div><p><code>spec.template.spec.containers[controller].args</code>에 추가</p>
+<p><img src="image-3.png" alt="add arg in container spec"></p>
+<p>이후 Controller 파드의 환경변수 반영을 체크합니다.</p>
+<p><img src="image-4.png" alt="recheck arg in controller pod"></p>
+<h2 id="1-tls-활성화-argocd-배포">1. TLS 활성화 ArgoCD 배포</h2>
+<p>방금까지 <code>Client(Browser) -&gt; Ingress -&gt; ArgoCD 서버</code>간 E2E HTTPS가 유지될 수 있는 상황을 만들었으니,  자체 TLS 인증서를 사용하는 ArgoCD를 배포해보겠습니다.</p>
+<p>가상의 도메인으로 <code>argocd.example.com</code>로 정하고,<br>
+ArgoCD 서버 annotations에 <code>force-ssl-redirect</code>와 <code>ssl-passthrough</code>를 활성화하였습니다.</p>
+<h3 id="1-인증서-생성">(1) 인증서 생성</h3>
+<blockquote>
+<p><code>5w/shells/argocd</code> 폴더 참조<br>
+<code>9-create-local-crt.sh</code>로 생성한, 인증서는 <code>openssl-crt-file</code> 폴더에 저장.<br>
+설치는 <code>deploy-chart.sh</code>로 진행합니다.</p>
+</blockquote>
+<p><img src="image-6.png" alt="argocd shell files tree"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 5w/shells/argocd/argocd-values.yaml</span>
+</span></span><span style="display:flex;"><span>global:
+</span></span><span style="display:flex;"><span>  domain: argocd.example.com
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># # TLS certificate configuration via cert-manager</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># # cert-manager가 있을 때, 활용.  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># certificate: </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   enabled: true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>server:
+</span></span><span style="display:flex;"><span>  ingress:
+</span></span><span style="display:flex;"><span>    enabled: true
+</span></span><span style="display:flex;"><span>    ingressClassName: nginx
+</span></span><span style="display:flex;"><span>    annotations:
+</span></span><span style="display:flex;"><span>      nginx.ingress.kubernetes.io/force-ssl-redirect: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>      nginx.ingress.kubernetes.io/ssl-passthrough: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    tls: true
+</span></span></code></pre></div><p><img src="image-5.png" alt="creat cert and deploy argocd server in tls mode"></p>
+<p>더불어, <code>/etc/hosts</code> 파일도 수정하여, 임의의 도메인을 수정합니다.</p>
+<p><img src="image-7.png" alt="edit etc hosts file"></p>
+<h2 id="9-kind의-ingress-controllernginx-구성">9. kind의 Ingress Controller(NGINX) 구성</h2>
+<p>이번 실습에서는 kind의 Control plane에 별도의 사용자 지정 라벨링을 하였으나,<br>
+kind 문서(<a href="https://kind.sigs.k8s.io/docs/user/ingress">Ingress/kind</a>)에서는<br>
+k8s 공식 라벨 소개하는 2가지 방법이 있습니다.</p>
+<p>특히, 라벨은 kubernetest의 알려진(Well-Known)라벨인 <a href="https://kubernetes.io/docs/reference/labels-annotations-taints/#app-kubernetes-io-component"><code>app.kubernetes.io/component</code></a>을 활용하는 것을 확인하였습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Selector로 아래 라벨 활용 확인  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># app.kubernetes.io/component=controller </span>
+</span></span><span style="display:flex;"><span>kubectl wait --namespace ingress-nginx <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --for<span style="color:#f92672">=</span>condition<span style="color:#f92672">=</span>ready pod <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --selector<span style="color:#f92672">=</span>app.kubernetes.io/component<span style="color:#f92672">=</span>controller <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --timeout<span style="color:#f92672">=</span>90s
+</span></span></code></pre></div><p>이후 사용방법 요약.</p>
+<p>(1) <code>ingress-nginx-controller</code>에 등록된 External IP의 이용<br>
+(관련 YAML파일 다운로드:<a href="https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml">https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml</a>)<br>
+(2) kind 배포 시 Control plane에 80/443 포트(<code>extraPortMappings</code>)를 열고, localhost로 이용.</p>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://kind.sigs.k8s.io/docs/user/ingress">Ingress/kind</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/argocd-hello-world/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">ArgoCD 101 - CI/CD 스터디 4주차</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2024 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>

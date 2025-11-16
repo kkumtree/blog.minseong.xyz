@@ -96,6 +96,26 @@
 
             
             <div class="p-list__item">
+              <a href="/post/argocd-ingress/"><h2>ArgoCD with Ingress - CI/CD 스터디 5주차</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-16T17:38:34&#43;09:00</u></p>
+              <p>CloudNet@에서 진행하고 있는 CI/CD Study 5주차에는 ArgoCD를 좀더 다루었습니다.
+0. 실습 준비 우선 80/443 포트를 사용할 수 있는지 확인하여야합니다. 아닌 경우, 다른 포트를 사용해야합니다.
+실제로 해보았을 경우 tailscale이 포트를 사용하는 것으로 보여 해당 서비스를 중지했습니다만,
+kind yaml을 잘못 작성한 것으로 보입니다.
+(1) kind 및 kube-ops-view 이번에는 Ingress의 배포를 하기 위한 밑작업으로
+Control Node에 라벨링을 진행합니다.
+이는 다음에 이어질 ingress-nginx 배포 시, nodeSeletor 조건으로 사용합니다.
+# 5w/shells/kind/up-kind.sh kind: Cluster apiVersion: kind.x-k8s.io/v1alpha4 # networking: # apiServerAddress: &#34;0.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/argocd-hello-world/"><h2>ArgoCD 101 - CI/CD 스터디 4주차</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -169,26 +189,6 @@ Helm chart(차트)
 애플리케이션의 설정값은 일반적으로 k8s의 ConfigMap에 대응되는 속성입니다.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/vscode-devcontainer-usage/"><h2>VSCode DevContainer - CI/CD 스터디 1주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-19T20:50:46&#43;09:00</u></p>
-              <p>한가위 연휴의 끝과 함께, CloudNet@에서 진행하고 있는 CI/CD Study에 참여하게 되었습니다.
-이번에는 핸즈온용으로 즐겨쓰는 GitHub CodeSpace와 연관된,
-Visual Studio 상에서의 Dev Containers 활용에 대해 다뤄보고자 합니다.
-사용 OS환경은 Ubuntu Desktop 24.04 LTS 이며,
-아래의 문서에서 안내된대로 차근차근 따라해보며 좀 더 이해를 해보고자 합니다.
-Developing inside a Container
-0. Docker 설치 내용이 길어, 아래의 포스트로 나누었습니다.
-Ubuntu Docker 설치 작성 기준, Dev Container는 Ubuntu Snap 패키지(snapcraft)로 설치된 Docker에는 지원되지 않는다고 합니다. 사용자($USER)를 docker 그룹에 추가하여야합니다.</p>
-            </div>
-            
 <ol class="p-pagination">
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous" 
@@ -215,6 +215,9 @@ Ubuntu Docker 설치 작성 기준, Dev Container는 Ubuntu Snap 패키지(snapc
     <a class="p-pagination__link " href="/tags/cloudnet@/page/4/">4</a>
   </li>
   <li class="p-pagination__item">
+    <a class="p-pagination__link " href="/tags/cloudnet@/page/5/">5</a>
+  </li>
+  <li class="p-pagination__item">
     <a class="p-pagination__link--next "
         href="/tags/cloudnet@/page/2/" title="Next page">
         <i class="p-icon--contextual-menu">Next page</i>
@@ -222,7 +225,7 @@ Ubuntu Docker 설치 작성 기준, Dev Container는 Ubuntu Snap 패키지(snapc
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next"
-        href="/tags/cloudnet@/page/4/" title="Last page">
+        href="/tags/cloudnet@/page/5/" title="Last page">
         <i class="p-icon--contextual-menu">Last page</i>
     </a>
   </li>

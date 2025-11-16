@@ -6,17 +6,17 @@
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>CICD | kkumtree</title>
+    <title>argocd | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="CICD" />
+    <meta property="og:title" content="argocd" />
 
     
-    <meta property="og:image" content='https://blog.minseong.xyz/tags/cicd/' />
-    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/cicd/' />
+    <meta property="og:image" content='https://blog.minseong.xyz/tags/argocd/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/argocd/' />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/cicd/' />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/argocd/' />
 
     
     <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
@@ -82,7 +82,7 @@
   <section class="p-strip--suru main-slide main-strip">
       <div class="row">
         <div class="col-8 left-section">
-          <h1>CICD</h1>
+          <h1>argocd</h1>
           <p></p>
         </div>
       </div>
@@ -113,80 +113,6 @@ kind yaml을 잘못 작성한 것으로 보입니다.
 Control Node에 라벨링을 진행합니다.
 이는 다음에 이어질 ingress-nginx 배포 시, nodeSeletor 조건으로 사용합니다.
 # 5w/shells/kind/up-kind.sh kind: Cluster apiVersion: kind.x-k8s.io/v1alpha4 # networking: # apiServerAddress: &#34;0.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/argocd-hello-world/"><h2>ArgoCD 101 - CI/CD 스터디 4주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-09T08:44:34&#43;09:00</u></p>
-              <p>CloudNet@에서 진행하고 있는 CI/CD Study 4주차에는 ArgoCD를 다루기 시작했습니다.
-Kubernetes(이하, k8s) 상에서 ArgoCD는 Controller보다는 Operator에 가까운 포지션을 갖는다고 하여,
-이번 기회에 실습을 하면서 체감을 하는 것에 목적을 두었습니다.
-Controller: live state(실제 상태)와 desired state(원하는 상태)가 일치하는지 관찰 및 지속적 조정 Operator: Controller가 k8s 내부 object에서 동작한다면, Operator는 k8s 외의 것들도 다룰 수 있음 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
-https://github.com/kkumtree/ci-cd-cloudnet-study 의 4w 폴더
-0. 실습 준비 이전 게시물, Jenkins, git and kubernetes의 kind 및 kube-ops-view 설정과 동일하여 생략합니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/jenkins-ci-cd-kubernetes/"><h2>Jenkins, git and kubernetes - CI/CD 스터디 3주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-02T08:51:39&#43;09:00</u></p>
-              <p>CloudNet@에서 진행하고 있는 CI/CD Study 3주차에는 Jenkins와 ArgoCD을 다뤘습니다.
-이번에는 kubernetes(이하, k8s)에 self-host Git과 Jenkins를 배포 후 CI/CD 부분을 다루도록 하겠습니다.
-하다보니 개인적으로, 아래 3가지가 주로 기억에 남았던 것 같습니다.
-Docker UDS의 GID Gitea와 Multibranch Pipeline의 결합 Local PV의 Taint 및 Node 지정 더불어, Gitea에 대해 Basic Auth를 통한 CLI 접근을 막아보는 것도 새로이 해보았습니다.
-해당 구성들은 아래 GitHub에 탑재되어 있습니다.
-https://github.com/kkumtree/ci-cd-cloudnet-study 의 3w 폴더
-0. 실습 준비 (1) kind kind 설치의 경우 다음 포스트를 참고할 수 있습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/helm-template-reusing-statements/"><h2>Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-26T03:16:04&#43;09:00</u></p>
-              <p>이번에는 재사용성을 위해서 _helpers.tpl 파일을 활용해보겠습니다.
-기존의 Helm 101 - CI/CD 스터디 2주차에서 이어집니다.
-1. _helpers.tpl을 통한 공통 변수 재사용 (1) 공통사항 숙지 이전에 생성한 deployment.yaml과 service.yaml의 selector 부분에 공통점이 있습니다.
-# `{{ .Values.replicaCount }} ## deployment.yaml spec.selector.matchLabels spec.template.metadata.labels ## service.yaml spec.selector (2) 템플릿 생성 해당 label을 추가/삭제하려면, 여러 필드를 업데이트를 하여야합니다.
-대신 _helpers.tpl파일을 생성하여 구성읋 합니다.
-_helpers.tpl 뿐만 아니라, 맨 앞에 _로 시작하기만 하면 되며,
-이 파일은 k8s manifest 파일로 취급되지 않습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/helm-hello-world/"><h2>Helm 101 - CI/CD 스터디 2주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-24T01:17:39&#43;09:00</u></p>
-              <p>CloudNet@에서 진행하고 있는 CI/CD Study 2주차에는 Helm과 Tekton을 다뤘습니다.
-이번에는 Helm의 기본적인 부분을 다루도록 하겠습니다.
-1. Helm의 역할과 실습 준비사항 Helm? 템플릿 기반 솔루션. 즉, 버전 관리 및 공유, 배포가 가능한 아티팩트를 생성하도록 돕습니다.
-Helm chart(차트)
-공유 가능한 Kubernetes(쿠버네티스, 이하 k8s) 패키지며, 차트 간 의존성 등 다양한 요소를 포함합니다. k8s를 다루면 Helm을 많이 사용하게 되는데, 그 이유 중 하나가 chart 개념입니다. Rolling Update for ConfigMap
-애플리케이션의 설정값은 일반적으로 k8s의 ConfigMap에 대응되는 속성입니다.</p>
             </div>
             
 </div>

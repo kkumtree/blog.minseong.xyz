@@ -6,7 +6,23 @@
     <description>Recent content on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sun, 09 Nov 2025 08:44:34 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 16 Nov 2025 17:38:34 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ArgoCD with Ingress - CI/CD 스터디 5주차</title>
+      <link>https://blog.minseong.xyz/post/argocd-ingress/</link>
+      <pubDate>Sun, 16 Nov 2025 17:38:34 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/argocd-ingress/</guid>
+      <description>CloudNet@에서 진행하고 있는 CI/CD Study 5주차에는 ArgoCD를 좀더 다루었습니다.
+0. 실습 준비 우선 80/443 포트를 사용할 수 있는지 확인하여야합니다. 아닌 경우, 다른 포트를 사용해야합니다.
+실제로 해보았을 경우 tailscale이 포트를 사용하는 것으로 보여 해당 서비스를 중지했습니다만,
+kind yaml을 잘못 작성한 것으로 보입니다.
+(1) kind 및 kube-ops-view 이번에는 Ingress의 배포를 하기 위한 밑작업으로
+Control Node에 라벨링을 진행합니다.
+이는 다음에 이어질 ingress-nginx 배포 시, nodeSeletor 조건으로 사용합니다.
+# 5w/shells/kind/up-kind.sh kind: Cluster apiVersion: kind.x-k8s.io/v1alpha4 # networking: # apiServerAddress: &amp;#34;0.</description>
+    </item>
+    
     <item>
       <title>ArgoCD 101 - CI/CD 스터디 4주차</title>
       <link>https://blog.minseong.xyz/post/argocd-hello-world/</link>

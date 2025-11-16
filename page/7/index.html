@@ -97,6 +97,29 @@
 
             
             <div class="p-list__item">
+              <a href="/post/terraform-cloud-with-iam-sts/"><h2>IAM STS를 이용한 Terraform Cloud 권한 부여</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-09-13T20:54:28&#43;09:00</u></p>
+              <p>이번에는 Terraform Cloud가 얼마나 좋은지 더 알아보기 위해,
+스터디에서 지속적으로 장점이 강조되어 왔던 Terraform Cloud에
+IAM STS를 이용한 권한 부여 도전 및 적용 성공에 대해 써보려고 합니다.
+Terraform의 상태 저장을 위해 보통 AWS S3를 사용하는데,
+알다시피 S3 기록은 무료지만, 불러오는 것은 유료입니다.
+(전기는 국산이지만, 원료는 수입입니다)
+그래서 스터디용으로는 Terraform을 불러올 때마다,
+상태 값을 S3말고, 로컬에 저장했었는데요.
+밖에서는 노트북, 집에서는 데스크탑으로 하려니
+이걸 GitHub의 Private Repo에 저장할까? 하다가
+Terraform Cloud를 써보기로 했습니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/terraform-basic-resource-concept/"><h2>Terraform resource 이해하기 w/AWS VPC</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -163,24 +186,6 @@ kubectl get pods --all-namespaces NAMESPACE NAME READY STATUS RESTARTS AGE kube-
 VSCode 기반으로 세팅하기에, 그대로 따라온다면 별 문제 없이 잘 적용될 것이다.
 cf. classic token이라 할지라도, 큰 이슈는 없을 것으로 생각된다.
 Git config의 적용범위 git config &lt;parameter&gt;를 통해, 설정 값을 구성할 수 있다. system &gt; global &gt; local 순으로 옵션이 override된다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/how-to-fix-ubuntu-release-file-is-not-valid-yet/"><h2>Release file for URL is not valid yet 해결 방법</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-29T02:28:34&#43;09:00</u></p>
-              <p>최근 WSL를 쓰게 되면서, 한 가지 이슈가 생겼다.
-APT repo를 업데이트 하면 아래와 같은 에러가 발생한다.
-이것저것 손대보고 해결법을 적어보고자 한다.
-E: Release file for http://ports.ubuntu.com/ubuntu-ports/dists/jammy/InRelease is not valid yet (invalid for another 5min 1s). Updates for this repository will not be applied. 오류 증상은 릴리스 파일이 존재하지 않는데, 5분 1초동안 유효하지 않는다고 한다.
-무슨 말인가 싶은데, 5분 있다가 업데이트 해보라는 것이다.
-원인 오랫동안 절전모드로 두어서 시간 동기화가 안된 것으로 보인다.</p>
             </div>
             
 <ol class="p-pagination">

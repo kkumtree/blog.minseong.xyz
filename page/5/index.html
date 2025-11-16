@@ -97,6 +97,26 @@
 
             
             <div class="p-list__item">
+              <a href="/post/kans-3w-calico-operator/"><h2>Calico Installation in Operator Mode</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-18T20:52:16&#43;09:00</u></p>
+              <p>CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+스터디 진행 시, Manifests를 사용하여 Calico를 설치하였으나,
+Operator를 사용하여 설치하는 방법을 정리합니다.
+과제는 아니었지만, 요새 다들 Operator Framework를 사용해서 마라샹궈 볶듯이
+Operator를 지지고 볶는 것 같아서 호기심에 정리해보았습니다.
+참고로 Manifests를 사용하여 설치 시, 50개의 노드[1]를 초과하는 경우 Typha를 구성하여야 합니다.
+Calico 설치 환경 : AWS EC2(No EKS), kubeadm[2], pod-network-cidr=172.16.0.0/16, IPIP Mode
+1. Calico Routing Mode 위에 언급된 IPIP Mode를 이해하려면 Calico의 Routing Mode를 훑을 필요성이 있었습니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/kans-3w-calico-overview/"><h2>Calico 및 메트릭 수집 구성</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -166,24 +186,6 @@ k8s가 워낙 인기가 많기도 하지만, Pod 간 통신에는 많은 지식�
 첫 주차는, 바로 Kubernetes에 진입하지 않고 Containerization에 대한 이해를 먼저 다뤄주셨습니다.
 여타 쿠버네티스 강의와 달리 9주 간 매주 일요일에만 진행되는 세션인데도, 기반 기술을 다시 짚어주셔서 감사했습니다.
 1. AWS EC2 Instance 셋업 CloudFormation을 통해, EC2 및 제반사항을 구성하여 주셨습니다만, 취미 삼아 Terraform 변환 작업을 해보았습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/maintanence-in-2024/"><h2>Blog maintanence in 2024</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-08-26T00:02:49&#43;09:00</u></p>
-              <p>Before starting group study, I decided to update my blog.
-Very small things, but I have some needs about it.
-One is GitHub Actions&rsquo; dependency update and another is Licences.
-Cause, Blog is deployed via Github Actions, I need to check dependencies in Github Actions&rsquo; workflow.
-What I use is actions/checkout, actions/setup-go, and actions/setup-node.
-Name Prev. Version Latest Version Purpose checkout actions/checkoutv3 actions/checkoutv4 Src. and Dest. Branch setup-go actions/setup-go@v4 actions/setup-go@v5 Hugo setup-node actions/setup-node@v3 actions/setup-node@v4 Vanila Framework commit 5d4c9b9 Another thing is Licences.</p>
             </div>
             
 <ol class="p-pagination">
