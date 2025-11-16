@@ -23,12 +23,11 @@ draft: false # 글 초안 여부
 
 우선 80/443 포트를 사용할 수 있는지 확인하여야합니다. 아닌 경우, 다른 포트를 사용해야합니다.  
 
-실제로 해보았을 경우 tailscale이 포트를 사용하는 것으로 보여 해당 서비스를 중지했습니다만,  
-kind yaml을 잘못 작성한 것으로 보입니다.  
+실제로 해보았을 경우 tailscale이 포트를 사용하는 것으로 보여 해당 서비스를 중지해보았습니다. 다만, kind yaml을 잘못 작성한 것으로 보입니다.  
 
-![stop other processes](image-8.png)
+![stop other processes](image-8.png)  
 
-### (1) kind 및 kube-ops-view
+### (1) kind 및 kube-ops-view  
 
 이번에는 Ingress의 배포를 하기 위한 밑작업으로  
 Control Node에 라벨링을 진행합니다.  
@@ -154,6 +153,7 @@ ArgoCD 서버 annotations에 `force-ssl-redirect`와 `ssl-passthrough`를 활성
 > `9-create-local-crt.sh`로 생성한, 인증서는 `openssl-crt-file` 폴더에 저장.  
 > 설치는 `deploy-chart.sh`로 진행합니다.  
 
+(단, 이미지의 폴더명 `openssl-tls-file` 대신, `openssl-x509-output`으로 변경해두었습니다.)  
 ![argocd shell files tree](image-6.png)
 
 ```bash
@@ -182,6 +182,27 @@ server:
 
 ![edit etc hosts file](image-7.png)
 
+이후에 제대로 되었는지 확인해봐야하는데, ArgoCD 배포 직후에는 바로 반영이 안되고 수 분이 소요됩니다.  
+( `curl -vk https://argocd.example.com/` 활용)
+
+![check custom domain](image-9.png)
+
+웹 브라우저에서 접속을 해보면, 임의로 만들었기 때문에 경고가 나옵니다.  
+
+![exception for local domain](image-10.png)
+
+아래 명령어로 초기 패스워드를 얻고나서 접속해봅니다.  
+
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d ;echo
+# KALyT84LFFnr5x-J
+argocd login argocd.example.com --insecure
+```
+
+해당 URL로 웹 콘솔 접속도 잘되고, CLI로도 해당 도메인으로 접근이 잘 됩니다.  
+
+![cli check](image-11.png)
+
 ## 9. kind의 Ingress Controller(NGINX) 구성  
 
 이번 실습에서는 kind의 Control plane에 별도의 사용자 지정 라벨링을 하였으나,  
@@ -199,7 +220,7 @@ kubectl wait --namespace ingress-nginx \
   --timeout=90s
 ```
 
-이후 사용방법 요약.  
+이후 두 방법을 요약하면, 아래와 같습니다.  
 
 (1) `ingress-nginx-controller`에 등록된 External IP의 이용  
   (관련 YAML파일 다운로드:<https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml>)  
@@ -208,4 +229,5 @@ kubectl wait --namespace ingress-nginx \
 ## Reference
 
 - [Ingress/kind](https://kind.sigs.k8s.io/docs/user/ingress)  
-
+- [kind#2889/GitHub](https://github.com/kubernetes-sigs/kind/issues/2889#issuecomment-1321001072)  
+- [Well-Known Labels, Annotations and Taints/Kubernetes](https://kubernetes.io/docs/reference/labels-annotations-taints/#app-kubernetes-io-component)  
