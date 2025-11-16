@@ -127,8 +127,7 @@
   <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 CI/CD Study 5주차에는 ArgoCD를 좀더 다루었습니다.</p>
 <h2 id="0-실습-준비">0. 실습 준비</h2>
 <p>우선 80/443 포트를 사용할 수 있는지 확인하여야합니다. 아닌 경우, 다른 포트를 사용해야합니다.</p>
-<p>실제로 해보았을 경우 tailscale이 포트를 사용하는 것으로 보여 해당 서비스를 중지했습니다만,<br>
-kind yaml을 잘못 작성한 것으로 보입니다.</p>
+<p>실제로 해보았을 경우 tailscale이 포트를 사용하는 것으로 보여 해당 서비스를 중지해보았습니다. 다만, kind yaml을 잘못 작성한 것으로 보입니다.</p>
 <p><img src="image-8.png" alt="stop other processes"></p>
 <h3 id="1-kind-및-kube-ops-view">(1) kind 및 kube-ops-view</h3>
 <p>이번에는 Ingress의 배포를 하기 위한 밑작업으로<br>
@@ -218,7 +217,8 @@ ArgoCD 서버 annotations에 <code>force-ssl-redirect</code>와 <code>ssl-passth
 <code>9-create-local-crt.sh</code>로 생성한, 인증서는 <code>openssl-crt-file</code> 폴더에 저장.<br>
 설치는 <code>deploy-chart.sh</code>로 진행합니다.</p>
 </blockquote>
-<p><img src="image-6.png" alt="argocd shell files tree"></p>
+<p>(단, 이미지의 폴더명 <code>openssl-tls-file</code> 대신, <code>openssl-x509-output</code>으로 변경해두었습니다.)<br>
+<img src="image-6.png" alt="argocd shell files tree"></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 5w/shells/argocd/argocd-values.yaml</span>
 </span></span><span style="display:flex;"><span>global:
 </span></span><span style="display:flex;"><span>  domain: argocd.example.com
@@ -239,6 +239,17 @@ ArgoCD 서버 annotations에 <code>force-ssl-redirect</code>와 <code>ssl-passth
 </span></span></code></pre></div><p><img src="image-5.png" alt="creat cert and deploy argocd server in tls mode"></p>
 <p>더불어, <code>/etc/hosts</code> 파일도 수정하여, 임의의 도메인을 수정합니다.</p>
 <p><img src="image-7.png" alt="edit etc hosts file"></p>
+<p>이후에 제대로 되었는지 확인해봐야하는데, ArgoCD 배포 직후에는 바로 반영이 안되고 수 분이 소요됩니다.<br>
+( <code>curl -vk https://argocd.example.com/</code> 활용)</p>
+<p><img src="image-9.png" alt="check custom domain"></p>
+<p>웹 브라우저에서 접속을 해보면, 임의로 만들었기 때문에 경고가 나옵니다.</p>
+<p><img src="image-10.png" alt="exception for local domain"></p>
+<p>아래 명령어로 초기 패스워드를 얻고나서 접속해봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.data.password}&#34;</span> | base64 -d ;echo
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># KALyT84LFFnr5x-J</span>
+</span></span><span style="display:flex;"><span>argocd login argocd.example.com --insecure
+</span></span></code></pre></div><p>해당 URL로 웹 콘솔 접속도 잘되고, CLI로도 해당 도메인으로 접근이 잘 됩니다.</p>
+<p><img src="image-11.png" alt="cli check"></p>
 <h2 id="9-kind의-ingress-controllernginx-구성">9. kind의 Ingress Controller(NGINX) 구성</h2>
 <p>이번 실습에서는 kind의 Control plane에 별도의 사용자 지정 라벨링을 하였으나,<br>
 kind 문서(<a href="https://kind.sigs.k8s.io/docs/user/ingress">Ingress/kind</a>)에서는<br>
@@ -250,13 +261,15 @@ k8s 공식 라벨 소개하는 2가지 방법이 있습니다.</p>
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --for<span style="color:#f92672">=</span>condition<span style="color:#f92672">=</span>ready pod <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --selector<span style="color:#f92672">=</span>app.kubernetes.io/component<span style="color:#f92672">=</span>controller <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --timeout<span style="color:#f92672">=</span>90s
-</span></span></code></pre></div><p>이후 사용방법 요약.</p>
+</span></span></code></pre></div><p>이후 두 방법을 요약하면, 아래와 같습니다.</p>
 <p>(1) <code>ingress-nginx-controller</code>에 등록된 External IP의 이용<br>
 (관련 YAML파일 다운로드:<a href="https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml">https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml</a>)<br>
 (2) kind 배포 시 Control plane에 80/443 포트(<code>extraPortMappings</code>)를 열고, localhost로 이용.</p>
 <h2 id="reference">Reference</h2>
 <ul>
 <li><a href="https://kind.sigs.k8s.io/docs/user/ingress">Ingress/kind</a></li>
+<li><a href="https://github.com/kubernetes-sigs/kind/issues/2889#issuecomment-1321001072">kind#2889/GitHub</a></li>
+<li><a href="https://kubernetes.io/docs/reference/labels-annotations-taints/#app-kubernetes-io-component">Well-Known Labels, Annotations and Taints/Kubernetes</a></li>
 </ul>
 
   </div>
