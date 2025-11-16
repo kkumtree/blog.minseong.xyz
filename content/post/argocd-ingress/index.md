@@ -13,13 +13,16 @@ authors:
       launchpad: mscho7969
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
-image: image-14.png # 커버 이미지 URL
+image: image-10.png # 커버 이미지 URL
 draft: false # 글 초안 여부
 ---
 
 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 CI/CD Study 5주차에는 ArgoCD를 좀더 다루었습니다.  
 
 ## 0. 실습 준비  
+
+> 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
+> <https://github.com/kkumtree/ci-cd-cloudnet-study> 의 5w 폴더
 
 우선 80/443 포트를 사용할 수 있는지 확인하여야합니다. 아닌 경우, 다른 포트를 사용해야합니다.  
 
@@ -201,6 +204,7 @@ argocd login argocd.example.com --insecure
 
 해당 URL로 웹 콘솔 접속도 잘되고, CLI로도 해당 도메인으로 접근이 잘 됩니다.  
 
+![console check](image-12.png)
 ![cli check](image-11.png)
 
 ## 9. kind의 Ingress Controller(NGINX) 구성  
