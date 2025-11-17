@@ -99,19 +99,83 @@ kubectl delete ns argocd
 
 `deploy-chart.sh` 파일에서 해당되는 도메인과 생성된 키로 값을 변경한 뒤, 배포하였습니다. 
 
+```bash
+#!/bin/bash
+kubectl create ns argocd
+
+# confirm cert and key is available in the path
+kubectl -n argocd create secret tls argocd-server-tls \
+  --cert=openssl-x509-output/kkumtree-ms-7a34.panda-ule.ts.net.crt \
+  --key=openssl-x509-output/kkumtree-ms-7a34.panda-ule.ts.net.key
+
+# https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/values.yaml
+
+cat <<EOF > argocd-values-tailnet.yaml
+global:
+  domain: kkumtree-ms-7a34.panda-ule.ts.net
+
+# # TLS certificate configuration via cert-manager
+# # cert-manager가 있을 때, 활용.
+# certificate:
+#   enabled: true
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    tls: true
+EOF
+
+# https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd#installing-the-chart
+helm repo add argo https://argoproj.github.io/argo-helm
+# https://github.com/argoproj/argo-helm/releases
+helm install argocd argo/argo-cd --version 9.0.5 -f argocd-values-tailnet.yaml --namespace argocd
+```
+
 ![deploy argocd chart](image-5.png)
+
+다만, 차트 배포 시 ArgoCD 서버는 자체 TLS인증서를 쓰기로 설정되었기 때문에 
+위의 코드처럼, Tailscale도 Nginx ingress를 위한 추가 어노테이션 설정이 필요합니다.
+
+```bash
+server:
+  ingress:
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+```
+
+그렇지 않으면 ingress 로그를 까봤을 때, 307 redirect 에러가 납니다. 
+
+![307 redirect](image-8.png)
+
 
 ## 4. Tailscale serve 실행  
 
-차트 배포 시 ArgoCD 서버는 자체 TLS인증서를 쓰기로 설정되었기 때문에 
-Nginx ingress와 마찬가지로, Tailscale도 
-
 ```bash
-
+sudo tailscale serve --bg --tcp 443 tcp://localhost:443  
+sudo tailscale serve status  
 ```
 
 ![tailscale serve](image-6.png)
 
+## 5. 접속 확인
+
+이제 해당 네트워크에서 제대로 접속되는 것을 알 수 있습니다.  
+
+![connection test](image-9.png)
+
+Tailscale에 대한 DNS파일(`/etc/resolv.conf`)이 깨졌을 경우에는 재기동을 합니다. 
+
+```bash
+sudo tailscale down
+sudo tailscale up
+```
+
 ## Reference  
 
 - [tailscale serve command](https://tailscale.com/kb/1242/tailscale-serve)  
+- [Ingress Configuration - ArgoCD](https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-2-ssl-termination-at-ingress-controller) / kubernetes/ingress-nginx  
