@@ -2,7 +2,7 @@
 date: 2025-11-09T08:44:34+09:00
 title: "ArgoCD 101 - CI/CD 스터디 4주차"
 tags:
-  - helm
+  - argocd
   - CICD
   - CloudNet@
 authors:

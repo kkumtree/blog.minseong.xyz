@@ -2,8 +2,8 @@
 date: 2025-11-16T17:38:34+09:00
 title: "ArgoCD with Ingress - CI/CD 스터디 5주차"
 tags:
-  - helm
   - argocd
+  - ingress
   - CICD
   - CloudNet@
 authors:
