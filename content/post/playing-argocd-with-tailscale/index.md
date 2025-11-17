@@ -1,8 +1,9 @@
 ---
 date: 2025-11-17T10:23:03+09:00
-title: "제목"
+title: "Tailscale을 타고, ArgoCD에 접근해보기"
 tags:
   - tailscale
+  - argocd
   - CloudNet@
 authors:
     - name: kkumtree
@@ -11,8 +12,8 @@ authors:
       launchpad: mscho7969
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
-image: cover.png # 커버 이미지 URL
-draft: true # 글 초안 여부
+image: image-10.png # 커버 이미지 URL
+draft: post # 글 초안 여부
 ---
 
 이전 게시물, [ArgoCD with Ingress](../argocd-ingress/)의 도메인 설정을 하다가 문득, Tailscale의 [serve](https://tailscale.com/kb/1312/serve)기능을 활용하여 Tailscale 내부 네트워크(이하, tailnet)에서만 접근 가능한 ArgoCD 서버를 구축하면 되지 않을까? 하여 구성해보았습니다.  
@@ -139,7 +140,7 @@ helm install argocd argo/argo-cd --version 9.0.5 -f argocd-values-tailnet.yaml -
 ![deploy argocd chart](image-5.png)
 
 다만, 차트 배포 시 ArgoCD 서버는 자체 TLS인증서를 쓰기로 설정되었기 때문에 
-위의 코드처럼, Tailscale도 Nginx ingress를 위한 추가 어노테이션 설정이 필요합니다.
+위의 코드처럼, Tailscale을 위한 추가 어노테이션 설정이 필요합니다.
 
 ```bash
 server:
@@ -168,6 +169,11 @@ sudo tailscale serve status
 
 ![connection test](image-9.png)
 
+동일 Tailnet에 속한 휴대전화로 해당 도메인에 접근가능한 것을 확인할 수 있습니다. 
+
+![mobile browser](image-10.png)
+
+(Mac/Linux)
 Tailscale에 대한 DNS파일(`/etc/resolv.conf`)이 깨졌을 경우에는 재기동을 합니다. 
 
 ```bash
