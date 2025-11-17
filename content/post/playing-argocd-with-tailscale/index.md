@@ -13,7 +13,7 @@ authors:
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
 image: image-10.png # 커버 이미지 URL
-draft: post # 글 초안 여부
+draft: false # 글 초안 여부
 ---
 
 이전 게시물, [ArgoCD with Ingress](../argocd-ingress/)의 도메인 설정을 하다가 문득, Tailscale의 [serve](https://tailscale.com/kb/1312/serve)기능을 활용하여 Tailscale 내부 네트워크(이하, tailnet)에서만 접근 가능한 ArgoCD 서버를 구축하면 되지 않을까? 하여 구성해보았습니다.  
