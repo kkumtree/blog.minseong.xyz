@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html><head>
-	<meta name="generator" content="Hugo 0.110.0">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>kkumtree | kkumtree</title>
+    <title>tailscale | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="kkumtree" />
+    <meta property="og:title" content="tailscale" />
 
     
-    <meta property="og:image" content='https://blog.minseong.xyz/' />
-    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/' />
+    <meta property="og:image" content='https://blog.minseong.xyz/tags/tailscale/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/tailscale/' />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content='https://blog.minseong.xyz/' />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/tailscale/' />
 
     
     <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
@@ -83,7 +82,7 @@
   <section class="p-strip--suru main-slide main-strip">
       <div class="row">
         <div class="col-8 left-section">
-          <h1>kkumtree</h1>
+          <h1>tailscale</h1>
           <p></p>
         </div>
       </div>
@@ -112,123 +111,6 @@ Tailscale의 경우, Mesh 네트워크의 형태를 가지며 Wireguard를 활�
 구분 전통적 중앙집중식 VPN Tailscale (메쉬 VPN) 네트워크 구조 중앙 서버를 통한 모든 트래픽 경유​ P2P 직접 연결, 분산형 메쉬 네트워크​ 데이터 경로 클라이언트 → VPN 서버 → 목적지​ 클라이언트 → 목적지 (직접 연결)​ 프로토콜 OpenVPN(TCP/UDP), IKEv2, L2TP WireGuard(UDP 기반) 성능 중앙 서버 병목 발생, 지연 증가​ 직접 연결로 지연 최소화, 빠른 속도 설정 복잡도 서버 구축, 포트 포워딩 필요​ 로그인만으로 즉시 사용 가능​ NAT 통과 수동 포트 포워딩 필요​ 자동 NAT Traversal 지원 확장성 서버 용량에 따라 제한​ 각 노드 독립적, 확장 용이 보안 중앙 서버가 모든 트래픽 확인 가능​ 종단 간 암호화, P2P 전송​ Tailscale의 serve와 같은 경우는, ngrok의 기본 기능과 유사한 funnel과 달리</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/argocd-ingress/"><h2>ArgoCD with Ingress - CI/CD 스터디 5주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-16T17:38:34&#43;09:00</u></p>
-              <p>CloudNet@에서 진행하고 있는 CI/CD Study 5주차에는 ArgoCD를 좀더 다루었습니다.
-0. 실습 준비 해당 구성들은 아래 GitHub에 탑재되어 있습니다. https://github.com/kkumtree/ci-cd-cloudnet-study 의 5w 폴더
-우선 80/443 포트를 사용할 수 있는지 확인하여야합니다. 아닌 경우, 다른 포트를 사용해야합니다.
-실제로 해보았을 경우 tailscale이 포트를 사용하는 것으로 오인하여 해당 서비스를 중지해보았습니다.
-다만, 단순히 kind YAML을 잘못 작성한 것으로 보입니다.
-(1) kind 및 kube-ops-view 이번에는 Ingress의 배포를 하기 위한 밑작업으로
-Control Node에 라벨링을 진행합니다.
-이는 다음에 이어질 ingress-nginx 배포 시, nodeSeletor 조건으로 사용합니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/argocd-hello-world/"><h2>ArgoCD 101 - CI/CD 스터디 4주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-09T08:44:34&#43;09:00</u></p>
-              <p>CloudNet@에서 진행하고 있는 CI/CD Study 4주차에는 ArgoCD를 다루기 시작했습니다.
-Kubernetes(이하, k8s) 상에서 ArgoCD는 Controller보다는 Operator에 가까운 포지션을 갖는다고 하여,
-이번 기회에 실습을 하면서 체감을 하는 것에 목적을 두었습니다.
-Controller: live state(실제 상태)와 desired state(원하는 상태)가 일치하는지 관찰 및 지속적 조정 Operator: Controller가 k8s 내부 object에서 동작한다면, Operator는 k8s 외의 것들도 다룰 수 있음 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
-https://github.com/kkumtree/ci-cd-cloudnet-study 의 4w 폴더
-0. 실습 준비 이전 게시물, Jenkins, git and kubernetes의 kind 및 kube-ops-view 설정과 동일하여 생략합니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/jenkins-ci-cd-kubernetes/"><h2>Jenkins, git and kubernetes - CI/CD 스터디 3주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-02T08:51:39&#43;09:00</u></p>
-              <p>CloudNet@에서 진행하고 있는 CI/CD Study 3주차에는 Jenkins와 ArgoCD을 다뤘습니다.
-이번에는 kubernetes(이하, k8s)에 self-host Git과 Jenkins를 배포 후 CI/CD 부분을 다루도록 하겠습니다.
-하다보니 개인적으로, 아래 3가지가 주로 기억에 남았던 것 같습니다.
-Docker UDS의 GID Gitea와 Multibranch Pipeline의 결합 Local PV의 Taint 및 Node 지정 더불어, Gitea에 대해 Basic Auth를 통한 CLI 접근을 막아보는 것도 새로이 해보았습니다.
-해당 구성들은 아래 GitHub에 탑재되어 있습니다.
-https://github.com/kkumtree/ci-cd-cloudnet-study 의 3w 폴더
-0. 실습 준비 (1) kind kind 설치의 경우 다음 포스트를 참고할 수 있습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/helm-template-reusing-statements/"><h2>Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-26T03:16:04&#43;09:00</u></p>
-              <p>이번에는 재사용성을 위해서 _helpers.tpl 파일을 활용해보겠습니다.
-기존의 Helm 101 - CI/CD 스터디 2주차에서 이어집니다.
-1. _helpers.tpl을 통한 공통 변수 재사용 (1) 공통사항 숙지 이전에 생성한 deployment.yaml과 service.yaml의 selector 부분에 공통점이 있습니다.
-# `{{ .Values.replicaCount }} ## deployment.yaml spec.selector.matchLabels spec.template.metadata.labels ## service.yaml spec.selector (2) 템플릿 생성 해당 label을 추가/삭제하려면, 여러 필드를 업데이트를 하여야합니다.
-대신 _helpers.tpl파일을 생성하여 구성읋 합니다.
-_helpers.tpl 뿐만 아니라, 맨 앞에 _로 시작하기만 하면 되며,
-이 파일은 k8s manifest 파일로 취급되지 않습니다.</p>
-            </div>
-            
-<ol class="p-pagination">
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--previous" 
-        href="/" title="Previous page">
-        <i class="p-icon--contextual-menu">First page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--previous  is-disabled" 
-         title="Previous page">
-        <i class="p-icon--contextual-menu">Previous page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link  is-active" href="/">1</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/page/2/">2</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/page/3/">3</a>
-  </li>
-  <li class="p-pagination__item p-pagination__item--truncation">
-    …
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/page/11/">11</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--next "
-        href="/page/2/" title="Next page">
-        <i class="p-icon--contextual-menu">Next page</i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--next"
-        href="/page/11/" title="Last page">
-        <i class="p-icon--contextual-menu">Last page</i>
-    </a>
-  </li>
-</ol>
 </div>
         </div>
       </div>

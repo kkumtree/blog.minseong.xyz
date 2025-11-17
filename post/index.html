@@ -96,6 +96,22 @@
 
             
             <div class="p-list__item">
+              <a href="/post/playing-argocd-with-tailscale/"><h2>Tailscale을 타고, ArgoCD에 접근해보기</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-17T10:23:03&#43;09:00</u></p>
+              <p>이전 게시물, ArgoCD with Ingress의 도메인 설정을 하다가 문득, Tailscale의 serve기능을 활용하여 Tailscale 내부 네트워크(이하, tailnet)에서만 접근 가능한 ArgoCD 서버를 구축하면 되지 않을까? 하여 구성해보았습니다.
+1. Tailscale과 Serve 전통적인 중앙집중식(Hub-Spoke) VPN이 아래와 같다면,
+Tailscale의 경우, Mesh 네트워크의 형태를 가지며 Wireguard를 활용합니다.
+구분 전통적 중앙집중식 VPN Tailscale (메쉬 VPN) 네트워크 구조 중앙 서버를 통한 모든 트래픽 경유​ P2P 직접 연결, 분산형 메쉬 네트워크​ 데이터 경로 클라이언트 → VPN 서버 → 목적지​ 클라이언트 → 목적지 (직접 연결)​ 프로토콜 OpenVPN(TCP/UDP), IKEv2, L2TP WireGuard(UDP 기반) 성능 중앙 서버 병목 발생, 지연 증가​ 직접 연결로 지연 최소화, 빠른 속도 설정 복잡도 서버 구축, 포트 포워딩 필요​ 로그인만으로 즉시 사용 가능​ NAT 통과 수동 포트 포워딩 필요​ 자동 NAT Traversal 지원 확장성 서버 용량에 따라 제한​ 각 노드 독립적, 확장 용이 보안 중앙 서버가 모든 트래픽 확인 가능​ 종단 간 암호화, P2P 전송​ Tailscale의 serve와 같은 경우는, ngrok의 기본 기능과 유사한 funnel과 달리</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/argocd-ingress/"><h2>ArgoCD with Ingress - CI/CD 스터디 5주차</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -169,24 +185,6 @@ https://github.com/kkumtree/ci-cd-cloudnet-study 의 3w 폴더
 대신 _helpers.tpl파일을 생성하여 구성읋 합니다.
 _helpers.tpl 뿐만 아니라, 맨 앞에 _로 시작하기만 하면 되며,
 이 파일은 k8s manifest 파일로 취급되지 않습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/helm-hello-world/"><h2>Helm 101 - CI/CD 스터디 2주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-24T01:17:39&#43;09:00</u></p>
-              <p>CloudNet@에서 진행하고 있는 CI/CD Study 2주차에는 Helm과 Tekton을 다뤘습니다.
-이번에는 Helm의 기본적인 부분을 다루도록 하겠습니다.
-1. Helm의 역할과 실습 준비사항 Helm? 템플릿 기반 솔루션. 즉, 버전 관리 및 공유, 배포가 가능한 아티팩트를 생성하도록 돕습니다.
-Helm chart(차트)
-공유 가능한 Kubernetes(쿠버네티스, 이하 k8s) 패키지며, 차트 간 의존성 등 다양한 요소를 포함합니다. k8s를 다루면 Helm을 많이 사용하게 되는데, 그 이유 중 하나가 chart 개념입니다. Rolling Update for ConfigMap
-애플리케이션의 설정값은 일반적으로 k8s의 ConfigMap에 대응되는 속성입니다.</p>
             </div>
             
 <ol class="p-pagination">

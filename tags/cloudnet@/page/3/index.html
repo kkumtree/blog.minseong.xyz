@@ -96,6 +96,22 @@
 
             
             <div class="p-list__item">
+              <a href="/post/terraform-basic-resource-concept/"><h2>Terraform resource 이해하기 w/AWS VPC</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-09-08T22:41:14&#43;09:00</u></p>
+              <p>이번에는 CloudNet@를 통해 학습한 내용을 기반으로,
+AZ를 대상으로 한 data 조회 AWS VPC 생성 예제로 살펴보는 output resource 이름 변경 순으로 알아보도록 하겠습니다.
+교재로 사용한 [테라폼으로 시작하는 IaC] 도 참고하였습니다.
+기본 설정 aws-cli에 리전을 ap-northeast-2을 설정하였습니다. $ aws configure list Name Value Type Location ---- ----- ---- -------- profile &lt;not set&gt; None None access_key ****************2U5J shared-credentials-file secret_key ****************Z0co shared-credentials-file region ap-northeast-2 config-file ~/.aws/config 1. data 조회 data는 사용자가 정의하는 resource 및 리소스에 대한 스펙과 반대로,</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/terraform-hello-world-tfenv/"><h2>Terraform 시작하기 w/Minimal Ubuntu</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -168,24 +184,6 @@ HPA custom metrics(사용자 정의 메트릭) 적용
 YAML 설정값을 CPU로 맞춘 것을 잊고, 프로비저닝을 잘못 예측한 것도 함께 공유합니다.
 AutoScaling
 HPA: Horizontal Pod Autoscaler VPA: Vertical Pod Autoscaler CA: Cluster Autoscaler 각 CSP 의존적, 워커 노드 레벨에서의 오토스케일링 1. 실습 환경 배포 4주차의 초기 배포 내용에 p8s 및 Grafana를 추가하여 배포 verticalPodAutoscaler 활성화 추천 대시보드: 15757, 17900, 15172 curl -O https://s3.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/aws-eks-study-week4/"><h2>AWS EKS 스터디 4주차 - Observability</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-21T06:13:52&#43;09:00</u></p>
-              <p>이번 주차에는 Observability에 대해 스터디가 진행되었습니다.
-자원 모니터링 툴들의 적용 및 사용이 중심입니다.
-그나저나 k8s 1.26에서 metrics의 일부 명칭이 바뀌는 걸 보고 식겁했습니다.
-(etcd_db_total_size_bytes 대신, apiserver_storage_db_total_size_in_bytes 으로 변경)
-또한 kubecost의 경우, cloudformation 스택 제거 후에도 볼륨 데이터가 남아있어서 별도로 삭제해야 했습니다.
-1. 실습환경 배포 NAT게이트웨이, EBS addon, IAM role, ISRA for LB/EFS, PreCommand 포함 노드: t3.xlarge t3a.xlarge(AMD)는 서울 리전 b AZ(ap-northeast-2b)에서 미지원 더 많은 값들이 입력되어서, 생성 완료까지 더 많은 시간이 소요 (약 20여분 이내) curl -O https://s3.</p>
             </div>
             
 <ol class="p-pagination">

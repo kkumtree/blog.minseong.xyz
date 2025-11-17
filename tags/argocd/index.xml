@@ -6,7 +6,19 @@
     <description>Recent content in argocd on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sun, 16 Nov 2025 17:38:34 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/argocd/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 17 Nov 2025 10:23:03 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/argocd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tailscale을 타고, ArgoCD에 접근해보기</title>
+      <link>https://blog.minseong.xyz/post/playing-argocd-with-tailscale/</link>
+      <pubDate>Mon, 17 Nov 2025 10:23:03 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/playing-argocd-with-tailscale/</guid>
+      <description>이전 게시물, ArgoCD with Ingress의 도메인 설정을 하다가 문득, Tailscale의 serve기능을 활용하여 Tailscale 내부 네트워크(이하, tailnet)에서만 접근 가능한 ArgoCD 서버를 구축하면 되지 않을까? 하여 구성해보았습니다.
+1. Tailscale과 Serve 전통적인 중앙집중식(Hub-Spoke) VPN이 아래와 같다면,
+Tailscale의 경우, Mesh 네트워크의 형태를 가지며 Wireguard를 활용합니다.
+구분 전통적 중앙집중식 VPN Tailscale (메쉬 VPN) 네트워크 구조 중앙 서버를 통한 모든 트래픽 경유​ P2P 직접 연결, 분산형 메쉬 네트워크​ 데이터 경로 클라이언트 → VPN 서버 → 목적지​ 클라이언트 → 목적지 (직접 연결)​ 프로토콜 OpenVPN(TCP/UDP), IKEv2, L2TP WireGuard(UDP 기반) 성능 중앙 서버 병목 발생, 지연 증가​ 직접 연결로 지연 최소화, 빠른 속도 설정 복잡도 서버 구축, 포트 포워딩 필요​ 로그인만으로 즉시 사용 가능​ NAT 통과 수동 포트 포워딩 필요​ 자동 NAT Traversal 지원 확장성 서버 용량에 따라 제한​ 각 노드 독립적, 확장 용이 보안 중앙 서버가 모든 트래픽 확인 가능​ 종단 간 암호화, P2P 전송​ Tailscale의 serve와 같은 경우는, ngrok의 기본 기능과 유사한 funnel과 달리</description>
+    </item>
+    
     <item>
       <title>ArgoCD with Ingress - CI/CD 스터디 5주차</title>
       <link>https://blog.minseong.xyz/post/argocd-ingress/</link>
