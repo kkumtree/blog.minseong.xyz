@@ -14,7 +14,7 @@
     <loc>https://blog.minseong.xyz/tags/cloudnet@/</loc>
     <lastmod>2025-11-16T17:38:34+09:00</lastmod>
   </url><url>
-    <loc>https://blog.minseong.xyz/tags/helm/</loc>
+    <loc>https://blog.minseong.xyz/tags/ingress/</loc>
     <lastmod>2025-11-16T17:38:34+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/</loc>
@@ -30,6 +30,9 @@
     <lastmod>2025-11-09T08:44:34+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/gitea/</loc>
+    <lastmod>2025-11-02T08:51:39+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/tags/helm/</loc>
     <lastmod>2025-11-02T08:51:39+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/jenkins/</loc>
@@ -148,9 +151,6 @@
   </url><url>
     <loc>https://blog.minseong.xyz/post/kans-7w-envoy-helloworld/</loc>
     <lastmod>2024-10-15T10:16:38+09:00</lastmod>
-  </url><url>
-    <loc>https://blog.minseong.xyz/tags/ingress/</loc>
-    <lastmod>2024-10-10T22:12:57+09:00</lastmod>
   </url><url>
     <loc>https://blog.minseong.xyz/tags/k3s/</loc>
     <lastmod>2024-10-10T22:12:57+09:00</lastmod>

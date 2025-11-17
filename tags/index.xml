@@ -35,11 +35,11 @@
     </item>
     
     <item>
-      <title>helm</title>
-      <link>https://blog.minseong.xyz/tags/helm/</link>
+      <title>ingress</title>
+      <link>https://blog.minseong.xyz/tags/ingress/</link>
       <pubDate>Sun, 16 Nov 2025 17:38:34 +0900</pubDate>
       
-      <guid>https://blog.minseong.xyz/tags/helm/</guid>
+      <guid>https://blog.minseong.xyz/tags/ingress/</guid>
       <description></description>
     </item>
     
@@ -49,6 +49,15 @@
       <pubDate>Sun, 02 Nov 2025 08:51:39 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/gitea/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>helm</title>
+      <link>https://blog.minseong.xyz/tags/helm/</link>
+      <pubDate>Sun, 02 Nov 2025 08:51:39 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/tags/helm/</guid>
       <description></description>
     </item>
     
@@ -274,15 +283,6 @@
       <pubDate>Sat, 19 Oct 2024 16:59:16 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/tags/proxy/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ingress</title>
-      <link>https://blog.minseong.xyz/tags/ingress/</link>
-      <pubDate>Thu, 10 Oct 2024 22:12:57 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/tags/ingress/</guid>
       <description></description>
     </item>
     
