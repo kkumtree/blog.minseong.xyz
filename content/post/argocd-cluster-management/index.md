@@ -168,3 +168,12 @@ argocd cluster add kind-prd --name prd-k8s
 
 ![register clusters with argocd cli](image-10.png)  
 
+등록이 되었는지 확인해봅니다. 
+클러스터의 자격증명은 `argocd.argoproj.io/secret-type=cluster`과 함께 시크릿으로 저장됩니다.  
+
+```bash
+kubectl get secret -n argocd -l argocd.argoproj.io/secret-type=cluster
+argocd cluster list
+```
+
+![check registered clusters](image-11.png)
