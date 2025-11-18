@@ -12,11 +12,15 @@ authors:
       launchpad: mscho7969
       github: kkumtree
       profile: https://avatars.githubusercontent.com/u/52643858?v=4 
-image: image-10.png # 커버 이미지 URL
+image: image-11.png # 커버 이미지 URL
 draft: false # 글 초안 여부
 ---
 
 이전 게시물, [ArgoCD with Ingress](../argocd-ingress/)의 도메인 설정을 하다가 문득, Tailscale의 [serve](https://tailscale.com/kb/1312/serve)기능을 활용하여 Tailscale 내부 네트워크(이하, tailnet)에서만 접근 가능한 ArgoCD 서버를 구축하면 되지 않을까? 하여 구성해보았습니다.  
+
+![tailnet diagram](image-11.png)  
+
+> kind를 운용 중인 Host와 접속할 Client들에 Tailscale 설치되어 있어야합니다.  
 
 ## 1. Tailscale과 Serve
 
@@ -152,7 +156,6 @@ server:
 그렇지 않으면 ingress 로그를 까봤을 때, 307 redirect 에러가 납니다. 
 
 ![307 redirect](image-8.png)
-
 
 ## 4. Tailscale serve 실행  
 
