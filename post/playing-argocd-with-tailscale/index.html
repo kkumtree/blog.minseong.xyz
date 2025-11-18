@@ -264,11 +264,15 @@ tailnet에 속한 기기만 접근이 가능합니다.</p>
 <p><img src="image-9.png" alt="connection test"></p>
 <p>동일 Tailnet에 속한 휴대전화로 해당 도메인에 접근가능한 것을 확인할 수 있습니다.</p>
 <p><img src="image-10.png" alt="mobile browser"></p>
-<p>(Mac/Linux)
+<p>(Mac/Linux)<br>
 Tailscale에 대한 DNS파일(<code>/etc/resolv.conf</code>)이 깨졌을 경우에는 재기동을 합니다.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo tailscale down
 </span></span><span style="display:flex;"><span>sudo tailscale up
-</span></span></code></pre></div><h2 id="reference">Reference</h2>
+</span></span></code></pre></div><h2 id="9-tailscale-serve-종료">9. Tailscale serve 종료</h2>
+<p>실습을 마쳤다면, 종료하여 해당 포트를 반납합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo tailscale serve --tcp <span style="color:#ae81ff">443</span> off
+</span></span></code></pre></div><p><img src="image-12.png" alt="disable tailscale tcp 443 serve"></p>
+<h2 id="reference">Reference</h2>
 <ul>
 <li><a href="https://tailscale.com/kb/1242/tailscale-serve">tailscale serve command</a></li>
 <li><a href="https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-2-ssl-termination-at-ingress-controller">Ingress Configuration - ArgoCD</a> / kubernetes/ingress-nginx</li>
