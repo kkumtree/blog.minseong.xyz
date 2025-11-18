@@ -176,13 +176,23 @@ sudo tailscale serve status
 
 ![mobile browser](image-10.png)
 
-(Mac/Linux)
+(Mac/Linux)  
 Tailscale에 대한 DNS파일(`/etc/resolv.conf`)이 깨졌을 경우에는 재기동을 합니다. 
 
 ```bash
 sudo tailscale down
 sudo tailscale up
 ```
+
+## 9. Tailscale serve 종료  
+
+실습을 마쳤다면, 종료하여 해당 포트를 반납합니다.  
+
+```bash
+sudo tailscale serve --tcp 443 off
+```
+
+![disable tailscale tcp 443 serve](image-12.png)
 
 ## Reference  
 
