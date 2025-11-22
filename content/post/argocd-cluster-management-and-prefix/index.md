@@ -1,5 +1,5 @@
 ---
-date: 2025-11-18T14:23:29+09:00
+date: 2025-11-22T20:56:43+09:00
 title: "ArgoCD Cluster 및 Prefix 관리 - CI/CD 스터디 6주차"
 tags:
   - argocd
