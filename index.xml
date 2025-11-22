@@ -6,11 +6,11 @@
     <description>Recent content on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Tue, 18 Nov 2025 14:23:29 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 22 Nov 2025 20:56:43 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ArgoCD Cluster 및 Prefix 관리 - CI/CD 스터디 6주차</title>
       <link>https://blog.minseong.xyz/post/argocd-cluster-management-and-prefix/</link>
-      <pubDate>Tue, 18 Nov 2025 14:23:29 +0900</pubDate>
+      <pubDate>Sat, 22 Nov 2025 20:56:43 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/post/argocd-cluster-management-and-prefix/</guid>
       <description>CloudNet@에서 진행하고 있는 CI/CD Study 6주차에는 ArgoCD를 마지막으로 다루었습니다.
