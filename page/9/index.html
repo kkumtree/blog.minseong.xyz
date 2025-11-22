@@ -97,6 +97,24 @@
 
             
             <div class="p-list__item">
+              <a href="/post/aws-eks-study-week7/"><h2>AWS EKS 스터디 7주차 - Automation</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-10T15:13:19&#43;09:00</u></p>
+              <p>EKS 스터디도 마지막 7주차를 맞이했습니다.
+이번에는 AWS Controller for k8s(ACK)와 flux를 가볍게 실습해보고
+자동화에 대해 맛보기를 해보았습니다.
+앞서 학습해본 IRSA 개념 외에도 CRD(CustomResourceDefinition)을 활용합니다.
+1. 실습환경 배포 실습을 위한 YAML파일이 변경된거 말고는 6주차와 유사합니다.
+curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/eks-oneclick6.yaml # 이하 중략 # CERT_ARN(ACM)의 경우에는 /etc/profile에 환경변수 저장을 안해둬서 # 세션이 만료되면, 다시 재설정 필요 CERT_ARN=`aws acm list-certificates --query &#39;CertificateSummaryList[].CertificateArn[]&#39; --output text` echo $CERT_ARN 2. ACK(AWS Controller for k8s) 웹콘솔에 접근하지 않고도, AWS 서비스 리소스를 직접 k8s에서 정의 및 사용가능 순서: ACK 컨트롤러 설치 -&gt; IRSA 설정 -&gt; AWS 리소스 컨트롤 같은 패턴으로 이루어져있는데, Cloudformation을 쓰다보니 중간중간 대기 시간 발생 (23/05/29) GA: 17개 서비스, Preview: 10개 서비스 2-1.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/how-to-add-comment-section-in-gh-pages/"><h2>gh-pages에 댓글 기능 추가하기(giscus/Hugo)</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -168,24 +186,6 @@ AutoScaling
 HPA: Horizontal Pod Autoscaler VPA: Vertical Pod Autoscaler CA: Cluster Autoscaler 각 CSP 의존적, 워커 노드 레벨에서의 오토스케일링 1. 실습 환경 배포 4주차의 초기 배포 내용에 p8s 및 Grafana를 추가하여 배포 verticalPodAutoscaler 활성화 추천 대시보드: 15757, 17900, 15172 curl -O https://s3.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/aws-eks-study-week4/"><h2>AWS EKS 스터디 4주차 - Observability</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-21T06:13:52&#43;09:00</u></p>
-              <p>이번 주차에는 Observability에 대해 스터디가 진행되었습니다.
-자원 모니터링 툴들의 적용 및 사용이 중심입니다.
-그나저나 k8s 1.26에서 metrics의 일부 명칭이 바뀌는 걸 보고 식겁했습니다.
-(etcd_db_total_size_bytes 대신, apiserver_storage_db_total_size_in_bytes 으로 변경)
-또한 kubecost의 경우, cloudformation 스택 제거 후에도 볼륨 데이터가 남아있어서 별도로 삭제해야 했습니다.
-1. 실습환경 배포 NAT게이트웨이, EBS addon, IAM role, ISRA for LB/EFS, PreCommand 포함 노드: t3.xlarge t3a.xlarge(AMD)는 서울 리전 b AZ(ap-northeast-2b)에서 미지원 더 많은 값들이 입력되어서, 생성 완료까지 더 많은 시간이 소요 (약 20여분 이내) curl -O https://s3.</p>
-            </div>
-            
 <ol class="p-pagination">
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous" 
@@ -220,8 +220,11 @@ HPA: Horizontal Pod Autoscaler VPA: Vertical Pod Autoscaler CA: Cluster Autoscal
   <li class="p-pagination__item">
     <a class="p-pagination__link " href="/page/10/">10</a>
   </li>
+  <li class="p-pagination__item p-pagination__item--truncation">
+    …
+  </li>
   <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/page/11/">11</a>
+    <a class="p-pagination__link " href="/page/12/">12</a>
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next "
@@ -231,7 +234,7 @@ HPA: Horizontal Pod Autoscaler VPA: Vertical Pod Autoscaler CA: Cluster Autoscal
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next"
-        href="/page/11/" title="Last page">
+        href="/page/12/" title="Last page">
         <i class="p-icon--contextual-menu">Last page</i>
     </a>
   </li>

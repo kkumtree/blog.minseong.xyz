@@ -97,6 +97,20 @@
 
             
             <div class="p-list__item">
+              <a href="/post/init-calico-from-quay-registry/"><h2>Init Calico from quay registry</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-07-25T00:40:14&#43;09:00</u></p>
+              <p>Written in 25 July 2023. It could be different when you read this article. Error I met I met error message like Init:ImagePullBackOff when I tried to create calico pod.
+kubectl get pods --all-namespaces NAMESPACE NAME READY STATUS RESTARTS AGE kube-system calico-kube-controllers-xxxxxxxxxx-yyyyy 1/1 Running 1 13h kube-system calico-node-xxxxx 0/1 Init:ImagePullBackOff 0 13h Why it happened Yes, it&rsquo;s because of changed docker hub policy. Recently, I&rsquo;m in an environment that about 20~30 people use 4 public IP addresses.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/how-to-manage-github-tokens-in-local-windows/"><h2>Windows에서 여러 Github 토큰 관리</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -165,24 +179,6 @@ ls -l /lib/systemd/system/runlevel?.target 명령어로 확인 가능 RunLevel E
 WSL2 환경에서는 Vagrant가 의도한대로 작동하지 않으므로 유의: 별도의 설정 필요 Hashicorp Docs Vagrant 설치 Ubuntu 22.04 LTS 및 23.10 기준, APT repo를 통한 설치 지원 sudo apt-get install vagrant VBox 설치(사용 시) CPU 가상화 기술 활성화 필요(BIOS단, AMD의 경우는 SVM, Intel의 경우는 VT-x) virtualbox-ext-pack(선택): USB 2.0/3.0 지원 등의 확장 기능을 사용하려면 설치 개인용도의 제한적 라이선스(동의를 위한 대화창 확인) 확장기능을 쓸 필요가 없기 때문에 설치하지 아니함 sudo apt-get install virtualbox # sudo apt-get install virtualbox-ext-pack Docker 설치(사용 시) Ubuntu 기준, 아래 3가지 설치 방법이 있으므로, 친숙한 모드로 진행 sudo snap install docker # 최신버전 sudo apt-get install docker.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/aws-eks-study-week7/"><h2>AWS EKS 스터디 7주차 - Automation</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-10T15:13:19&#43;09:00</u></p>
-              <p>EKS 스터디도 마지막 7주차를 맞이했습니다.
-이번에는 AWS Controller for k8s(ACK)와 flux를 가볍게 실습해보고
-자동화에 대해 맛보기를 해보았습니다.
-앞서 학습해본 IRSA 개념 외에도 CRD(CustomResourceDefinition)을 활용합니다.
-1. 실습환경 배포 실습을 위한 YAML파일이 변경된거 말고는 6주차와 유사합니다.
-curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/eks-oneclick6.yaml # 이하 중략 # CERT_ARN(ACM)의 경우에는 /etc/profile에 환경변수 저장을 안해둬서 # 세션이 만료되면, 다시 재설정 필요 CERT_ARN=`aws acm list-certificates --query &#39;CertificateSummaryList[].CertificateArn[]&#39; --output text` echo $CERT_ARN 2. ACK(AWS Controller for k8s) 웹콘솔에 접근하지 않고도, AWS 서비스 리소스를 직접 k8s에서 정의 및 사용가능 순서: ACK 컨트롤러 설치 -&gt; IRSA 설정 -&gt; AWS 리소스 컨트롤 같은 패턴으로 이루어져있는데, Cloudformation을 쓰다보니 중간중간 대기 시간 발생 (23/05/29) GA: 17개 서비스, Preview: 10개 서비스 2-1.</p>
-            </div>
-            
 <ol class="p-pagination">
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous" 
@@ -221,7 +217,7 @@ curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S
     …
   </li>
   <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/page/11/">11</a>
+    <a class="p-pagination__link " href="/page/12/">12</a>
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next "
@@ -231,7 +227,7 @@ curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next"
-        href="/page/11/" title="Last page">
+        href="/page/12/" title="Last page">
         <i class="p-icon--contextual-menu">Last page</i>
     </a>
   </li>

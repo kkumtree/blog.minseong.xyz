@@ -97,6 +97,25 @@
 
             
             <div class="p-list__item">
+              <a href="/post/helm-template-reusing-statements/"><h2>Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-26T03:16:04&#43;09:00</u></p>
+              <p>이번에는 재사용성을 위해서 _helpers.tpl 파일을 활용해보겠습니다.
+기존의 Helm 101 - CI/CD 스터디 2주차에서 이어집니다.
+1. _helpers.tpl을 통한 공통 변수 재사용 (1) 공통사항 숙지 이전에 생성한 deployment.yaml과 service.yaml의 selector 부분에 공통점이 있습니다.
+# `{{ .Values.replicaCount }} ## deployment.yaml spec.selector.matchLabels spec.template.metadata.labels ## service.yaml spec.selector (2) 템플릿 생성 해당 label을 추가/삭제하려면, 여러 필드를 업데이트를 하여야합니다.
+대신 _helpers.tpl파일을 생성하여 구성읋 합니다.
+_helpers.tpl 뿐만 아니라, 맨 앞에 _로 시작하기만 하면 되며,
+이 파일은 k8s manifest 파일로 취급되지 않습니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/helm-hello-world/"><h2>Helm 101 - CI/CD 스터디 2주차</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -165,23 +184,6 @@ Why? Simple. I want to upgrade them easily with APT package manager rather than 
 sudo apt-get update -y &amp;&amp; sudo apt-get upgrade -y When I installed Microsoft Edge and Visual Studio Code, I used dpkg command.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/install-obs-studio-ubuntu/"><h2>Ubuntu에 OBS Studio 설치하기</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-11-11T20:59:03&#43;09:00</u></p>
-              <p>뭔가 내가 알려줘야하는데, 글로 쓰기 싫은 그런 날이 있다.
-그래서 있는 OBS Studio.
-Ubuntu도 22.04 LTS (Jammy Jellyfish) 이후부터는 OBS Studio를 APT repository를 통해 설치를 할 수 있다고 하여, 도전.
-Installation: https://obsproject.com/download sudo add-apt-repository ppa:obsproject/obs-studio sudo apt update sudo apt install ffmpeg obs-studio 생각보다 오래 걸린다.
-sudo add-apt-repository ppa:obsproject/obs-studio # [sudo] password for kkumtree: # Repository: &#39;Types: deb # URIs: https://ppa.launchpadcontent.net/obsproject/obs-studio/ubuntu/ # Suites: noble # Components: main # &#39; # Description: # Latest stable release of OBS Studio # More info: https://launchpad.</p>
-            </div>
-            
 <ol class="p-pagination">
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous" 
@@ -208,7 +210,7 @@ sudo add-apt-repository ppa:obsproject/obs-studio # [sudo] password for kkumtree
     …
   </li>
   <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/page/11/">11</a>
+    <a class="p-pagination__link " href="/page/12/">12</a>
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next "
@@ -218,7 +220,7 @@ sudo add-apt-repository ppa:obsproject/obs-studio # [sudo] password for kkumtree
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next"
-        href="/page/11/" title="Last page">
+        href="/page/12/" title="Last page">
         <i class="p-icon--contextual-menu">Last page</i>
     </a>
   </li>

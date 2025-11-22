@@ -96,6 +96,26 @@
 
             
             <div class="p-list__item">
+              <a href="/post/argocd-cluster-management-and-prefix/"><h2>ArgoCD Cluster 및 Prefix 관리 - CI/CD 스터디 6주차</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-18T14:23:29&#43;09:00</u></p>
+              <p>CloudNet@에서 진행하고 있는 CI/CD Study 6주차에는 ArgoCD를 마지막으로 다루었습니다.
+Cluster를 추가해보고 Gitea를 붙이기 전에, ArgoCD를 Prefix로 라우팅하려고 했는데 로그아웃하고 나서 원치않는 경로로 빠지는 바람에
+이것저것 살펴보고 수정을 하여 원하는 대로 구동되도록 셋업했습니다.
+0. 실습 준비 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
+https://github.com/kkumtree/ci-cd-cloudnet-study 의 6w 폴더
+이전 포스팅 Tailscale을 타고, ArgoCD에 접근해보기을 하였다면, 리소스 정리를 합니다.
+kind 배포 시, 포트 점유로 오류가 발생합니다.
+sudo tailscale serve --tcp 443 off 이후 실습을 위한 배포를 합니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/playing-argocd-with-tailscale/"><h2>Tailscale을 타고, ArgoCD에 접근해보기</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -169,25 +189,6 @@ https://github.com/kkumtree/ci-cd-cloudnet-study 의 3w 폴더
 0. 실습 준비 (1) kind kind 설치의 경우 다음 포스트를 참고할 수 있습니다.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/helm-template-reusing-statements/"><h2>Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-26T03:16:04&#43;09:00</u></p>
-              <p>이번에는 재사용성을 위해서 _helpers.tpl 파일을 활용해보겠습니다.
-기존의 Helm 101 - CI/CD 스터디 2주차에서 이어집니다.
-1. _helpers.tpl을 통한 공통 변수 재사용 (1) 공통사항 숙지 이전에 생성한 deployment.yaml과 service.yaml의 selector 부분에 공통점이 있습니다.
-# `{{ .Values.replicaCount }} ## deployment.yaml spec.selector.matchLabels spec.template.metadata.labels ## service.yaml spec.selector (2) 템플릿 생성 해당 label을 추가/삭제하려면, 여러 필드를 업데이트를 하여야합니다.
-대신 _helpers.tpl파일을 생성하여 구성읋 합니다.
-_helpers.tpl 뿐만 아니라, 맨 앞에 _로 시작하기만 하면 되며,
-이 파일은 k8s manifest 파일로 취급되지 않습니다.</p>
-            </div>
-            
 <ol class="p-pagination">
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous" 
@@ -214,7 +215,7 @@ _helpers.tpl 뿐만 아니라, 맨 앞에 _로 시작하기만 하면 되며,
     …
   </li>
   <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/post/page/11/">11</a>
+    <a class="p-pagination__link " href="/post/page/12/">12</a>
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next "
@@ -224,7 +225,7 @@ _helpers.tpl 뿐만 아니라, 맨 앞에 _로 시작하기만 하면 되며,
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next"
-        href="/post/page/11/" title="Last page">
+        href="/post/page/12/" title="Last page">
         <i class="p-icon--contextual-menu">Last page</i>
     </a>
   </li>

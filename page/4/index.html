@@ -97,6 +97,25 @@
 
             
             <div class="p-list__item">
+              <a href="/post/kans-8w-why-ebpf/"><h2>Why eBPF?</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-21T19:47:33&#43;09:00</u></p>
+              <p>고쳐야할 부분이 너무 많아서 나중에 해당 부분만 글을 작성할 예정입니다.
+어느덧 이번 스터디도 대망의 Cilium을 다루기 시작합니다.
+Cilium에 이렇게도 (저를 포함한) 모?두가 열광하는지 알아보기 전에
+근간이 되는 eBPF를 먼저 가볍게 알아보고 가려합니다.
+이 때는 설마 했지만, 역시나 스불재 엔딩이었다
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. Linux Network Stack 스터디 1주차의 Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기에서 가볍게 맛을 보고 도망치기 바빴지만, 여튼 아래의 사항은 스쳐지나갔습니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/kans-7w-envoy-config/"><h2>Kubernetes Service(4): envoy config</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -170,22 +189,6 @@ You can define a LoadBalancer Service by disabling the load balancer NodePort al
 Disabling load balancer NodePort allocation 문서를 살펴보니,</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/kans-4w-iptables-grafana/"><h2>iptables monitoring with Grafana (Not Completed)</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-29T13:35:13&#43;09:00</u></p>
-              <p>iptables를 수집하여 Grafana로 표현하는 방법을 알아봅니다.
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-0. 환경 구성 (kind) 작성시간 이슈로 featureGates, ConfigPatches, networking 설정 설명은 스킵&hellip;합니다.
-a. 1 Master, 3 Slave 환경 구성 cat &lt;&lt;EOT&gt; kind-svc-1w.yaml kind: Cluster apiVersion: kind.x-k8s.io/v1alpha4 featureGates: &#34;InPlacePodVerticalScaling&#34;: true &#34;MultiCIDRServiceAllocator&#34;: true nodes: - role: control-plane labels: mynode: control-plane topology.kubernetes.io/zone: ap-northeast-2a extraPortMappings: - containerPort: 30000 hostPort: 30000 - containerPort: 30001 hostPort: 30001 - containerPort: 30002 hostPort: 30002 kubeadmConfigPatches: - | kind: ClusterConfiguration apiServer: extraArgs: runtime-config: api/all=true controllerManager: extraArgs: bind-address: 0.</p>
-            </div>
-            
 <ol class="p-pagination">
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous" 
@@ -218,7 +221,7 @@ a. 1 Master, 3 Slave 환경 구성 cat &lt;&lt;EOT&gt; kind-svc-1w.yaml kind: Cl
     …
   </li>
   <li class="p-pagination__item">
-    <a class="p-pagination__link " href="/page/11/">11</a>
+    <a class="p-pagination__link " href="/page/12/">12</a>
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next "
@@ -228,7 +231,7 @@ a. 1 Master, 3 Slave 환경 구성 cat &lt;&lt;EOT&gt; kind-svc-1w.yaml kind: Cl
   </li>
   <li class="p-pagination__item">
     <a class="p-pagination__link--next"
-        href="/page/11/" title="Last page">
+        href="/page/12/" title="Last page">
         <i class="p-icon--contextual-menu">Last page</i>
     </a>
   </li>
