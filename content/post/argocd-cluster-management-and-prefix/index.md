@@ -197,11 +197,11 @@ Gitea도 같이 띄우기 위해서, ArgoCD 진입점을 Prefix `/_argocd` 로 �
 ![set url in argocd-cm](image-17.png)
 
 ```yaml
-configs.params.server.basehref: "<Prefix>"  # Reverse Proxy 사용 시, 하위 경로가 다를 때 사용. 웹콘솔의 index.html 경로 정의
-configs.params.server.rootpath: "<Prefix>"  # Reverse Proxy 사용 시, 하위 경로가 다를 때 사용.  
-configs.cm.url: "https://<DOMAIN>/Prefix"   # Logout 시, ArgoCD 메인페이지로 가지 못하는 이슈가 있어, 수동으로 지정  
-server.ingress.path: /_argocd/              # 마지막에 `/` 추가하지 않으면 에러발생 확인.  
-server.ingress.pathType: Prefix             # ImplementationSpecific로 할 경우, Prefix 뿐만이 아니고 Domain 최상위 경로도 점유하는 것으로 확인  
+configs.params.server.basehref: "/<Prefix>"   # Reverse Proxy 사용 시, 하위 경로가 다를 때 사용. 웹콘솔의 index.html 경로 정의
+configs.params.server.rootpath: <Prefix>/     # Reverse Proxy 사용 시, 하위 경로가 다를 때 사용.  
+configs.cm.url: "https://<DOMAIN>/<Prefix>"   # Logout 시, ArgoCD 메인페이지로 가지 못하는 이슈가 있어, 수동으로 지정  
+server.ingress.path: /</Prefix>/              # 마지막에 `/` 추가하지 않으면 에러발생 확인.  
+server.ingress.pathType: Prefix               # ImplementationSpecific로 할 경우, Prefix 뿐만이 아니고 Domain 최상위 경로도 점유하는 것으로 확인  
 ```
 
 `configs` 네임스페이스에 정의된 사항은 ConfigMap `argocd-cmd-parmas-cm` 과 `argocd-cm` 에서 확인할 수 있습니다.  
