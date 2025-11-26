@@ -20,6 +20,10 @@
 
     
     <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.05bc9a89b9988ba7449154a7ccd83133b7df79fac13cc1945cffac151ac54dbb.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
 </head>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
 <script>
@@ -48,6 +52,93 @@
       </ul>
 
       <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
         
         <li class="p-navigation__item--dropdown-toggle" id="link-4">
           <a class="p-navigation__link" aria-controls="account-menu">
@@ -56,15 +147,15 @@
           <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
             <li>
               <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
-                rel="noopener noreferrer">GitHub</a>
+                rel="noopener noreferrer">GitHub ⧉</a>
             </li>
             <li>
               <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
-                rel="noopener noreferrer">Linkedin</a>
+                rel="noopener noreferrer">Linkedin ⧉</a>
             </li>
             <li>
               <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
-                rel="noopener noreferrer">Launchpad Profile</a>
+                rel="noopener noreferrer">Launchpad ⧉</a>
             </li>
           </ul>
         </li>
