@@ -44,7 +44,7 @@ permalinks = [
 [params.languages.ko.params]
   shortTitle = "블로그"
   description = "Magic(physics) tool's blog"
-  copyright = "© 2023 blog.minseong.xyz All rights reserved. 별도 고지가 있는 경우를 제외하고, 웹 사이트 소스코드는 MIT, 웹 사이트의 컨텐츠는 CC BY-SA 4.0 라이선스로 이용 가능합니다. "
+  copyright = "© 2025 blog.minseong.xyz All rights reserved. 별도 고지가 있는 경우를 제외하고, 웹 사이트 소스코드는 MIT, 웹 사이트의 컨텐츠는 CC BY-SA 4.0 라이선스로 이용 가능합니다. "
 
 [params.languages.ko.params.main_slide]
   label = "About this blog"

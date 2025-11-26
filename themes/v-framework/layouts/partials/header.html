@@ -4,7 +4,7 @@
       <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
         <a class="p-navigation__link" href="{{ .Site.LanguagePrefix | relURL }}">
           <div class="p-navigation__logo-tag">
-            <img class="p-navigation__logo-icon" src="{{ " /img/BlogWhite.svg" | relURL }}" alt="">
+            <img class="p-navigation__logo-icon" src="{{ '/img/BlogWhite.svg' | relURL }}" alt="">
           </div>
           <span class="p-navigation__logo-title">{{.Site.Params.shortTitle}}</span>
         </a>
@@ -69,11 +69,18 @@
             🔗
           </a>
           <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
-            {{ range .Site.Menus.link }}
             <li>
-              <a href="{{ .URL | relLangURL }}" class="p-navigation__dropdown-item">{{ .Name }}</a>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub</a>
             </li>
-            {{ end }}
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad Profile</a>
+            </li>
           </ul>
         </li>
       </ul>
