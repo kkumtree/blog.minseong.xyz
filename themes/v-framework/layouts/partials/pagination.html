@@ -3,7 +3,8 @@
 <ol class="p-pagination">
   {{ with $pag.First -}}
   <li class="p-pagination__item">
-    <a class="p-pagination__link--previous" href="{{ .URL }}" title="Previous page">
+    <a class="p-pagination__link--previous {{ if not $pag.HasPrev }} is-disabled{{ end }}" {{ if $pag.HasPrev
+      }}href="{{ .URL }}" {{ end }} title="First page">
       <i class="p-icon--contextual-menu">
         << </i>
     </a>
@@ -62,7 +63,8 @@
   </li>
   {{- with $pag.Last }}
   <li class="p-pagination__item">
-    <a class="p-pagination__link--next" href="{{ .URL }}" title="Last page">
+    <a class="p-pagination__link--next {{ if not $pag.HasNext }} is-disabled{{ end }}" {{ if $pag.HasNext
+      }}href="{{ .URL }}" {{ end }} title="Last page">
       <i class="p-icon--contextual-menu">>></i>
     </a>
   </li>
