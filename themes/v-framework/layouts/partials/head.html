@@ -8,7 +8,8 @@
 
 
     {{- $options := (dict "includePaths" (slice "node_modules") "transpiler" "dartsass") -}}
-    {{ $style := resources.Get "sass/theme.scss" | resources.ToCSS $options | resources.Minify | resources.Fingerprint }}
+    {{ $style := resources.Get "sass/theme.scss" | resources.ToCSS $options | resources.Minify | resources.Fingerprint
+    }}
     <title>{{ .Title }} | {{ .Site.Title }}</title>
     <!--  Open Graph Protocol -->
     <meta property="og:site_name" content="{{ .Site.Title }}" />
@@ -23,4 +24,8 @@
 
     <!--   SASS Stylesheets -->
     <link rel="stylesheet" href="{{ $style.Permalink }}">
+
+    <!-- Search -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='{{ "js/search.js" | relURL }}'></script>
 </head>

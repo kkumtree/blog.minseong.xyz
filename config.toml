@@ -8,6 +8,13 @@ permalinks = [
   { post = "/:2006/:01/:02/:filename" }
 ]
 
+[outputs]
+  home = ["HTML", "RSS", "Search"]
+
+[outputFormats.Search]
+  mediaType = "application/json"
+  baseName = "index"
+
 [params]
   shortTitle = "Blog"
   contact = "mscho7969@ubuntu.com"

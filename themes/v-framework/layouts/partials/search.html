@@ -1,0 +1,82 @@
+<div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
