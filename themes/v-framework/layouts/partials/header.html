@@ -39,7 +39,7 @@
       <ul class="p-navigation__items">
         <li class="p-navigation__item">
           <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
-            🔍
+            🔍 <span class="p-sr-only">Search</span>
           </a>
         </li>
         {{ partial "search.html" . }}
@@ -73,12 +73,12 @@
 
         <li class="p-navigation__item">
           <a class="p-navigation__link" href="/tags">
-            🏷️
+            🏷️ <span class="p-sr-only">Tags</span>
           </a>
         </li>
         <li class="p-navigation__item--dropdown-toggle" id="link-4">
           <a class="p-navigation__link" aria-controls="account-menu">
-            🔗
+            🔗 <span class="p-sr-only">Links</span>
           </a>
           <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
             <li>
