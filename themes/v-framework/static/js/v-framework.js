@@ -48,8 +48,14 @@ function initNavDropdowns(containerClass) {
     toggle.addEventListener('click', function (e) {
       e.preventDefault();
 
+      var parent = toggle.parentNode;
+      var wasActive = parent.classList.contains('is-active');
+
       closeAllDropdowns(toggles);
-      toggleDropdown(toggle, true);
+
+      if (!wasActive) {
+        toggleDropdown(toggle, true);
+      }
     });
   });
 }
