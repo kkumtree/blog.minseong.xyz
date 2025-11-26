@@ -155,7 +155,7 @@ Cluster를 추가해보고 Gitea를 붙이기 전에, ArgoCD를 Prefix로 라우
 <p><img src="image-1.png" alt="provisioning mgmt kind cluster"><br>
 <img src="image-2.png" alt="provisioning dev, prd kind cluster"></p>
 <p>이후 아래 3개의 context를 확인할 수 있습니다.<br>
-(<code>kubectl config get-context</code>, k9s의 경우 <code>:ctx</code>)</p>
+(<code>kubectl config get-contexts</code>, k9s의 경우 <code>:ctx</code>)</p>
 <ul>
 <li>kind-mgmt / kind-prd / kind-dev</li>
 </ul>
@@ -280,6 +280,8 @@ kind가 사용중인 Docker 네트워크와 Docker 포트포워딩 정보를 확
 </span></span><span style="display:flex;"><span>argocd login kkumtree-ms-7a34.panda-ule.ts.net --grpc-web-root-path /_argocd --insecure --username admin --password kkumtree
 </span></span><span style="display:flex;"><span><span style="color:#75715e">#  kubectl delete secret argocd-initial-admin-secret -n argocd</span>
 </span></span></code></pre></div><p><img src="image-16.png" alt="argocli usage with custom prefix path"></p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
 <h2 id="9-host-재부팅-시-unhandled-error">9. Host 재부팅 시, Unhandled Error</h2>
 <p><img src="image-12.png" alt="Unhandled Error after reboot"></p>
 <p>재부팅 후 kubectl 명령어 입력 시 kind 클러스터, 즉 Docker pod의 Docker network 상의 IP주소가 변경되므로 <code>1-(1) kind를 위한 설정 및 Alias 등록</code>을 참조하여 <code>~/.kube/config</code> 설정을 업데이트 합니다.</p>
@@ -397,7 +399,7 @@ kind가 사용중인 Docker 네트워크와 Docker 포트포워딩 정보를 확
       </ul>
       <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
       <p>
-        © 2024 kkumtree and contributors All rights reserved.<br>
+        © 2025 kkumtree and contributors All rights reserved.<br>
         Licensed under <br>
         <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
           CC BY-NC-ND 4.0
