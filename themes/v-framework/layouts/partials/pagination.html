@@ -5,14 +5,14 @@
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous" 
         href="{{ .URL }}" title="Previous page">
-        <i class="p-icon--contextual-menu">First page</i>
+        <i class="p-icon--contextual-menu"><<</i>
     </a>
   </li>
   {{ end -}}
   <li class="p-pagination__item">
     <a class="p-pagination__link--previous {{ if not $pag.HasPrev }} is-disabled{{ end }}" 
         {{ if $pag.HasPrev }}href="{{ $pag.Prev.URL }}"{{ end }} title="Previous page">
-        <i class="p-icon--contextual-menu">Previous page</i>
+        <i class="p-icon--contextual-menu"><</i>
     </a>
   </li>
   {{- $ellipsed := false -}}
@@ -42,14 +42,14 @@
   <li class="p-pagination__item">
     <a class="p-pagination__link--next {{ if not $pag.HasNext }} is-disabled{{ end }}"
         {{ if $pag.HasNext }}href="{{ $pag.Next.URL }}"{{ end }} title="Next page">
-        <i class="p-icon--contextual-menu">Next page</i>
+        <i class="p-icon--contextual-menu">></i>
     </a>
   </li>
   {{- with $pag.Last }}
   <li class="p-pagination__item">
     <a class="p-pagination__link--next"
         href="{{ .URL }}" title="Last page">
-        <i class="p-icon--contextual-menu">Last page</i>
+        <i class="p-icon--contextual-menu">>></i>
     </a>
   </li>
   {{- end }}

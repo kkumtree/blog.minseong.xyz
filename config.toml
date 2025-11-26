@@ -17,7 +17,7 @@ permalinks = [
   defaultContentLanguage = "ko"
 
 [params.copyright]
-  base = "© 2024 kkumtree and contributors All rights reserved."
+  base = "© 2025 kkumtree and contributors All rights reserved."
   creativeCommonsUrl = "https://creativecommons.org/licenses/by-nc-nd/4.0/"
   creativeCommons = "CC BY-NC-ND 4.0"
   # creativeCommonsIcoStyle = "height:22px!important;margin-left:3px;vertical-align:text-bottom;"

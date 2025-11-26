@@ -388,7 +388,7 @@ Host IDE(VSCode)를 통해, 파일을 추가했습니다.
   조건 충족을 위해 아래의 권한을 부여합니다.  
 
 - read:organization # 조직 권한을 읽습니다.  
-- write:repository  # repository를 읽습니다.  
+- write:repository  # repository 편집 권한.  
 - read:user         # user의 정보를 읽습니다.  
 
 ### (3) Jenkins 플러그인 설치 및 Token 주입  

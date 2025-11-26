@@ -56,7 +56,7 @@ sudo tailscale serve --tcp 443 off
 ![provisioning dev, prd kind cluster](image-2.png)  
 
 이후 아래 3개의 context를 확인할 수 있습니다.  
-(`kubectl config get-context`, k9s의 경우 `:ctx`)  
+(`kubectl config get-contexts`, k9s의 경우 `:ctx`)  
 
 - kind-mgmt / kind-prd / kind-dev  
 
@@ -245,6 +245,83 @@ argocd login kkumtree-ms-7a34.panda-ule.ts.net --grpc-web-root-path /_argocd --i
 ```
 
 ![argocli usage with custom prefix path](image-16.png)  
+
+<!-- ## 3. Tailscale Kubernetes Operator 설치  
+
+생각해보니, ArgoCD가 네트워크 내부의 Gitea를 읽으려면 Host 뿐만이 아니라, kind 내부에도 설치를 해야합니다.  
+
+> <https://tailscale.com/kb/1486/kubernetes-operator-multi-cluster-argocd>  
+
+그 전에 Tailscale ACL부터 설정해보겠습니다.  
+
+### (1) Tag 생성
+
+> (Visual editor 기준)
+> Access controls > Tags  
+
+아래처럼 `k8s-operator` 및 `k8s` 태그를 생성하고,  
+`k8s` 태그 소유자(tagOwners)는 `k8s-operator`로 지정합니다.  
+
+![tailscale Access Control](image-18.png)
+
+### (2) OAuth키 발급  
+
+> Settings > Trust credentials > + Credential  
+
+먼저 아래의 형태를 갖습니다. 계정별로 고유합니다.  
+
+```yaml
+OAuth client ID: "k123456CNTRL"
+OAuth client secret: "tskey-client-k123456CNTRL-abcdef"
+```
+
+아래 화면에서 `+ Credential` 클릭
+
+![tailscale trust credential](image-19.png)
+
+`New credential`에서 OAuth 선택 확인 후, Continue.  
+
+Write 권한은 아래 두 가지를 지정하며,  
+tag는 앞서 지정한 `k8s-operator`로 설정합니다.  
+
+- Devices > Core  
+- Keys > Auth Keys  
+
+![Set scope with tag](image-20.png)
+
+생성 버튼을 누르면 모달창이 뜨는데, 닫으면 조회가 안되므로 메모해둡니다.  
+
+### (3) 배포  
+
+(6w/shells/tailscale-operator/)
+
+```bash
+TAIL_OAUTH_CLIENT_ID=k123456CNTRL 
+TAIL_OAUTH_CLIENT_SECRET=skey-client-k123456CNTRL-abcdef
+
+TAIL_OAUTH_CLIENT_ID=$TAIL_OAUTH_CLIENT_ID TAIL_OAUTH_CLIENT_SECRET=$TAIL_OAUTH_CLIENT_SECRET ./deploy-chart.sh
+```
+
+![deploy tailscale operator](image-21.png)
+
+정상적으로 배포되었다면, 기기 등록 페이지에서도 확인됩니다.  
+
+![check operators are registered](image-22.png)
+
+### (4) MagicDNS(tailnet) 사용 설정  
+
+Tailscale의 dnsconfig 리소스를 활용하여, coredns에 추가하여야 합니다.  
+
+```bash
+./deploy-ts-dns.sh
+```
+
+해당 스크립트에는 
+
+- dnsconfig 리소스 생성
+- coredns에 ts.net을 위한 DNS정보 추가
+
+![deploy ts dns](image-23.png) -->
 
 ## 9. Host 재부팅 시, Unhandled Error  
 
