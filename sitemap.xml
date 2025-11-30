@@ -35,6 +35,12 @@
     <loc>https://blog.minseong.xyz/tags/ingress/</loc>
     <lastmod>2025-11-16T17:38:34+09:00</lastmod>
   </url><url>
+    <loc>https://blog.minseong.xyz/tags/vault/</loc>
+    <lastmod>2025-11-16T17:38:34+09:00</lastmod>
+  </url><url>
+    <loc>https://blog.minseong.xyz/post/vault-in-kubernetes/</loc>
+    <lastmod>2025-11-16T17:38:34+09:00</lastmod>
+  </url><url>
     <loc>https://blog.minseong.xyz/post/argocd-hello-world/</loc>
     <lastmod>2025-11-09T08:44:34+09:00</lastmod>
   </url><url>

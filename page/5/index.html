@@ -195,6 +195,24 @@
 
             
             <div class="p-list__item">
+              <a href="/post/kans-5w-metallb-loadbalancer/"><h2>Kubernetes Service(2): LoadBalancer(MetalLB)</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-02T12:54:17&#43;09:00</u></p>
+              <p>지난 포스팅, Kubernetes Service(1): ClusterIP/NodePort에 이어 LoadBalancer Type을 가볍게 살펴보고, MetalLB를 가볍게 붙여보겠습니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. LoadBalancer Type Service(1)에서 언급된 부분은 거두절미하고, 추가로 적을 수 있는 부분이 있다면, 아래 한 줄이 있습니다.
+You can define a LoadBalancer Service by disabling the load balancer NodePort allocation.
+글자 그대로 LB의 NodePort 할당을 비활성하여, LoadBalancer Service를 정의할 수 있습니다.
+Disabling load balancer NodePort allocation 문서를 살펴보니,</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/kans-4w-iptables-grafana/"><h2>iptables monitoring with Grafana (Not Completed)</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -262,25 +280,6 @@ Calico 설치 환경 : AWS EC2(No EKS), kubeadm[2], pod-network-cidr=172.16.0.0/
 CNI가 설치되지 않았기에 NotReady 상태에 있다가, Calico 설치하면 CoreDNS가 설정되며, Ready 상태로 변경된다.
 Calico 설치 전
 # Control Plane and worker nodes are not ready (⎈|HomeLab:default) root@k8s-m:~# kubectl get nodes NAME STATUS ROLES AGE VERSION k8s-m NotReady control-plane 32m v1.30.5 k8s-w0 NotReady &lt;none&gt; 31m v1.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/kans-2w-kind-overview/"><h2>KIND 톺아보기</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-09-03T21:16:07&#43;09:00</u></p>
-              <p>톺아보다(우리말샘) 는 의외로 표준어라고 합니다.
-KIND 설치 이후에 기본적인 내용을 살펴봅니다.
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-0. $KUBECONFIG $KUBECONFIG 환경변수가 없을 경우:
-보통은 ~/.kube 디렉토리가 생성됩니다.
-확인해보니, config 값과 더불어, cache 디렉토리도 확인할 수 있었습니다.
-❯ find ~/.kube -maxdepth 2 -type f -exec ls -ld &#34;{}&#34; \; -rw------- 1 kkumtree kkumtree 44 Sep 3 21:31 /home/kkumtree/.kube/config ❯ find ~/.kube -maxdepth 2 -type d -exec ls -ld &#34;{}&#34; \; drwxr-x--- 3 kkumtree kkumtree 4096 Sep 3 21:31 /home/kkumtree/.</p>
             </div>
             
 <ol class="p-pagination">

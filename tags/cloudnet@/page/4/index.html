@@ -194,6 +194,25 @@
 
             
             <div class="p-list__item">
+              <a href="/post/aws-eks-study-week6/"><h2>AWS EKS 스터디 6주차 - Security</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-04T06:56:52&#43;09:00</u></p>
+              <p>이번에는 보안을 위한 인증 및 인가, 그리고 IRSA를 중심으로 EKS의 보안에 대해 학습해보았습니다.
+kops 스터디 때에는 잘 몰랐는데, RBAC 뿐만 아니라 복기하다보니&hellip;
+[4-1] projected Volume [4-2] AWS Load Balancer Controller IRSA 및 LB Pod mutating 위의 두 가지가 중요한 파트를 차지하고 있었음을 알 수 있었습니다.
+Network(2주차)가 매번 뭔가 일부가 아리송하였다면
+Security는 복기하다가 이론적으로는 간단(과연?)해보여도
+실제 구동방식 이해 자체가 초반에 안되서, 사흘 남짓 걸린 덕에 더 어려웠던 것 같습니다.
+그 외 myeks-bastion-2에 접속 시, 함께 진행할 때는 ssh {Public IP}로 잘 접속되는 걸 봤는데 정작 혼자 할 땐 접속이 되지않았습니다.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/aws-eks-study-week5/"><h2>AWS EKS 스터디 5주차 - Autoscaling</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -260,25 +279,6 @@ NodeAffinity를 이용한 라벨링 AWS EBS controller의 경우, AWS managed po
 가장 고난도라고 생각했던 네트워크를 다시 만나니 이제 1% 친근감이 느껴지고 있네요.
 자 그럼 해보도록 합시다.
 1. cloudformation을 활용한 EKS 원클릭 구성 학습을 위해, 이번에도 가시다님이 준비해주신 원클릭 배포 yaml을 활용하여 배포.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/aws-eks-study-week1/"><h2>AWS EKS 스터디 1주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-04-30T03:00:15&#43;09:00</u></p>
-              <p>최근 CloudNet@에서 진행하고 있는
-AWS EKS Workshop Study(이하, AEWS)에 참여하게 되었습니다.
-k8s가 워낙 인기가 많기도 하지만, 지난 kOps 스터디를 통해 관리요소가 참 많은 것을 느꼈었고,
-좀더 수월하게 이해를 해보고자 AWS 서비스인
-EKS(Elastic Kubernetes Service)를 이번 기회에 살펴보기로 했습니다.
-EKS 사용에 있어 고려사항 EKS는 관리형 서비스(managed service)이기에 아래와 같은 장점이 있습니다.
-클러스터링을 위한 Control Plane(일명, 마스터 노드)을 AWS에서 관리해줍니다. 워커노드는 사용자가 AMI를 구성하여 이를 사용 AWS에서 제공하는 Fargate로 VM을 할당하여 사용 kOps와도 유사하지만, 다른 AWS 서비스와의 연동이 용이합니다.</p>
             </div>
             
 <ol class="p-pagination">

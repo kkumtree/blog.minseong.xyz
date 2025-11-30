@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html><head>
-	<meta name="generator" content="Hugo 0.110.0">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
     <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
     <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
-    <title>kkumtree | kkumtree</title>
+    <title>vault | kkumtree</title>
     
     <meta property="og:site_name" content="kkumtree" />
-    <meta property="og:title" content="kkumtree" />
+    <meta property="og:title" content="vault" />
 
     
-    <meta property="og:image" content='https://blog.minseong.xyz/' />
-    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/' />
+    <meta property="og:image" content='https://blog.minseong.xyz/tags/vault/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/vault/' />
     
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content='https://blog.minseong.xyz/' />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/vault/' />
 
     
     <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.fab2b396c750e003c2101de8575925a23fdd2affcd52233a66f0c9a69e213c23.css">
@@ -181,7 +180,7 @@
   <section class="p-strip--suru main-slide main-strip">
       <div class="row">
         <div class="col-8 left-section">
-          <h1>kkumtree</h1>
+          <h1>vault</h1>
           <p></p>
         </div>
       </div>
@@ -195,7 +194,7 @@
 
             
             <div class="p-list__item">
-              <a href="/post/kans-8w-cilium-trial/"><h2>Kubernetes Service(5): Cillium Quick-start w/Hubble UI</h2></a>
+              <a href="/post/vault-in-kubernetes/"><h2>Vault UI in Kubernetes - CI/CD 스터디 7주차</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
                 <li class="p-inline-list__item">
@@ -203,135 +202,15 @@
                 </li>
                 
               </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-26T01:35:59&#43;09:00</u></p>
-              <p>그럼 매번 실패만 했던 Cilium 배포를 한번 해볼까요?
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-1. CSP VM 골라보기 이렇게 쓴 이유는 결국 네트워크를 잘 알아야하는데,
-작년에 할 때는 그런거 생각도 안하고 그냥 올려보려 했으니 당연히 안 돌아가겠죠?
-trying2adult/What Is XDP And How Do You Use It In Linux 그냥 곰곰히 오리duckduckgo랑 투닥거리다보니, 비록 연식이 되긴 했지만
-클릭을 안하고는 못배길 위의 블로그 제목이 눈에 띄였습니다.</p>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-16T17:38:34&#43;09:00</u></p>
+              <p>CloudNet@에서 진행하고 있는 CI/CD Study 7주차에는 Vault를 다루었습니다.
+자세한 설명은 해당 공식 페이지에서 해주고 있지만, 그저 1password 같은 패스워드 관리 서비스가 엔드유저 대상이라면 Vault는 인프라 관리자 대상으로 사용되는 것으로 알고 있는 제게는 흥미로운 주차였습니다.
+이번 스터디에서는 계속해서 kind로 로컬 Kubernetes(k8s)를 활용했기에, 이번에도 비슷하게 배포해보겠습니다.
+0. 실습 환경 준비 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
+https://github.com/kkumtree/ci-cd-cloudnet-study 의 7w 폴더
+(1) kind 클러스터 배포 kind create cluster --name vault --image kindest/node:v1.32.8 --config - &lt;&lt;EOF kind: Cluster apiVersion: kind.</p>
             </div>
             
-            <div class="p-list__item">
-              <a href="/post/kans-8w-why-ebpf/"><h2>Why eBPF?</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-21T19:47:33&#43;09:00</u></p>
-              <p>고쳐야할 부분이 너무 많아서 나중에 해당 부분만 글을 작성할 예정입니다.
-어느덧 이번 스터디도 대망의 Cilium을 다루기 시작합니다.
-Cilium에 이렇게도 (저를 포함한) 모?두가 열광하는지 알아보기 전에
-근간이 되는 eBPF를 먼저 가볍게 알아보고 가려합니다.
-이 때는 설마 했지만, 역시나 스불재 엔딩이었다
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-1. Linux Network Stack 스터디 1주차의 Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기에서 가볍게 맛을 보고 도망치기 바빴지만, 여튼 아래의 사항은 스쳐지나갔습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/kans-7w-envoy-config/"><h2>Kubernetes Service(4): envoy config</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-19T16:59:16&#43;09:00</u></p>
-              <p>정적/동적 설정을 알아봅니다.
-traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 명료했습니다.
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-1. Static Configuration 아래와 같이 구성됩니다.
-static_resources listeners clusters (a) static_resources envoy의 시작과 함께, 정적으로 설정되는 모든 리소스를 포함한다고 합니다.
-실제로 envoy-demo.yaml 파일을 열어보면 최상단에 static_resources이 선언되어 있습니다.
-static_resources: listeners: (b) listeners envoy-demo.yaml 파일 기준,
-socket_address: 리스너는 포트 10000에서 수신하도록 설정되어 있습니다. route_config: 모든 경로에 대해 service_envoyproxy_io 클러스터로 라우팅합니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/kans-7w-envoy-helloworld/"><h2>Kubernetes Service(4): envoy overview</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-15T10:16:38&#43;09:00</u></p>
-              <p>따로 슥 찾아보니, envoy는 Micro Service Architecture 등 구현된 단위 기능간의 통신을 위한 L7 Proxy 라고 합니다.
-Docker Compose 정도나 일반 서비스에서는 굳이 필요하지는 않을 것 같지만, Service Mesh 환경에서는 알아두면 좋을 것 같아 훝어봅니다.
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-1. Envoy Installation Docs: Installing Envoy wget -O- https://apt.envoyproxy.io/signing.key | sudo gpg --dearmor -o /etc/apt/keyrings/envoy-keyring.gpg echo &#34;deb [signed-by=/etc/apt/keyrings/envoy-keyring.gpg] https://apt.envoyproxy.io jammy main&#34; | sudo tee /etc/apt/sources.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/kans-6w-k3s-ingress/"><h2>Kubernetes Service(3): Ingress(ingress-nginx) w/k3s</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-10T22:12:57&#43;09:00</u></p>
-              <p>지난 포스팅, Kubernetes Service(2): LoadBalancer(MetalLB)에 이어 Ingress Type을 가볍게 살펴보고, Ingress-Nginx를 가볍게 붙여보겠습니다.
-CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
-1. Ingress Type 이제, 신규 기능(New feature)은 Gateway API에 추가된다고 합니다.
-우선, Kubernetes가 헷갈리는 것 중 하나가,
-Ingress Type 과 LoadBalancer Type의 명확한 차이가 뭘까...?
-라는 점이라고 봅니다. 물론, 그거 외에도 k8s에는 알쏭달쏭한 것들이 아-주 많지만요.
-친절한 Docs에 따르면,
-클러스터 외부로 클러스터 내부 서비스에 대한 HTTP 및 HTTPS 라우팅을 노출하는 것이라고 합니다.</p>
-            </div>
-            
-<ol class="p-pagination">
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--previous " href="/"  title="First page">
-      <i class="p-icon--contextual-menu">
-        &lt;&lt; </i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--previous " href="/page/3/"  title="Previous page">
-      <i class="p-icon--contextual-menu">
-        &lt; </i>
-    </a>
-  </li>
-  <li class="p-pagination__item mobile-hidden">
-    <a class="p-pagination__link " href="/">1</a>
-  </li>
-  <li class="p-pagination__item mobile-hidden">
-    <a class="p-pagination__link " href="/page/2/">2</a>
-  </li>
-  <li class="p-pagination__item ">
-    <a class="p-pagination__link " href="/page/3/">3</a>
-  </li>
-  <li class="p-pagination__item ">
-    <a class="p-pagination__link  is-active" href="/page/4/">4</a>
-  </li>
-  <li class="p-pagination__item ">
-    <a class="p-pagination__link " href="/page/5/">5</a>
-  </li>
-  <li class="p-pagination__item p-pagination__item--truncation mobile-hidden">
-    …
-  </li>
-  <li class="p-pagination__item mobile-hidden">
-    <a class="p-pagination__link " href="/page/12/">12</a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--next " href="/page/5/"  title="Next page">
-      <i class="p-icon--contextual-menu">></i>
-    </a>
-  </li>
-  <li class="p-pagination__item">
-    <a class="p-pagination__link--next " href="/page/12/"  title="Last page">
-      <i class="p-icon--contextual-menu">>></i>
-    </a>
-  </li>
-</ol>
 </div>
         </div>
       </div>

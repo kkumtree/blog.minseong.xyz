@@ -251,6 +251,24 @@ Control Node에 라벨링을 진행합니다.
             </div>
             
             <div class="p-list__item">
+              <a href="/post/vault-in-kubernetes/"><h2>Vault UI in Kubernetes - CI/CD 스터디 7주차</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-16T17:38:34&#43;09:00</u></p>
+              <p>CloudNet@에서 진행하고 있는 CI/CD Study 7주차에는 Vault를 다루었습니다.
+자세한 설명은 해당 공식 페이지에서 해주고 있지만, 그저 1password 같은 패스워드 관리 서비스가 엔드유저 대상이라면 Vault는 인프라 관리자 대상으로 사용되는 것으로 알고 있는 제게는 흥미로운 주차였습니다.
+이번 스터디에서는 계속해서 kind로 로컬 Kubernetes(k8s)를 활용했기에, 이번에도 비슷하게 배포해보겠습니다.
+0. 실습 환경 준비 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
+https://github.com/kkumtree/ci-cd-cloudnet-study 의 7w 폴더
+(1) kind 클러스터 배포 kind create cluster --name vault --image kindest/node:v1.32.8 --config - &lt;&lt;EOF kind: Cluster apiVersion: kind.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/argocd-hello-world/"><h2>ArgoCD 101 - CI/CD 스터디 4주차</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -266,25 +284,6 @@ Kubernetes(이하, k8s) 상에서 ArgoCD는 Controller보다는 Operator에 가�
 Controller: live state(실제 상태)와 desired state(원하는 상태)가 일치하는지 관찰 및 지속적 조정 Operator: Controller가 k8s 내부 object에서 동작한다면, Operator는 k8s 외의 것들도 다룰 수 있음 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
 https://github.com/kkumtree/ci-cd-cloudnet-study 의 4w 폴더
 0. 실습 준비 이전 게시물, Jenkins, git and kubernetes의 kind 및 kube-ops-view 설정과 동일하여 생략합니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/jenkins-ci-cd-kubernetes/"><h2>Jenkins, git and kubernetes - CI/CD 스터디 3주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-02T08:51:39&#43;09:00</u></p>
-              <p>CloudNet@에서 진행하고 있는 CI/CD Study 3주차에는 Jenkins와 ArgoCD을 다뤘습니다.
-이번에는 kubernetes(이하, k8s)에 self-host Git과 Jenkins를 배포 후 CI/CD 부분을 다루도록 하겠습니다.
-하다보니 개인적으로, 아래 3가지가 주로 기억에 남았던 것 같습니다.
-Docker UDS의 GID Gitea와 Multibranch Pipeline의 결합 Local PV의 Taint 및 Node 지정 더불어, Gitea에 대해 Basic Auth를 통한 CLI 접근을 막아보는 것도 새로이 해보았습니다.
-해당 구성들은 아래 GitHub에 탑재되어 있습니다.
-https://github.com/kkumtree/ci-cd-cloudnet-study 의 3w 폴더
-0. 실습 준비 (1) kind kind 설치의 경우 다음 포스트를 참고할 수 있습니다.</p>
             </div>
             
 <ol class="p-pagination">

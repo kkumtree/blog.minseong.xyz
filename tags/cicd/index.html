@@ -234,6 +234,24 @@ Control Node에 라벨링을 진행합니다.
             </div>
             
             <div class="p-list__item">
+              <a href="/post/vault-in-kubernetes/"><h2>Vault UI in Kubernetes - CI/CD 스터디 7주차</h2></a>
+              <ul class="p-card__content p-inline-list--middot">
+                
+                <li class="p-inline-list__item">
+                  kkumtree
+                </li>
+                
+              </ul>
+              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-16T17:38:34&#43;09:00</u></p>
+              <p>CloudNet@에서 진행하고 있는 CI/CD Study 7주차에는 Vault를 다루었습니다.
+자세한 설명은 해당 공식 페이지에서 해주고 있지만, 그저 1password 같은 패스워드 관리 서비스가 엔드유저 대상이라면 Vault는 인프라 관리자 대상으로 사용되는 것으로 알고 있는 제게는 흥미로운 주차였습니다.
+이번 스터디에서는 계속해서 kind로 로컬 Kubernetes(k8s)를 활용했기에, 이번에도 비슷하게 배포해보겠습니다.
+0. 실습 환경 준비 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
+https://github.com/kkumtree/ci-cd-cloudnet-study 의 7w 폴더
+(1) kind 클러스터 배포 kind create cluster --name vault --image kindest/node:v1.32.8 --config - &lt;&lt;EOF kind: Cluster apiVersion: kind.</p>
+            </div>
+            
+            <div class="p-list__item">
               <a href="/post/argocd-hello-world/"><h2>ArgoCD 101 - CI/CD 스터디 4주차</h2></a>
               <ul class="p-card__content p-inline-list--middot">
                 
@@ -268,25 +286,6 @@ Docker UDS의 GID Gitea와 Multibranch Pipeline의 결합 Local PV의 Taint 및 
 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
 https://github.com/kkumtree/ci-cd-cloudnet-study 의 3w 폴더
 0. 실습 준비 (1) kind kind 설치의 경우 다음 포스트를 참고할 수 있습니다.</p>
-            </div>
-            
-            <div class="p-list__item">
-              <a href="/post/helm-template-reusing-statements/"><h2>Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                
-                <li class="p-inline-list__item">
-                  kkumtree
-                </li>
-                
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-26T03:16:04&#43;09:00</u></p>
-              <p>이번에는 재사용성을 위해서 _helpers.tpl 파일을 활용해보겠습니다.
-기존의 Helm 101 - CI/CD 스터디 2주차에서 이어집니다.
-1. _helpers.tpl을 통한 공통 변수 재사용 (1) 공통사항 숙지 이전에 생성한 deployment.yaml과 service.yaml의 selector 부분에 공통점이 있습니다.
-# `{{ .Values.replicaCount }} ## deployment.yaml spec.selector.matchLabels spec.template.metadata.labels ## service.yaml spec.selector (2) 템플릿 생성 해당 label을 추가/삭제하려면, 여러 필드를 업데이트를 하여야합니다.
-대신 _helpers.tpl파일을 생성하여 구성읋 합니다.
-_helpers.tpl 뿐만 아니라, 맨 앞에 _로 시작하기만 하면 되며,
-이 파일은 k8s manifest 파일로 취급되지 않습니다.</p>
             </div>
             
 <ol class="p-pagination">
