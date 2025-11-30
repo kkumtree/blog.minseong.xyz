@@ -409,7 +409,45 @@
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>sudo apt-get update -qq  <span style="color:#f92672">&amp;&amp;</span> sudo apt-get install -y vault
-</span></span></code></pre></div>
+</span></span></code></pre></div><p>CLI를 활용해서 kv(key-value) store에 데이터를 저장하고, 조회해보겠습니다.</p>
+<p>VAULT_ADDR 환경변수를 설정하지 않으면, 기본값으로 조회한다고 표시될 것입니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export VAULT_ADDR<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;https://kkumtree-ms-7a34.panda-ule.ts.net&#39;</span>
+</span></span><span style="display:flex;"><span>vault login
+</span></span><span style="display:flex;"><span>vault secrets list
+</span></span><span style="display:flex;"><span>vault kv put secret/sampleapp/config <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  username<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;demo&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  password<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;p@ssw0rd&#34;</span>
+</span></span><span style="display:flex;"><span>vault kv get secret/sampleapp/config
+</span></span></code></pre></div><p>위 부분이 kv store에 데이터를 저장하는 부분입니다.</p>
+<p>값은 UI에서 조회하거나, 아래와 같이 API호출을 통해 조회합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -s --header <span style="color:#e6db74">&#34;X-Vault-Token: root&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --request GET $VAULT_ADDR/v1/secret/data/sampleapp/config | jq
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;request_id&#34;</span>: <span style="color:#e6db74">&#34;63fd04bf-5b7c-2b8f-8d65-1f620c93670b&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;lease_id&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;renewable&#34;</span>: false,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;lease_duration&#34;</span>: 0,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;data&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;data&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;password&#34;</span>: <span style="color:#e6db74">&#34;p@ssw0rd&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;username&#34;</span>: <span style="color:#e6db74">&#34;demo&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;metadata&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;created_time&#34;</span>: <span style="color:#e6db74">&#34;2025-11-30T00:35:58.175932548Z&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;custom_metadata&#34;</span>: null,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;deletion_time&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;destroyed&#34;</span>: false,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;version&#34;</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;wrap_info&#34;</span>: null,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;warnings&#34;</span>: null,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;auth&#34;</span>: null,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;mount_type&#34;</span>: <span style="color:#e6db74">&#34;kv&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><img src="image.png" alt="secret in vault ui"></p>
+<p>(지속 작성 중)</p>
+
   </div>
   </section>
   <section class="p-strip">
