@@ -6,7 +6,21 @@
     <description>Recent content in CICD on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sat, 22 Nov 2025 20:56:43 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/cicd/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 30 Nov 2025 08:59:34 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/cicd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Vault 101 in Kubernetes - CI/CD 스터디 7주차</title>
+      <link>https://blog.minseong.xyz/post/vault-101-in-kubernetes/</link>
+      <pubDate>Sun, 30 Nov 2025 08:59:34 +0900</pubDate>
+      
+      <guid>https://blog.minseong.xyz/post/vault-101-in-kubernetes/</guid>
+      <description>CloudNet@에서 진행하고 있는 CI/CD Study 7주차에는 Vault를 다루었습니다.
+자세한 설명은 해당 공식 페이지에서 해주고 있지만, 그저 1password 같은 패스워드 관리 서비스가 엔드유저 대상이라면 Vault는 인프라 관리자 대상으로 사용되는 것으로 알고 있는 제게는 흥미로운 주차였습니다.
+이번 스터디에서는 계속해서 kind로 로컬 Kubernetes(k8s)를 활용했기에, 이번에도 비슷하게 배포해보겠습니다.
+0. 실습 환경 준비 - kind 클러스터 배포 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
+https://github.com/kkumtree/ci-cd-cloudnet-study 의 7w 폴더
+kind create cluster --name vault --image kindest/node:v1.32.8 --config - &amp;lt;&amp;lt;EOF kind: Cluster apiVersion: kind.</description>
+    </item>
+    
     <item>
       <title>ArgoCD Cluster 및 Prefix 관리 - CI/CD 스터디 6주차</title>
       <link>https://blog.minseong.xyz/post/argocd-cluster-management-and-prefix/</link>
@@ -37,20 +51,6 @@ sudo tailscale serve --tcp 443 off 이후 실습을 위한 배포를 합니다.<
 (1) kind 및 kube-ops-view 이번에는 Ingress의 배포를 하기 위한 밑작업으로
 Control Node에 라벨링을 진행합니다.
 이는 다음에 이어질 ingress-nginx 배포 시, nodeSeletor 조건으로 사용합니다.</description>
-    </item>
-    
-    <item>
-      <title>Vault 101 in Kubernetes - CI/CD 스터디 7주차</title>
-      <link>https://blog.minseong.xyz/post/vault-101-in-kubernetes/</link>
-      <pubDate>Sun, 16 Nov 2025 17:38:34 +0900</pubDate>
-      
-      <guid>https://blog.minseong.xyz/post/vault-101-in-kubernetes/</guid>
-      <description>CloudNet@에서 진행하고 있는 CI/CD Study 7주차에는 Vault를 다루었습니다.
-자세한 설명은 해당 공식 페이지에서 해주고 있지만, 그저 1password 같은 패스워드 관리 서비스가 엔드유저 대상이라면 Vault는 인프라 관리자 대상으로 사용되는 것으로 알고 있는 제게는 흥미로운 주차였습니다.
-이번 스터디에서는 계속해서 kind로 로컬 Kubernetes(k8s)를 활용했기에, 이번에도 비슷하게 배포해보겠습니다.
-0. 실습 환경 준비 - kind 클러스터 배포 해당 구성들은 아래 GitHub에 탑재되어 있습니다.
-https://github.com/kkumtree/ci-cd-cloudnet-study 의 7w 폴더
-kind create cluster --name vault --image kindest/node:v1.32.8 --config - &amp;lt;&amp;lt;EOF kind: Cluster apiVersion: kind.</description>
     </item>
     
     <item>

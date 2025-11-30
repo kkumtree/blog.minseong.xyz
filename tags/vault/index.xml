@@ -6,11 +6,11 @@
     <description>Recent content in vault on kkumtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ko-kr</language>
-    <lastBuildDate>Sun, 16 Nov 2025 17:38:34 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/vault/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 30 Nov 2025 08:59:34 +0900</lastBuildDate><atom:link href="https://blog.minseong.xyz/tags/vault/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Vault 101 in Kubernetes - CI/CD 스터디 7주차</title>
       <link>https://blog.minseong.xyz/post/vault-101-in-kubernetes/</link>
-      <pubDate>Sun, 16 Nov 2025 17:38:34 +0900</pubDate>
+      <pubDate>Sun, 30 Nov 2025 08:59:34 +0900</pubDate>
       
       <guid>https://blog.minseong.xyz/post/vault-101-in-kubernetes/</guid>
       <description>CloudNet@에서 진행하고 있는 CI/CD Study 7주차에는 Vault를 다루었습니다.
