@@ -238,3 +238,52 @@ echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
 sudo apt-get update -qq  && sudo apt-get install -y vault
 ```
 
+CLI를 활용해서 kv(key-value) store에 데이터를 저장하고, 조회해보겠습니다. 
+
+VAULT_ADDR 환경변수를 설정하지 않으면, 기본값으로 조회한다고 표시될 것입니다.  
+
+```bash
+export VAULT_ADDR='https://kkumtree-ms-7a34.panda-ule.ts.net'
+vault login
+vault secrets list
+vault kv put secret/sampleapp/config \
+  username="demo" \
+  password="p@ssw0rd"
+vault kv get secret/sampleapp/config
+```
+
+위 부분이 kv store에 데이터를 저장하는 부분입니다. 
+
+값은 UI에서 조회하거나, 아래와 같이 API호출을 통해 조회합니다. 
+
+```bash
+curl -s --header "X-Vault-Token: root" \
+  --request GET $VAULT_ADDR/v1/secret/data/sampleapp/config | jq
+{
+  "request_id": "63fd04bf-5b7c-2b8f-8d65-1f620c93670b",
+  "lease_id": "",
+  "renewable": false,
+  "lease_duration": 0,
+  "data": {
+    "data": {
+      "password": "p@ssw0rd",
+      "username": "demo"
+    },
+    "metadata": {
+      "created_time": "2025-11-30T00:35:58.175932548Z",
+      "custom_metadata": null,
+      "deletion_time": "",
+      "destroyed": false,
+      "version": 2
+    }
+  },
+  "wrap_info": null,
+  "warnings": null,
+  "auth": null,
+  "mount_type": "kv"
+}
+```
+
+![secret in vault ui](image.png)
+
+(지속 작성 중)
