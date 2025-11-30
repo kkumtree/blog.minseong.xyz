@@ -1,5 +1,5 @@
 ---
-date: 2025-11-16T17:38:34+09:00
+date: 2025-11-30T08:59:34+09:00
 title: "Vault 101 in Kubernetes - CI/CD 스터디 7주차"
 tags:
   - vault
