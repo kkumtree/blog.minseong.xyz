@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+    <title>Vault 101 in Kubernetes - CI/CD 스터디 7주차 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Vault 101 in Kubernetes - CI/CD 스터디 7주차" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/vault-101-in-kubernetes/image-10.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/vault-101-in-kubernetes/image-10.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/vault-101-in-kubernetes/image-10.png' />
+
+    
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.fab2b396c750e003c2101de8575925a23fdd2affcd52233a66f0c9a69e213c23.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-10.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Vault 101 in Kubernetes - CI/CD 스터디 7주차</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-16T17:38:34&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/vault" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">vault</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cicd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CICD</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 CI/CD Study 7주차에는 <a href="https://www.vaultproject.io/">Vault</a>를 다루었습니다.</p>
+<p>자세한 설명은 해당 공식 페이지에서 해주고 있지만, 그저 1password 같은 패스워드 관리 서비스가 엔드유저 대상이라면 Vault는 인프라 관리자 대상으로 사용되는 것으로 알고 있는 제게는 흥미로운 주차였습니다.</p>
+<p>이번 스터디에서는 계속해서 kind로 로컬 Kubernetes(k8s)를 활용했기에, 이번에도 비슷하게 배포해보겠습니다.</p>
+<h2 id="0-실습-환경-준비---kind-클러스터-배포">0. 실습 환경 준비 - kind 클러스터 배포</h2>
+<blockquote>
+<p>해당 구성들은 아래 GitHub에 탑재되어 있습니다.<br>
+<a href="https://github.com/kkumtree/ci-cd-cloudnet-study">https://github.com/kkumtree/ci-cd-cloudnet-study</a> 의 7w 폴더</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kind create cluster --name vault --image kindest/node:v1.32.8 --config - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Cluster
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: kind.x-k8s.io/v1alpha4
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">nodes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: control-plane
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: worker
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ingress-ready: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  extraPortMappings:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30080
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;[Provisoning..] ingress-nginx in vault cluster&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl config use-context kind-vault
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl wait --namespace ingress-nginx <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --for<span style="color:#f92672">=</span>condition<span style="color:#f92672">=</span>ready pod <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --selector<span style="color:#f92672">=</span>app.kubernetes.io/component<span style="color:#f92672">=</span>controller <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --timeout<span style="color:#f92672">=</span>90s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo tailscale serve -bg localhost:30080
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f whoami.yaml 
+</span></span></code></pre></div><p>이번에는 UI 관련해서 80포트 하나만 뚫어놓고 사용하고 싶었는데, 뭔가 하나씩 막히는 중입니다.
+그래서 <code>traefik/whoami</code> 이미지를 활용하여 디버깅을 하기로 했습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># cat kind/whoami.yaml</span>
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Namespace
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: whoami
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>apiVersion: apps/v1
+</span></span><span style="display:flex;"><span>kind: Deployment
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: whoami
+</span></span><span style="display:flex;"><span>  namespace: whoami
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  replicas: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  selector:
+</span></span><span style="display:flex;"><span>    matchLabels:
+</span></span><span style="display:flex;"><span>      app: whoami
+</span></span><span style="display:flex;"><span>  template:
+</span></span><span style="display:flex;"><span>    metadata:
+</span></span><span style="display:flex;"><span>      labels:
+</span></span><span style="display:flex;"><span>        app: whoami
+</span></span><span style="display:flex;"><span>    spec:
+</span></span><span style="display:flex;"><span>      containers:
+</span></span><span style="display:flex;"><span>      - name: whoami
+</span></span><span style="display:flex;"><span>        image: traefik/whoami:v1.9.0
+</span></span><span style="display:flex;"><span>        ports:
+</span></span><span style="display:flex;"><span>        - containerPort: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Service
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: whoami
+</span></span><span style="display:flex;"><span>  namespace: whoami
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  selector:
+</span></span><span style="display:flex;"><span>    app: whoami
+</span></span><span style="display:flex;"><span>  ports:
+</span></span><span style="display:flex;"><span>  - name: http
+</span></span><span style="display:flex;"><span>    port: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>    targetPort: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>apiVersion: networking.k8s.io/v1
+</span></span><span style="display:flex;"><span>kind: Ingress
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: whoami-ingress
+</span></span><span style="display:flex;"><span>  namespace: whoami
+</span></span><span style="display:flex;"><span>  annotations:
+</span></span><span style="display:flex;"><span>    nginx.ingress.kubernetes.io/rewrite-target: <span style="color:#e6db74">&#34;/</span>$1<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    nginx.ingress.kubernetes.io/use-regex: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  ingressClassName: <span style="color:#e6db74">&#34;nginx&#34;</span>
+</span></span><span style="display:flex;"><span>  rules:
+</span></span><span style="display:flex;"><span>  - http:  <span style="color:#75715e"># Tailscale serve용 host 제거</span>
+</span></span><span style="display:flex;"><span>      paths:
+</span></span><span style="display:flex;"><span>      - path: /whoami<span style="color:#f92672">(</span>?:/<span style="color:#f92672">(</span>.*<span style="color:#f92672">))</span>?
+</span></span><span style="display:flex;"><span>        pathType: ImplementationSpecific
+</span></span><span style="display:flex;"><span>        backend:
+</span></span><span style="display:flex;"><span>          service:
+</span></span><span style="display:flex;"><span>            name: whoami
+</span></span><span style="display:flex;"><span>            port:
+</span></span><span style="display:flex;"><span>              number: <span style="color:#ae81ff">80</span>
+</span></span></code></pre></div><h3 id="2-vault-devmode배포">(2) Vault DevMode배포</h3>
+<p>이번에는</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>❯ cat vault-server.sh
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>helm repo add hashicorp https://helm.releases.hashicorp.com
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># vault-values-dev.yaml 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; vault-values-dev.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">global:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tlsDisable: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">injector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  # Sidecar Injection을 위해 필요한 설정
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">server:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      nginx.ingress.kubernetes.io/ssl-redirect: &#34;false&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      nginx.ingress.kubernetes.io/force-ssl-redirect: &#34;false&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#      nginx.ingress.kubernetes.io/rewrite-target: &#34;/\$1&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#      nginx.ingress.kubernetes.io/use-regex: &#34;true&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ingressClassName: &#34;nginx&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hosts:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - host: kkumtree-ms-7a34.panda-ule.ts.net
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        paths:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          - /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  dev:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    devRootToken: &#34;root&#34; 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  dataStorage:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tls: []
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  service:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    type: &#34;ClusterIP&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ui:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  serviceType: &#34;ClusterIP&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  activeVaultPodOnly: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>helm upgrade vault hashicorp/vault -n vault -f vault-values-dev.yaml --install --create-namespace
+</span></span></code></pre></div><p>Root path 안써보고 싶어서 갖은 궁리를 해봤지만, 생각보다 안되었습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">server</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingress</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">nginx.ingress.kubernetes.io/rewrite-target</span>: <span style="color:#e6db74">&#34;/\$1&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">nginx.ingress.kubernetes.io/use-regex</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">hosts</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">host</span>: <span style="color:#ae81ff">kkumtree-ms-7a34.panda-ule.ts.net</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#ae81ff">/_vault(?:/(.*))?</span>
+</span></span></code></pre></div><p>원래는 위와 같이 하고 싶었는데, 어쩔 수 없이 루트 경로에서 진행했습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># kubectl get ingress -A -o json | \</span>
+</span></span><span style="display:flex;"><span>jq <span style="color:#e6db74">&#39;.items[] | {namespace: .metadata.namespace, name: .metadata.name, host: .spec.rules[].host, paths: .spec.rules[].http.paths[].path}&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;namespace&#34;</span>: <span style="color:#e6db74">&#34;vault&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;vault&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;kkumtree-ms-7a34.panda-ule.ts.net&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;paths&#34;</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;namespace&#34;</span>: <span style="color:#e6db74">&#34;whoami&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;whoami-ingress&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;host&#34;</span>: null,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;paths&#34;</span>: <span style="color:#e6db74">&#34;/whoami(?:/(.*))?&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>그러면 위와 같이 경로가 떠서, localhost 일때만 whoami를 접속할 수 있었습니다.</p>
+<h2 id="2-vault-cli-설치">2. Vault CLI 설치</h2>
+<blockquote>
+<p>Terraform을 APT로 설치했다면, 마지막의 vault 설치만 진행하면 됩니다.<br>
+(GPG키 중복 표시됨)</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -fsSL https://apt.releases.hashicorp.com/gpg <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	  | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">	https://apt.releases.hashicorp.com </span><span style="color:#66d9ef">$(</span>lsb_release -cs<span style="color:#66d9ef">)</span><span style="color:#e6db74"> main&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	  | sudo tee /etc/apt/sources.list.d/hashicorp.list
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo apt-get update -qq  <span style="color:#f92672">&amp;&amp;</span> sudo apt-get install -y vault
+</span></span></code></pre></div>
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/post/argocd-hello-world/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">ArgoCD 101 - CI/CD 스터디 4주차</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/post/argocd-ingress/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">ArgoCD with Ingress - CI/CD 스터디 5주차</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+setSlideIndex(0);
+setInterval(nextSlide, 5000);
+</script>
+
+</body>
+</html>
