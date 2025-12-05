@@ -32,10 +32,10 @@ kind 배포와 ingress-nginx, 그리고 vault-worker 까지 배포하면, 아래
 
 (1-1) kind의 경우 (8w/shells/kind/up-kind.sh)  
 
-- control-plane 하나 (containerPort:hostPort)  
+1. control-plane 하나 (containerPort:hostPort)  
    - 80:80, 443:443 (TCP)  
-   - 30000:30000, 30001 
-- vault-worker간 raft 알고리즘을 위한, 3개의 worker 노드
+   - 30000:30000, 30001  
+2. vault-worker간 raft 알고리즘을 위한, 3개의 worker 노드
 
 (1-2) ingress-nginx의 경우 (8w/shells/kind/up-kind.sh)  
 
@@ -46,16 +46,16 @@ kind 배포와 ingress-nginx, 그리고 vault-worker 까지 배포하면, 아래
 
 (2) vault-worker의 경우 (8w/shells/vault/vault-ha.sh)  
 
-- HA모드 활성화 및 replica 3개 구성
+1. HA모드 활성화 및 replica 3개 구성
    - raft 및 ui 활성화 / TLS 비활성화
    - Port: 8200(API), 8201(vault-worker간 통신)
    - kubernetes 서비스 등록
-- readinessProbe 활성화
-- PVC: raft 데이터 저장 (10Gi)  
-- UI (NodePort)  
+2. readinessProbe 활성화
+3. PVC: raft 데이터 저장 (10Gi)  
+4. UI (NodePort)  
    - externalPort: 8200
    - serviceNodePort: 300000
-- injector 비활성화  
+5. injector 비활성화  
 
 ## 1. Vault 클러스터 구성
 
@@ -74,10 +74,10 @@ kind 배포와 ingress-nginx, 그리고 vault-worker 까지 배포하면, 아래
 1. 3개의 Pod 중 하나를 선택하여, 터미널에서 Vault 클러스터 초기화(initialize)를 합니다.  
    - 출력되는 Unseal Key 5개와 Initial Root Token 1개를 메모해둡니다.  
    - Unseal Key 3개를 골라, Vault를 Unseal 상태로 바꿉니다. (다수결 충족 및 리더로 선출)  
-   - 해당 Pod에서 확인되는 Vault HA Cluster 주소를 메모해둡니다.   
-2. 남은 Pod의 터미널에서는 **초기화하지 않습니다**. 
+   - 해당 Pod에서 확인되는 Vault HA Cluster 주소를 메모해둡니다.  
+2. 남은 Pod의 터미널에서는 **초기화하지 않습니다**.  
    - 초기화한 Vault Pod에서 확인된 Cluster 주소를 기반으로 Cluster에 Join 합니다.  
-   - Vault를 Unseal 상태로 만듭니다. 
+   - Vault를 Unseal 상태로 만듭니다. (1번에서 고른 3개의 **Unseal Key** 사용)  
 
 ![init vault operator in a pod](image-1.png)  
 
@@ -95,17 +95,35 @@ kind 배포와 ingress-nginx, 그리고 vault-worker 까지 배포하면, 아래
 (4-남은 Pod에서 Unseal 시행)  
 ![unseal in other pods](image-6.png)  
 
-이후 vault-worker Pod 외부에서 vault와 통신하려면, 아래와 같이 두 변수를 설정해야합니다. 
+각 Pod에서 Unsealed 시행 시 다음과 같이 확인할 수 있습니다.  
+
+![unsealed vault](image-7.png)  
+
+vault-0 Pod가 Unsealed 되었을 시, 아래와 같이 해당 Pod만 Ready 상태가 됩니다.  
+
+![alt text](image-8.png)
+
+다른 두 Pod에서 join 후, 똑같이 Unsealed를 하면 이 또한 Ready 상태가 됩니다.  
+
+![join in other pods](image-9.png)
+
+![ready with unsealed](image-10.png)
+
+이후 vault-worker Pod 외부에서 vault와 통신하려면, 아래와 같이 두 변수를 설정해야합니다.  
 
 - `VAULT_ROOT_TOKEN`: 초기화 시 확인된 root token  
 - `VAULT_ADDR`: 'http://localhost:30000' (ui.ServiceNodePort)
 
-> 여기서 눈치챘겠지만, vault cli는 HTTP API 호출을 기반으로 한다는 것을 알 수 있습니다. 
+> 여기서 눈치챘겠지만, vault cli는 HTTP API 호출을 기반으로 한다는 것을 알 수 있습니다.  
 
 그러면 아래와 같이 leader 1개, follower 2개의 raft 피어목록을 확인할 수 있습니다.  
 
 ```bash  
+# vault login
 vault operator raft list-peers  
 ```  
 
-## 2. 
+![raft list-peers to check peers](image-11.png)  
+
+## 2. Vault API 간단 맛보기  
+
