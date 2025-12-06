@@ -1,5 +1,5 @@
 ---
-date: 2025-12-03T08:59:34+09:00
+date: 2025-12-07T05:59:10+09:00
 title: "Vault HA 및 Metric 수집 설정 - CI/CD 스터디 8주차"
 tags:
   - vault
