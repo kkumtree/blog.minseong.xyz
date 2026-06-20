@@ -36,9 +36,11 @@ jobs:
         working-directory: 'themes/v-framework'
         run: npm ci --no-audit --no-fund
 
-      - name: Add theme binaries to PATH
-        run: echo "$PWD/themes/v-framework/node_modules/.bin" >> "$GITHUB_PATH"
-         
+      - name: Install Dart Sass
+        run: |
+          curl -sSfL "https://github.com/sass/dart-sass/releases/download/1.101.0/dart-sass-1.101.0-linux-x64.tar.gz" | tar xz
+          echo "$PWD/dart-sass" >> "$GITHUB_PATH"
+
       - name: Build website with hugo
         run: hugo
 
