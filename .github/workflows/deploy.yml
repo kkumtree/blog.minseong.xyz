@@ -40,7 +40,7 @@ jobs:
         run: npm ci --no-audit --no-fund
          
       - name: Build website with hugo
-        run: hugo --minify
+        run: hugo
 
       # Checkout destination branch
       - uses: actions/checkout@v4
