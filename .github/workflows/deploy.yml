@@ -24,8 +24,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-          cache: 'yarn'
-          cache-dependency-path: 'themes/v-framework/yarn.lock'
+          cache: 'npm'
+          cache-dependency-path: 'themes/v-framework/package-lock.json'
 
       - name: Install Dart Sass
         run: npm install -g sass
@@ -35,9 +35,9 @@ jobs:
           hugo-version: '0.163.3'
           extended: true
           
-      - name: Install yarn dependencies  
+      - name: Install theme dependencies  
         working-directory: 'themes/v-framework'
-        run: yarn install --frozen-lockfile
+        run: npm ci --no-audit --no-fund
          
       - name: Build website with hugo
         run: hugo --minify
