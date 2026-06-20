@@ -16,12 +16,12 @@ jobs:
     # Check out latest commit 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         name: Checkout src repo
         with:
           ref: main
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -44,27 +44,15 @@ jobs:
       - name: Build website with hugo
         run: hugo
 
-      # Checkout destination branch
-      - uses: actions/checkout@v4
-        name: Checkout dest repo
-        with:
-          path: dest
-          fetch-depth: 0
-          ref: gh-pages
-            
-      # Commit and push changes
-      - name: Copy website built from src/public
-        working-directory: dest
+      - name: Deploy to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          rm -rf ./*
-          rsync -a --delete ../public/ ./
-
-      # Commit and push changes
-      - name: Commit website updates
-        working-directory: dest
-        run: |
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
+          cd public
+          git init
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git add .
-          git diff-index --quiet HEAD || git commit -m "Deploy website updates with GitHub Actions: ${GITHUB_SHA}"
-          git push origin gh-pages
+          git commit -m "Deploy website updates with GitHub Actions: ${GITHUB_SHA}"
+          git push --force origin HEAD:gh-pages
