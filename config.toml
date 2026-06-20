@@ -4,9 +4,8 @@ title = "kkumtree"
 theme = "v-framework"
 buildFuture = true
 paginate = 5
-permalinks = [
-  { post = "/:2006/:01/:02/:filename" }
-]
+[permalinks]
+  post = "/:2006/:01/:02/:contentbasename"
 
 [outputs]
   home = ["HTML", "RSS", "Search"]
