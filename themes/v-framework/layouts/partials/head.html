@@ -6,9 +6,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href='{{ "/img/favicon/favicon-32x32.png" | relURL }}'>
     <link rel="icon" type="image/png" sizes="16x16" href='{{ "/img/favicon/favicon-16x16.png" | relURL }}'>
 
-
     {{- $options := (dict "includePaths" (slice "themes/v-framework/node_modules") "transpiler" "dartsass" "silenceDependencyDeprecations" true) -}}
     {{ $style := resources.Get "sass/theme.scss" | toCSS $options | resources.Minify | resources.Fingerprint }}
+
     <title>{{ .Title }} | {{ .Site.Title }}</title>
     <!--  Open Graph Protocol -->
     <meta property="og:site_name" content="{{ .Site.Title }}" />
@@ -21,7 +21,6 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content='{{.Permalink}}{{.Params.image}}' />
 
-    <!--   SASS Stylesheets -->
     <link rel="stylesheet" href="{{ $style.Permalink }}">
 
     <!-- Search -->

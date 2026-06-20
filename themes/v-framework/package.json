@@ -5,5 +5,8 @@
 	"dependencies": {
 		"pretendard-jp": "^1.3.7",
 		"vanilla-framework": "^4.52.0"
+	},
+	"devDependencies": {
+		"sass": "^1.101.0"
 	}
 }

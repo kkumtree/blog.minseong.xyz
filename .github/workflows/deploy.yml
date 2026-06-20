@@ -27,17 +27,20 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'themes/v-framework/package-lock.json'
 
-      - name: Install Dart Sass
-        run: npm install -g sass
-
       - uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: '0.163.3'
           extended: true
-          
-      - name: Install theme dependencies  
+
+      - name: Install theme dependencies
         working-directory: 'themes/v-framework'
         run: npm ci --no-audit --no-fund
+
+      - name: Add Sass wrapper to PATH
+        run: echo "$PWD/tools" >> "$GITHUB_PATH"
+
+      - name: Add theme binaries to PATH
+        run: echo "$PWD/themes/v-framework/node_modules/.bin" >> "$GITHUB_PATH"
          
       - name: Build website with hugo
         run: hugo
