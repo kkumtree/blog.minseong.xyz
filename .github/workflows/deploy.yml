@@ -36,9 +36,6 @@ jobs:
         working-directory: 'themes/v-framework'
         run: npm ci --no-audit --no-fund
 
-      - name: Add Sass wrapper to PATH
-        run: echo "$PWD/tools" >> "$GITHUB_PATH"
-
       - name: Add theme binaries to PATH
         run: echo "$PWD/themes/v-framework/node_modules/.bin" >> "$GITHUB_PATH"
          

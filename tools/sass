@@ -1,4 +1,0 @@
-#!/usr/bin/env sh
-set -eu
-script_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-exec node "$script_dir/../themes/v-framework/node_modules/sass/sass.js" "$@"
