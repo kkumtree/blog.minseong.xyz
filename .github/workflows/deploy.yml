@@ -27,10 +27,10 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'themes/v-framework/package-lock.json'
 
-      - uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: '0.163.3'
-          extended: true
+      - name: Install Hugo
+        run: |
+          curl -sSfL "https://github.com/gohugoio/hugo/releases/download/v0.163.3/hugo_extended_0.163.3_linux-amd64.tar.gz" | tar xz
+          sudo mv hugo /usr/local/bin/hugo
 
       - name: Install theme dependencies
         working-directory: 'themes/v-framework'
