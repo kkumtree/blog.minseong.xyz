@@ -52,18 +52,18 @@
             {{ if eq (len .AllTranslations) (len $.Site.Home.AllTranslations) }}
             {{ range .AllTranslations }}
             <li>
-              <a href="{{ .Permalink }}" class="p-navigation__dropdown-item">{{ .Language.LanguageName }}</a>
+              <a href="{{ .Permalink }}" class="p-navigation__dropdown-item">{{ .Language.Label }}</a>
             </li>
             {{ end }}
             {{ else }}
             {{ range .AllTranslations }}
             <li>
-              <a href="{{ .Permalink }}" class="p-navigation__dropdown-item">📄 {{ .Language.LanguageName }}</a>
+              <a href="{{ .Permalink }}" class="p-navigation__dropdown-item">📄 {{ .Language.Label }}</a>
             </li>
             {{ end }}
             {{ range $.Site.Home.AllTranslations }}
             <li>
-              <a href="{{ .Permalink }}" class="p-navigation__dropdown-item">🏠 {{ .Language.LanguageName }}</a>
+              <a href="{{ .Permalink }}" class="p-navigation__dropdown-item">🏠 {{ .Language.Label }}</a>
             </li>
             {{ end }}
             {{ end }}

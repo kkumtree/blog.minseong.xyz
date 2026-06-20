@@ -1,5 +1,5 @@
 baseURL = 'https://blog.minseong.xyz'
-languageCode = 'ko-kr'
+locale = 'ko-KR'
 title = "kkumtree"
 theme = "v-framework"
 buildFuture = true
@@ -9,6 +9,9 @@ paginate = 5
 
 [outputs]
   home = ["HTML", "RSS", "Search"]
+
+[markup.goldmark.renderer]
+  unsafe = true
 
 [outputFormats.Search]
   mediaType = "application/json"

@@ -1,6 +1,6 @@
 // Import the framework
-@import 'vanilla-framework/scss/vanilla';
-@import 'pretendard/dist/web/static/pretendard-jp.css';
+@use 'vanilla-framework/scss/vanilla' as *;
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.7/dist/web/static/pretendard-jp.css');
 
 // Include all of Vanilla Framework
 @include vanilla;

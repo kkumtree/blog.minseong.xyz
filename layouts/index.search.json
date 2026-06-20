@@ -1,0 +1,14 @@
+[
+  {{- $pages := .Site.RegularPages -}}
+  {{- range $index, $page := $pages -}}
+    {{- if $index }},{{ end -}}
+    {{- $summary := $page.Plain | htmlUnescape | plainify | truncate 500 -}}
+    {{- dict
+      "title" $page.Title
+      "contents" $summary
+      "tags" $page.Params.tags
+      "categories" $page.Params.categories
+      "permalink" $page.Permalink
+    | jsonify -}}
+  {{- end -}}
+]

@@ -7,9 +7,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href='{{ "/img/favicon/favicon-16x16.png" | relURL }}'>
 
 
-    {{- $options := (dict "includePaths" (slice "node_modules") "transpiler" "dartsass") -}}
-    {{ $style := resources.Get "sass/theme.scss" | resources.ToCSS $options | resources.Minify | resources.Fingerprint
-    }}
+    {{- $options := (dict "includePaths" (slice "themes/v-framework/node_modules") "transpiler" "dartsass" "silenceDependencyDeprecations" true) -}}
+    {{ $style := resources.Get "sass/theme.scss" | toCSS $options | resources.Minify | resources.Fingerprint }}
     <title>{{ .Title }} | {{ .Site.Title }}</title>
     <!--  Open Graph Protocol -->
     <meta property="og:site_name" content="{{ .Site.Title }}" />

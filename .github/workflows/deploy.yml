@@ -3,6 +3,9 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: write
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -17,11 +20,6 @@ jobs:
         name: Checkout src repo
         with:
           ref: main
-      
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '^1.13.1'
-          cache: false
 
       - uses: actions/setup-node@v4
         with:
@@ -29,23 +27,20 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'themes/v-framework/yarn.lock'
 
-      - name: Install hugo
-        run: |
-          wget --progress=bar:force:noscroll https://github.com/gohugoio/hugo/releases/download/v0.110.0/hugo_extended_0.110.0_linux-amd64.deb -O hugo.deb
-          DEBIAN_FRONTEND=noninteractive sudo dpkg -i hugo.deb
-          wget --progress=bar:force:noscroll https://github.com/sass/dart-sass-embedded/releases/download/1.52.1/sass_embedded-1.52.1-linux-x64.tar.gz -O dartsass.tar.gz
-          tar -xvzf dartsass.tar.gz
-          sudo cp sass_embedded/dart-sass-embedded /usr/bin/
+      - name: Install Dart Sass
+        run: npm install -g sass
 
-      - name: check hugo mod 
-        run: hugo mod get
+      - uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.163.3'
+          extended: true
           
       - name: Install yarn dependencies  
         working-directory: 'themes/v-framework'
-        run: yarn install
+        run: yarn install --frozen-lockfile
          
       - name: Build website with hugo
-        run: hugo
+        run: hugo --minify
 
       # Checkout destination branch
       - uses: actions/checkout@v4
@@ -59,8 +54,8 @@ jobs:
       - name: Copy website built from src/public
         working-directory: dest
         run: |
-          rm -rf *
-          yes | cp -rf ../public/* .
+          rm -rf ./*
+          rsync -a --delete ../public/ ./
 
       # Commit and push changes
       - name: Commit website updates

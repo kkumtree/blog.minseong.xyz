@@ -7,7 +7,7 @@ pretendard-jp@^1.3.7:
   resolved "https://registry.yarnpkg.com/pretendard-jp/-/pretendard-jp-1.3.7.tgz#b8781977edd1d5fb3ee221797218a0a8d1141a42"
   integrity sha512-ffGik7y392LngmeZKvpdf9EgkCfarI7Qm+tfsPtw56gpAM/BXzhaLvwdPxEdi0z4gUNLO4LXgNHPVlUnwY20Nw==
 
-vanilla-framework@^3.11.0:
-  version "3.15.0"
-  resolved "https://registry.yarnpkg.com/vanilla-framework/-/vanilla-framework-3.15.0.tgz#d6e317962b643239ba1b99d2590f5eacd0a50b69"
-  integrity sha512-0pspKu/DeOv9cqpsSH8jfTcu4N7AHflUNXYnGudEL9NMIwxpVsi5Rq6OsmaiUjPilJ/WH1GHNoi77EX6aoMF/Q==
+vanilla-framework@^4.52.0:
+  version "4.52.0"
+  resolved "https://registry.yarnpkg.com/vanilla-framework/-/vanilla-framework-4.52.0.tgz#ed1b5603a146b081f730e50b2e7df92d93582ba7"
+  integrity sha512-R4AtNYdYYfYEnQa1A+ya6ADHf7R66XvDkk4d0pnxIjtdLGp9zgNf2U2xcOazO2VxQ377cedOcvQjdO6ZlLksAw==
