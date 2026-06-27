@@ -62,7 +62,7 @@ flowchart TB
     - Grace Hopper 칩에 적용된 CPU와 GPU 간의 통신을 위한 링크
     - ARM 기반 CPU를 통해, PCIe를 거치지 않고 GPU와 CPU 간의 통신을 가능하게 함
     - 기존의 PCIe가 병목이기 때문에, 칩 패키지 내에서 처리될 수 있도록 함
-3. NVLink 브리지
+3. NVLink 브리지  
     ![NVlink Bridge 2-slot](image-2.png)
     > Image Referenced from [MAXON](https://support.maxon.net/hc/en-us/articles/22085399180060-Managing-VRAM-issues-with-Redshift)  
     - 앞서 말했던, NVLink 입니다. 데이터센터 [SXM(Server PCI Express Module)](https://ko.wikipedia.org/wiki/SXM_%28%EC%86%8C%EC%BC%93%29)에는 필요없다고 하는데, SXM? 모르기 때문에 한번 찾아봤습니다.  
