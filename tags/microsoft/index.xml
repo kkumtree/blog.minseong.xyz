@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Microsoft on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/microsoft/</link>
+		<description>Recent content in Microsoft on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 02 Mar 2025 22:31:49 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/microsoft/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>How to manage Microsoft packages with APT manager</title>
+				<link>https://blog.minseong.xyz/2025/03/02/how-to-manage-microsoft-packages-with-apt-manager/</link>
+				<pubDate>Sun, 02 Mar 2025 22:31:49 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2025/03/02/how-to-manage-microsoft-packages-with-apt-manager/</guid>
+				<description>&lt;p&gt;Microsoft gave us a lot of programs as Ubuntu/Debian packages.&lt;/p&gt;&#xA;&lt;p&gt;In this post, I will show you how to manage Edge and VSCode packages with APT package manager.&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;APT is stands for &lt;code&gt;Advanced Package Tool&lt;/code&gt;.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;h2 id=&#34;why&#34;&gt;Why?&lt;/h2&gt;&#xA;&lt;p&gt;Simple. I want to upgrade them easily with APT package manager rather than using &lt;code&gt;dpkg&lt;/code&gt; command.&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo apt-get update -y &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; sudo apt-get upgrade -y  &#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;When I installed Microsoft Edge and Visual Studio Code, I used &lt;code&gt;dpkg&lt;/code&gt; command.&#xA;But, It is little burdensome to manage packages with &lt;code&gt;dpkg&lt;/code&gt; command in Update/Upgrade.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

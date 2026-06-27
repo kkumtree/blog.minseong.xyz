@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Drift on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/drift/</link>
+		<description>Recent content in Drift on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 15 Oct 2023 00:10:33 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/drift/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>TFC(Terraform Cloud) drift 알림 설정</title>
+				<link>https://blog.minseong.xyz/2023/10/15/notification-about-terraform-cloud-drift/</link>
+				<pubDate>Sun, 15 Oct 2023 00:10:33 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2023/10/15/notification-about-terraform-cloud-drift/</guid>
+				<description>&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서의 Terraform 스터디가 끝나고 나서,&lt;br&gt;&#xA;테라폼을 실제 운영 상황에 도입하면서 마주할 수 밖에 없는 드리프트(drift) 상황에 대해&lt;br&gt;&#xA;이해해보는 시간을 가졌습니다.&lt;/p&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-info&#34; data-lang=&#34;info&#34;&gt;참고) TFC에서의 Drift Detection 기능은 현재 TFC Plus 에디션에서 지원됩니다.  &#xA;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;1-용어-이해해보기&#34;&gt;1. 용어 이해해보기&lt;/h2&gt;&#xA;&lt;p&gt;사실은 작년부터 테라폼을 접하고나서, IaC라는 개념에 꽂히기만 했지&lt;br&gt;&#xA;운영 입장에서 마주했었던 수많은 시행착오들을 흔한 유저에러로만 생각해왔었습니다.&lt;br&gt;&#xA;스터디에 참여하면서 종종 &amp;lsquo;드리프트&amp;rsquo;라는 단어를 듣고, 찾아보니&lt;br&gt;&#xA;상당부분이 이에 속하는 상황이라는 것을 알 수 있었습니다.&lt;/p&gt;&#xA;&lt;h3 id=&#34;1-drift&#34;&gt;(1) Drift?&lt;/h3&gt;&#xA;&lt;p&gt;글 작성을 위해 찾아본 기술적 Drift는 본래 주행에 있어서의 그것과&lt;br&gt;&#xA;크게 차이가 없음을 알 수 있었습니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

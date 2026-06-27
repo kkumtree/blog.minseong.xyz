@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Datadog on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/datadog/</link>
+		<description>Recent content in Datadog on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 07 Dec 2025 05:59:10 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/datadog/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Vault HA 및 Metric 수집 설정 - CI/CD 스터디 8주차</title>
+				<link>https://blog.minseong.xyz/2025/12/07/vault-ha-metric-in-kubernetes/</link>
+				<pubDate>Sun, 07 Dec 2025 05:59:10 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2025/12/07/vault-ha-metric-in-kubernetes/</guid>
+				<description>&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 CI/CD Study 8주차에는 &lt;a href=&#34;https://www.vaultproject.io/&#34;&gt;Vault&lt;/a&gt;의 HA(High Availability)에 대해 다루었습니다.&lt;/p&gt;&#xA;&lt;p&gt;구성 방법의 이론적 부분은 단순했으나, 예상한 구성 방법과 달라서 제가 나중에 참고하려고 부연설명을 해두려고 합니다.&lt;/p&gt;&#xA;&lt;p&gt;더불어 대시보드에서 Vault 관련 메트릭을 보고 싶어서, Datadog과 연동하여 관측하였습니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;0-실습-환경-준비&#34;&gt;0. 실습 환경 준비&lt;/h2&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;해당 구성들은 아래 GitHub에 탑재되어 있습니다.&lt;br&gt;&#xA;&lt;a href=&#34;https://github.com/kkumtree/ci-cd-cloudnet-study&#34;&gt;https://github.com/kkumtree/ci-cd-cloudnet-study&lt;/a&gt; 의 8w 폴더&#xA;Helm v4 출시 후 한 달도 안된 시점에 작성되었기에, v3에 호환되는 차트 버전을 명시하여 배포했습니다.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;kind 배포와 ingress-nginx, 그리고 vault-worker 까지 배포하면, 아래와 같은 구성도가 됩니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

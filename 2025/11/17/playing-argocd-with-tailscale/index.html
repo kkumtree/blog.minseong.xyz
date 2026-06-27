@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>Tailscale을 타고, ArgoCD에 접근해보기 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Tailscale을 타고, ArgoCD에 접근해보기" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2025/11/17/playing-argocd-with-tailscale/image-11.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2025/11/17/playing-argocd-with-tailscale/image-11.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2025/11/17/playing-argocd-with-tailscale/image-11.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-11.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Tailscale을 타고, ArgoCD에 접근해보기</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-17T10:23:03&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/tailscale" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">tailscale</span>
+              </div>
+            </a>
+            
+            <a href="/tags/argocd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">argocd</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>이전 게시물, <a href="../argocd-ingress/">ArgoCD with Ingress</a>의 도메인 설정을 하다가 문득, Tailscale의 <a href="https://tailscale.com/kb/1312/serve">serve</a>기능을 활용하여 Tailscale 내부 네트워크(이하, tailnet)에서만 접근 가능한 ArgoCD 서버를 구축하면 되지 않을까? 하여 구성해보았습니다.</p>
+<p><img src="image-11.png" alt="tailnet diagram"></p>
+<blockquote>
+<p>kind를 운용 중인 Host와 접속할 Client들에 Tailscale 설치되어 있어야합니다.</p>
+</blockquote>
+<h2 id="1-tailscale과-serve">1. Tailscale과 Serve</h2>
+<p>전통적인 중앙집중식(Hub-Spoke) VPN이 아래와 같다면,</p>
+<p><img src="image-1.png" alt="A traditional hub-and-spoke VPN"></p>
+<p>Tailscale의 경우, Mesh 네트워크의 형태를 가지며 Wireguard를 활용합니다.</p>
+<p><img src="image-2.png" alt="Tailscale P2P mesh network"></p>
+<table>
+	<thead>
+			<tr>
+					<th style="text-align: center">구분</th>
+					<th style="text-align: center">전통적 중앙집중식 VPN</th>
+					<th style="text-align: center">Tailscale (메쉬 VPN)</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td style="text-align: center">네트워크 구조</td>
+					<td style="text-align: center">중앙 서버를 통한 모든 트래픽 경유​</td>
+					<td style="text-align: center">P2P 직접 연결, 분산형 메쉬 네트워크​</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">데이터 경로</td>
+					<td style="text-align: center">클라이언트 → VPN 서버 → 목적지​</td>
+					<td style="text-align: center">클라이언트 → 목적지 (직접 연결)​</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">프로토콜</td>
+					<td style="text-align: center">OpenVPN(TCP/UDP), IKEv2, L2TP</td>
+					<td style="text-align: center">WireGuard(UDP 기반)</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">성능</td>
+					<td style="text-align: center">중앙 서버 병목 발생, 지연 증가​</td>
+					<td style="text-align: center">직접 연결로 지연 최소화, 빠른 속도</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">설정 복잡도</td>
+					<td style="text-align: center">서버 구축, 포트 포워딩 필요​</td>
+					<td style="text-align: center">로그인만으로 즉시 사용 가능​</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">NAT 통과</td>
+					<td style="text-align: center">수동 포트 포워딩 필요​</td>
+					<td style="text-align: center">자동 NAT Traversal 지원</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">확장성</td>
+					<td style="text-align: center">서버 용량에 따라 제한​</td>
+					<td style="text-align: center">각 노드 독립적, 확장 용이</td>
+			</tr>
+			<tr>
+					<td style="text-align: center">보안</td>
+					<td style="text-align: center">중앙 서버가 모든 트래픽 확인 가능​</td>
+					<td style="text-align: center">종단 간 암호화, P2P 전송​</td>
+			</tr>
+	</tbody>
+</table>
+<p>Tailscale의 serve와 같은 경우는, ngrok의 기본 기능과 유사한 funnel과 달리<br>
+tailnet에 속한 기기만 접근이 가능합니다.</p>
+<h2 id="2-tailscale의-상태확인">2. Tailscale의 상태확인</h2>
+<p>kind(Kubernetes)를 구동 중인, 데스크톱에서 상태를 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tailscale status
+</span></span></code></pre></div><p>7A34로 끝나는 장비에서 kind를 구동 중이며 online/offline 대신 해당 장치에서 확인 중이기에,<br>
+<code>-</code>(하이픈)으로 표시됨을 알 수 있습니다.</p>
+<p><img src="image.png" alt="status tailscale"></p>
+<p>또한, Tailscale에서 제공하는 DNS도 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo tailscale dns status
+</span></span></code></pre></div><p><img src="image-7.png" alt="check tailscale dns"></p>
+<h2 id="3-인증서-재생성-및-argocd-재배포">3. 인증서 재생성 및 ArgoCD 재배포</h2>
+<p><a href="../argocd-ingress/">이전 게시물</a>의 <code>1. TLS 활성화 ArgoCD 배포</code> 부분부터 해당 부분을 적용해보겠습니다.</p>
+<blockquote>
+<p>해당 구성들은 아래 GitHub에 탑재되어 있습니다.<br>
+<a href="https://github.com/kkumtree/ci-cd-cloudnet-study">https://github.com/kkumtree/ci-cd-cloudnet-study</a> 의 <code>5w/shells/tailnet</code> 폴더</p>
+</blockquote>
+<h3 id="1-인증서-생성">(1) 인증서 생성</h3>
+<p><code>create-local-crt.sh</code>에서 확인된 도메인으로 수정 후 실행하여,<br>
+로컬의 <code>openssl-x509-output</code>폴더에 인증서를 생성해두었습니다.<br>
+(keyout 및 out은 각 파일의 구분 용이를 위한 것이며, subj의 CN이 중요합니다.)</p>
+<p>전체 DNS는 <code>&lt;Tailscale에서 식별된 Hostname&gt;.&lt;DNS주소&gt;</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># create-local-crt.sh</span>
+</span></span><span style="display:flex;"><span>openssl req -x509 -nodes -days <span style="color:#ae81ff">365</span> -newkey rsa:2048 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -keyout openssl-x509-output/kkumtree-ms-7a34.panda-ule.ts.net.key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -out openssl-x509-output/kkumtree-ms-7a34.panda-ule.ts.net.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -subj <span style="color:#e6db74">&#34;/CN=kkumtree-ms-7a34.panda-ule.ts.net/O=kkumtree&#34;</span>
+</span></span></code></pre></div><p><img src="image-3.png" alt="create local crt"></p>
+<h3 id="2-argocd-재배포">(2) ArgoCD 재배포</h3>
+<p>기존에 ArgoCD가 배포되어있기에 네임스페이스 째로 삭제를 먼저 진행했습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl delete ns argocd
+</span></span></code></pre></div><p><img src="image-4.png" alt="delete former argocd chart"></p>
+<p><code>deploy-chart.sh</code> 파일에서 해당되는 도메인과 생성된 키로 값을 변경한 뒤, 배포하였습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span>kubectl create ns argocd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># confirm cert and key is available in the path</span>
+</span></span><span style="display:flex;"><span>kubectl -n argocd create secret tls argocd-server-tls <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --cert<span style="color:#f92672">=</span>openssl-x509-output/kkumtree-ms-7a34.panda-ule.ts.net.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --key<span style="color:#f92672">=</span>openssl-x509-output/kkumtree-ms-7a34.panda-ule.ts.net.key
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/values.yaml</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; argocd-values-tailnet.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">global:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  domain: kkumtree-ms-7a34.panda-ule.ts.net
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># # TLS certificate configuration via cert-manager
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># # cert-manager가 있을 때, 활용.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># certificate:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#   enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">server:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enabled: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ingressClassName: nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      nginx.ingress.kubernetes.io/force-ssl-redirect: &#34;true&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      nginx.ingress.kubernetes.io/ssl-passthrough: &#34;true&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      nginx.ingress.kubernetes.io/backend-protocol: &#34;HTTPS&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    tls: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd#installing-the-chart</span>
+</span></span><span style="display:flex;"><span>helm repo add argo https://argoproj.github.io/argo-helm
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># https://github.com/argoproj/argo-helm/releases</span>
+</span></span><span style="display:flex;"><span>helm install argocd argo/argo-cd --version 9.0.5 -f argocd-values-tailnet.yaml --namespace argocd
+</span></span></code></pre></div><p><img src="image-5.png" alt="deploy argocd chart"></p>
+<p>다만, 차트 배포 시 ArgoCD 서버는 자체 TLS인증서를 쓰기로 설정되었기 때문에
+위의 코드처럼, Tailscale을 위한 추가 어노테이션 설정이 필요합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>server:
+</span></span><span style="display:flex;"><span>  ingress:
+</span></span><span style="display:flex;"><span>    annotations:
+</span></span><span style="display:flex;"><span>      nginx.ingress.kubernetes.io/backend-protocol: <span style="color:#e6db74">&#34;HTTPS&#34;</span>
+</span></span></code></pre></div><p>그렇지 않으면 ingress 로그를 까봤을 때, 307 redirect 에러가 납니다.</p>
+<p><img src="image-8.png" alt="307 redirect"></p>
+<h2 id="4-tailscale-serve-실행">4. Tailscale serve 실행</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo tailscale serve --bg --tcp <span style="color:#ae81ff">443</span> tcp://localhost:443  
+</span></span><span style="display:flex;"><span>sudo tailscale serve status  
+</span></span></code></pre></div><p><img src="image-6.png" alt="tailscale serve"></p>
+<h2 id="5-접속-확인">5. 접속 확인</h2>
+<p>이제 해당 네트워크에서 제대로 접속되는 것을 알 수 있습니다.</p>
+<p><img src="image-9.png" alt="connection test"></p>
+<p>동일 Tailnet에 속한 휴대전화로 해당 도메인에 접근가능한 것을 확인할 수 있습니다.</p>
+<p><img src="image-10.png" alt="mobile browser"></p>
+<p>(Mac/Linux)<br>
+Tailscale에 대한 DNS파일(<code>/etc/resolv.conf</code>)이 깨졌을 경우에는 재기동을 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo tailscale down
+</span></span><span style="display:flex;"><span>sudo tailscale up
+</span></span></code></pre></div><h2 id="9-tailscale-serve-종료">9. Tailscale serve 종료</h2>
+<p>실습을 마쳤다면, 종료하여 해당 포트를 반납합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo tailscale serve --tcp <span style="color:#ae81ff">443</span> off
+</span></span></code></pre></div><p><img src="image-12.png" alt="disable tailscale tcp 443 serve"></p>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://tailscale.com/kb/1242/tailscale-serve">tailscale serve command</a></li>
+<li><a href="https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-2-ssl-termination-at-ingress-controller">Ingress Configuration - ArgoCD</a> / kubernetes/ingress-nginx</li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2025/11/16/argocd-ingress/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">ArgoCD with Ingress - CI/CD 스터디 5주차</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2025/11/22/argocd-cluster-management-and-prefix/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">ArgoCD Cluster 및 Prefix 관리 - CI/CD 스터디 6주차</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

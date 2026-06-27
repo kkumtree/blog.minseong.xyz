@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>Posts | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Posts" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+
+
+
+
+
+<main>
+  <section class="p-strip--suru main-slide main-strip">
+      <div class="row">
+        <div class="col-8 left-section">
+          <h1>Posts</h1>
+          <p></p>
+        </div>
+      </div>
+  </section>
+  <section class="p-strip">
+      <div class="row">
+        <div class="col-12">
+          <div class="p-list--divided">
+            
+            
+
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2024/09/01/kans-1w-container-socket/">
+              <div class="post-card__media">
+                
+                <img src="/2024/09/01/kans-1w-container-socket/images/k8s_4wish_hu_b50f661d73eae85c.webp" alt="Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-09-01T09:02:15&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">최근 CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)에 참여하게 되었습니다.
+난이도를 생각하면 KH(Hardcore)NS가 더 맞아보이지만&hellip;
+k8s가 워낙 인기가 많기도 하지만, Pod 간 통신에는 많은 지식이 투여되기에 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2024/08/26/maintanence-in-2024/">
+              <div class="post-card__media">
+                
+                <img src="/2024/08/26/maintanence-in-2024/cover_hu_1c87ecb99545d5a6.webp" alt="Blog maintanence in 2024" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Blog maintanence in 2024</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-08-26T00:02:49&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">Before starting group study, I decided to update my blog.
+Very small things, but I have some needs about it.
+One is GitHub Actions&rsquo; dependency update and …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2023/11/21/visualizing-google-cloud-101-book-review/">
+              <div class="post-card__media">
+                
+                <img src="/2023/11/21/visualizing-google-cloud-101-book-review/cover_hu_ca3d68382f088ed8.webp" alt="그림으로 배우는 구글 클라우드 101 리뷰" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">그림으로 배우는 구글 클라우드 101 리뷰</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2023-11-21T13:51:29&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">Jpub에서 최근 출판한 그림으로 배우는 구글 클라우드 101 - 제이펍 홈페이지에 대해,
+짧막하게 소개하는 글입니다.
+《그림으로 배우는 구글 클라우드 101》 서평단으로 본 도서를 제공받아 작성하였습니다. 최근 AWS 프로젝트를 진행하고 있습니다. Terraform을 활용하여, IaC …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2023/10/15/notification-about-terraform-cloud-drift/">
+              <div class="post-card__media">
+                
+                <img src="/2023/10/15/notification-about-terraform-cloud-drift/cover_hu_62b3310eb6d2cd64.webp" alt="TFC(Terraform Cloud) drift 알림 설정" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">TFC(Terraform Cloud) drift 알림 설정</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2023-10-15T00:10:33&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">CloudNet@에서의 Terraform 스터디가 끝나고 나서,
+테라폼을 실제 운영 상황에 도입하면서 마주할 수 밖에 없는 드리프트(drift) 상황에 대해
+이해해보는 시간을 가졌습니다.
+참고) TFC에서의 Drift Detection 기능은 현재 TFC Plus 에디션에서 지원됩니다. …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2023/10/04/architecting-aws-with-terraform-module/">
+              <div class="post-card__media">
+                
+                <img src="/2023/10/04/architecting-aws-with-terraform-module/cover_hu_f4b64a4c98aac1b8.webp" alt="Understanding terraform module" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Understanding terraform module</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2023-10-04T11:24:13&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">This week is last week of CloudNet@ group study about terraform.
+In this study, my personal goal is making AWS architecture only with terraform and one tfstate …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2023/09/24/troubleshoot-terraformer-with-tfenv/">
+              <div class="post-card__media">
+                
+                <img src="/2023/09/24/troubleshoot-terraformer-with-tfenv/cover_hu_e8c33cfca6310d3f.webp" alt="Troubleshoot when using terraformer with tfenv" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Troubleshoot when using terraformer with tfenv</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2023-09-24T11:47:51&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">Removing &amp; installing packages are some annoying, isn&rsquo;t it? So, I like using version managers like SDKMAN, nvm, etc..
+I also use tfenv for terraform …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2023/09/13/terraform-cloud-with-iam-sts/">
+              <div class="post-card__media">
+                
+                <img src="/2023/09/13/terraform-cloud-with-iam-sts/cover_hu_418a1e8a2cab7bc1.webp" alt="IAM STS를 이용한 Terraform Cloud 권한 부여" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">IAM STS를 이용한 Terraform Cloud 권한 부여</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2023-09-13T20:54:28&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">이번에는 Terraform Cloud가 얼마나 좋은지 더 알아보기 위해,
+스터디에서 지속적으로 장점이 강조되어 왔던 Terraform Cloud에
+IAM STS를 이용한 권한 부여 도전 및 적용 성공에 대해 써보려고 합니다.
+Terraform의 상태 저장을 위해 보통 AWS S3를 사용 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2023/09/08/terraform-basic-resource-concept/">
+              <div class="post-card__media">
+                
+                <img src="/2023/09/08/terraform-basic-resource-concept/cover_hu_418a1e8a2cab7bc1.webp" alt="Terraform resource 이해하기 w/AWS VPC" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Terraform resource 이해하기 w/AWS VPC</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2023-09-08T22:41:14&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">이번에는 CloudNet@를 통해 학습한 내용을 기반으로,
+AZ를 대상으로 한 data 조회 AWS VPC 생성 예제로 살펴보는 output resource 이름 변경 순으로 알아보도록 하겠습니다.
+교재로 사용한 [테라폼으로 시작하는 IaC] 도 참고하였습니다.
+기본 설정 aws-cli …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2023/08/31/terraform-hello-world-tfenv/">
+              <div class="post-card__media">
+                
+                <img src="/2023/08/31/terraform-hello-world-tfenv/cover_hu_418a1e8a2cab7bc1.webp" alt="Terraform 시작하기 w/Minimal Ubuntu" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Terraform 시작하기 w/Minimal Ubuntu</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2023-08-31T22:21:08&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">이번에는 CloudNet@에서 진행하는 Terraform 스터디(이하, T101)에 참여했습니다.
+Terraform을 쓰면 왜 좋은지는 자세하고 전문적인 글이 있으므로, 참고하시면 좋을 것 같습니다. (링크: 44bits)
+예전에 테라폼을 썼던 적이 있지만, Module화가 어렵기도 하 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+            
+            <a class="post-card" href="/2023/07/25/init-calico-from-quay-registry/">
+              <div class="post-card__media">
+                
+                <img class="post-card__media--placeholder" src='/img/BlogWhite.svg' alt="" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Init Calico from quay registry</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2023-07-25T00:40:14&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">Written in 25 July 2023. It could be different when you read this article. Error I met I met error message like Init:ImagePullBackOff when I tried to create …</p>
+              </div>
+            </a>
+            
+<ol class="p-pagination">
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--previous " href="/post/"  title="First page">
+      <i class="p-icon--contextual-menu">
+        &lt;&lt; </i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--previous " href="/post/page/3/"  title="Previous page">
+      <i class="p-icon--contextual-menu">
+        &lt; </i>
+    </a>
+  </li>
+  <li class="p-pagination__item mobile-hidden">
+    <a class="p-pagination__link " href="/post/">1</a>
+  </li>
+  <li class="p-pagination__item mobile-hidden">
+    <a class="p-pagination__link " href="/post/page/2/">2</a>
+  </li>
+  <li class="p-pagination__item ">
+    <a class="p-pagination__link " href="/post/page/3/">3</a>
+  </li>
+  <li class="p-pagination__item ">
+    <a class="p-pagination__link  is-active" href="/post/page/4/">4</a>
+  </li>
+  <li class="p-pagination__item ">
+    <a class="p-pagination__link " href="/post/page/5/">5</a>
+  </li>
+  <li class="p-pagination__item mobile-hidden">
+    <a class="p-pagination__link " href="/post/page/6/">6</a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--next " href="/post/page/5/"  title="Next page">
+      <i class="p-icon--contextual-menu">></i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--next " href="/post/page/6/"  title="Last page">
+      <i class="p-icon--contextual-menu">>></i>
+    </a>
+  </li>
+</ol>
+</div>
+        </div>
+      </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

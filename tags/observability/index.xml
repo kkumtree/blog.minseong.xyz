@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Observability on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/observability/</link>
+		<description>Recent content in Observability on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 21 May 2023 06:13:52 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/observability/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>AWS EKS 스터디 4주차 - Observability</title>
+				<link>https://blog.minseong.xyz/2023/05/21/aws-eks-study-week4/</link>
+				<pubDate>Sun, 21 May 2023 06:13:52 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2023/05/21/aws-eks-study-week4/</guid>
+				<description>&lt;p&gt;이번 주차에는 Observability에 대해 스터디가 진행되었습니다.&lt;br&gt;&#xA;자원 모니터링 툴들의 적용 및 사용이 중심입니다.&lt;/p&gt;&#xA;&lt;p&gt;그나저나 k8s 1.26에서 metrics의 일부 명칭이 바뀌는 걸 보고 식겁했습니다.&lt;br&gt;&#xA;(&lt;code&gt;etcd_db_total_size_bytes&lt;/code&gt; 대신, &lt;code&gt;apiserver_storage_db_total_size_in_bytes&lt;/code&gt; 으로 변경)&lt;br&gt;&#xA;또한 kubecost의 경우, cloudformation 스택 제거 후에도 볼륨 데이터가 남아있어서 별도로 삭제해야 했습니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;1-실습환경-배포&#34;&gt;1. 실습환경 배포&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;NAT게이트웨이, EBS addon, IAM role, ISRA for LB/EFS, PreCommand 포함&lt;/li&gt;&#xA;&lt;li&gt;노드: t3.xlarge&#xA;&lt;ul&gt;&#xA;&lt;li&gt;t3&lt;strong&gt;a&lt;/strong&gt;.xlarge(AMD)는 서울 리전 b AZ(ap-northeast-2b)에서 미지원&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;더 많은 값들이 입력되어서, 생성 완료까지 더 많은 시간이 소요 (약 20여분 이내)&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/eks-oneclick3.yaml&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 이하 생략, 3주차 참고&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;./images/cloudformation.png&#34; alt=&#34;cloudformation&#34;&gt;&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

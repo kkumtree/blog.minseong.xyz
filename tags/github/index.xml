@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>GitHub on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/github/</link>
+		<description>Recent content in GitHub on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Mon, 26 Aug 2024 00:02:49 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/github/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Blog maintanence in 2024</title>
+				<link>https://blog.minseong.xyz/2024/08/26/maintanence-in-2024/</link>
+				<pubDate>Mon, 26 Aug 2024 00:02:49 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2024/08/26/maintanence-in-2024/</guid>
+				<description>&lt;p&gt;Before starting group study, I decided to update my blog.&lt;/p&gt;&#xA;&lt;p&gt;Very small things, but I have some needs about it.&lt;/p&gt;&#xA;&lt;p&gt;One is GitHub Actions&amp;rsquo; dependency update and another is Licences.&lt;/p&gt;&#xA;&lt;p&gt;Cause, Blog is deployed via Github Actions, I need to check dependencies in Github Actions&amp;rsquo; workflow.&lt;/p&gt;&#xA;&lt;p&gt;What I use is &lt;code&gt;actions/checkout&lt;/code&gt;, &lt;code&gt;actions/setup-go&lt;/code&gt;, and &lt;code&gt;actions/setup-node&lt;/code&gt;.&lt;/p&gt;&#xA;&lt;table&gt;&#xA;&#x9;&lt;thead&gt;&#xA;&#x9;&#x9;&#x9;&lt;tr&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;th&gt;Name&lt;/th&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;th&gt;Prev. Version&lt;/th&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;th&gt;Latest Version&lt;/th&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;th&gt;Purpose&lt;/th&gt;&#xA;&#x9;&#x9;&#x9;&lt;/tr&gt;&#xA;&#x9;&lt;/thead&gt;&#xA;&#x9;&lt;tbody&gt;&#xA;&#x9;&#x9;&#x9;&lt;tr&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;checkout&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/checkoutv3&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/checkoutv4&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;Src. and Dest. Branch&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&lt;/tr&gt;&#xA;&#x9;&#x9;&#x9;&lt;tr&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;setup-go&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/setup-go@v4&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/setup-go@v5&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&lt;/tr&gt;&#xA;&#x9;&#x9;&#x9;&lt;tr&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;setup-node&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/setup-node@v3&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/setup-node@v4&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;&lt;a href=&#34;https://vanillaframework.io/&#34;&gt;Vanila Framework&lt;/a&gt;&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&lt;/tr&gt;&#xA;&#x9;&lt;/tbody&gt;&#xA;&lt;/table&gt;&#xA;&lt;p&gt;&lt;img src=&#34;images/github_actions.png&#34; alt=&#34;github_actions&#34;&gt;&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Windows에서 여러 Github 토큰 관리</title>
+				<link>https://blog.minseong.xyz/2023/07/04/how-to-manage-github-tokens-in-local-windows/</link>
+				<pubDate>Tue, 04 Jul 2023 09:57:14 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2023/07/04/how-to-manage-github-tokens-in-local-windows/</guid>
+				<description>&lt;p&gt;평소에는 Git관리를 terminal을 통해서 하고,&lt;br&gt;&#xA;여러 SSH키를 통해 작업을 하기에&lt;br&gt;&#xA;.ssh/config를 통해 키 기반으로 관리하고 있었다.&lt;/p&gt;&#xA;&lt;p&gt;어쩌다보니, 토큰 기반으로 그것도 윈도우에서 관리를 해보게 되어서&#xA;둘 다 생소한 접근이라 새로운 셋업을 적용해보기로 했다.&lt;br&gt;&#xA;VSCode 기반으로 세팅하기에,&#xA;그대로 따라온다면 별 문제 없이 잘 적용될 것이다.&lt;/p&gt;&#xA;&lt;p&gt;cf. classic token이라 할지라도, 큰 이슈는 없을 것으로 생각된다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;git-config의-적용범위&#34;&gt;Git config의 적용범위&lt;/h2&gt;&#xA;&lt;p&gt;&lt;code&gt;git config &amp;lt;parameter&amp;gt;&lt;/code&gt;를 통해, 설정 값을 구성할 수 있다.&#xA;system &amp;gt; global &amp;gt; local 순으로 옵션이 override된다.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>GitHub Pages가 고장났나? (Cloudflare 526 Error)</title>
+				<link>https://blog.minseong.xyz/2023/03/28/fix-error-526-in-cloudflare-with-github-page/</link>
+				<pubDate>Tue, 28 Mar 2023 18:29:11 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2023/03/28/fix-error-526-in-cloudflare-with-github-page/</guid>
+				<description>&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-brief&#34; data-lang=&#34;brief&#34;&gt;`gh-pages &amp;amp; Cloudflare DNS` 를 쓰고자 한다면, &#xA;Cloudflare에서 SSL/TLS 정책을 `Full (Strict)` 대신 &#xA;`Full`로 하는 쪽이 관리 요소를 줄일 수 있다. &#xA;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;invalid-ssl-certificate&#34;&gt;Invalid SSL certificate&lt;/h2&gt;&#xA;&lt;p&gt;&lt;img src=&#34;./images/error.jpg&#34; alt=&#34;error&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;그간 업무 인계도 있었고, 개인 일정을 소화하면서 블로그 들어갈 일이 없었다.&lt;br&gt;&#xA;그러다 지난 주말에 있었던 &lt;a href=&#34;https://discourse.ubuntu-kr.org/t/topic/48634&#34;&gt;정기총회&lt;/a&gt;에서 만난 분으로부터&lt;br&gt;&#xA;블로그에 안 들어가진다는 말을 듣고, 그제서야 인지하게 되었다.&lt;br&gt;&#xA;대체 언제부터 이랬던걸까?&lt;/p&gt;&#xA;&lt;p&gt;GitHub Pages에서 블로그 관리를 하고있었고,&lt;br&gt;&#xA;Cloudflare로 Domain Registrar를 이전한 후에&lt;br&gt;&#xA;블로그를 올렸기 때문에 한동안 신경을 안 써도 잘 썼는데.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>Kubernetes | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Kubernetes" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/tags/kubernetes/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/tags/kubernetes/' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/tags/kubernetes/' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+
+
+
+
+
+<main>
+  <section class="p-strip--suru main-slide main-strip">
+      <div class="row">
+        <div class="col-8 left-section">
+          <h1>Kubernetes</h1>
+          <p></p>
+        </div>
+      </div>
+  </section>
+  <section class="p-strip">
+      <div class="row">
+        <div class="col-12">
+          <div class="p-list--divided">
+            
+            
+
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2024/10/26/kans-8w-cilium-trial/">
+              <div class="post-card__media">
+                
+                <img src="/2024/10/26/kans-8w-cilium-trial/cover_hu_1d3ab92ca2d41250.webp" alt="Kubernetes Service(5): Cillium Quick-start w/Hubble UI" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Kubernetes Service(5): Cillium Quick-start w/Hubble UI</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-10-26T01:35:59&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">그럼 매번 실패만 했던 Cilium 배포를 한번 해볼까요?
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. CSP VM 골라보기 이렇게 쓴 이유는 결국 네트워크를 잘 알아야하는데,
+작년에 할 때 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2024/10/21/kans-8w-why-ebpf/">
+              <div class="post-card__media">
+                
+                <img src="/2024/10/21/kans-8w-why-ebpf/cover_hu_257db64d655fc51.webp" alt="Why eBPF?" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Why eBPF?</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-10-21T19:47:33&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt"> 고쳐야할 부분이 너무 많아서 나중에 해당 부분만 글을 작성할 예정입니다.
+어느덧 이번 스터디도 대망의 Cilium을 다루기 시작합니다.
+Cilium에 이렇게도 (저를 포함한) 모?두가 열광하는지 알아보기 전에
+근간이 되는 eBPF를 먼저 가볍게 알아보고 가려합니다.
+이 때는 설마 했지 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+            
+            <a class="post-card" href="/2024/10/19/kans-7w-envoy-config/">
+              <div class="post-card__media">
+                
+                <img class="post-card__media--placeholder" src='/img/BlogWhite.svg' alt="" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Kubernetes Service(4): envoy config</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-10-19T16:59:16&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">정적/동적 설정을 알아봅니다.
+traefik을 맛볼때는, 호되게 데인 부분인데 envoy는 상대적으로 명료했습니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. Static …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2024/10/15/kans-7w-envoy-helloworld/">
+              <div class="post-card__media">
+                
+                <img src="/2024/10/15/kans-7w-envoy-helloworld/images/envoy-hello-world_hu_c59a5cd87d220e0e.webp" alt="Kubernetes Service(4): envoy overview" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Kubernetes Service(4): envoy overview</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-10-15T10:16:38&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt"> 따로 슥 찾아보니, envoy는 Micro Service Architecture 등 구현된 단위 기능간의 통신을 위한 L7 Proxy 라고 합니다.
+Docker Compose 정도나 일반 서비스에서는 굳이 필요하지는 않을 것 같지만, Service Mesh 환경에서는 알아두면 좋을 것 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2024/10/10/kans-6w-k3s-ingress/">
+              <div class="post-card__media">
+                
+                <img src="/2024/10/10/kans-6w-k3s-ingress/images/only-nodeport-accessible_hu_9cb89acd07bf6658.webp" alt="Kubernetes Service(3): Ingress(ingress-nginx) w/k3s" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Kubernetes Service(3): Ingress(ingress-nginx) w/k3s</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-10-10T22:12:57&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">지난 포스팅, Kubernetes Service(2): LoadBalancer(MetalLB)에 이어 Ingress Type을 가볍게 살펴보고, Ingress-Nginx를 가볍게 붙여보겠습니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+            
+            <a class="post-card" href="/2024/10/02/kans-5w-metallb-loadbalancer/">
+              <div class="post-card__media">
+                
+                <img class="post-card__media--placeholder" src='/img/BlogWhite.svg' alt="" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Kubernetes Service(2): LoadBalancer(MetalLB)</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-10-02T12:54:17&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">지난 포스팅, Kubernetes Service(1): ClusterIP/NodePort에 이어 LoadBalancer Type을 가볍게 살펴보고, MetalLB를 가볍게 붙여보겠습니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2024/09/29/kans-4w-iptables-grafana/">
+              <div class="post-card__media">
+                
+                <img src="/2024/09/29/kans-4w-iptables-grafana/cover_hu_6fd9e31539732346.webp" alt="iptables monitoring with Grafana (Not Completed)" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">iptables monitoring with Grafana (Not Completed)</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-09-29T13:35:13&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">iptables를 수집하여 Grafana로 표현하는 방법을 알아봅니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+0. 환경 구성 (kind) 작성시간 이슈로 featureGates, …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+            
+            <a class="post-card" href="/2024/09/27/kans-4w-clusterip-nodeport/">
+              <div class="post-card__media">
+                
+                <img class="post-card__media--placeholder" src='/img/BlogWhite.svg' alt="" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Kubernetes Service(1): ClusterIP/NodePort</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-09-27T21:28:17&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">Kubernetes의 (컨셉, 혹은 콘셉트라 불리는) Concepts 중에서 Service의 주제를 다뤄봅니다.
+CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+Service Docs에 명료하게 적혀 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2024/09/18/kans-3w-calico-operator/">
+              <div class="post-card__media">
+                
+                <img src="/2024/09/18/kans-3w-calico-operator/cover_hu_9585b15018d95f1d.webp" alt="Calico Installation in Operator Mode" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Calico Installation in Operator Mode</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-09-18T20:52:16&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+스터디 진행 시, Manifests를 사용하여 Calico를 설치하였으나,
+Operator를 사용하여 설치하는 방법을 정리합니다.
+과제는 아니었지만, …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2024/09/15/kans-3w-calico-overview/">
+              <div class="post-card__media">
+                
+                <img src="/2024/09/15/kans-3w-calico-overview/images/calico_p8s_basic_hu_2c60a328d8829759.webp" alt="Calico 및 메트릭 수집 구성" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Calico 및 메트릭 수집 구성</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2024-09-15T18:40:22&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">CloudNet@에서 진행하고 있는 K8s Advanced Network Study(이하, KANS)를 통해 학습한 내용을 정리합니다.
+1. Calico 설치 스터디에서 AWS CF 및 Calico 설치 스크립트(Manifest)를 제공하였기에, 이 부분은 참고만 하시기 바랍니다. …</p>
+              </div>
+            </a>
+            
+<ol class="p-pagination">
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--previous  is-disabled"  title="First page">
+      <i class="p-icon--contextual-menu">
+        &lt;&lt; </i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--previous  is-disabled"  title="Previous page">
+      <i class="p-icon--contextual-menu">
+        &lt; </i>
+    </a>
+  </li>
+  <li class="p-pagination__item ">
+    <a class="p-pagination__link  is-active" href="/tags/kubernetes/">1</a>
+  </li>
+  <li class="p-pagination__item ">
+    <a class="p-pagination__link " href="/tags/kubernetes/page/2/">2</a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--next " href="/tags/kubernetes/page/2/"  title="Next page">
+      <i class="p-icon--contextual-menu">></i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--next " href="/tags/kubernetes/page/2/"  title="Last page">
+      <i class="p-icon--contextual-menu">>></i>
+    </a>
+  </li>
+</ol>
+</div>
+        </div>
+      </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

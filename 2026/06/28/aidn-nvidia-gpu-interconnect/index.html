@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>NVIDIA GPU Interconnect 계층 훑어보기 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="NVIDIA GPU Interconnect 계층 훑어보기" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2026/06/28/aidn-nvidia-gpu-interconnect/image-9.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2026/06/28/aidn-nvidia-gpu-interconnect/image-9.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2026/06/28/aidn-nvidia-gpu-interconnect/image-9.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-9.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>NVIDIA GPU Interconnect 계층 훑어보기</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2026-06-28T00:04:17&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aidn" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">aidn</span>
+              </div>
+            </a>
+            
+            <a href="/tags/interconnect" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">interconnect</span>
+              </div>
+            </a>
+            
+            <a href="/tags/nvlink" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">nvlink</span>
+              </div>
+            </a>
+            
+            <a href="/tags/infiniband" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">infiniband</span>
+              </div>
+            </a>
+            
+            <a href="/tags/roce" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">roce</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 AI Datacenter Network Study(이하, AIDN)에서 매주 생전 처음 접하는 단어들의 홍수에 허우적(?)하는 중입니다.</p>
+<p>RTX3090의 같은 경우에는 개인용 GPU 중 NV Link 브리지를 지원하는 가장 상위 모델로 알고있지만,<br>
+가정용 메인보드의 PCIe 슬롯 간 속도가 다른건 차치하더라도, NV Link가 주는 효용을 다 쓸 수 있을지 애매해서 좀 고민을 하고 있었습니다.</p>
+<p>이번 주차에서 들은 생각은 NVIDIA 생태계에서 매우 비용효율적인 소모품이라는 것을 알게 되었습니다.</p>
+<p>대역폭에 있어서, 가까우면 가까울 수록 크다는 것은 일반적인 저장장치 (ROM -&gt; RAM -&gt; L1/L2 Cache) 계층 구조와 비슷한 느낌이었습니다.</p>
+<!-- ```mermaid  
+flowchart TB
+  subgraph C["카드 <-> 카드(PCIe)"]
+    c["NVLink 브리지"]
+      subgraph B["CPU <-> GPU(패키지)"]
+        b["NVLink-C2C"]       
+        subgraph A["다이 <-> 다이"]
+          a["NV-HBI"]
+        end
+      end
+  end
+```   -->
+<pre class="mermaid">flowchart TB
+  subgraph C["1. [브릿지] 카드 <-> 카드: 수백 GB/s"]
+    subgraph B["2. [패키지] CPU <-> GPU: 900GB/s"]
+      subgraph A["3. [패키지] 다이 <-> 다이: ~ 10TB/s"]
+        a["익숙한 개념"]
+      end
+    end
+  end</pre>
+
+<ol>
+<li>NV-HBI Link<br>
+<img src="image.png" alt="Dual-Die GPU">
+<blockquote>
+<p>Image Referenced from <a href="https://uvation.com/articles/blackwell-architecture-and-the-future-of-ai-inferencing">Uvation</a></p>
+</blockquote>
+<ul>
+<li>GPU 패키지 내부에 2개의 다이 간의 통신을 위한 링크</li>
+</ul>
+</li>
+<li>NVLink-C2C<br>
+<img src="image-1.png" alt="Grace CPU and Hopper GPU">
+<blockquote>
+<p>Image Referenced from <a href="https://www.ithome.com.tw/review/158165">iThome</a></p>
+</blockquote>
+<ul>
+<li>Grace Hopper 칩에 적용된 CPU와 GPU 간의 통신을 위한 링크</li>
+<li>ARM 기반 CPU를 통해, PCIe를 거치지 않고 GPU와 CPU 간의 통신을 가능하게 함</li>
+<li>기존의 PCIe가 병목이기 때문에, 칩 패키지 내에서 처리될 수 있도록 함</li>
+</ul>
+</li>
+<li>NVLink 브리지<br>
+<img src="image-2.png" alt="NVlink Bridge 2-slot">
+<blockquote>
+<p>Image Referenced from <a href="https://support.maxon.net/hc/en-us/articles/22085399180060-Managing-VRAM-issues-with-Redshift">MAXON</a></p>
+</blockquote>
+<ul>
+<li>앞서 말했던, NVLink 입니다. 데이터센터 <a href="https://ko.wikipedia.org/wiki/SXM_%28%EC%86%8C%EC%BC%93%29">SXM(Server PCI Express Module)</a>에는 필요없다고 하는데, SXM? 모르기 때문에 한번 찾아봤습니다.
+<ul>
+<li>2016년도부터 NVIDIA가 써왔던 소켓이라고 하는데, 꽂혀있는 사진이 일본 TSUBAME 3.0 슈퍼컴퓨터 사진이고, 그 다음 사진의 오른쪽의 비어있는 소켓이 SXM 소켓이라고 합니다.(이해하는데 시간이 좀 걸림;)<br>
+<img src="image-3.png" alt="TSUBAME Supercom"><br>
+<img src="image-4.png" alt="Bare SXM Socket">
+<blockquote>
+<p>Image Referenced from <a href="https://ko.wikipedia.org/wiki/SXM_%28%EC%86%8C%EC%BC%93%29">Wikipedia</a></p>
+</blockquote>
+</li>
+<li>PCIe 슬롯과는 달라서, <a href="https://gigglehd.com/gg/hard/15728880">바꿔주는 어댑터</a>도 있는 모양</li>
+<li>SLI 브릿지랑 똑같은거 아닌가 싶은 생각이 문득 들었지만, 나중에 생각 더 해보는 걸로&hellip;</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>위까지는 그래도 기존 지식 속에서 그렇-구나하고 슥슥 넘어갈 수 있는데, 이제부터는 신기(?)한 것들.</p>
+<pre class="mermaid">flowchart TB
+  subgraph C["1. [AI 팩토리] InfiniBand / RoCEv2 : 800GB/s"]
+    subgraph B["2. [단일 랙] NVSwitch 트레이 (NVL72): 130TB/s"]
+      subgraph A["3. [단일 서버] NVLink + NVSwitch: 1.8TB/s"]
+        a["새롭게 알게된 개념"]
+      end
+    end
+  end</pre>
+
+<p>&hellip; 여기서는 단어들만 조금씩 정리해보고 덮어보려고 합니다.</p>
+<ol>
+<li>
+<p>NVSwitch와 NVSwitch 트레이?<br>
+일단 아래 3줄은, GitHub Copilot이 써줬습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>- NVSwitch는 NVIDIA에서 개발한 고속 스위칭 기술로, 여러 GPU 간의 데이터 전송을 효율적으로 관리합니다.  
+</span></span><span style="display:flex;"><span>- NVSwitch 트레이는 이러한 스위치를 여러 개 포함하여, 단일 서버 내에서 GPU 간의 통신을 극대화합니다.  
+</span></span><span style="display:flex;"><span>- 이를 통해 단일 서버 내에서 최대 1.8TB/s의 데이터 전송 속도를 달성할 수 있습니다.  
+</span></span></code></pre></div><ul>
+<li>NVSwitch 는 NVLink를 네트워크 패브릭으로 확장하기 위한 스위칭 칩이라고 합니다.<br>
+<img src="image-5.png" alt="NVSwitch chips on H200">
+<blockquote>
+<p>Image Referenced from <a href="https://dev.to/aicplight/nvlink-vs-nvswitch-the-backbone-of-scalable-ai-gpu-interconnect-1n48">AICPLIGHT</a></p>
+</blockquote>
+</li>
+<li>NVSwitch의 내부에 대한 다른 도표는 <a href="https://www.servethehome.com/nvidia-nvswitch-details-at-hot-chips-30/">ServerTheHome</a>에도 다양하게 있었습니다.</li>
+<li>아래 사진이 GB200 NVL72 스위치 트레이 내부라고 하네요.<br>
+<img src="image-6.png" alt="GB200 NVL72 Switch Tray Internal">
+<blockquote>
+<p>Image Referenced from <a href="https://www.servethehome.com/this-is-the-nvidia-dgx-gb200-nvl72/">ServerTheHome</a></p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>
+<p>InfiniBand / RoCEv2
+아래 3줄도, GitHub Copilot이 써줬습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>- InfiniBand는 고속 데이터 전송을 위한 네트워크 기술로, 주로 HPC(High-Performance Computing) 환경에서 사용됩니다.  
+</span></span><span style="display:flex;"><span>- RoCEv2(RDMA over Converged Ethernet version 2)는 InfiniBand의 기능을 이더넷 네트워크에서 구현한 기술로, 낮은 지연 시간과 높은 대역폭을 제공합니다.  
+</span></span><span style="display:flex;"><span>- 이를 통해 AI 팩토리 환경에서 GPU 간의 데이터 전송 속도를 800GB/s까지 달성할 수 있습니다.  
+</span></span></code></pre></div><ul>
+<li>인피니밴드는 스토리지 분야에서 쓰인다고 먼저 들었었는데, GPU 서버 간 통신에도 쓰이는구나를 알게되었습니다.</li>
+<li>인피니밴드는 자체 계층을 갖는데 반해, RoCEv2는 Ethernet/IP/UDP 위에 (주로 ETH를 대상으로) InfiniBand transport를 올린다고 합니다.</li>
+<li>인피니밴드 전송 계층
+<code>LRH │ GRH optional │ BTH │ Extended Transport │ Payload │ CRCs</code></li>
+<li>RoCEv2 전송 계층
+<code>Ethernet │ IP │ UDP │ **BTH** │ Extended Transport │ Payload │ ICRC</code></li>
+<li>그림을 더 찾아보니 아래와 같은 것을 발견.<br>
+<img src="image-7.png" alt="InfiniBand and RoCEv2">
+<blockquote>
+<p>Image Referenced from <a href="https://medium.com/@menu.sri13/from-infiniband-to-ultra-ethernet-why-ai-networks-had-to-rethink-rdma-on-ethernet-b8fc6599c5bc">Menuka Wijayarathna</a></p>
+</blockquote>
+</li>
+<li>2020년에 NVIDIA가 멜라녹스를 인수한 이유가 인피니밴드라는 것을 검색하다보니 발견.</li>
+<li>그 외에도 <code>RDMA로 CPU를 거치지 않는다</code>라는 것이 납득이 안되었는데, <a href="https://speakerdeck.com/markunet/kurautotetasentanetutowakuno-ima-to-korekara">クラウドデータセンターネットワークの “いま”と “これから”</a>에 좋은 그림이 있어서 첨부.<br>
+<img src="image-8.png" alt="Distributed and Disaggregated Computing"><br>
+<img src="image-9.png" alt="RDMA Based Interconnect"></li>
+</ul>
+</li>
+</ol>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://uvation.com/articles/blackwell-architecture-and-the-future-of-ai-inferencing">UVATION - Blackwell Architecture and the Future of AI Inferencing</a></li>
+<li><a href="https://www.ithome.com.tw/review/158165">iThome - 用256顆自研異質融合晶片，輝達推144TB共享記憶體的AI系統</a></li>
+<li><a href="https://support.maxon.net/hc/en-us/articles/22085399180060-Managing-VRAM-issues-with-Redshift">MAXON - Managing VRAM issues with Redshift</a></li>
+<li><a href="https://ko.wikipedia.org/wiki/SXM_%28%EC%86%8C%EC%BC%93%29">Wikipedia - SXM (소켓)</a></li>
+<li><a href="https://gigglehd.com/gg/hard/15728880">기글하드웨어 - SXM-to-PCIe 어댑터. 데이터센터용 GPU를 PCIe 슬롯에 연결</a></li>
+<li><a href="https://dev.to/aicplight/nvlink-vs-nvswitch-the-backbone-of-scalable-ai-gpu-interconnect-1n48">DEV Community - NVLink vs. NVSwitch: The Backbone of Scalable AI GPU Interconnect</a></li>
+<li><a href="https://www.servethehome.com/nvidia-nvswitch-details-at-hot-chips-30/">ServeTheHome - NVIDIA NVSwitch Details at Hot Chips 30</a></li>
+<li><a href="https://www.servethehome.com/this-is-the-nvidia-dgx-gb200-nvl72/">ServeTheHome - This is the NVIDIA DGX GB200 NVL72</a></li>
+<li><a href="https://medium.com/@menu.sri13/from-infiniband-to-ultra-ethernet-why-ai-networks-had-to-rethink-rdma-on-ethernet-b8fc6599c5bc">Medium - From InfiniBand to Ultra Ethernet: Why AI Networks Had to Rethink RDMA on Ethernet</a></li>
+<li><a href="https://speakerdeck.com/markunet/kurautotetasentanetutowakuno-ima-to-korekara">Speaker Deck - Masayuki Kobayashi</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2026/06/20/aidn-kvcache-and-localllm/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">KV cache에 대한 이해</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+<script type="text/javascript" src='/js/mermaid.min.js'></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+
+
+</body>
+</html>

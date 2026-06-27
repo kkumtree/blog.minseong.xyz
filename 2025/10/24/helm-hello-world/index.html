@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>Helm 101 - CI/CD 스터디 2주차 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Helm 101 - CI/CD 스터디 2주차" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2025/10/24/helm-hello-world/image-6.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2025/10/24/helm-hello-world/image-6.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2025/10/24/helm-hello-world/image-6.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-6.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Helm 101 - CI/CD 스터디 2주차</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-10-24T01:17:39&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/helm" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">helm</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cicd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CICD</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 CI/CD Study 2주차에는 Helm과 Tekton을 다뤘습니다.</p>
+<p>이번에는 Helm의 기본적인 부분을 다루도록 하겠습니다.</p>
+<h2 id="1-helm의-역할과-실습-준비사항">1. Helm의 역할과 실습 준비사항</h2>
+<h3 id="helm">Helm?</h3>
+<p>템플릿 기반 솔루션. 즉, 버전 관리 및 공유, 배포가 가능한 아티팩트를 생성하도록 돕습니다.</p>
+<ul>
+<li>
+<p>Helm chart(차트)</p>
+<ul>
+<li>공유 가능한 Kubernetes(쿠버네티스, 이하 k8s) 패키지며, 차트 간 의존성 등 다양한 요소를 포함합니다.</li>
+<li>k8s를 다루면 Helm을 많이 사용하게 되는데, 그 이유 중 하나가 chart 개념입니다.</li>
+</ul>
+</li>
+<li>
+<p>Rolling Update for ConfigMap</p>
+<ul>
+<li>애플리케이션의 설정값은 일반적으로 k8s의 ConfigMap에 대응되는 속성입니다.</li>
+<li>ConfigMap: 수정되어도 애플리케이션의 롤링 업데이트 전, 즉 애플리케이션을 수동 재시작 하기 전까지는 값이 적용되지 않습니다.
+<ul>
+<li>Helm은 ConfigMap이 변경되면, 자동으로 Rolling Update가 이루어지는 기능들을 제공합니다.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="실습-준비">실습 준비</h3>
+<ol>
+<li>
+<p>kind</p>
+<blockquote>
+<p>kind 설치의 경우 다음 포스트를 참고할 수 있습니다.<br>
+<a href="../kans-2w-kind-installation-on-linux/">리눅스에 KIND 설치하기 w/golang</a><br>
+Docs: <a href="https://kind.sigs.k8s.io/">https://kind.sigs.k8s.io/</a></p>
+</blockquote>
+</li>
+</ol>
+<p>kind를 통해, 로컬 환경에 k8s를 배포해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 2w/shells/kind/up-kind.sh</span>
+</span></span><span style="display:flex;"><span>kind create cluster --name myk8s --image kindest/node:v1.32.8 --config - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Cluster
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: kind.x-k8s.io/v1alpha4
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">nodes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: control-plane
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  extraPortMappings:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 30000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 30001
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30001
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><p><img src="image.png" alt="preparing handson"><br>
+2. Helm 설치</p>
+<blockquote>
+<p>Snap패키지(snapcraft)로도 설치가 가능하니,<br>
+이 방법으로 설치해보겠습니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo snap install helm --classic
+</span></span></code></pre></div><p><img src="image-2.png" alt="install helm by snapcraft"></p>
+<h2 id="2-helm-project-101">2. Helm Project 101</h2>
+<p>아래의 구조를 갖습니다.</p>
+<ul>
+<li>Chart.yaml: metadata</li>
+<li>templates: 설치와 관련된 모든 템플릿 파일
+<ul>
+<li>deployment.yaml</li>
+<li>service.yaml</li>
+<li>(..)</li>
+</ul>
+</li>
+<li>values.yaml: chart default value</li>
+</ul>
+<p>아래와 같이 4개의 YAML파일을 생성해보겠습니다.</p>
+<blockquote>
+<p>해당 구성들은 아래 GitHub에 탑재되어 있습니다.<br>
+<a href="https://github.com/kkumtree/ci-cd-cloudnet-study">https://github.com/kkumtree/ci-cd-cloudnet-study</a><br>
+Helm의 구성파일들은 <code>2w/pacman</code> 폴더에 있습니다.</p>
+</blockquote>
+<p><img src="image-1.png" alt="create basic Helm chart"></p>
+<h3 id="1-chartyaml">(1) Chart.yaml</h3>
+<blockquote>
+<p>Helm chart의 메타데이터 정의
+<a href="https://helm.sh/docs/topics/charts/#the-chartyaml-file">https://helm.sh/docs/topics/charts/#the-chartyaml-file</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 2w/shells/helm/1-helm-chart.yaml</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt; EOF &gt; Chart.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">name: pacman
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">description: A Helm chart for Pacman
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">type: application
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">version: 0.1.0        
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">appVersion: &#34;1.0.0&#34;   
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><ul>
+<li>apiVersion: chart API 버전
+<ul>
+<li>Helm 2는 <code>V1</code>, Helm 3는 <code>V2</code> 값을 갖습니다.</li>
+</ul>
+</li>
+<li>name: 차트에 대한 이름</li>
+<li>version: 차트 에 대한 버전 (<a href="https://semver.org">SemVer</a>, 시맨틱 버전 규칙)
+<ul>
+<li>차트 정의가 바뀌면 업데이트</li>
+</ul>
+</li>
+<li>description: 차트에 대한 설명</li>
+<li>type: 차트의 타입 (optional)
+<ul>
+<li><code>application</code>(기본값) 혹은 <code>library</code> 택 1.</li>
+<li><code>library</code>: 재사용 가능한 차트. 배포 되지 않는 일종의 템플릿.</li>
+</ul>
+</li>
+<li>appVersion: 어플리케이션 버전
+<ul>
+<li><code>version</code>과 독립적.</li>
+<li>권장표기: 쌍따옴표(<code>&quot;</code>) 사용. <code>&quot;&lt;APPLICATION_VERSION&gt;&quot;</code></li>
+</ul>
+</li>
+</ul>
+<!-- https://helm.sh/docs/topics/charts/#chart-types -->
+<h3 id="2-templatesdeploymentsyaml">(2) templates/deployments.yaml</h3>
+<blockquote>
+<p>일반적인 deployment에 템플릿 언어 및 함수를 사용하여 배포 정의<br>
+템플릿에 쓰이는 언어는 Go</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 2w/shells/helm/2-helm-deployment.yaml</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt; EOF &gt; templates/deployment.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: {{ .Chart.Name}}            
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app.kubernetes.io/name: {{ .Chart.Name}}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    {{- if .Chart.AppVersion }}     
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    {{- end }}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: {{ .Values.replicaCount }}     
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app.kubernetes.io/name: {{ .Chart.Name}}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app.kubernetes.io/name: {{ .Chart.Name}}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - image: &#34;{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion}}&#34;   
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          imagePullPolicy: {{ .Values.image.pullPolicy }}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          securityContext:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            {{- toYaml .Values.securityContext | nindent 14 }} 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          name: {{ .Chart.Name}}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - containerPort: {{ .Values.image.containerPort }}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              name: http
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              protocol: TCP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><ul>
+<li>metadata: Chart.yaml 파일에 설정된 값으로 설정
+<ul>
+<li><code>{{ .Chart.AppVersion}}</code>: 필수요소가 아니므로, 조건문으로 구성</li>
+<li><code>{{ .Chart.Name}}</code>: name 및 labels.app.kubernetes.io/name</li>
+</ul>
+</li>
+<li>spec: Chart.yaml 파일 및 후술할 values.yaml에 설정된 값으로 설정
+<ul>
+<li><code>&quot;{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion}}&quot;</code>
+<ul>
+<li>image 및 image tag 지정 방법</li>
+<li>values.yaml에 tag 지정이 없을시, Chart.yaml에 있는 AppVersion을 기본값으로 설정</li>
+</ul>
+</li>
+<li><code>toYaml</code>: <a href="https://helm.sh/docs/howto/charts_tips_and_tricks/#using-the-include-function">Helm Docs/</a>
+<ul>
+<li><code>{{- toYaml .Values.securityContext | nindent 14 }}</code>
+<ul>
+<li>앞의 공백 제거 후, 해당 부분을 YAML 객체화. 이후 14칸의 들여쓰기</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>{{ .Values.replicaCount}}</code></li>
+<li><code>{{ .Values.image.pullPolicy}}</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="3-templatesserviceyaml">(3) templates/service.yaml</h3>
+<blockquote>
+<p>서비스 이름 및 컨테이너 포트 지정</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 2w/shells/helm/3-helm-service.yaml</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt; EOF &gt; templates/service.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app.kubernetes.io/name: {{ .Chart.Name }}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: {{ .Chart.Name }}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: http
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port: {{ .Values.image.containerPort }}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: {{ .Values.image.containerPort }}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app.kubernetes.io/name: {{ .Chart.Name }}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><h3 id="4-valuesyaml">(4) values.yaml</h3>
+<blockquote>
+<p>default values, 기본 설정 정의</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 2w/shells/helm/4-values.yaml</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt; EOF &gt; values.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">image:     
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  repository: quay.io/gitops-cookbook/pacman-kikd
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tag: &#34;1.0.0&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  pullPolicy: Always
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containerPort: 8080
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">replicaCount: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">securityContext: {}     
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><ul>
+<li>템플릿 정의 부분 확인
+<ul>
+<li>image.*</li>
+<li>replicaCount</li>
+<li>securityContext: <code>{}</code> (속성 비움)</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-local-rendering-to-yaml">3. Local rendering to YAML</h2>
+<ul>
+<li>로컬에서 렌더링을 해봅니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm template .  
+</span></span></code></pre></div><ul>
+<li>Chart.yaml과 values.yaml을 제외한, YAML 파일들의 렌더링 확인</li>
+</ul>
+<p><img src="image-3.png" alt="local rendering to yaml"></p>
+<h3 id="기본값-재정의-후-렌더링-set">기본값 재정의 후, 렌더링 (&ndash;set)</h3>
+<blockquote>
+<p>기본값을 변경(override)하여 정상 적용되는지 확인해봅니다.<br>
+<code>values.yaml</code>의 <code>replicaCount</code>를 변경해보겠습니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># # 기존(deployment.yaml)  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># # spec.replicas: 1  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># helm template . | grep &#34;replicas:&#34; -B9</span>
+</span></span><span style="display:flex;"><span>helm template --set replicaCount<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> . | grep <span style="color:#e6db74">&#34;replicas:&#34;</span> -B9
+</span></span></code></pre></div><p><img src="image-4.png" alt="change default value with set params"></p>
+<h2 id="4-kindk8s에-chart-배포-및-helm-확인">4. kind(k8s)에 chart 배포 및 helm 확인</h2>
+<blockquote>
+<p>실제로 k8s에 배포 후, 확인을 합니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm install pacman .
+</span></span><span style="display:flex;"><span>helm list
+</span></span><span style="display:flex;"><span>kubectl get deploy,pod,service,ep
+</span></span><span style="display:flex;"><span>helm history pacman
+</span></span><span style="display:flex;"><span>kubectl get pod -o yaml | grep securityContext -A1
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># secret도 보겠습니다.  </span>
+</span></span><span style="display:flex;"><span>kubectl get secret
+</span></span></code></pre></div><ul>
+<li>Secret 생성 이유? <code>sh.helm.release.v1.pacman.v1</code>
+Helm은 배포 릴리스에 대한 metadata를 저장하기 위해, 자동으로 Secret 리소스를 생성합니다.<br>
+Helm이 차트의 상태를 복구하거나 rollback 할 때 이 데이터를 이용</li>
+</ul>
+<p><img src="image-5.png" alt="provisioning helm chart"></p>
+<ul>
+<li>이번엔 replicaCount 값을 재설정하여, 배포를 합니다.
+<ul>
+<li><code>--reuse-values</code>: 업그레이드 진행시, 최신 릴리스의 값에 CLI Override(`&ndash;set 및 -f)값과 합쳐 적용.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm upgrade pacman --reuse-values --set replicaCount<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span> .  
+</span></span><span style="display:flex;"><span>kubectl get pod
+</span></span></code></pre></div><p><img src="image-6.png" alt="helm upgrade"></p>
+<ul>
+<li>히스토리와 시크릿은 upgrade 할 때마다 누적되는 것을 확인할 수 있습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get secret
+</span></span><span style="display:flex;"><span>helm history pacman
+</span></span></code></pre></div><p><img src="image-7.png" alt="increased secrets and history via upgrade chart"></p>
+<ul>
+<li>이외에도 chart의 배포 정보, 즉 metadata를 살펴보겠습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm get all pacman  
+</span></span><span style="display:flex;"><span>helm get values pacman  
+</span></span><span style="display:flex;"><span>helm get manifest pacman
+</span></span><span style="display:flex;"><span>helm get notes pacman
+</span></span></code></pre></div><ul>
+<li>all: 아래 내용에 대한 전체 사항
+<ul>
+<li>values: <code>USER-SUPPLIED VALUES</code>(사용자 지정 값)</li>
+<li>manifest: chart에 의해 생성된 k8s 리소스의 표현 (YAML 형식)</li>
+<li>notes: 해당 릴리스에 대한 노트(메모)</li>
+</ul>
+</li>
+</ul>
+<p><img src="image-8.png" alt="check chart metadata"></p>
+<ul>
+<li>chart의 <code>secret</code>의 경우, 아래 사진과 같은 base64로 인코딩된 값을 가집니다.</li>
+</ul>
+<p><img src="image-9.png" alt="secret which chart have"></p>
+<ul>
+<li>이 값을 <code>2번</code> 디코딩했을때는 아래와 같이 출력됩니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get secrets sh.helm.release.v1.pacman.v1 -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.data.release}&#39;</span> | base64 -d | base64 -d | gzip -d | jq  
+</span></span></code></pre></div><p><img src="image-11.png" alt="decode twice chart secret"></p>
+<ul>
+<li><code>secret</code>이 갖고있던 메타데이터 키값들을 확인해봅니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get secret sh.helm.release.v1.pacman.v3 -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.data.release}&#39;</span> | base64 -d | base64 -d | gzip -d | jq -r <span style="color:#e6db74">&#39;paths(scalars) | join(&#34;.&#34;)&#39;</span>
+</span></span></code></pre></div><p><img src="image-10.png" alt="Dot-notation"></p>
+<h2 id="5-chart-삭제-후-확인">5. chart 삭제 후 확인</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm uninstall pacman
+</span></span><span style="display:flex;"><span>kubectl get secret
+</span></span></code></pre></div><ul>
+<li>chart를 삭제하면, 변화를 기록하던 시크릿도 다 함께 사라진 것을 확인할 수 있습니다.</li>
+</ul>
+<p><img src="image-12.png" alt="all secret remove after chart deleted"></p>
+<h2 id="8-chart-api-v1---v2-변화점-helm-v2-to-v3">8. Chart API v1 -&gt; v2 변화점 (Helm v2 to v3)</h2>
+<blockquote>
+<p>A <code>dependencies</code> field defining chart dependencies, which were located in a separate <code>requirements.yaml</code> file for v1 charts. The type field, discriminating application and library charts.</p>
+</blockquote>
+<ul>
+<li>기존 <code>requirements.yaml</code>에 분리되어 있던 <code>dependencies</code> 필드는, <code>Chart.yaml</code>에서 정의됩니다.</li>
+<li><code>type</code> 필드 도입을 통해서 일반적인 애플리케이션용인지, 직접 배포되지 않아야하는 라이브러리인지 식별하는데 도움을 줍니다.</li>
+</ul>
+<h2 id="9-template-관련">9. Template 관련</h2>
+<table>
+	<thead>
+			<tr>
+					<th style="text-align: left">No.</th>
+					<th style="text-align: center">기능</th>
+					<th style="text-align: center">표현</th>
+					<th style="text-align: center">설명</th>
+					<th style="text-align: center">참고</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td style="text-align: left">1</td>
+					<td style="text-align: center">Whitespace Control</td>
+					<td style="text-align: center"><code>{{-</code></td>
+					<td style="text-align: center">앞의 공백문자(<code>\n</code>포함) 제거</td>
+					<td style="text-align: center"><code>{{</code></td>
+			</tr>
+			<tr>
+					<td style="text-align: left">2</td>
+					<td style="text-align: center">newline indent</td>
+					<td style="text-align: center"><code>nindent</code></td>
+					<td style="text-align: center">앞에 개행 추가</td>
+					<td style="text-align: center"><code>indent</code></td>
+			</tr>
+			<tr>
+					<td style="text-align: left">3</td>
+					<td style="text-align: center">함수 호출(권장)</td>
+					<td style="text-align: center">{{ <code>toYaml</code> &hellip; }}</td>
+					<td style="text-align: center">템플릿 함수</td>
+					<td style="text-align: center"><a href="https://masterminds.github.io/sprig/">sprig</a></td>
+			</tr>
+			<tr>
+					<td style="text-align: left">9</td>
+					<td style="text-align: center">template 호출</td>
+					<td style="text-align: center">{{ <code>include &quot;toYaml&quot;</code> &hellip; }}</td>
+					<td style="text-align: center">toYaml이라는 템플릿 호출 <code>{{ define &quot;toYaml&quot; }}</code></td>
+					<td style="text-align: center"><code>_helpers.tpl</code>등에 정의 (과거)</td>
+			</tr>
+	</tbody>
+</table>
+<ul>
+<li>
+<p>조건문 및 쌍따옴표 처리</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>{{- <span style="color:#ae81ff">if &lt;VAR&gt; }}          </span> <span style="color:#75715e"># 변수가 있을 때에만     </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">KEY</span>: {{ <span style="color:#ae81ff">&lt;VAR&gt; | quote }} </span> <span style="color:#75715e"># 해당 변수에 쌍따옴표를 붙여서 구성</span>
+</span></span><span style="display:flex;"><span>{{- <span style="color:#ae81ff">end }}</span>
+</span></span></code></pre></div></li>
+<li>
+<p><code>securityContext</code>: 컨테이너 보안</p>
+<ul>
+<li>
+<p>공백 처리 방법:<code>{}</code></p>
+<ul>
+<li><code>nil</code> 방지</li>
+<li>기본값으로 비어있는 객체로 설정한다는 의미</li>
+</ul>
+</li>
+<li>
+<p>(예시)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>securityContext:
+</span></span><span style="display:flex;"><span>  capabilities:
+</span></span><span style="display:flex;"><span>    drop:
+</span></span><span style="display:flex;"><span>    - ALL
+</span></span><span style="display:flex;"><span>  readOnlyRootFilesystem: true
+</span></span><span style="display:flex;"><span>  runAsNonRoot: true
+</span></span><span style="display:flex;"><span>  runAsUser: <span style="color:#ae81ff">1000</span>
+</span></span></code></pre></div></li>
+<li>
+<p><code>runAsUser</code> / <code>runAsGroup</code>:</p>
+<ul>
+<li>컨테이너를 특정 유저 ID나 그룹 ID로 실행</li>
+</ul>
+</li>
+<li>
+<p><code>runAsNonRoot</code>:</p>
+<ul>
+<li>root 권한 방지</li>
+</ul>
+</li>
+<li>
+<p><code>readOnlyRootFilesystem</code>:</p>
+<ul>
+<li>컨테이너의 루트 파일 시스템을 읽기 전용으로 설정</li>
+</ul>
+</li>
+<li>
+<p><code>allowPrivilegeEscalation</code>:</p>
+<ul>
+<li>부모 프로세스보다 더 많은 권한을 컨테이너 내부 프로세스가 획득하는 것을 설정</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://snapcraft.io/helm">Install helm on Linux | Snap Store</a></li>
+<li><a href="https://helm.sh/docs/topics/charts/">Helm | Charts</a></li>
+<li><a href="https://semver.org">Semantic Versioning</a></li>
+<li><a href="https://masterminds.github.io/sprig/">Sprig Function Documentation</a></li>
+<li><a href="https://gist.github.com/DzeryCZ/c4adf39d4a1a99ae6e594a183628eaee">Decoding Helm3 resources in secrets</a></li>
+<li><a href="../kans-2w-kind-installation-on-linux/">리눅스에 KIND 설치하기 w/golang</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2025/10/19/vscode-devcontainer-usage/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">VSCode DevContainer - CI/CD 스터디 1주차</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2025/10/26/helm-template-reusing-statements/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

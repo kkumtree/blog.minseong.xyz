@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>SAML for using Amazon Managed Grafana Workspace (To-Do) | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="SAML for using Amazon Managed Grafana Workspace (To-Do)" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2024/11/02/getting-started-amazon-managed-grafana-workspace/images/just-click-console.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2024/11/02/getting-started-amazon-managed-grafana-workspace/images/just-click-console.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2024/11/02/getting-started-amazon-managed-grafana-workspace/images/just-click-console.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('images/just-click-console.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>SAML for using Amazon Managed Grafana Workspace (To-Do)</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-11-02T21:43:00&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">aws</span>
+              </div>
+            </a>
+            
+            <a href="/tags/grafana" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">grafana</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <blockquote>
+<p>Organization의 이슈가 있어  <code>Amazon Managed Grafana Workspace</code>를 사용하려면 SAML 인증을 구성해야하는데, SAML 인증 제어가 되면 검토해보겠습니다.</p>
+</blockquote>
+<!-- [Monitoring CoreDNS in EKS with AMG](https://blog.mincloud.io/post/kans-9w-monitoring-codedns-in-eks-with-amg/)의 pre-requisite로, Amazon Managed Grafana Workspace를 훑어보았습니다.   -->
+<p>당연히 거의 4년이 다되가니 <a href="https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/">Amazon Managed Grafana – Getting Started</a>와는 다른 인터페이스를 확인할 수 있었습니다.</p>
+<p>현재 제 권한으로는 Organization을 생성할 수 없어서, Workspace만 생성해보았습니다.<br>
+즉, <del>매우</del> 느슨한 권한으로 Workspace를 만들어주겠다 이것입니다.</p>
+<h2 id="1-딸깍으로-시작하기">1. &lsquo;딸깍&rsquo;으로 시작하기</h2>
+<ul>
+<li>Getting Started with <code>딸깍</code></li>
+</ul>
+<p><img src="images/just-click-console.png" alt="amg-workspace"></p>
+<ul>
+<li>이름만 짓고, 넘어가 보겠습니다.</li>
+</ul>
+<p><img src="images/step1-ws-name.png" alt="step1-ws-name"></p>
+<ul>
+<li>AWS <del>IIC</del> IAM Identity Center (구, AWS SSO)를 활용하겠습니다.
+<ul>
+<li><del>신경써야할게 많네요</del></li>
+</ul>
+</li>
+</ul>
+<p><img src="images/step2-enable-sso.png" alt="step2-enable-sso"></p>
+<ul>
+<li>딸~깍, 유저를 만들어봅시다.</li>
+</ul>
+<p><img src="images/step2-create-user.png" alt="step2-create-user"></p>
+<ul>
+<li>YEO-EUK-SHI&hellip; 될리가 없지요. IAM Identity Center 활성화부터 해야겠네요.</li>
+</ul>
+<p><img src="images/get-stuck-in-step2.png" alt="get-stuck-in-step2"></p>
+<h2 id="2-iam-identity-center-활성화-시도">2. IAM Identity Center 활성화 시도</h2>
+<blockquote>
+<p>보통, 이때 조금 망했다는 생각이 들기 시작하죠</p>
+</blockquote>
+<ul>
+<li><code>IAM Identity Center</code> 메뉴에서 Enable을 <code>딸깍</code> 합니다.</li>
+</ul>
+<p><img src="images/click-enable-click.png" alt="click-enable-click"></p>
+<ul>
+<li><code>Recommended</code> 싫은데요! 난 다른거 할 건데요! 하면 경고 엄청 날립니다.</li>
+</ul>
+<p><img src="images/stern-warning-not-recommended.png" alt="stern-warning-not-recommended"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>- Users, groups, and AWS managed applications are isolated to this account instance.
+</span></span><span style="display:flex;"><span>  - 선택지 그대로, 현재 로그인한 계정에 격리된다고 합니다.  
+</span></span><span style="display:flex;"><span>- This account instance doesn&#39;t support granting users and groups access to - AWS accounts in an AWS organization.  
+</span></span><span style="display:flex;"><span>  - AWS Org.에 속한 계정에 권한 부여 안된다고 합니다.  
+</span></span><span style="display:flex;"><span>- This account instance can&#39;t be upgraded to become an organization instance.
+</span></span><span style="display:flex;"><span>  - `Recommended` 선택지로 업그레이드 안된다고 합니다.  
+</span></span></code></pre></div><ul>
+<li>알았어, 알았다고. 왼쪽을 선택하고 <code>Continue</code>를 <code>딸깍</code></li>
+</ul>
+<p><img src="images/click-continue-with-recommended.png" alt="click-continue-with-recommended"></p>
+<ul>
+<li>아 맞다, 주인님 허가 맡아야하지&hellip;</li>
+</ul>
+<p><img src="images/failed-with-insufficient-permission.png" alt="failed-with-insufficient-permission"></p>
+<ul>
+<li>이미 경고 숙지했으니, 오른쪽 선택지로 <code>Continue</code>를 <code>딸깍</code>
+<ul>
+<li>한 5~10초 가량 소요</li>
+</ul>
+</li>
+</ul>
+<p><img src="images/click-continue-without-recommended.png" alt="click-continue-without-recommended"></p>
+<ul>
+<li>이제 뭘해야할까&hellip; <del>이대로 되는 것일까&hellip;</del></li>
+</ul>
+<p><img src="images/what-to-do-next.png" alt="what-to-do-next"></p>
+<ul>
+<li>다시 시도!</li>
+</ul>
+<p><img src="images/retry.png" alt="retry"></p>
+<ul>
+<li><code>UpdateSsoConfiguration</code> 권한 넣으라는 엄중한 지시&hellip;
+<ul>
+<li>애당초, 안되는 것 같아보이는데&hellip;</li>
+</ul>
+</li>
+</ul>
+<p><img src="images/error-again.png" alt="error-again"></p>
+<ul>
+<li>
+<p>에라, Document 소환!</p>
+<ul>
+<li>Docs: <a href="https://docs.aws.amazon.com/grafana/latest/userguide/authentication-in-AMG-SSO.html">Use AWS IAM Identity Center with your Amazon Managed Grafana workspace</a></li>
+</ul>
+</li>
+<li>
+<p>아래 권한을 제게 다 넣어보겠습니다.</p>
+<ul>
+<li>AWSGrafanaAccountAdministrator</li>
+<li>AWSSSOMasterAccountAdministrator</li>
+<li>AWSOrganizationsFullAccess</li>
+<li>AWSSSODirectoryAdministrator</li>
+</ul>
+</li>
+</ul>
+<p><img src="images/exodia-managed-permission.png" alt="exodia-managed-permission"></p>
+<ul>
+<li>또 안되서, 인라인 하나만 넣어보고 안되면 던져야겠습니다.</li>
+</ul>
+<p><img src="images/update-sso-configuration.png" alt="UpdateSSOConfiguration"></p>
+<ul>
+<li>아 그냥 안되는 거였네요. 일단 넘어가야겠네요.</li>
+</ul>
+<p><img src="images/you-are-not-allowed.png" alt="you-are-not-allowed"></p>
+<h2 id="3-saml-based-amg">3. SAML-based AMG</h2>
+<ul>
+<li>SAML 인증으로 선택해보고 계속 생성시도 해보겠습니다.</li>
+</ul>
+<p><img src="images/use-saml-auth.png" alt="use-saml-auth"></p>
+<ul>
+<li>다른 옵션은 아래와 같습니다.</li>
+</ul>
+<p><img src="images/amg-options.png" alt="amg-options"></p>
+<ul>
+<li>경고가 아찔한데&hellip;</li>
+</ul>
+<p><img src="images/need-more-permission-to-ams-prom.png" alt="need-more-permission-to-ams-prom"></p>
+<ul>
+<li>Docs: <a href="https://docs.aws.amazon.com/grafana/latest/userguide/AMG-manage-permissions.html#AMG-service-managed-account">Amazon Managed Grafana permissions and policies for AWS data sources</a></li>
+</ul>
+<p><img src="images/add-one-more-permission.png" alt="add-one-more-permission"></p>
+<ul>
+<li>에러는 없애지 못했지만, 워크스페이스 자체는 생성이 되었습니다. <del>찜찜</del></li>
+</ul>
+<p><img src="images/workspace-created.png" alt="workspace-created"></p>
+<p><img src="images/amg-hello-world.png" alt="amg-hello-world"></p>
+<h2 id="4-saml-설정">4. SAML 설정</h2>
+<ul>
+<li>SAML의 경우, 제가 Admin인 SAML이 없어서 나중에 검토해볼 생각입니다.</li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2024/10/30/kans-9w-monitoring-codedns-in-eks-with-grafana-cloud/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Monitoring CoreDNS in EKS with Grafana Cloud</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2024/11/04/apt-expkeysig-troubleshooting/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">The following signatures were invalid: EXPKEYSIG</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

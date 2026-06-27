@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Devcontainer on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/devcontainer/</link>
+		<description>Recent content in Devcontainer on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 19 Oct 2025 20:50:46 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/devcontainer/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>VSCode DevContainer - CI/CD 스터디 1주차</title>
+				<link>https://blog.minseong.xyz/2025/10/19/vscode-devcontainer-usage/</link>
+				<pubDate>Sun, 19 Oct 2025 20:50:46 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2025/10/19/vscode-devcontainer-usage/</guid>
+				<description>&lt;p&gt;한가위 연휴의 끝과 함께, &lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 CI/CD Study에 참여하게 되었습니다.&lt;/p&gt;&#xA;&lt;p&gt;이번에는 핸즈온용으로 즐겨쓰는 GitHub CodeSpace와 연관된,&lt;br&gt;&#xA;Visual Studio 상에서의 Dev Containers 활용에 대해 다뤄보고자 합니다.&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;사용 OS환경은 Ubuntu Desktop 24.04 LTS 이며,&lt;br&gt;&#xA;아래의 문서에서 안내된대로 차근차근 따라해보며 좀 더 이해를 해보고자 합니다.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://code.visualstudio.com/docs/devcontainers/containers&#34;&gt;Developing inside a Container&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;0-docker-설치&#34;&gt;0. Docker 설치&lt;/h2&gt;&#xA;&lt;p&gt;내용이 길어, 아래의 포스트로 나누었습니다.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://blog.minseong.xyz/post/docker-installation-in-ubuntu/&#34;&gt;Ubuntu Docker 설치&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;작성 기준, Dev Container는 Ubuntu Snap 패키지(snapcraft)로 설치된 Docker에는 지원되지 않는다고 합니다.&lt;/li&gt;&#xA;&lt;li&gt;사용자(&lt;code&gt;$USER&lt;/code&gt;)를 &lt;code&gt;docker&lt;/code&gt; 그룹에 추가하여야합니다.&lt;br&gt;&#xA;(위 게시물의 &lt;code&gt;3. 권한 상승 설정 (선택)&lt;/code&gt; 참고)&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;1-dev-containers-확장-프로그램&#34;&gt;1. Dev Containers 확장 프로그램&lt;/h2&gt;&#xA;&lt;p&gt;Visual Studio Code(이하, VSCode)에서 제공되는, &lt;code&gt;Dev Containers&lt;/code&gt; 확장 프로그램을 사용하면, 개발 환경에 필요한 모든 기능이 갖춰진 Container를 구축하여 환경을 구성할 수 있습니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Cilium on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/cilium/</link>
+		<description>Recent content in Cilium on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sat, 26 Oct 2024 01:35:59 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/cilium/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Kubernetes Service(5): Cillium Quick-start w/Hubble UI</title>
+				<link>https://blog.minseong.xyz/2024/10/26/kans-8w-cilium-trial/</link>
+				<pubDate>Sat, 26 Oct 2024 01:35:59 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2024/10/26/kans-8w-cilium-trial/</guid>
+				<description>&lt;p&gt;그럼 매번 실패만 했던 Cilium 배포를 한번 해볼까요?&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 &lt;strong&gt;K&lt;/strong&gt;8s &lt;strong&gt;A&lt;/strong&gt;dvanced &lt;strong&gt;N&lt;/strong&gt;etwork &lt;strong&gt;S&lt;/strong&gt;tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;1-csp-vm-골라보기&#34;&gt;1. CSP VM 골라보기&lt;/h2&gt;&#xA;&lt;p&gt;이렇게 쓴 이유는 결국 네트워크를 &lt;code&gt;잘&lt;/code&gt; 알아야하는데,&lt;br&gt;&#xA;작년에 할 때는 그런거 생각도 안하고 그냥 올려보려 했으니 당연히 안 돌아가겠죠?&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://trying2adult.com/what-is-xdp-and-how-do-you-use-it-in-linux-amazon-ec2-example/&#34;&gt;trying2adult/What Is XDP And How Do You Use It In Linux&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;그냥 곰곰히 오리&lt;del&gt;duckduckgo&lt;/del&gt;랑 투닥거리다보니, 비록 연식이 되긴 했지만&lt;br&gt;&#xA;클릭을 안하고는 못배길 위의 블로그 제목이 눈에 띄였습니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

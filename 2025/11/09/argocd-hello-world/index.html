@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>ArgoCD 101 - CI/CD 스터디 4주차 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="ArgoCD 101 - CI/CD 스터디 4주차" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2025/11/09/argocd-hello-world/image-14.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2025/11/09/argocd-hello-world/image-14.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2025/11/09/argocd-hello-world/image-14.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-14.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>ArgoCD 101 - CI/CD 스터디 4주차</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-09T08:44:34&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/argocd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">argocd</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cicd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CICD</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 CI/CD Study 4주차에는 ArgoCD를 다루기 시작했습니다.</p>
+<p>Kubernetes(이하, k8s) 상에서 ArgoCD는 Controller보다는 Operator에 가까운 포지션을 갖는다고 하여,<br>
+이번 기회에 실습을 하면서 체감을 하는 것에 목적을 두었습니다.</p>
+<ul>
+<li>Controller: live state(실제 상태)와 desired state(원하는 상태)가 일치하는지 관찰 및 지속적 조정</li>
+<li>Operator: Controller가 k8s 내부 object에서 동작한다면, Operator는 k8s 외의 것들도 다룰 수 있음</li>
+</ul>
+<blockquote>
+<p>해당 구성들은 아래 GitHub에 탑재되어 있습니다.<br>
+<a href="https://github.com/kkumtree/ci-cd-cloudnet-study">https://github.com/kkumtree/ci-cd-cloudnet-study</a> 의 4w 폴더</p>
+</blockquote>
+<h2 id="0-실습-준비">0. 실습 준비</h2>
+<p>이전 게시물, <a href="../jenkins-ci-cd-kubernetes/">Jenkins, git and kubernetes</a>의 kind 및 kube-ops-view 설정과 동일하여 생략합니다.</p>
+<ul>
+<li>실습 코드: <a href="https://github.com/PacktPublishing/ArgoCD-in-Practice">PacktPublishing/ArgoCD-in-Practice</a></li>
+</ul>
+<h2 id="1-명령형선언형-방식">1. 명령형/선언형 방식</h2>
+<ul>
+<li>명령형(imperative): 절차적 방식, 명령어를 순서대로 적용.<br>
+k8s에서는 kubectl <code>create</code>/<code>replace</code></li>
+<li>선언형(declarative): 파일을 통해 생성하고, 수정 후 업데이트/동기화.<br>
+k8s에서는 kubectl <code>apply</code> (신규/수정 동일)</li>
+</ul>
+<p>Packt 출판사의 실습코드를 통해 기본적인 동작을 살펴봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ArgoCD-in-Practice/ch01/basic-gitops-operator  </span>
+</span></span><span style="display:flex;"><span>cd ch01  
+</span></span><span style="display:flex;"><span>tree basic-gitops-operator-config <span style="color:#75715e"># 배포할 manifest 파일  </span>
+</span></span><span style="display:flex;"><span>tree basic-gitops-operator <span style="color:#75715e"># tmp 폴더를 생성하고, 클러스터에 적용할 manifest을 관리  </span>
+</span></span><span style="display:flex;"><span>basic-gitops-operator  
+</span></span><span style="display:flex;"><span>go run main.go  
+</span></span></code></pre></div><p>main.go 파일은 tmp 폴더를 생성하고, 5초 주기로 해당 매니페스트를 동기화하는 소스코드임을 확인했습니다.</p>
+<ul>
+<li>첫번째 루프에서는 nginx 배포를 위한 namespace(이하, NS)랑 deployment를 동시에 생성 시도하였으나, 해당 ns가 생성완료 되기도 전에 선언된 deployment를 생성하려다 실패.</li>
+<li>5초 후 두번째 루프에서는 이전 루프에서 실패한 deployment를 마저 배포 성송.</li>
+<li>이후에도 연속적으로 5초 마다 상태를 동기화를 시도하는 것을 볼 수 있었습니다.</li>
+</ul>
+<p><img src="image.png" alt="basic gitops operator"></p>
+<p>아래 커맨드로 nginx deployment를 삭제하였어도,<br>
+오퍼레이터는 5초 후에 매니페스트와 비교하여 재배포하는 것을 확인할 수 있었습니다. <code>deployment.apps/nginx created</code></p>
+<p><img src="image-1.png" alt="how operator works"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 새로운 터미널에서  </span>
+</span></span><span style="display:flex;"><span>kubectl get deployment,pod -n nginx
+</span></span><span style="display:flex;"><span>kubectl delete deployment nginx -n nginx
+</span></span><span style="display:flex;"><span>kubectl get deployment,pod -n nginx <span style="color:#75715e"># 재배포된 것을 확인 </span>
+</span></span></code></pre></div><p><img src="image-2.png" alt="confirm recreation with age"></p>
+<p>이후 환경 정리를 위해, 오퍼레이터 코드를 중단하고 해당 NS를 삭제합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl delete ns nginx
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># namespace &#34;nginx&#34; deleted</span>
+</span></span></code></pre></div><h2 id="2-argocd">2. ArgoCD</h2>
+<p>ArgoCD는 k8s 환경에서 GitOps 방식의 배포를 위한 도구들 중 하나입니다.</p>
+<p>Git repository 내에, 앞서 알아보았던 <a href="../helm-hello-world/">Helm 101</a> 게시물에서 다뤘던 Helm 차트 등의 템플릿을<br>
+k8s yaml 매니페스트로 변환하여 배포하는 도구로 정리될 수 있습니다.</p>
+<p>더불어, 앞서 명령형/선언형 방식에서 살펴본 오퍼레이터와 같이, <code>kubectl apply</code> 즉, 선언전 도구라는 점도 참고하면 좋습니다.</p>
+<h3 id="1-multi-cluster-사용-시">(1) Multi-Cluster 사용 시</h3>
+<p>kind를 배포하면, ~/.kube/config 파일에 단일 클러스터 정보를 얻고 관리할 수 있듯이<br>
+각 k8s 클러스터는 고유한 토큰을 통해 접근, 관리할 수 있기 때문에, ArgoCD 가 설치된 Cluster 외의 다른 Cluster에 접근할 권한을 얻어야합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># e.g. </span>
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Secret
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: cluster-credentials-dev
+</span></span><span style="display:flex;"><span>  namespace: argocd
+</span></span><span style="display:flex;"><span>  labels:
+</span></span><span style="display:flex;"><span>    argocd.argoproj.io/secret-type: cluster             <span style="color:#75715e"># Label 설정에 유의  </span>
+</span></span><span style="display:flex;"><span>stringData:
+</span></span><span style="display:flex;"><span>  name: dev-cluster                                     <span style="color:#75715e"># Argo CD 내에서 표시될 클러스터 이름</span>
+</span></span><span style="display:flex;"><span>  server: https://123.45.67.89:6443                     <span style="color:#75715e"># 대상 클러스터의 API 서버 주소         </span>
+</span></span><span style="display:flex;"><span>  config: |                                             <span style="color:#75715e"># JSON 형태의 kubeconfig 일부. Argo CD가 인증에 사용</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;bearerToken&#34;</span>: <span style="color:#e6db74">&#34;eyJhbGciOiJSUzI1NiIsImtpZCI6...&#34;</span>, <span style="color:#75715e"># 대상 클러스터의 ServiceAccount로부터 추출한 토큰</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;tlsClientConfig&#34;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;insecure&#34;</span>: false,                              <span style="color:#75715e"># true일 경우 TLS 검증 비활성화 (개발용)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;caData&#34;</span>: <span style="color:#e6db74">&#34;LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0t...&#34;</span> <span style="color:#75715e"># 클러스터 CA 인증서 (Base64 인코딩된 값)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>이는 위의 YAML 형태외에도 CLI 명령어로도 가능합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>argocd cluster add &lt;CONTEXT_NAME&gt; --name &lt;CLUSTER_ALIAS&gt;
+</span></span></code></pre></div><h3 id="2-argocd-helm-chart-설치">(2) ArgoCD Helm Chart 설치</h3>
+<p>Helm Chart의 일반적인 배포방식이며, 아래와 같습니다.</p>
+<ol>
+<li>ArgoCD를 배포할 네임스페이스 생성</li>
+<li>각 Kubernetes 환경에 맞는 values.yaml 파일 작성</li>
+<li>배포 후 확인</li>
+</ol>
+<blockquote>
+<p>파일은 아래 경로에 있습니다.<br>
+해당 구성들은 <code>4w/shells/argocd</code> 폴더에 탑재되어 있습니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># pwd</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># # /home/kkumtree/Documents/github/ci-cd-cloudnet-study/4w/shells/argocd</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ls</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># # argocd-values.yaml  deploy-chart.sh</span>
+</span></span><span style="display:flex;"><span>./deploy-chart.sh  
+</span></span></code></pre></div><p><img src="image-3.png" alt="install argocd with helm chart"></p>
+<p>각 구성요소를 확인해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get pod,svc,ep,secret,cm -n argocd  
+</span></span><span style="display:flex;"><span>kubectl get crd | grep argo
+</span></span><span style="display:flex;"><span>kubectl get appproject -n argocd -o yaml
+</span></span><span style="display:flex;"><span>kubectl get sa -n argocd
+</span></span></code></pre></div><p><img src="image-4.png" alt="details about argocd"></p>
+<p>권한도 보겠습니다.</p>
+<blockquote>
+<p>아래 커맨드를 위해서 krew 플러그인 매니저가 설치되어 있어야 합니다.<br>
+<code>4w/shells/krew/install-krew-bash-zsh.sh</code> 스크립트로도 설치할 수 있습니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># kubectl krew install rolesum  </span>
+</span></span><span style="display:flex;"><span>kubectl rolesum -k User system:kube-proxy  
+</span></span><span style="display:flex;"><span>kubectl rolesum -k Group system:masters    
+</span></span></code></pre></div><p><img src="image-5.png" alt="rolesum for check rbac"></p>
+<p>Role Binding / Cluster Role Binding 도 확인해봅니다</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl rolesum -n argocd argocd-server
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubectl rolesum -n argocd argocd-application-controller</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubectl rolesum -n argocd argocd-applicationset-controller</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kubectl rolesum -n argocd argocd-repo-server</span>
+</span></span></code></pre></div><p><img src="image-6.png" alt="rbac about argocd-server"></p>
+<p>ArgoCD 최초 암호 확인은 아래와 같이 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.data.password}&#34;</span> | base64 -d ;echo
+</span></span></code></pre></div><p><img src="image-7.png" alt="check argocd initial secret"></p>
+<h3 id="3-testing-with-sample-app">(3) Testing with sample app</h3>
+<p>샘플 어플리케이션 <code>guestbook</code>을 배포 후, ArgoCD 대시보드를 통해 변화를 관찰해봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 4w/yaml/guestbook 폴더로 이동</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f guestbook.yaml
+</span></span></code></pre></div><p><img src="image-8.png" alt="apply sample application"></p>
+<!-- > 이번에는 krew 플러그인 중 하나인 `neat`를 설치 후 활용해보겠습니다.  
+
+```bash
+# kubectl krew install neat
+```
+
+![alt text](image-9.png) -->  
+<p>해당 서비스가 kind 클러스터의 노출된 30003 포트로 접근 가능하도록 시도해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get svc -n guestbook
+</span></span><span style="display:flex;"><span>kubectl patch svc -n guestbook guestbook-helm-guestbook -p <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;type&#34;:&#34;NodePort&#34;,&#34;ports&#34;:[{&#34;port&#34;:80,&#34;targetPort&#34;:80,&#34;nodePort&#34;:30003}]}}&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl get svc -n guestbook
+</span></span><span style="display:flex;"><span>kubectl patch svc -n guestbook guestbook-helm-guestbook -p <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;type&#34;:&#34;NodePort&#34;,&#34;ports&#34;:[{&#34;port&#34;:80,&#34;targetPort&#34;:80,&#34;nodePort&#34;:30003}]}}&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl get svc -n guestbook
+</span></span></code></pre></div><p>변화가 없는 것을 확인할 수 있습니다.</p>
+<p><img src="image-11.png" alt="try enabling nodeport before self healing disabled"></p>
+<p>왜냐하면, ArgoCD의 <code>Self healing</code>으로 동기화되고 있기 때문입니다.</p>
+<p>이를 바꾸기위해, 웹 콘솔에서 Self healing을 비활성화하고 사용하면 됩니다.</p>
+<h3 id="4-argocd-웹-콘솔에서-pod-terminal-사용-활성화">(4) ArgoCD 웹 콘솔에서 Pod Terminal 사용 활성화</h3>
+<p>Jenkins의 경우에는 웹 콘솔에서 Pod에 접속할 터미널이 없었던 것으로 알고있는데,<br>
+RBAC을 포함한 활성화 설정으로, 웹 콘솔에서 현재 배포된 Pod의 내부에 접근할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># (ArgoCD Pod) exec 기능 활성화</span>
+</span></span><span style="display:flex;"><span>kubectl get configmap argocd-cm -n argocd -o yaml | grep exec.enabled
+</span></span><span style="display:flex;"><span>kubectl patch configmap argocd-cm -n argocd --type merge -p <span style="color:#e6db74">&#39;{&#34;data&#34;:{&#34;exec.enabled&#34;:&#34;true&#34;}}&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl get configmap argocd-cm -n argocd -o yaml | grep exec.enabled <span style="color:#75715e"># 활성화 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (RBAC) CR에 pods/exec 생성권한 추가  </span>
+</span></span><span style="display:flex;"><span>kubectl rolesum -n argocd argocd-server | head -n <span style="color:#ae81ff">5</span> <span style="color:#75715e"># argocd-server의 Role Binding 확인</span>
+</span></span><span style="display:flex;"><span>kubectl describe clusterroles.rbac.authorization.k8s.io argocd-server | grep pods <span style="color:#75715e"># pods/exec 없음 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl patch clusterrole argocd-server --type<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;json&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -p<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;[{&#34;op&#34;: &#34;add&#34;, &#34;path&#34;: &#34;/rules/-&#34;, &#34;value&#34;: {&#34;apiGroups&#34;: [&#34;&#34;], &#34;resources&#34;: [&#34;pods/exec&#34;], &#34;verbs&#34;: [&#34;create&#34;]}}]&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl describe clusterroles.rbac.authorization.k8s.io argocd-server | grep pods <span style="color:#75715e"># pods/exec create 확인</span>
+</span></span></code></pre></div><p><img src="image-13.png" alt="enable exec in argocd-server">
+<img src="image-12.png" alt="add pods exec rbac for argocd-server"></p>
+<p>이후에 웹 콘솔로 접속 시, Pod에 대해 웹 Terminal로 접근이 가능한 점을 확인할 수 있습니다.</p>
+<p><img src="image-14.png" alt="web based terminal"></p>
+<h3 id="5-argocd-cli">(5) ArgoCD CLI</h3>
+<p>유사시, 커맨드라인으로 ArgoCD와 API 통신을 하기 위해 ArgoCD CLI를 설치 후 사용해봅니다.<br>
+(Linux/Curl방식: <a href="https://argo-cd.readthedocs.io/en/stable/cli_installation/#download-latest-version">Download With Curl</a>)</p>
+<blockquote>
+<p>초기 비밀번호로 사용하는 것은 권장되는 방법은 아니나<br>
+원격으로 해당 클러스터에 붙어서 실습 중이었기에, 편의 상 아래와 같이 진행했습니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.data.password}&#34;</span> | base64 -d ;echo
+</span></span><span style="display:flex;"><span>argocd login 127.0.0.1:30002 --plaintext
+</span></span><span style="display:flex;"><span>argocd account list
+</span></span><span style="display:flex;"><span>argocd proj list
+</span></span><span style="display:flex;"><span>argocd repo list
+</span></span><span style="display:flex;"><span>argocd cluster list
+</span></span><span style="display:flex;"><span>argocd app list
+</span></span></code></pre></div><p><img src="image-10.png" alt="login with argocd cli to communicate via api"></p>
+<h2 id="3-argocd-autopilot">3. ArgoCD Autopilot</h2>
+<blockquote>
+<p><a href="https://github.com/argoproj-labs/argocd-autopilot">https://github.com/argoproj-labs/argocd-autopilot</a><br>
+<a href="https://codefresh.io/blog/launching-argo-cd-autopilot-opinionated-way-manage-applications-across-environments-using-gitops-scale/">Argo CD Autopilot Introduction/Codefresh</a></p>
+</blockquote>
+<p>Jenkins가 되었든 ArgoCD가 되었든, 자기 자신을 자동으로 sync 관리 하기가 어려운 경우가 있습니다.<br>
+이번에는 ArgoCD Autopilot을 가볍에 알아보겠습니다.</p>
+<p><img src="image-16.png" alt="arch in proposal"></p>
+<p>제안 문서도 참고하여 확인 후 살펴봤을 때, Autopilot의 목적은 ArgoCD를 Bootstrap화 하는 것으로 이해했습니다.<br>
+배포하면서 Argo CD에 대한 템플릿도 git 레포에 업로드한 후, 이 또한 ArgoCD가 조회하며 sync를 맞추는 것으로 파악됩니다.</p>
+<p><img src="image-15.png" alt="proposal"></p>
+<p>다양한 제안이 있는 것으로 보이며, 앞으로도 업데이트 될 사안이 많아 보였습니다.</p>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2025/11/02/jenkins-ci-cd-kubernetes/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Jenkins, git and kubernetes - CI/CD 스터디 3주차</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2025/11/16/argocd-ingress/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">ArgoCD with Ingress - CI/CD 스터디 5주차</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

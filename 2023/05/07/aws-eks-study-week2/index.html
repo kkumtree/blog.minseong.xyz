@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>AWS EKS 스터디 2주차 - Network | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="AWS EKS 스터디 2주차 - Network" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2023/05/07/aws-eks-study-week2/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2023/05/07/aws-eks-study-week2/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2023/05/07/aws-eks-study-week2/cover.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>AWS EKS 스터디 2주차 - Network</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-07T07:30:52&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">AWS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/eks" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">EKS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/network" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">network</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <pre tabindex="0"><code class="language-note" data-lang="note"># 아쉽게도 신규 항목인 istio, kube-ops-view는 실습 실패
+- istio: `myhome.yaml` 을 어떻게 생성할지 몰라서 중단
+- kube-ops-view: A레코드에 제대로 잡히지 않음
+</code></pre><p>지난 1주차에 이어, 이번 주에는 EKS의 네트워크 구성에 대해 알아보는 시간이었습니다.</p>
+<p>직전 스터디에서도 바로 광탈당하나?하며 밤과 주말을 하얗게 불태웠을 정도로<br>
+가장 고난도라고 생각했던 네트워크를 다시 만나니 이제 1% 친근감이 느껴지고 있네요.</p>
+<p><img src="./images/00_intro.jpeg" alt="이해했냐고요?"></p>
+<p>자 그럼 해보도록 합시다.</p>
+<h2 id="1-cloudformation을-활용한-eks-원클릭-구성">1. cloudformation을 활용한 EKS 원클릭 구성</h2>
+<ul>
+<li>학습을 위해, 이번에도 <a href="https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">가시다</a>님이 준비해주신 원클릭 배포 yaml을 활용하여 배포.</li>
+<li><strong>완전 배포까지 대략 20분 가량 소요</strong></li>
+<li>IAM에서 미리 발급해둔 액세스키/시크릿키를 알아두어야합니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 원클릭 셋업</span>
+</span></span><span style="display:flex;"><span>aws cloudformation deploy --template-file ~/Documents/aews/eks-oneclick.yaml --stack-name myeks --parameter-overrides KeyName<span style="color:#f92672">=</span>aews SgIngressSshCidr<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span>/32 MyIamUserAccessKeyID<span style="color:#f92672">={</span>ACSSKEY|AKIA..<span style="color:#f92672">}</span>  MyIamUserSecretAccessKey<span style="color:#f92672">={</span>SECUKEY|7ob..<span style="color:#f92672">}</span> ClusterBaseName<span style="color:#f92672">=</span>myeks --region ap-northeast-2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤 플레인(마스터노드) 접속 확인</span>
+</span></span><span style="display:flex;"><span>ssh -i ~/.ssh/aews.pem ec2-user@<span style="color:#66d9ef">$(</span>aws cloudformation describe-stacks --stack-name myeks --query <span style="color:#e6db74">&#39;Stacks[*].Outputs[0].OutputValue&#39;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span></code></pre></div><p><img src="./images/01_oneclick.png" alt="oneclick_templete"></p>
+<h2 id="2-aws-vpc-cni-w기본-셋업-in-control-plane">2. AWS VPC CNI w/기본 셋업 (in Control Plane)</h2>
+<ul>
+<li>네임스페이스는 미리 default로 설정.<br>
+이걸 깜박해서, 지난 스터디 때 헛된 시행착오를 반복했던 이력이 있음.</li>
+<li>(워커)노드 IP 확인 및 변수 지정<br>
+워커노드는 EKS에서 <code>데이터플레인</code>이라고도 함.</li>
+<li>eksctl addon으로 설치된 아래 3가지 항목의 정상 설치 확인
+<ul>
+<li>codedns</li>
+<li>kube-proxy</li>
+<li><strong>vpc-cni</strong></li>
+</ul>
+</li>
+<li>스터디에서는 경이로운(?) AWS VPC CNI를 사용.<br>
+Calico CNI와 달리 데이터플레인(노드)의 AWS ENI(Elastic Network Interface)와 Pod가 같은 네트워크 대역(CIDR)을 사용한다!</li>
+<li>예시:
+<ul>
+<li>eth0(ENI): 10.10.1.1/24</li>
+<li>Pod1: 10.10.1.<strong>10</strong></li>
+<li>Pod2: 10.10.1.<strong>20</strong></li>
+</ul>
+</li>
+<li>실제로도 데이터플레인과 Pod가 같은 네트워크 대역을 사용한다.<br>
+(실습해보니 왜 IP까지 동일하지&hellip;? CIDR /32가 걸린건가? 혼란에 빠졌다!) <strong>(To-Do)</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># default 네임스페이스 설정</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl ns default
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인 IP 확인 및 변수 지정</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>N1<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get node --label-columns<span style="color:#f92672">=</span>topology.kubernetes.io/zone --selector<span style="color:#f92672">=</span>topology.kubernetes.io/zone<span style="color:#f92672">=</span>ap-northeast-2a -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.addresses<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.address<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span> 
+</span></span><span style="display:flex;"><span>N2<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get node --label-columns<span style="color:#f92672">=</span>topology.kubernetes.io/zone --selector<span style="color:#f92672">=</span>topology.kubernetes.io/zone<span style="color:#f92672">=</span>ap-northeast-2b -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.addresses<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.address<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span> 
+</span></span><span style="display:flex;"><span>N3<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get node --label-columns<span style="color:#f92672">=</span>topology.kubernetes.io/zone --selector<span style="color:#f92672">=</span>topology.kubernetes.io/zone<span style="color:#f92672">=</span>ap-northeast-2c -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.addresses<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.address<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span> 
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;export N1=</span>$N1<span style="color:#e6db74">&#34;</span> &gt;&gt; /etc/profile 
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;export N2=</span>$N2<span style="color:#e6db74">&#34;</span> &gt;&gt; /etc/profile 
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;export N3=</span>$N3<span style="color:#e6db74">&#34;</span> &gt;&gt; /etc/profile 
+</span></span><span style="display:flex;"><span>echo $N1, $N2, $N3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인 &lt;-&gt; 컨트롤플레인 ssh 접속을 위해 모든 프로토콜 허용</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NGSGID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws ec2 describe-security-groups --filters Name<span style="color:#f92672">=</span>group-name,Values<span style="color:#f92672">=</span>*ng1* --query <span style="color:#e6db74">&#34;SecurityGroups[*].[GroupId]&#34;</span> --output text<span style="color:#66d9ef">)</span> 
+</span></span><span style="display:flex;"><span>aws ec2 authorize-security-group-ingress --group-id $NGSGID --protocol <span style="color:#e6db74">&#39;-1&#39;</span> --cidr 192.168.1.100/32
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 ssh 접속 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 hostname 
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 hostname 
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N3 hostname
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># eksctl addon 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>eksctl get addon --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2023-05-04 19:04:32 [ℹ]  Kubernetes version &#34;1.24&#34; in use by cluster &#34;myeks&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2023-05-04 19:04:32 [ℹ]  getting all addons</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2023-05-04 19:04:33 [ℹ]  to see issues for an addon run `eksctl get addon --name &lt;addon-name&gt; --cluster &lt;cluster-name&gt;`</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NAME  VERSION   STATUS </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># coredns  v1.9.3-eksbuild.3 ACTIVE </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-proxy v1.24.10-eksbuild.2 ACTIVE </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># vpc-cni  v1.12.6-eksbuild.1 ACTIVE </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS VPC CNI 관련</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 각각 노드(데이터플레인)IP 와 Pod IP 확인하는 명령어</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws ec2 describe-instances --query <span style="color:#e6db74">&#34;Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key==&#39;Name&#39;]|[0].Value,Status:State.Name}&#34;</span> --filters Name<span style="color:#f92672">=</span>instance-state-name,Values<span style="color:#f92672">=</span>running --output table
+</span></span><span style="display:flex;"><span>kubectl get pod -n kube-system -o<span style="color:#f92672">=</span>custom-columns<span style="color:#f92672">=</span>NAME:.metadata.name,IP:.status.podIP,STATUS:.status.phase
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># kube-proxy config 확인 (mode: “iptables” 사용)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl describe cm -n kube-system kube-proxy-config | grep mode
+</span></span></code></pre></div><p><img src="./images/02_oneclick-node-setup.png" alt="oneclick-node-setup"></p>
+<p><img src="./images/03_eks-addon.png" alt="eksctl_addon"></p>
+<p><img src="./images/04_kube-proxy-config.png" alt="kube-proxy-config"></p>
+<h3 id="2-1-kube-proxy에서-ipvs-대신-iptables를-사용하는-이유">2-1. kube-proxy에서 ipvs 대신 iptables를 사용하는 이유?</h3>
+<ul>
+<li>
+<p>가시다님이 설명하시길 ARP고정이나 가상 인터페이스 이슈 등으로 iptables를 쓰는 것으로 보인다고 하였음.</p>
+</li>
+<li>
+<p>더 찾아보니, 해당 이슈는 <code>19년 1월</code>부터 제기되어 왔음.<br>
+참조: <a href="https://github.com/aws/containers-roadmap/issues/142#issuecomment-1367437044">AWS-github</a></p>
+</li>
+<li>
+<p><code>22년 12월</code>에 ipvs에 대한 지원이 GA되었음.<br>
+참조: <a href="https://aws.amazon.com/blogs/containers/amazon-eks-add-ons-advanced-configuration/">AWS-blog</a></p>
+</li>
+<li>
+<p>ipvs가 iptables보다 나은가?<br>
+해당 내용은 <a href="https://github.com/sbueringer/kubecon-slides/blob/master/slides/2017-kubecon-eu/Scale%20Kubernetes%20to%20Support%2050%2C000%20Services%20%5BI%5D%20-%20Haibin%20Xie%20%26%20Quinton%20Hoole%2C%20Huawei%20Technologies%20-%20Scale%20Kubernetes%20to%20Support%2050000%20Services.pdf">KubeCon Europe 2019에서 발표된 내용</a>에서 언급된다.</p>
+<ul>
+<li>아래와 같이 서비스의 수에 따라 <a href="https://blog.naver.com/alice_k106/221606077410">시간복잡도</a>에 의해 발생하는 지연을 줄일 수 있다고 한다. (iptables: O(N), ipvs: O(1))</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/2017-kubecon-eu-huawei.png" alt="CC BY 3.0 The Linux Foundation"></p>
+<h2 id="3-데이터플레인노드의-네트워크-기본-정보-확인">3. 데이터플레인(노드)의 네트워크 기본 정보 확인</h2>
+<ul>
+<li>노드에 tcpdump 등 네트워크 관련 도구를 설치를 하여 확인해본다.</li>
+<li><a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/">k8s CNI</a> : 쿠버네티스의 네트워크 환경을 구성해주는 플러그인 (Container Network Interface)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 각 데이터플레인에 도구 설치</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 sudo yum install links tree jq tcpdump -y 
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 sudo yum install links tree jq tcpdump -y 
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N3 sudo yum install links tree jq tcpdump -y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CNI 정보 확인(비슷비슷하므로 N2만 진행)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 tree /var/log/aws-routed-eni 
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 cat /var/log/aws-routed-eni/plugin.log | jq <span style="color:#75715e"># IP 할당시 CIDR 32 확인</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 cat /var/log/aws-routed-eni/ipamd.log | jq  <span style="color:#75715e"># maxENI 5개, 할당된 IP 1개 확인</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 cat /var/log/aws-routed-eni/egress-v4-plugin.log | jq <span style="color:#75715e"># </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 네트워크 정보 확인 : eniY는 pod network 네임스페이스와 veth pair </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 sudo ip -br -c addr 
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 sudo ip -c addr 
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 sudo ip -c route 
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 sudo iptables -t nat -S <span style="color:#75715e"># iptables 룰 확인</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 sudo iptables -t nat -L -n -v 
+</span></span></code></pre></div><p><img src="./images/05_network-tool.png" alt="install_network_tool"></p>
+<p><img src="./images/06_CNI-information.png" alt="cni-info"></p>
+<h3 id="3-1-데이터플레인의-기본-네트워크-정보-확인-보조-ipv4-주소-확인">3-1. 데이터플레인의 기본 네트워크 정보 확인: 보조 IPv4 주소 확인</h3>
+<ul>
+<li>가시다님이 제공해주신 장표와 함께 확인.</li>
+</ul>
+<p><img src="./images/gasida-network.png" alt="gasida-network"></p>
+<ul>
+<li>(coredns Pod 기준)AWS 웹콘솔에서 확인해보면, 2가지 IP가 있음.
+<ul>
+<li>프라이빗 주소 IP: <del>컨트롤</del>데이터플레인의 IP주소</li>
+<li>보조 프라이빗 주소 IP:
+<ul>
+<li>데이터플레인에 Pod가 생성되면 바로 IP를 붙이기 위해 예약된 IP</li>
+<li>L(ocal)-IPAM Warm <strong>IP Pool</strong></li>
+<li>새로운 Pod에 할당할 Pool이 없으면, 새로 ENI(eth1 등)을 만들어서 할당함 (3-3 참조)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>스크린샷에서는 veth 페어의 IP 주소는 <code>192.168.2.86</code>임을 확인.</li>
+</ul>
+<p><img src="./images/07_veth-pair.png" alt="veth-pair"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># coredns 파드 IP 정보 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 아래 스크린샷을 보면 알듯이 한국 리전 B존의 노드에 생성된 coredns 파드의 IP임을 알 수 있었다.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get pod -n kube-system -l k8s-app<span style="color:#f92672">=</span>kube-dns -owide
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드의 라우팅 정보 확인 &gt;&gt; EC2 네트워크 정보의 &#39;보조 프라이빗 IPv4 주소&#39;와 비교</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 웹 콘솔에서 한국 리전 B로 확인했으므로, N2의 정보를 확인.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># veth 페어의 IP 주소는 Pod의 IP 주소와 동일함.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 sudo ip -c route
+</span></span></code></pre></div><p><img src="./images/08_veth-pair-console.png" alt="veth-pair-console"></p>
+<h3 id="3-2-vethv-eth-virtual-ethernet-interface">3-2. veth(v-eth, virtual ethernet interface)</h3>
+<ul>
+<li>단어를 보고 단박에 가상eth 인건 알았지만, 자세한 건 아래의 글을 통해서 알 수 있음.
+<ul>
+<li><a href="https://www.44bits.io/ko/keyword/veth">44bits-veth</a></li>
+</ul>
+</li>
+<li>아래까지 참고한다면, veth의 실제를 알 수 있을 것으로 판단.
+<ul>
+<li><a href="https://www.44bits.io/ko/post/container-network-2-ip-command-and-network-namespace">44bit-컨테이너 네트워크 기초 2편</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="3-3-테스트용-파드-생성-wnetshoot">3-3. 테스트용 파드 생성 w/netshoot</h3>
+<ul>
+<li><a href="https://github.com/nicolaka/netshoot">nicolaka/netshoot</a> a.k.a. 네트워크 장애해결용 맥가이버칼</li>
+<li>다른 터미널로 데이터플레인 모니터링을 병행</li>
+<li>스크린샷을 참조하면 N1에서 처음에 네트워크 인터페이스가 하나 밖에 없다는 것을 알았으므로,<br>
+이번 실습을 통해 네트워크 어댑터가 하나 더 생기는 것을 관찰하기 위해서임
+<ul>
+<li><code>2.</code>에서 생겼던 궁금증이 약간? 해소된 것 같다.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># (다른 터미널을 띄워서) 아래와 같이 3개를 모니터링</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1
+</span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#34;ip link | egrep &#39;eth|eni&#39; ;echo;echo &#34;</span><span style="color:#f92672">[</span>ROUTE TABLE<span style="color:#f92672">]</span><span style="color:#e6db74">&#34;; route -n | grep eni&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2
+</span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#34;ip link | egrep &#39;eth|eni&#39; ;echo;echo &#34;</span><span style="color:#f92672">[</span>ROUTE TABLE<span style="color:#f92672">]</span><span style="color:#e6db74">&#34;; route -n | grep eni&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N3
+</span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#34;ip link | egrep &#39;eth|eni&#39; ;echo;echo &#34;</span><span style="color:#f92672">[</span>ROUTE TABLE<span style="color:#f92672">]</span><span style="color:#e6db74">&#34;; route -n | grep eni&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 netshoot 파드 생성 명령</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 그러면 각 데이터플레인에서 변화가 생기는데 </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이번 경우에는 $N3에서 eth1이 생성됨을 확인할 수 있음</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: netshoot-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: netshoot-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: netshoot-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: netshoot-pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: nicolaka/netshoot
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        command: [&#34;tail&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        args: [&#34;-f&#34;, &#34;/dev/null&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><p><img src="./images/09_node-2-before-netshoot-pod.png" alt="before-netshoot-pod"></p>
+<p><img src="./images/10_node-2-after-netshoot-pod.png" alt="after-netshoot-pod"></p>
+<h2 id="4-데이터플레인노드간-통신-확인">4. 데이터플레인(노드)간 통신 확인</h2>
+<ul>
+<li>AWS VPC CNI를 쓰는 경우, NAT 동작(Overlay) 없이, VPC 내부에서 통신이 가능하다.
+<ul>
+<li>데이터플레인에 있는 ENI(eth0 등)을 타고 노드 간 통신을 한다.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 파드 이름 변수 지정</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>PODNAME1<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>netshoot-pod -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>PODNAME2<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>netshoot-pod -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span>.metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>PODNAME3<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>netshoot-pod -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>2<span style="color:#f92672">]</span>.metadata.name<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 IP 변수 지정</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>PODIP1<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>netshoot-pod -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.podIP<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>PODIP2<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>netshoot-pod -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span>.status.podIP<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>PODIP3<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get pod -l app<span style="color:#f92672">=</span>netshoot-pod -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>2<span style="color:#f92672">]</span>.status.podIP<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 각 파드(데이터플레인)에서 tcpdump로 ping 패킷 미리 대기</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [$N1, $N2, $N3]</span>
+</span></span><span style="display:flex;"><span>sudo tcpdump -i any -nn icmp
+</span></span></code></pre></div><p><img src="./images/11_internal-any-eni.png" alt="tcpdump-icmp"></p>
+<h3 id="번외-eth0-나-eth1-만-패킷-모니터링해보기">번외: eth0 나 eth1 만 패킷 모니터링해보기</h3>
+<ul>
+<li>이론 상으로는 eth0의 인터페이스를 쓰고 있어서 eth1에서는 안 떠야(?)하는데,<br>
+실제 <code>$N2</code>에서는 eth0은 안쓰고, eth1을 쓰는 것으로 확인됨. 무슨 일인가.. <strong>To-Do</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo tcpdump -i eth0 -nn icmp
+</span></span><span style="display:flex;"><span>sudo tcpdump -i eth1 -nn icmp
+</span></span></code></pre></div><p><img src="./images/12_internal-eth0.png" alt="tcpdump-icmp-eth0"></p>
+<p><img src="./images/13_internal-eth1.png" alt="tcpdump-icmp-eth1"></p>
+<h2 id="5-데이터플레인노드에서-외부-통신">5. 데이터플레인(노드)에서 외부 통신</h2>
+<ul>
+<li>EXTERNAL SNAT(Source Network Address Translation) 설정에 따라,<br>
+외부 통신 시 SNAT 사용 여부를 결정할 수 있음</li>
+<li>아래 실습을 통해 확인
+<ul>
+<li>외부 ping 테스트</li>
+<li>데이터플레인에서 정보(tcpdump, iptables) 확인</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인의 파드에서 외부 ping 테스트</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it $PODNAME1 -- ping -c <span style="color:#ae81ff">1</span> www.google.com
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인: TCPDUMP 확인 ($N3) 및 iptables 규칙 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo tcpdump -i any -nn icmp
+</span></span><span style="display:flex;"><span>sudo tcpdump -i eth0 -nn icmp
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ip rule
+</span></span><span style="display:flex;"><span>ip route show table main
+</span></span><span style="display:flex;"><span>sudo iptables -L -n -v -t nat
+</span></span><span style="display:flex;"><span>sudo iptables -t nat -S
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS-SNAT-CHAIN-0, AWS-SNAT-CHAIN-1에 대한 정보 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo iptables -t nat -S | grep <span style="color:#e6db74">&#39;A AWS-SNAT-CHAIN&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># conntrack 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 169.254.169.x : 인스턴스 메타데이터 서비스의 IPv4 주소</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 출처: https://zetawiki.com/wiki/IP%EC%A3%BC%EC%86%8C_169.254.169.254</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo conntrack -L -n |grep -v <span style="color:#e6db74">&#39;169.254.169&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인에서 SNAT체인 모니터링 준비</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#39;sudo iptables -v --numeric --table nat --list AWS-SNAT-CHAIN-0; echo ; sudo iptables -v --numeric --table nat --list AWS-SNAT-CHAIN-1; echo ; sudo iptables -v --numeric --table nat --list KUBE-POSTROUTING&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인의 파드에서 외부 ping 테스트 </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it $PODNAME1 -- ping -i 0.1 www.google.com
+</span></span></code></pre></div><p><img src="./images/14_external-ping-test.png" alt="external_ping"></p>
+<p><img src="./images/15_compare-node_ip-pod_ip-same.png" alt="compare_node_ip_pod_ip_same"></p>
+<ul>
+<li>여태껏 $N1에 $PODNAME1이 있는 줄 알았는데, 예상값이 이상해서 찍어보니 $N3였음;</li>
+</ul>
+<p><img src="./images/16_mask-with-node-ip.png" alt="masquerading"></p>
+<p><img src="./images/17_monitor-snat-chaining.png" alt="snat-chain"></p>
+<ul>
+<li>
+<p>위에서 보다시피, AWS-SNAT-CHAIN-0에 의해 데이터플레인 CIDR대역이 아니면,<br>
+AWS-SNAT-CHAIN-1로 점프시켜서, 데이터플레인의 Private IP로 입혀서 외부로 내보낸다.</p>
+<ul>
+<li>그래서, 데이터플레인(노드)의 Public IP로 나가는 것을 볼 수 있다.</li>
+</ul>
+</li>
+<li>
+<p><a href="https://www.joongang.co.kr/article/1051848#home"><strong>매스커레이딩</strong></a></p>
+</li>
+</ul>
+<h2 id="6-데이터플레인노드에-파드-생성-갯수-제한">6. 데이터플레인(노드)에 파드 생성 갯수 제한</h2>
+<ul>
+<li>
+<p>요약: <strong>((MaxENI * (IPv4addr-1)) + 2)</strong></p>
+<ul>
+<li>MaxENI:<br>
+Number of network interfaces for the instance type</li>
+<li>IPv4addr:<br>
+the number of IP address per network interface</li>
+</ul>
+</li>
+<li>
+<p>t3.medium 경우 :</p>
+<ul>
+<li>(3 * (6 - 1)) + 2 = 17개</li>
+<li>그러나, aws-node 와 kube-proxy 2개 제외하면 15개</li>
+</ul>
+</li>
+<li>
+<p>Secondary IPv4 address로는 각 인스턴스마다 제한이 있음.</p>
+<ul>
+<li>IPv4 접두사 위임(Prefix Delegation)으로 해결 가능하지만,<br>
+이번에는 다루지 않음(기본 내용으로도 살짝 부하)</li>
+</ul>
+</li>
+<li>
+<p>실습에서는 t3 타입의 정보 및 데이터플레인 내에서 할당 갯수를 확인한 다음,<br>
+실제로 파드를 생성해보면서 확인해본다.</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># t3 타입의 정보(필터) 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws ec2 describe-instance-types --filters Name<span style="color:#f92672">=</span>instance-type,Values<span style="color:#f92672">=</span>t3.* <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span> --query <span style="color:#e6db74">&#34;InstanceTypes[].{Type: InstanceType, MaxENI: NetworkInfo.MaximumNetworkInterfaces, IPv4addr: NetworkInfo.Ipv4AddressesPerInterface}&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span> --output table
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인 상세 정보 확인 : 노드 상세 정보의 Allocatable 에 pods 에 17개 정보 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl describe node | grep Allocatable: -A7
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 데이터플레인에서 모니터링 대기</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true; <span style="color:#66d9ef">do</span> ip -br -c addr show <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;--------------&#34;</span> ; date <span style="color:#e6db74">&#34;+%Y-%m-%d %H:%M:%S&#34;</span> ; sleep 1; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 모니터링 대기</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#39;kubectl get pods -o wide&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 파드 생성 명령</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/2/nginx-dp.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f nginx-dp.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 파드 증가 테스트(50개) 및 실패 확인: Too many pods</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment nginx-deployment --replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">50</span>
+</span></span><span style="display:flex;"><span>kubectl get pods | grep Pending
+</span></span><span style="display:flex;"><span>kubectl describe pod <span style="color:#e6db74">${</span>Pending된 파드<span style="color:#e6db74">}</span> | grep Events: -A5
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 디플로이먼트 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete deploy nginx-deployment
+</span></span></code></pre></div><p><img src="./images/18_t2-allocatable.png" alt="t2-allocatable"></p>
+<p><img src="./images/19-before-scaling.png" alt="before-scaling"></p>
+<p><img src="./images/20_after-scaling.png" alt="after-scaling"></p>
+<p><img src="./images/21_failed-pods.png" alt="failed-pods"></p>
+<h2 id="7-service--aws-loadbalancer-controller">7. Service &amp; AWS LoadBalancer Controller</h2>
+<ul>
+<li>
+<p>서비스 방법에는 아래와 같은 종류가 있음</p>
+<ol>
+<li>ClusterIP:
+<ul>
+<li>컨트롤플레인의 iptables룰에 의해 데이터플레인 내의 <code>Pod IP</code>로 접근</li>
+<li>클러스터 내에서만 접근 가능</li>
+</ul>
+</li>
+<li>NodePort:
+<ul>
+<li>고정 포트(NodePort)로 각 데이터플레인의 IP에 접근</li>
+<li>각 데이터플레인(노드)에 있는 iptables룰에 의해 <code>Pod IP</code>로 접근</li>
+</ul>
+</li>
+<li>LoadBalancer: <strong>기본값</strong>
+<ul>
+<li>클라우드 공급자(CSP)의 로드밸런서를 활용, 데이터플레인 앞에 로드밸런서가 있음.</li>
+<li>(NLB 인스턴스 유형 기준) 이걸 거친 다음 각 데이터플레인의 iptables를 타고, 파드로 접근</li>
+</ul>
+</li>
+<li>Service (LoadBalancer Controller + NLB IP모드)
+<ul>
+<li>w/<strong>AWS VPC CNI</strong>: 이번 실습에서 AWS VPC CNI를 쓰는 이유</li>
+<li>iptables를 타지 않고, <strong>Bypass</strong>로 바로 <code>Pod IP</code>로 접근</li>
+<li>이게 가능한 이유는 별도의 LB 컨트롤러 파드가 있고,<br>
+여기에 Pod IP 정보를 지속적으로 제공</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>그래서 마지막의 방법을 쓰려면 OIDC를 활용해서, LB컨트롤러 IAM 정책을 적용해야함.</p>
+<ul>
+<li>OIDC: OpenID Connect(IdP)
+<ul>
+<li>OAuth2.0와 거의 유사하다고 김세웅님께서 설명해주심.</li>
+</ul>
+</li>
+<li>이전 스터디에서 IAM 정책이 적용되어서 중복 에러가 뜨지만, 확인에는 문제 없음.</li>
+<li>이렇게 권한을 주는 것을 <strong>IRSA(IAM Roles Service Account)</strong> 라고 함.
+<ul>
+<li>출처: <a href="https://channel.io/ko/blog/tech-aws-cross-accounts-irsa">IRSA@채널톡</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># OIDC 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws eks describe-cluster --name $CLUSTER_NAME --query <span style="color:#e6db74">&#34;cluster.identity.oidc.issuer&#34;</span> --output text
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws iam list-open-id-connect-providers | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IAM Policy (AWSLoadBalancerControllerIAMPolicy) 생성</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.7/docs/install/iam_policy.json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이미 있다면, 아래의 명령어는 에러를 발생시키지만 무시해도 됨.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://iam_policy.json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 생성된 IAM Policy Arn 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws iam list-policies --scope Local
+</span></span><span style="display:flex;"><span>aws iam get-policy --policy-arn arn:aws:iam::$ACCOUNT_ID:policy/AWSLoadBalancerControllerIAMPolicy
+</span></span><span style="display:flex;"><span>aws iam get-policy --policy-arn arn:aws:iam::$ACCOUNT_ID:policy/AWSLoadBalancerControllerIAMPolicy --query <span style="color:#e6db74">&#39;Policy.Arn&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IRSA 생성 w/cloudformation</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>eksctl create iamserviceaccount --cluster<span style="color:#f92672">=</span>$CLUSTER_NAME --namespace<span style="color:#f92672">=</span>kube-system --name<span style="color:#f92672">=</span>aws-load-balancer-controller <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>--attach-policy-arn<span style="color:#f92672">=</span>arn:aws:iam::$ACCOUNT_ID:policy/AWSLoadBalancerControllerIAMPolicy --override-existing-serviceaccounts --approve
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IRSA 및 서비스 어카운트 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>eksctl get iamserviceaccount --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>kubectl get serviceaccounts -n kube-system aws-load-balancer-controller -o yaml | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Helm Chart 설치 for AWS LoadBalancer Controller</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>helm repo add eks https://aws.github.io/eks-charts
+</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span>helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName<span style="color:#f92672">=</span>$CLUSTER_NAME <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --set serviceAccount.create<span style="color:#f92672">=</span>false --set serviceAccount.name<span style="color:#f92672">=</span>aws-load-balancer-controller
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get crd
+</span></span><span style="display:flex;"><span>kubectl get deployment -n kube-system aws-load-balancer-controller
+</span></span><span style="display:flex;"><span>kubectl describe deploy -n kube-system aws-load-balancer-controller | grep <span style="color:#e6db74">&#39;Service Account&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 클러스터롤 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl describe clusterrolebindings.rbac.authorization.k8s.io aws-load-balancer-controller-rolebinding
+</span></span></code></pre></div><p><img src="./images/22_ODIC-IAM-policy.png" alt="ODIC-IAM-policy"></p>
+<p><img src="./images/23_apply-IAM-2-cluster-with-cloudformation.png" alt="apply IRSA"></p>
+<p><img src="./images/24_cloudformation-IAM-LB-controller.png" alt="cloudformation"></p>
+<p><img src="./images/25_helm-chart-to-install-AWS-LB-controller.png" alt="helm-chart-install-AWS-RB-Controller"></p>
+<ul>
+<li>웹 콘솔에서 IAM 신뢰관계(Trust Relationships)를 확인
+<ul>
+<li>평소에는 <code>sts:AssumeRole</code>을 많이 봐왔는데, 이번에는 <code>sts:AssumeRoleWithWebIdentity</code>를 볼 수 있음.</li>
+<li><a href="https://aws.amazon.com/ko/blogs/korea/how-to-use-trust-policies-with-iam-roles-html/">IAM신뢰관계@AWS</a></li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/26_IRSA-in-console.png" alt="IRSA-trust-relationships"></p>
+<h3 id="7-1-nlb를-활용한-서비스파드-생성">7-1. NLB를 활용한 서비스/파드 생성</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 모니터링</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>watch -d kubectl get pod,svc,ep
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 디플로이먼트 &amp; 서비스 생성</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/2/echo-service-nlb.yaml
+</span></span><span style="display:flex;"><span>cat echo-service-nlb.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f echo-service-nlb.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get deploy,pod
+</span></span><span style="display:flex;"><span>kubectl get svc,ep,ingressclassparams,targetgroupbindings
+</span></span><span style="display:flex;"><span>kubectl get targetgroupbindings -o json | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS ELB(NLB) 정보 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws elbv2 describe-load-balancers | jq
+</span></span><span style="display:flex;"><span>aws elbv2 describe-load-balancers --query <span style="color:#e6db74">&#39;LoadBalancers[*].State.Code&#39;</span> --output text
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 웹 접속 주소 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get svc svc-nlb-ip-type -o jsonpath<span style="color:#f92672">={</span>.status.loadBalancer.ingress<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.hostname<span style="color:#f92672">}</span> | awk <span style="color:#e6db74">&#39;{ print &#34;Pod Web URL = http://&#34;$1 }&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 로깅 모니터링</span>
+</span></span><span style="display:flex;"><span>kubectl logs -l app<span style="color:#f92672">=</span>deploy-websrv -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 분산 접속 확인</span>
+</span></span><span style="display:flex;"><span>NLB<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get svc svc-nlb-ip-type -o jsonpath<span style="color:#f92672">={</span>.status.loadBalancer.ingress<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.hostname<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>curl -s $NLB
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i in <span style="color:#f92672">{</span>1..100<span style="color:#f92672">}</span>; <span style="color:#66d9ef">do</span> curl -s $NLB | grep Hostname ; <span style="color:#66d9ef">done</span> | sort | uniq -c | sort -nr
+</span></span></code></pre></div><p><img src="./images/27_create-deploy-service-in-LB.png" alt="test"></p>
+<p><img src="./images/28_chk-creation.png" alt="check-creation"></p>
+<p><img src="./images/29_get-Pod-Web-URL.png" alt="get-pod-web-url"></p>
+<p><img src="./images/30_Pod-Web-in-browser.png" alt="pod-web-in-browser"></p>
+<p><img src="./images/31_chk-LB-100req.png" alt="check-loadbalancing"></p>
+<h3 id="7-2-scaling-downup">7-2. Scaling down/up</h3>
+<ul>
+<li>파드 2개 -&gt; 1개 -&gt; 3개로 스케일링
+<ul>
+<li>특히, draining 중인 파드는 무시하고 스케일링을 진행함.</li>
+</ul>
+</li>
+<li>당연한 말이겠지만, LB Controller 파드가 따로 있기 때문에 가능한 일</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에서 레플리카 수 변경 (2 -&gt; 1 -&gt; 3)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 웹 콘솔에서 NLB 상태 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment deploy-echo --replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment deploy-echo --replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS LB Controller</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl describe deploy -n kube-system aws-load-balancer-controller | grep <span style="color:#e6db74">&#39;Service count&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [AWS LB Ctrl] 클러스터 롤 바인딩 정보 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl describe clusterrolebindings.rbac.authorization.k8s.io aws-load-balancer-controller-rolebinding
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [AWS LB Ctrl] 클러스터롤 확인 </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl describe clusterroles.rbac.authorization.k8s.io aws-load-balancer-controller-role
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 실습 리소스 삭제</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl delete deploy deploy-echo; kubectl delete svc svc-nlb-ip-type
+</span></span></code></pre></div><p><img src="./images/32_pod-scale-down.png" alt="pod-scale-down"></p>
+<p><img src="./images/33_pod-scale-up.png" alt="pod-scale-up"></p>
+<p><img src="./images/34_AWS-LB-controller.png" alt="AWS-LB-controller"></p>
+<h3 id="7-3-nlb-대상-타겟을-instance-mode로-설정해보기">7-3. NLB 대상 타겟을 Instance mode로 설정해보기</h3>
+<ul>
+<li>NLB IP Target &amp; Proxy Protocol v2 활성화 : NLB에서 바로 파드로 인입 및 ClientIP 확인 설정</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 생성</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: gasida-web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: gasida-web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: gasida-web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      terminationGracePeriodSeconds: 0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: gasida-web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: gasida/httpd:pp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - containerPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: svc-nlb-ip-type-pp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: &#34;true&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: &#34;*&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      targetPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      protocol: TCP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: LoadBalancer
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  loadBalancerClass: service.k8s.aws/nlb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: gasida-web
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get svc,ep
+</span></span><span style="display:flex;"><span>kubectl describe svc svc-nlb-ip-type-pp
+</span></span><span style="display:flex;"><span>kubectl describe svc svc-nlb-ip-type-pp | grep Annotations: -A5
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># apache에 proxy protocol 활성화 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec deploy/gasida-web -- apachectl -t -D DUMP_MODULES
+</span></span><span style="display:flex;"><span>kubectl exec deploy/gasida-web -- cat /usr/local/apache2/conf/httpd.conf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 접속 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>NLB<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get svc svc-nlb-ip-type-pp -o jsonpath<span style="color:#f92672">={</span>.status.loadBalancer.ingress<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.hostname<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>curl -s $NLB
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 지속적인 접속 시도 : 아래 상세 동작 확인 시 유용(패킷 덤프 등)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true; <span style="color:#66d9ef">do</span> curl -s --connect-timeout <span style="color:#ae81ff">1</span> $NLB; echo <span style="color:#e6db74">&#34;----------&#34;</span> ; date <span style="color:#e6db74">&#34;+%Y-%m-%d %H:%M:%S&#34;</span> ; sleep 1; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 로그 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl logs -l app<span style="color:#f92672">=</span>gasida-web -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 삭제</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl delete deploy gasida-web; kubectl delete svc svc-nlb-ip-type-pp
+</span></span></code></pre></div><p><img src="./images/35_test-pod-create.png" alt="test-pod"></p>
+<p><img src="./images/36_get-nlb-information-and-enable-apachectl.png" alt="get-nlb-info-and-enable-apachectl"></p>
+<p><img src="./images/37_check-with-continous-connection.png" alt="check-with-connection"></p>
+<h2 id="8-ingress">8. Ingress</h2>
+<ul>
+<li>
+<p>클러스터 내부의 서비스(ClusterIP, NodePort, Loadbalancer)를 외부로 노출(HTTP/HTTPS)</p>
+</li>
+<li>
+<p>Web Proxy 역할: 어라 그러면, ClusterIP를 써도&hellip;.(?)</p>
+</li>
+<li>
+<p><code>AWS VPC CNI</code> 에서 AWS LB 컨트롤러 + Ingress (ALB) IP 모드 동작</p>
+<ul>
+<li>바로 파드의 IP로 통신이 가능</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 게임 파드와 Service, Ingress 배포</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/3/ingress1.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f ingress1.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>watch -d kubectl get pod,ingress,svc,ep -n game-2048
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 생성 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get-all -n game-2048
+</span></span><span style="display:flex;"><span>kubectl get ingress,svc,ep,pod -n game-2048
+</span></span><span style="display:flex;"><span>kubectl get targetgroupbindings -n game-2048
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ingress 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl describe ingress -n game-2048 ingress-2048
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 게임 접속 : ALB 주소로 웹 접속</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get ingress -n game-2048 ingress-2048 -o jsonpath<span style="color:#f92672">={</span>.status.loadBalancer.ingress<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.hostname<span style="color:#f92672">}</span> | awk <span style="color:#e6db74">&#39;{ print &#34;Game URL = http://&#34;$1 }&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 IP 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get pod -n game-2048 -owide
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 스케일 모니터링</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>watch kubectl get pod -n game-2048
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 3개로 증가</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment -n game-2048 deployment-2048 --replicas <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 1개로 감소</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment -n game-2048 deployment-2048 --replicas <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 삭제</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl delete ingress ingress-2048 -n game-2048
+</span></span><span style="display:flex;"><span>kubectl delete svc service-2048 -n game-2048 <span style="color:#f92672">&amp;&amp;</span> kubectl delete deploy deployment-2048 -n game-2048 <span style="color:#f92672">&amp;&amp;</span> kubectl delete ns game-2048
+</span></span></code></pre></div><p><img src="./images/38_ingress-test-pod.png" alt="ingress-test"></p>
+<p><img src="./images/39_check-pod-ingress-and-Web-URL.png" alt="check-ingress-info"></p>
+<p><img src="./images/40_ingress-scaling-up.png" alt="ingress-scaling-up"></p>
+<p><img src="./images/41_ingress-scaling-down.png" alt="ingress-scaling-down"></p>
+<p><img src="./images/42_delete-ingress-test.png" alt="delete-ingress-test"></p>
+<h2 id="9-external-dns">9. External DNS</h2>
+<ul>
+<li>외부 DNS 서비스를 통해 도메인을 통해 접속 가능하도록 설정</li>
+<li>AWS Route53에 Public 도메인을 등록시켜놓았음</li>
+<li>ExternalDNS CTRL 권한 주는 방법 3가지:
+<ol>
+<li><strong>Node IAM Role</strong>: EKS 원클릭 배포 시 설정되어 있음
+<ul>
+<li>eksctl create cluster &hellip; <strong>&ndash;external-dns-access</strong> &hellip;</li>
+</ul>
+</li>
+<li>Static credentials</li>
+<li>IRSA</li>
+</ol>
+</li>
+</ul>
+<h3 id="9-1-route53-정보-확인-및-변수-지정">9-1. Route53 정보 확인 및 변수 지정</h3>
+<ul>
+<li>중간에 명령어가 잘못되었는지, 제대로 값이 뜨지 않는 것이 있었음</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 도메인 변수 지정</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># MyDomain=&lt;소유한 도메인&gt;</span>
+</span></span><span style="display:flex;"><span>MyDomain<span style="color:#f92672">=</span>awskops.click
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Route 53 도메인 ID 조회 및 변수 지정 </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws route53 list-hosted-zones-by-name --dns-name <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDomain<span style="color:#e6db74">}</span><span style="color:#e6db74">.&#34;</span> | jq
+</span></span><span style="display:flex;"><span>MyDnzHostedZoneId<span style="color:#f92672">=</span><span style="color:#e6db74">`</span>aws route53 list-hosted-zones-by-name --dns-name <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDomain<span style="color:#e6db74">}</span><span style="color:#e6db74">.&#34;</span> --query <span style="color:#e6db74">&#34;HostedZones[0].Id&#34;</span> --output text<span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>echo $MyDnzHostedZoneId
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># A 레코드 타입 조회: 정상적으로 조회되지 않음</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws route53 list-resource-record-sets --hosted-zone-id <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDnzHostedZoneId<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> --query <span style="color:#e6db74">&#34;ResourceRecordSets[?Type == &#39;A&#39;].Name&#34;</span> --output text
+</span></span></code></pre></div><h3 id="9-2-externaldns-설치">9-2. ExternalDNS 설치</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Route53 변수 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo $MyDomain, $MyDnzHostedZoneId
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ExternalDNS 배포</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/aews/externaldns.yaml
+</span></span><span style="display:flex;"><span>MyDomain<span style="color:#f92672">=</span>$MyDomain MyDnzHostedZoneId<span style="color:#f92672">=</span>$MyDnzHostedZoneId envsubst &lt; externaldns.yaml | kubectl apply -f -
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인 및 로그 모니터링</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get pod -l app.kubernetes.io/name<span style="color:#f92672">=</span>external-dns -n kube-system
+</span></span><span style="display:flex;"><span>kubectl logs deploy/external-dns -n kube-system -f
+</span></span></code></pre></div><p><img src="./images/43_set-route53-as-variable.png" alt="set-route53-as-variable"></p>
+<h3 id="9-3-servicenlb--도메인-연동externaldns">9-3. Service(NLB) + 도메인 연동(ExternalDNS)</h3>
+<ul>
+<li>리소스 삭제 시, ExternalDNS에 의해 A레코드도 함께 제거됨을 확인</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 모니터링 준비 및 로그 조회</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>watch -d <span style="color:#e6db74">&#39;kubectl get pod,svc&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl logs deploy/external-dns -n kube-system -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 테트리스 디플로이먼트 배포</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | kubectl create -f -
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: apps/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Deployment
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  replicas: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    matchLabels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      app: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  template:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        app: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        image: bsord/tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Service
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: &#34;true&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: &#34;http&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    #service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: &#34;80&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  selector:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    app: tetris
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ports:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - port: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    protocol: TCP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    targetPort: 80
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: LoadBalancer
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  loadBalancerClass: service.k8s.aws/nlb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포 확인 : CLB 배포 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get deploy,svc,ep tetris
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># NLB에 ExternanDNS 로 도메인 연결</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl annotate service tetris <span style="color:#e6db74">&#34;external-dns.alpha.kubernetes.io/hostname=tetris.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Route53에 A레코드 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># jq 까지 하는 경우 정상적으로 조회되지 않음;;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>aws route53 list-resource-record-sets --hosted-zone-id <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDnzHostedZoneId<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> --query <span style="color:#e6db74">&#34;ResourceRecordSets[?Type == &#39;A&#39;]&#34;</span> | jq
+</span></span><span style="display:flex;"><span>aws route53 list-resource-record-sets --hosted-zone-id <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDnzHostedZoneId<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> --query <span style="color:#e6db74">&#34;ResourceRecordSets[?Type == &#39;A&#39;].Name&#34;</span> | jq .<span style="color:#f92672">[]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Public IP(도메인 DNS) 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>dig +short tetris.$MyDomain @8.8.8.8
+</span></span><span style="display:flex;"><span>dig +short tetris.$MyDomain
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 도메인 체크</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;My Domain Checker = https://www.whatsmydns.net/#A/tetris.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 웹 접속 주소 확인 및 접속</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Tetris Game URL = http://tetris.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 리소스 삭제</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl delete deploy,svc tetris
+</span></span></code></pre></div><p><img src="./images/44_tetris-pod-create.png" alt="create-tetris-pod"></p>
+<p><img src="./images/45_annotate(connect)-with-domain.png" alt="annotate-domain"></p>
+<p><img src="./images/46_tetris-pod-with-external-dns.png" alt="tetris-pod-with-dns"></p>
+<h2 id="10-envoy-반쪽-실습">10. Envoy (반쪽 실습)</h2>
+<ul>
+<li>istio를 위해 설치는 했으나, istio가 제대로 안되서 Envoy만 기재</li>
+<li>Envoy: L7 Proxy, istio의 Sidecar proxy
+<ul>
+<li>istiod: 컨트롤플레인</li>
+<li>Envoy: 데이터플레인 (istio-proxy &gt; envoy)
+<ul>
+<li>istio-proxy 안에 Envoy가 들어있다는 것</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 컨트롤플레인에 Envoy 설치</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo rpm --import <span style="color:#e6db74">&#39;https://rpm.dl.getenvoy.io/public/gpg.CF716AF503183491.key&#39;</span>
+</span></span><span style="display:flex;"><span>curl -sL <span style="color:#e6db74">&#39;https://rpm.dl.getenvoy.io/public/config.rpm.txt?distro=el&amp;codename=7&#39;</span> &gt; /tmp/tetrate-getenvoy-rpm-stable.repo
+</span></span><span style="display:flex;"><span>sudo yum-config-manager --add-repo <span style="color:#e6db74">&#39;/tmp/tetrate-getenvoy-rpm-stable.repo&#39;</span>
+</span></span><span style="display:flex;"><span>sudo yum makecache --disablerepo<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;*&#39;</span> --enablerepo<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;tetrate-getenvoy-rpm-stable&#39;</span> -y
+</span></span><span style="display:flex;"><span>sudo yum install getenvoy-envoy -y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>envoy --version
+</span></span></code></pre></div><p><img src="./images/47_install-envoy.png" alt="install-Envoy"></p>
+<h3 id="10-1-envoy-proxy-실습-wenvoy-demo">10-1. Envoy proxy 실습 w.Envoy-demo</h3>
+<ul>
+<li>Envoy 상에서 웹서버 구동을 위한 <code>myhome.yaml</code> 생성 방법을 이해하지 못함
+<ul>
+<li>직전까지 하여, 데모 페이지 및 어드민 페이지 확인</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 데모 config 적용하여 실행</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># `connect_timeout` missing 에러 출력되면서 실행 실패</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/92dcb9714fb6bc288d042029b34c0de4/envoy-demo.yaml
+</span></span><span style="display:flex;"><span>envoy -c envoy-demo.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># connect_timeout 추가 후 다시 실행</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sed -i<span style="color:#e6db74">&#39;&#39;</span> -r -e <span style="color:#e6db74">&#34;/dns_lookup_family/a\    connect_timeout: 5s&#34;</span> envoy-demo.yaml
+</span></span><span style="display:flex;"><span>envoy -c envoy-demo.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 정보 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ... 0.0.0.0:10000  0.0.0.0:*  users:((&#34;envoy&#34; ...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ss -tnlp
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 접속 테스트</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s http://127.0.0.1:10000 | grep -o <span style="color:#e6db74">&#34;&lt;title&gt;.*&lt;/title&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>&lt;title&gt;Envoy Proxy - Home&lt;/title&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># envoy 데모 페이지 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Envoy Proxy Demo = http://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:10000&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 연결 정보 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ss -tnp
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 기존 envoy 실행 취소 후 (관리자페이지) 설정 덮어쓰기</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT&gt; envoy-override.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">admin:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  address:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    socket_address:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      address: 0.0.0.0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port_value: 9902
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>envoy -c envoy-demo.yaml --config-yaml <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>cat envoy-override.yaml<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 웹브라우저에서 http://192.168.10.254:9902 접속 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 어드민 페이지 접속 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Envoy Proxy Demo = http://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:9902&#34;</span>
+</span></span></code></pre></div><p><img src="./images/48_error-with-timeout.png" alt="error-with-timeout-missing-in-envoy"></p>
+<p><img src="./images/49_mod-timeout-and-reinstall-envoy.png" alt="modify-envoy-config"></p>
+<p><img src="./images/50_envoy-install-success-and-get-information.png" alt="envoy-installation-success"></p>
+<p><img src="./images/51_envoy-connection-test.png" alt="envoy-connection-test"></p>
+<p><img src="./images/52_envoy-demo-page-at-10000-port.png" alt="envoy-demo-page"></p>
+<p><img src="./images/53_envoy-admin-page-at-9902-port.png" alt="envoy-admin-page"></p>
+<h2 id="11-파드간-속도-측정">11. 파드간 속도 측정</h2>
+<ul>
+<li>iperf3:
+<ul>
+<li>서버 모드로 동작하는 단말과 클라이언트 모드로 동작하는 단말로 구성해서 최대 네트워크 대역폭 측정</li>
+<li>TCP, UDP, SCTP 지원</li>
+</ul>
+</li>
+</ul>
+<h3 id="11-1-iperf3-배포">11-1. iperf3 배포</h3>
+<ul>
+<li>서버 모드와 클라이언트 모드가 각각 다른 데이터플레인에 배포되어야 함
+<ul>
+<li>실제 실습의 경우에는 $N1에 서버 모드, $N3에 클라이언트 모드 배포 확인</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 배포</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/aews/k8s-iperf3.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f k8s-iperf3.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인 : 서버와 클라이언트가 다른 데이터플레인에 배포되었는지 확인</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get deploy,svc,pod -owide
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 서버 파드 로그 확인 : 기본 5201 포트 Listen</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl logs -l app<span style="color:#f92672">=</span>iperf3-server -f
+</span></span></code></pre></div><h3 id="11-2-iperf3-테스트">11-2. iperf3 테스트</h3>
+<ol>
+<li>TCP 5201, 측정시간 5초</li>
+<li>UDP 사용, 역방향 모드(-R)</li>
+<li>TCP, 쌍방향 모드(-R)
+<ul>
+<li>해당사항 실습 누락함</li>
+</ul>
+</li>
+<li>TCP 다중 스트림(30개), -P(number of parallel client streams to run)</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 공통 모니터링</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 서버 파드 로그 확인 : 기본 5201 포트 Listen</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl logs -l app<span style="color:#f92672">=</span>iperf3-server -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1. TCP 5201, 측정시간 5초 </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -t <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. UDP 사용, 역방향 모드(-R)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -u -b 20G
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. TCP, 쌍방향 모드(-R)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -t <span style="color:#ae81ff">5</span> --bidir
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4. TCP 다중 스트림(30개), -P(number of parallel client streams to run)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl exec -it deploy/iperf3-client -- iperf3 -c iperf3-server -t <span style="color:#ae81ff">10</span> -P <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 실습 리소스 삭제</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl delete -f k8s-iperf3.yaml
+</span></span></code></pre></div><p><img src="./images/54_tcp-5201-sec-5.png" alt="iperf3-tcp-5201"></p>
+<p><img src="./images/55_udp-reverse-mode.png" alt="iperf3-udp-reverse"></p>
+<p><img src="./images/56_tcp-parallel-streams.png" alt="iperf3-tcp-parallel-streams"></p>
+<h2 id="reference">reference</h2>
+<ul>
+<li><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a> Notion 및 Slack 채널</li>
+<li><a href="https://github.com/aws/containers-roadmap/issues/142#issuecomment-1367437044">kube-proxy ipvs issue @AWS Github</a></li>
+<li><a href="https://aws.amazon.com/blogs/containers/amazon-eks-add-ons-advanced-configuration/">EKS addons advanced configuration @AWS blog</a></li>
+<li><a href="https://blog.naver.com/alice_k106/221606077410">ipvs vs iptables</a></li>
+<li><a href="https://www.44bits.io/ko/keyword/veth">veth @44bits</a></li>
+<li><a href="https://zetawiki.com/wiki/IP%EC%A3%BC%EC%86%8C_169.254.169.254">169.254.169.254 @zetawiki</a></li>
+<li><a href="https://www.joongang.co.kr/article/1051848#home">masquerading @joongang</a></li>
+<li><a href="https://channel.io/ko/blog/tech-aws-cross-accounts-irsa">IRSA @channel.io</a></li>
+<li><a href="https://aws.amazon.com/ko/blogs/korea/how-to-use-trust-policies-with-iam-roles-html/">Trust Policies with IAM roles @AWS blog</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2023/04/30/aws-eks-study-week1/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">AWS EKS 스터디 1주차</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2023/05/12/aws-eks-study-week3/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">AWS EKS 스터디 3주차 - Storage</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>Posts | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Posts" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/post/' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/post/' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/post/' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+
+
+
+
+
+<main>
+  <section class="p-strip--suru main-slide main-strip">
+      <div class="row">
+        <div class="col-8 left-section">
+          <h1>Posts</h1>
+          <p></p>
+        </div>
+      </div>
+  </section>
+  <section class="p-strip">
+      <div class="row">
+        <div class="col-12">
+          <div class="p-list--divided">
+            
+            
+
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2026/06/28/aidn-nvidia-gpu-interconnect/">
+              <div class="post-card__media">
+                
+                <img src="/2026/06/28/aidn-nvidia-gpu-interconnect/image-9_hu_e5f32ec6ad25de4e.webp" alt="NVIDIA GPU Interconnect 계층 훑어보기" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">NVIDIA GPU Interconnect 계층 훑어보기</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2026-06-28T00:04:17&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">CloudNet@에서 진행하고 있는 AI Datacenter Network Study(이하, AIDN)에서 매주 생전 처음 접하는 단어들의 홍수에 허우적(?)하는 중입니다.
+RTX3090의 같은 경우에는 개인용 GPU 중 NV Link 브리지를 지원하는 가장 상위 모델로 알고있지만,
+가 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2026/06/20/aidn-kvcache-and-localllm/">
+              <div class="post-card__media">
+                
+                <img src="/2026/06/20/aidn-kvcache-and-localllm/image-1_hu_b2191e262786594b.webp" alt="KV cache에 대한 이해" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">KV cache에 대한 이해</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2026-06-20T17:57:45&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">지난 주 일요일부터 CloudNet@에서 진행하고 있는 AI Datacenter Network Study(이하, AIDN)에 참여하게 되었습니다.
+요새는 PC에 달린 그래픽카드 활용을 위해, 이것저것(RAG, ASR 및 일반적인 추론모델) 돌려보는 중인데 그 중에서 막히던게 KV …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2025/12/07/vault-ha-metric-in-kubernetes/">
+              <div class="post-card__media">
+                
+                <img src="/2025/12/07/vault-ha-metric-in-kubernetes/image-27_hu_122b6d2bf338b5d.webp" alt="Vault HA 및 Metric 수집 설정 - CI/CD 스터디 8주차" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Vault HA 및 Metric 수집 설정 - CI/CD 스터디 8주차</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2025-12-07T05:59:10&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">CloudNet@에서 진행하고 있는 CI/CD Study 8주차에는 Vault의 HA(High Availability)에 대해 다루었습니다.
+구성 방법의 이론적 부분은 단순했으나, 예상한 구성 방법과 달라서 제가 나중에 참고하려고 부연설명을 해두려고 합니다.
+더불어 대시보드에서 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2025/11/30/vault-101-in-kubernetes/">
+              <div class="post-card__media">
+                
+                <img src="/2025/11/30/vault-101-in-kubernetes/image_hu_93b5099a71c6110.webp" alt="Vault 101 in Kubernetes - CI/CD 스터디 7주차" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Vault 101 in Kubernetes - CI/CD 스터디 7주차</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2025-11-30T08:59:34&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">CloudNet@에서 진행하고 있는 CI/CD Study 7주차에는 Vault를 다루었습니다.
+자세한 설명은 해당 공식 페이지에서 해주고 있지만, 그저 1password 같은 패스워드 관리 서비스가 엔드유저 대상이라면 Vault는 인프라 관리자 대상으로 사용되는 것으로 알고 있는 제게는 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2025/11/22/argocd-cluster-management-and-prefix/">
+              <div class="post-card__media">
+                
+                <img src="/2025/11/22/argocd-cluster-management-and-prefix/image-11_hu_dc40d8a122eca6cf.webp" alt="ArgoCD Cluster 및 Prefix 관리 - CI/CD 스터디 6주차" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">ArgoCD Cluster 및 Prefix 관리 - CI/CD 스터디 6주차</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2025-11-22T20:56:43&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">CloudNet@에서 진행하고 있는 CI/CD Study 6주차에는 ArgoCD를 마지막으로 다루었습니다.
+Cluster를 추가해보고 Gitea를 붙이기 전에, ArgoCD를 Prefix로 라우팅하려고 했는데 로그아웃하고 나서 원치않는 경로로 빠지는 바람에
+이것저것 살펴보고 수정을 하여 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2025/11/17/playing-argocd-with-tailscale/">
+              <div class="post-card__media">
+                
+                <img src="/2025/11/17/playing-argocd-with-tailscale/image-11_hu_eb824ef5ab893adb.webp" alt="Tailscale을 타고, ArgoCD에 접근해보기" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Tailscale을 타고, ArgoCD에 접근해보기</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2025-11-17T10:23:03&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">이전 게시물, ArgoCD with Ingress의 도메인 설정을 하다가 문득, Tailscale의 serve기능을 활용하여 Tailscale 내부 네트워크(이하, tailnet)에서만 접근 가능한 ArgoCD 서버를 구축하면 되지 않을까? 하여 구성해보았습니다.
+kind를 운용 중인 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2025/11/16/argocd-ingress/">
+              <div class="post-card__media">
+                
+                <img src="/2025/11/16/argocd-ingress/image-10_hu_15d01b2f5fce0ed6.webp" alt="ArgoCD with Ingress - CI/CD 스터디 5주차" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">ArgoCD with Ingress - CI/CD 스터디 5주차</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2025-11-16T17:38:34&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">CloudNet@에서 진행하고 있는 CI/CD Study 5주차에는 ArgoCD를 좀더 다루었습니다.
+0. 실습 준비 해당 구성들은 아래 GitHub에 탑재되어 있습니다. https://github.com/kkumtree/ci-cd-cloudnet-study 의 5w 폴더
+우선 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2025/11/09/argocd-hello-world/">
+              <div class="post-card__media">
+                
+                <img src="/2025/11/09/argocd-hello-world/image-14_hu_ec91f5125ecbfe4c.webp" alt="ArgoCD 101 - CI/CD 스터디 4주차" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">ArgoCD 101 - CI/CD 스터디 4주차</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2025-11-09T08:44:34&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">CloudNet@에서 진행하고 있는 CI/CD Study 4주차에는 ArgoCD를 다루기 시작했습니다.
+Kubernetes(이하, k8s) 상에서 ArgoCD는 Controller보다는 Operator에 가까운 포지션을 갖는다고 하여,
+이번 기회에 실습을 하면서 체감을 하는 것에 목적을 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2025/11/02/jenkins-ci-cd-kubernetes/">
+              <div class="post-card__media">
+                
+                <img src="/2025/11/02/jenkins-ci-cd-kubernetes/image-40_hu_e607a8d15a40af94.webp" alt="Jenkins, git and kubernetes - CI/CD 스터디 3주차" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Jenkins, git and kubernetes - CI/CD 스터디 3주차</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2025-11-02T08:51:39&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">CloudNet@에서 진행하고 있는 CI/CD Study 3주차에는 Jenkins와 ArgoCD을 다뤘습니다.
+이번에는 kubernetes(이하, k8s)에 self-host Git과 Jenkins를 배포 후 CI/CD 부분을 다루도록 하겠습니다.
+하다보니 개인적으로, 아래 3가지가 주 …</p>
+              </div>
+            </a>
+            
+            
+            
+            
+              
+                
+                  
+                
+              
+            
+            <a class="post-card" href="/2025/10/26/helm-template-reusing-statements/">
+              <div class="post-card__media">
+                
+                <img src="/2025/10/26/helm-template-reusing-statements/image-15_hu_12422b582ade410f.webp" alt="Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차" loading="lazy">
+                
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  
+                  <li class="p-inline-list__item">kkumtree</li>
+                  
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">2025-10-26T03:16:04&#43;09:00</u></li>
+                </ul>
+                <p class="post-card__excerpt">이번에는 재사용성을 위해서 _helpers.tpl 파일을 활용해보겠습니다.
+기존의 Helm 101 - CI/CD 스터디 2주차에서 이어집니다.
+1. _helpers.tpl을 통한 공통 변수 재사용 (1) 공통사항 숙지 이전에 생성한 deployment.yaml과 service.yaml의 …</p>
+              </div>
+            </a>
+            
+<ol class="p-pagination">
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--previous  is-disabled"  title="First page">
+      <i class="p-icon--contextual-menu">
+        &lt;&lt; </i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--previous  is-disabled"  title="Previous page">
+      <i class="p-icon--contextual-menu">
+        &lt; </i>
+    </a>
+  </li>
+  <li class="p-pagination__item ">
+    <a class="p-pagination__link  is-active" href="/post/">1</a>
+  </li>
+  <li class="p-pagination__item ">
+    <a class="p-pagination__link " href="/post/page/2/">2</a>
+  </li>
+  <li class="p-pagination__item ">
+    <a class="p-pagination__link " href="/post/page/3/">3</a>
+  </li>
+  <li class="p-pagination__item p-pagination__item--truncation mobile-hidden">
+    …
+  </li>
+  <li class="p-pagination__item mobile-hidden">
+    <a class="p-pagination__link " href="/post/page/6/">6</a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--next " href="/post/page/2/"  title="Next page">
+      <i class="p-icon--contextual-menu">></i>
+    </a>
+  </li>
+  <li class="p-pagination__item">
+    <a class="p-pagination__link--next " href="/post/page/6/"  title="Last page">
+      <i class="p-icon--contextual-menu">>></i>
+    </a>
+  </li>
+</ol>
+</div>
+        </div>
+      </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

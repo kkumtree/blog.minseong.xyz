@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>AWS EKS 스터디 7주차 - Automation | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="AWS EKS 스터디 7주차 - Automation" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2023/06/10/aws-eks-study-week7/cover.jpg' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2023/06/10/aws-eks-study-week7/cover.jpg' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2023/06/10/aws-eks-study-week7/cover.jpg' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.jpg'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>AWS EKS 스터디 7주차 - Automation</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-06-10T15:13:19&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">AWS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/eks" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">EKS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/automation" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">automation</span>
+              </div>
+            </a>
+            
+            <a href="/tags/ack" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">ACK</span>
+              </div>
+            </a>
+            
+            <a href="/tags/flux" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">flux</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>EKS 스터디도 마지막 7주차를 맞이했습니다.</p>
+<p>이번에는 AWS Controller for k8s(ACK)와 flux를 가볍게 실습해보고<br>
+자동화에 대해 맛보기를 해보았습니다.</p>
+<p>앞서 학습해본 IRSA 개념 외에도 CRD(CustomResourceDefinition)을 활용합니다.</p>
+<h2 id="1-실습환경-배포">1. 실습환경 배포</h2>
+<p>실습을 위한 YAML파일이 변경된거 말고는 6주차와 유사합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/eks-oneclick6.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이하 중략</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CERT_ARN(ACM)의 경우에는 /etc/profile에 환경변수 저장을 안해둬서  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 세션이 만료되면, 다시 재설정 필요</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>CERT_ARN<span style="color:#f92672">=</span><span style="color:#e6db74">`</span>aws acm list-certificates --query <span style="color:#e6db74">&#39;CertificateSummaryList[].CertificateArn[]&#39;</span> --output text<span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>echo $CERT_ARN
+</span></span></code></pre></div><h2 id="2-ackaws-controller-for-k8s">2. ACK(AWS Controller for k8s)</h2>
+<ul>
+<li>웹콘솔에 접근하지 않고도, AWS 서비스 리소스를 직접 k8s에서 정의 및 사용가능</li>
+<li>순서: ACK 컨트롤러 설치 -&gt; IRSA 설정 -&gt; AWS 리소스 컨트롤
+<ul>
+<li>같은 패턴으로 이루어져있는데, Cloudformation을 쓰다보니 중간중간 대기 시간 발생</li>
+</ul>
+</li>
+<li>(23/05/29) GA: 17개 서비스, Preview: 10개 서비스</li>
+</ul>
+<h3 id="2-1-s3">2-1. S3</h3>
+<ul>
+<li>[ACK S3 Controller 설치]</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 서비스명 변수 지정</span>
+</span></span><span style="display:flex;"><span>export SERVICE<span style="color:#f92672">=</span>s3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># helm 차트 다운로드</span>
+</span></span><span style="display:flex;"><span>export RELEASE_VERSION<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -sL https://api.github.com/repos/aws-controllers-k8s/$SERVICE-controller/releases/latest | grep <span style="color:#e6db74">&#39;&#34;tag_name&#34;:&#39;</span> | cut -d<span style="color:#e6db74">&#39;&#34;&#39;</span> -f4 | cut -c 2-<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>helm pull oci://public.ecr.aws/aws-controllers-k8s/$SERVICE-chart --version<span style="color:#f92672">=</span>$RELEASE_VERSION
+</span></span><span style="display:flex;"><span>tar xzvf $SERVICE-chart-$RELEASE_VERSION.tgz
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># helm chart 확인</span>
+</span></span><span style="display:flex;"><span>tree ~/$SERVICE-chart
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ACK S3 Controller 설치</span>
+</span></span><span style="display:flex;"><span>export ACK_SYSTEM_NAMESPACE<span style="color:#f92672">=</span>ack-system
+</span></span><span style="display:flex;"><span>export AWS_REGION<span style="color:#f92672">=</span>ap-northeast-2
+</span></span><span style="display:flex;"><span>helm install --create-namespace -n $ACK_SYSTEM_NAMESPACE ack-$SERVICE-controller --set aws.region<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$AWS_REGION<span style="color:#e6db74">&#34;</span> ~/$SERVICE-chart
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 설치 확인</span>
+</span></span><span style="display:flex;"><span>helm list --namespace $ACK_SYSTEM_NAMESPACE
+</span></span><span style="display:flex;"><span>kubectl -n ack-system get pods
+</span></span><span style="display:flex;"><span>kubectl get crd | grep $SERVICE
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get all -n ack-system
+</span></span><span style="display:flex;"><span>kubectl get-all -n ack-system
+</span></span><span style="display:flex;"><span>kubectl describe sa -n ack-system ack-s3-controller
+</span></span></code></pre></div><ul>
+<li>[IRSA 설정] AmazonS3FullAccess
+<ul>
+<li>설정 후에는 rollout으로 반영해주어야함</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Create an iamserviceaccount - AWS IAM role bound to a Kubernetes service account</span>
+</span></span><span style="display:flex;"><span>eksctl create iamserviceaccount <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --name ack-$SERVICE-controller <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --namespace ack-system <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --cluster $CLUSTER_NAME <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --attach-policy-arn <span style="color:#66d9ef">$(</span>aws iam list-policies --query <span style="color:#e6db74">&#39;Policies[?PolicyName==`AmazonS3FullAccess`].Arn&#39;</span> --output text<span style="color:#66d9ef">)</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --override-existing-serviceaccounts --approve
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>eksctl get iamserviceaccount --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>kubectl get sa -n ack-system
+</span></span><span style="display:flex;"><span>kubectl describe sa ack-$SERVICE-controller -n ack-system
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Restart ACK service controller deployment using the following commands.</span>
+</span></span><span style="display:flex;"><span>kubectl -n ack-system rollout restart deploy ack-$SERVICE-controller-$SERVICE-chart
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IRSA 적용으로 Env, projected Volume 추가 확인</span>
+</span></span><span style="display:flex;"><span>kubectl describe pod -n ack-system -l k8s-app<span style="color:#f92672">=</span>$SERVICE-chart
+</span></span></code></pre></div><p><img src="./images/ISRA-with-override.png" alt="ISRA with override"></p>
+<p><img src="./images/check-helm-chart-after-applying-IRSA.png" alt="check helm chart after applying IRSA"></p>
+<ul>
+<li>[리소스 조작] S3 버킷 생성, 업데이트, 삭제
+<ul>
+<li>새로운 쉘로 모니터링 준비: <code>watch -d aws s3 ls</code></li>
+<li>S3 버킷네임은 전세계에서 고유해야하므로 각자 본인이 쓰고 있는 계정명으로 명명</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># S3 버킷 생성을 위한 설정 파일 생성</span>
+</span></span><span style="display:flex;"><span>export AWS_ACCOUNT_ID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws sts get-caller-identity --query <span style="color:#e6db74">&#34;Account&#34;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>export BUCKET_NAME<span style="color:#f92672">=</span>my-ack-s3-bucket-$AWS_ACCOUNT_ID
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>read -r -d <span style="color:#e6db74">&#39;&#39;</span> BUCKET_MANIFEST <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: s3.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Bucket
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: $BUCKET_NAME
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: $BUCKET_NAME
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>BUCKET_MANIFEST<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> &gt; bucket.yaml
+</span></span><span style="display:flex;"><span>cat bucket.yaml | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># S3 버킷 생성</span>
+</span></span><span style="display:flex;"><span>aws s3 ls
+</span></span><span style="display:flex;"><span>kubectl create -f bucket.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># S3 버킷 확인</span>
+</span></span><span style="display:flex;"><span>aws s3 ls
+</span></span><span style="display:flex;"><span>kubectl get buckets
+</span></span><span style="display:flex;"><span>kubectl describe bucket/$BUCKET_NAME | head -6
+</span></span><span style="display:flex;"><span>aws s3 ls | grep $BUCKET_NAME
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># S3 버킷 업데이트: 태그 정보 입력</span>
+</span></span><span style="display:flex;"><span>read -r -d <span style="color:#e6db74">&#39;&#39;</span> BUCKET_MANIFEST <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: s3.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Bucket
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: $BUCKET_NAME
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: $BUCKET_NAME
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tagging:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    tagSet:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - key: myTagKey
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      value: myTagValue
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>BUCKET_MANIFEST<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> &gt; bucket.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># S3 버킷 설정 업데이트 실행 : 필요 주석 자동 업뎃 내용이니 무시해도됨!</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f bucket.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># S3 버킷 업데이트 확인 </span>
+</span></span><span style="display:flex;"><span>kubectl describe bucket/$BUCKET_NAME | grep Spec: -A5
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># S3 버킷 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete -f bucket.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get bucket/$BUCKET_NAME
+</span></span><span style="display:flex;"><span>aws s3 ls | grep $BUCKET_NAME
+</span></span></code></pre></div><p><img src="./images/applying-s3-bucket-manifest.png" alt="applying s3 bucket manifest"></p>
+<ul>
+<li>[ACK S3 Controller 삭제] helm -&gt; CRD -&gt; IRSA</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># helm uninstall</span>
+</span></span><span style="display:flex;"><span>export SERVICE<span style="color:#f92672">=</span>s3
+</span></span><span style="display:flex;"><span>helm uninstall -n $ACK_SYSTEM_NAMESPACE ack-$SERVICE-controller
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ACK S3 Controller 관련 crd 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete -f ~/$SERVICE-chart/crds
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IRSA 삭제</span>
+</span></span><span style="display:flex;"><span>eksctl delete iamserviceaccount --cluster myeks --name ack-$SERVICE-controller --namespace ack-system
+</span></span></code></pre></div><h3 id="2-2-ec2--vpc">2-2. EC2 &amp; VPC</h3>
+<ul>
+<li>
+<p>반복숙달의 반복.</p>
+<ul>
+<li>S3(2-1)를 건너뛰었다면, helm 설치 시 <code>--create-namespace</code> 추가</li>
+</ul>
+</li>
+<li>
+<p>[ACK EC2-Controller 설치]</p>
+<ul>
+<li>EC2 외에도, 해당 인스턴스를 위한 구성요소들을 위한 CRD도 포함된다.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 서비스명 변수 지정 및 helm 차트 다운로드</span>
+</span></span><span style="display:flex;"><span>export SERVICE<span style="color:#f92672">=</span>ec2
+</span></span><span style="display:flex;"><span>export RELEASE_VERSION<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -sL https://api.github.com/repos/aws-controllers-k8s/$SERVICE-controller/releases/latest | grep <span style="color:#e6db74">&#39;&#34;tag_name&#34;:&#39;</span> | cut -d<span style="color:#e6db74">&#39;&#34;&#39;</span> -f4 | cut -c 2-<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>helm pull oci://public.ecr.aws/aws-controllers-k8s/$SERVICE-chart --version<span style="color:#f92672">=</span>$RELEASE_VERSION
+</span></span><span style="display:flex;"><span>tar xzvf $SERVICE-chart-$RELEASE_VERSION.tgz
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># helm chart 확인</span>
+</span></span><span style="display:flex;"><span>tree ~/$SERVICE-chart
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ACK EC2-Controller 설치</span>
+</span></span><span style="display:flex;"><span>export ACK_SYSTEM_NAMESPACE<span style="color:#f92672">=</span>ack-system
+</span></span><span style="display:flex;"><span>export AWS_REGION<span style="color:#f92672">=</span>ap-northeast-2
+</span></span><span style="display:flex;"><span>helm install -n $ACK_SYSTEM_NAMESPACE ack-$SERVICE-controller --set aws.region<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$AWS_REGION<span style="color:#e6db74">&#34;</span> ~/$SERVICE-chart
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 설치 확인</span>
+</span></span><span style="display:flex;"><span>helm list --namespace $ACK_SYSTEM_NAMESPACE
+</span></span><span style="display:flex;"><span>kubectl -n $ACK_SYSTEM_NAMESPACE get pods -l <span style="color:#e6db74">&#34;app.kubernetes.io/instance=ack-</span>$SERVICE<span style="color:#e6db74">-controller&#34;</span>
+</span></span><span style="display:flex;"><span>kubectl get crd | grep $SERVICE
+</span></span></code></pre></div><ul>
+<li>[IRSA 설정] AmazonEC2FullAccess</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>eksctl create iamserviceaccount <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --name ack-$SERVICE-controller <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --namespace $ACK_SYSTEM_NAMESPACE <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --cluster $CLUSTER_NAME <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --attach-policy-arn <span style="color:#66d9ef">$(</span>aws iam list-policies --query <span style="color:#e6db74">&#39;Policies[?PolicyName==`AmazonEC2FullAccess`].Arn&#39;</span> --output text<span style="color:#66d9ef">)</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --override-existing-serviceaccounts --approve
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>eksctl get iamserviceaccount --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get sa -n $ACK_SYSTEM_NAMESPACE
+</span></span><span style="display:flex;"><span>kubectl describe sa ack-$SERVICE-controller -n $ACK_SYSTEM_NAMESPACE
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl -n $ACK_SYSTEM_NAMESPACE rollout restart deploy ack-$SERVICE-controller-$SERVICE-chart
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IRSA 적용으로 Env, projected Volume 추가 확인</span>
+</span></span><span style="display:flex;"><span>kubectl describe pod -n $ACK_SYSTEM_NAMESPACE -l k8s-app<span style="color:#f92672">=</span>$SERVICE-chart
+</span></span></code></pre></div><ul>
+<li>[리소스 조작] VPC, Subnet 생성 및 삭제
+<ul>
+<li>새로운 쉘로 모니터링 준비: <code>while true; do aws ec2 describe-vpcs --query 'Vpcs[*].{VPCId:VpcId, CidrBlock:CidrBlock}' --output text; echo &quot;-----&quot;; sleep 1; done</code></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># VPC 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; vpc.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: VPC
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: vpc-tutorial-test
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  cidrBlocks: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - 10.0.0.0/16
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enableDNSSupport: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enableDNSHostnames: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>kubectl apply -f vpc.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># VPC 생성 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get vpcs
+</span></span><span style="display:flex;"><span>kubectl describe vpcs
+</span></span><span style="display:flex;"><span>aws ec2 describe-vpcs --query <span style="color:#e6db74">&#39;Vpcs[*].{VPCId:VpcId, CidrBlock:CidrBlock}&#39;</span> --output text
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 다른 새로운 쉘이나 기존 모니터링 쉘 변경하여 모니터링 준비</span>
+</span></span><span style="display:flex;"><span>VPCID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get vpcs vpc-tutorial-test -o jsonpath<span style="color:#f92672">={</span>.status.vpcID<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true; <span style="color:#66d9ef">do</span> aws ec2 describe-subnets --filters <span style="color:#e6db74">&#34;Name=vpc-id,Values=</span>$VPCID<span style="color:#e6db74">&#34;</span> --query <span style="color:#e6db74">&#39;Subnets[*].{SubnetId:SubnetId, CidrBlock:CidrBlock}&#39;</span> --output text; echo <span style="color:#e6db74">&#34;-----&#34;</span>; sleep <span style="color:#ae81ff">1</span> ; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 서브넷 생성</span>
+</span></span><span style="display:flex;"><span>VPCID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get vpcs vpc-tutorial-test -o jsonpath<span style="color:#f92672">={</span>.status.vpcID<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; subnet.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Subnet
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: subnet-tutorial-test
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  cidrBlock: 10.0.0.0/20
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  vpcID: $VPCID
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f subnet.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 서브넷 생성 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get subnets
+</span></span><span style="display:flex;"><span>kubectl describe subnets
+</span></span><span style="display:flex;"><span>aws ec2 describe-subnets --filters <span style="color:#e6db74">&#34;Name=vpc-id,Values=</span>$VPCID<span style="color:#e6db74">&#34;</span> --query <span style="color:#e6db74">&#39;Subnets[*].{SubnetId:SubnetId, CidrBlock:CidrBlock}&#39;</span> --output text
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 리소스 삭제: 서브넷, VPC</span>
+</span></span><span style="display:flex;"><span>kubectl delete -f subnet.yaml <span style="color:#f92672">&amp;&amp;</span> kubectl delete -f vpc.yaml
+</span></span></code></pre></div><p><img src="images/creating-vpc.png" alt="creating VPC"></p>
+<p><img src="images/creating-subnet.png" alt="creating subnet"></p>
+<p><img src="images/subnet-mapped-with-vpc.png" alt="subnet mapped with VPC"></p>
+<h3 id="2-4-vpc-workflow-실습">2-4. VPC Workflow 실습</h3>
+<ul>
+<li>
+<p>2-3의 ACK 및 IRSA는 그대로 활용</p>
+</li>
+<li>
+<p>VPC, Subnet, SG, RT, EIP, IGW, NATGW, Instance 생성</p>
+</li>
+<li>
+<p>client &lt;-&gt; public subnet(ssh tunneling) &lt;-&gt; private subnet 접속</p>
+</li>
+<li>
+<p>ACK로 위의 환경을 만들 수 있는지 실습하는 작업</p>
+</li>
+<li>
+<p>[VPC 환경설정]</p>
+<ul>
+<li>모니터링 준비: watch -d kubectl get routetables,subnet</li>
+<li>NATGW 생성 완료 후, 아래 요소들이 순차적으로 확인됨 (약 5분 소요)
+<ul>
+<li>tutorial-private-route-table-az1: 라우팅 테이블 ID</li>
+<li>tutorial-private-subnet1: 서브넷 ID</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="images/route-table-and-subnet-created-consequently-in-private-vpc-1.png" alt="route table and subnet created consequently in private VPC 1"></p>
+<p><img src="images/route-table-and-subnet-created-consequently-in-private-vpc-2.png" alt="route table and subnet created consequently in private VPC 2"></p>
+<p><img src="images/route-table-and-subnet-created-consequently-in-private-vpc-3.png" alt="route table and subnet created consequently in private VPC 3"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; vpc-workflow.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: VPC
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-vpc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  cidrBlocks: 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - 10.0.0.0/16
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enableDNSSupport: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  enableDNSHostnames: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tags:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - key: name
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      value: vpc-tutorial
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: InternetGateway
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-igw
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  vpcRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: tutorial-vpc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: NATGateway
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-natgateway1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  subnetRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: tutorial-public-subnet1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  allocationRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: tutorial-eip1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ElasticIPAddress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-eip1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tags:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - key: name
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      value: eip-tutorial
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: RouteTable
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-public-route-table
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  vpcRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: tutorial-vpc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  routes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - destinationCIDRBlock: 0.0.0.0/0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    gatewayRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        name: tutorial-igw
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: RouteTable
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-private-route-table-az1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  vpcRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: tutorial-vpc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  routes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - destinationCIDRBlock: 0.0.0.0/0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    natGatewayRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        name: tutorial-natgateway1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Subnet
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-public-subnet1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  availabilityZone: ap-northeast-2a
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  cidrBlock: 10.0.0.0/20
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  mapPublicIPOnLaunch: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  vpcRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: tutorial-vpc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  routeTableRefs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: tutorial-public-route-table
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Subnet
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-private-subnet1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  availabilityZone: ap-northeast-2a
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  cidrBlock: 10.0.128.0/20
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  vpcRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: tutorial-vpc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  routeTableRefs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: tutorial-private-route-table-az1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: SecurityGroup
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-security-group
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  description: &#34;ack security group&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-sg
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  vpcRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       name: tutorial-vpc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingressRules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - ipProtocol: tcp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      fromPort: 22
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      toPort: 22
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      ipRanges:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - cidrIP: &#34;0.0.0.0/0&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          description: &#34;ingress&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f vpc-workflow.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># VPC 환경 생성 확인</span>
+</span></span><span style="display:flex;"><span>kubectl describe vpcs
+</span></span><span style="display:flex;"><span>kubectl describe internetgateways
+</span></span><span style="display:flex;"><span>kubectl describe routetables
+</span></span><span style="display:flex;"><span>kubectl describe natgateways
+</span></span><span style="display:flex;"><span>kubectl describe elasticipaddresses
+</span></span><span style="display:flex;"><span>kubectl describe securitygroups
+</span></span></code></pre></div><ul>
+<li>Public Subnet에 인스턴스 생성</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># public 서브넷 ID 확인</span>
+</span></span><span style="display:flex;"><span>PUBSUB1<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get subnets tutorial-public-subnet1 -o jsonpath<span style="color:#f92672">={</span>.status.subnetID<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $PUBSUB1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 보안그룹 ID 확인</span>
+</span></span><span style="display:flex;"><span>TSG<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get securitygroups tutorial-security-group -o jsonpath<span style="color:#f92672">={</span>.status.id<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $TSG
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Amazon Linux 2 최신 AMI ID 확인</span>
+</span></span><span style="display:flex;"><span>AL2AMI<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws ec2 describe-images --owners amazon --filters <span style="color:#e6db74">&#34;Name=name,Values=amzn2-ami-hvm-2.0.*-x86_64-gp2&#34;</span> --query <span style="color:#e6db74">&#39;Images[0].ImageId&#39;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $AL2AMI
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SSH 키페어 이름 변수 지정: 사용할 AWS keypair </span>
+</span></span><span style="display:flex;"><span>MYKEYPAIR<span style="color:#f92672">=</span>ryzen1600
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 변수 확인 &gt; 특히 서브넷 ID가 확인되었는지 꼭 확인하자!</span>
+</span></span><span style="display:flex;"><span>echo $PUBSUB1 , $TSG , $AL2AMI , $MYKEYPAIR
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링 준비</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true; <span style="color:#66d9ef">do</span> aws ec2 describe-instances --query <span style="color:#e6db74">&#34;Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key==&#39;Name&#39;]|[0].Value,Status:State.Name}&#34;</span> --filters Name<span style="color:#f92672">=</span>instance-state-name,Values<span style="color:#f92672">=</span>running --output table; date ; sleep <span style="color:#ae81ff">1</span> ; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># public 서브넷에 인스턴스 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; tutorial-bastion-host.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Instance
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-bastion-host
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  imageID: $AL2AMI # AL2 AMI ID - ap-northeast-2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  instanceType: t3.medium
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  subnetID: $PUBSUB1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  securityGroupIDs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - $TSG
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  keyName: $MYKEYPAIR
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tags:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - key: producer
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      value: ack
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f tutorial-bastion-host.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 인스턴스 생성 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get instance
+</span></span><span style="display:flex;"><span>kubectl describe instance
+</span></span><span style="display:flex;"><span>aws ec2 describe-instances --query <span style="color:#e6db74">&#34;Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key==&#39;Name&#39;]|[0].Value,Status:State.Name}&#34;</span> --filters Name<span style="color:#f92672">=</span>instance-state-name,Values<span style="color:#f92672">=</span>running --output table
+</span></span></code></pre></div><p><img src="./images/instance-ip-in-public-ip.png" alt="Instance IP in Public IP"></p>
+<ul>
+<li>Public Subnet의 인스턴스에 접속
+<ul>
+<li>ping test 실패해야 정상</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">## Client PC</span>
+</span></span><span style="display:flex;"><span>ssh -i <span style="color:#e6db74">${</span>사용할 keypair<span style="color:#e6db74">}</span> ec2-user@<span style="color:#e6db74">${</span>앞에서 확인한 Public IP<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ping -c <span style="color:#ae81ff">2</span> 8.8.8.8
+</span></span></code></pre></div><p><img src="./images/ping-test-failure-without-engress-rule.png" alt="ping test failure without engress rule"></p>
+<ul>
+<li>보안 그룹 정책 수정: egress 규칙 추가</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; modify-sg.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: SecurityGroup
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-security-group
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  description: &#34;ack security group&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-sg
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  vpcRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">       name: tutorial-vpc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingressRules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - ipProtocol: tcp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      fromPort: 22
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      toPort: 22
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      ipRanges:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - cidrIP: &#34;0.0.0.0/0&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          description: &#34;ingress&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  egressRules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - ipProtocol: &#39;-1&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      ipRanges:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - cidrIP: &#34;0.0.0.0/0&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          description: &#34;egress&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f modify-sg.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 변경 확인 &gt;&gt; 보안그룹에 아웃바운드 규칙 확인</span>
+</span></span><span style="display:flex;"><span>kubectl logs -n $ACK_SYSTEM_NAMESPACE -l k8s-app<span style="color:#f92672">=</span>ec2-chart -f
+</span></span></code></pre></div><p><img src="./images/logs-about-addition-of-egress-rule-to-security-group.png" alt="logs about addition of egress rule to security group"></p>
+<ul>
+<li>다시, Public Subnet상 인스턴스 접속 상태에서, ping test: 정상
+<ul>
+<li>curl로 출력되는 IP는 인스턴스 Public IP 주소</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">## Client PC</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ssh -i ${사용할 keypair} ec2-user@${앞에서 확인한 Public IP}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ping -c <span style="color:#ae81ff">2</span> 8.8.8.8
+</span></span><span style="display:flex;"><span>curl ipinfo.io/ip ; echo <span style="color:#75715e"># 인스턴스 Public UP(공인IP)</span>
+</span></span><span style="display:flex;"><span>exit
+</span></span></code></pre></div><p><img src="./images/ping-test-success-with-egress-rule.png" alt="ping test success with egress rule"></p>
+<ul>
+<li>Private Subnet에 인스턴스 생성
+<ul>
+<li>2-3 실습에서도 봤듯이 Private Subnet ID 확인까지 시간 소요</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># private 서브넷 ID 확인</span>
+</span></span><span style="display:flex;"><span>PRISUB1<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get subnets tutorial-private-subnet1 -o jsonpath<span style="color:#f92672">={</span>.status.subnetID<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $PRISUB1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 변수 확인</span>
+</span></span><span style="display:flex;"><span>echo $PRISUB1 , $TSG , $AL2AMI , $MYKEYPAIR
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Private Subnet에 인스턴스 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; tutorial-instance-private.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: ec2.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Instance
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: tutorial-instance-private
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  imageID: $AL2AMI # AL2 AMI ID - ap-northeast-2
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  instanceType: t3.medium
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  subnetID: $PRISUB1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  securityGroupIDs:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - $TSG
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  keyName: $MYKEYPAIR
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  tags:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - key: producer
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      value: ack
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f tutorial-instance-private.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 인스턴스 생성 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get instance
+</span></span><span style="display:flex;"><span>kubectl describe instance
+</span></span><span style="display:flex;"><span>aws ec2 describe-instances --query <span style="color:#e6db74">&#34;Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key==&#39;Name&#39;]|[0].Value,Status:State.Name}&#34;</span> --filters Name<span style="color:#f92672">=</span>instance-state-name,Values<span style="color:#f92672">=</span>running --output table
+</span></span></code></pre></div><p><img src="./images/launch-instance-in-private-subnet.png" alt="launch instance in Private Subnet"></p>
+<ul>
+<li>Public Subnet 인스턴스에 SSH 터널링 설정
+<ul>
+<li>터널링이므로, 접속 이후 그대로 두기</li>
+<li>실습에서는 임의 포트를 <code>9999</code>로 설정</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh -i ~/.ssh/id_ed25518 -L 9999:<span style="color:#e6db74">${</span>Private Subnet의 인스턴스 private IP<span style="color:#e6db74">}</span>:22 ec2-user@<span style="color:#e6db74">${</span>Public Subnet의 인스턴스 public IP<span style="color:#e6db74">}</span> -v 
+</span></span></code></pre></div><ul>
+<li>앞에서 설정한 임의 설정 포트(<code>9999</code>)로 SSH 접속 시 Private Subnet의 인스턴스에 접속 가능 [Jump Host]</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh -i ~/.ssh/id_ed25519 -p <span style="color:#ae81ff">9999</span> ec2-user@localhost
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IP 및 네트워크 정보 확인</span>
+</span></span><span style="display:flex;"><span>ip -c addr
+</span></span><span style="display:flex;"><span>sudo ss -tnp
+</span></span><span style="display:flex;"><span>ping -c <span style="color:#ae81ff">2</span> 8.8.8.8
+</span></span><span style="display:flex;"><span>curl ipinfo.io/ip ; echo <span style="color:#75715e"># NATGW IP</span>
+</span></span><span style="display:flex;"><span>exit
+</span></span></code></pre></div><p><img src="./images/connection-success-in-private-instance-and-check-natgw-ip.png" alt="connection success in Private instance and check NATGW IP"></p>
+<ul>
+<li>실습 후 리소스 삭제
+<ul>
+<li>VPC 관련 모든 리소스 삭제 시, 다소 시간이 소요</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl delete -f tutorial-bastion-host.yaml <span style="color:#f92672">&amp;&amp;</span> kubectl delete -f tutorial-instance-private.yaml
+</span></span><span style="display:flex;"><span>kubectl delete -f vpc-workflow.yaml
+</span></span></code></pre></div><h3 id="2-5-rds-생성">2-5. RDS 생성</h3>
+<ul>
+<li>
+<p>지원 엔진: Aurora(MySQL, PostgreSQL), RDS(MySQL, MariaDB, Oracle, SQL Server)</p>
+</li>
+<li>
+<p>[ACK RDS Controller 설치]</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 서비스명 변수 지정 및 helm 차트 다운로드</span>
+</span></span><span style="display:flex;"><span>export SERVICE<span style="color:#f92672">=</span>rds
+</span></span><span style="display:flex;"><span>export RELEASE_VERSION<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -sL https://api.github.com/repos/aws-controllers-k8s/$SERVICE-controller/releases/latest | grep <span style="color:#e6db74">&#39;&#34;tag_name&#34;:&#39;</span> | cut -d<span style="color:#e6db74">&#39;&#34;&#39;</span> -f4 | cut -c 2-<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>helm pull oci://public.ecr.aws/aws-controllers-k8s/$SERVICE-chart --version<span style="color:#f92672">=</span>$RELEASE_VERSION
+</span></span><span style="display:flex;"><span>tar xzvf $SERVICE-chart-$RELEASE_VERSION.tgz
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># helm chart 확인</span>
+</span></span><span style="display:flex;"><span>tree ~/$SERVICE-chart
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ACK EC2-Controller 설치</span>
+</span></span><span style="display:flex;"><span>export ACK_SYSTEM_NAMESPACE<span style="color:#f92672">=</span>ack-system
+</span></span><span style="display:flex;"><span>export AWS_REGION<span style="color:#f92672">=</span>ap-northeast-2
+</span></span><span style="display:flex;"><span>helm install -n $ACK_SYSTEM_NAMESPACE ack-$SERVICE-controller --set aws.region<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$AWS_REGION<span style="color:#e6db74">&#34;</span> ~/$SERVICE-chart
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 설치 확인</span>
+</span></span><span style="display:flex;"><span>helm list --namespace $ACK_SYSTEM_NAMESPACE
+</span></span><span style="display:flex;"><span>kubectl -n $ACK_SYSTEM_NAMESPACE get pods -l <span style="color:#e6db74">&#34;app.kubernetes.io/instance=ack-</span>$SERVICE<span style="color:#e6db74">-controller&#34;</span>
+</span></span><span style="display:flex;"><span>kubectl get crd | grep $SERVICE
+</span></span></code></pre></div><p><img src="./images/install-ack-rds-controller.png" alt="install ACK RDS Controller"></p>
+<ul>
+<li>[IRSA 설정] AmazonRDSFullAccess</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>eksctl create iamserviceaccount <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --name ack-$SERVICE-controller <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --namespace $ACK_SYSTEM_NAMESPACE <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --cluster $CLUSTER_NAME <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --attach-policy-arn <span style="color:#66d9ef">$(</span>aws iam list-policies --query <span style="color:#e6db74">&#39;Policies[?PolicyName==`AmazonRDSFullAccess`].Arn&#39;</span> --output text<span style="color:#66d9ef">)</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --override-existing-serviceaccounts --approve
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>eksctl get iamserviceaccount --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get sa -n $ACK_SYSTEM_NAMESPACE
+</span></span><span style="display:flex;"><span>kubectl describe sa ack-$SERVICE-controller -n $ACK_SYSTEM_NAMESPACE
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl -n $ACK_SYSTEM_NAMESPACE rollout restart deploy ack-$SERVICE-controller-$SERVICE-chart
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Env, projected Volume 추가 확인</span>
+</span></span><span style="display:flex;"><span>kubectl describe pod -n $ACK_SYSTEM_NAMESPACE -l k8s-app<span style="color:#f92672">=</span>$SERVICE-chart
+</span></span></code></pre></div><p><img src="./images/applying-irsa-to-ack-rds-controller.png" alt="applying IRSA to ACK RDS Controller"></p>
+<ul>
+<li>[리소스 조작] AWS RDS for MariaDB 생성 및 삭제
+<ul>
+<li>모니터링 준비: <code>watch -d &quot;kubectl describe dbinstance &quot;${RDS_INSTANCE_NAME}&quot; | grep 'Db Instance Status'&quot;</code></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># DB 암호를 위한 secret 생성</span>
+</span></span><span style="display:flex;"><span>RDS_INSTANCE_NAME<span style="color:#f92672">=</span>myrds
+</span></span><span style="display:flex;"><span>RDS_INSTANCE_PASSWORD<span style="color:#f92672">=</span>qwe12345
+</span></span><span style="display:flex;"><span>kubectl create secret generic <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>RDS_INSTANCE_NAME<span style="color:#e6db74">}</span><span style="color:#e6db74">-password&#34;</span> --from-literal<span style="color:#f92672">=</span>password<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>RDS_INSTANCE_PASSWORD<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get secret $RDS_INSTANCE_NAME-password
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># RDS 배포 생성 : 15분 이내 시간 소요 &gt;&gt; 보안그룹, 서브넷 등 필요한 옵션들은 추가해서 설정해보자!</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; rds-mariadb.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: rds.services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: DBInstance
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: &#34;${RDS_INSTANCE_NAME}&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  allocatedStorage: 20
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  dbInstanceClass: db.t4g.micro
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  dbInstanceIdentifier: &#34;${RDS_INSTANCE_NAME}&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  engine: mariadb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  engineVersion: &#34;10.6&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  masterUsername: &#34;admin&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  masterUserPassword:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    namespace: default
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: &#34;${RDS_INSTANCE_NAME}-password&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    key: password
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f rds-mariadb.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 생성 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get dbinstances  <span style="color:#e6db74">${</span>RDS_INSTANCE_NAME<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>kubectl describe dbinstance <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>RDS_INSTANCE_NAME<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>aws rds describe-db-instances --db-instance-identifier $RDS_INSTANCE_NAME | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Db Instance Status: creating/backing-up/available</span>
+</span></span><span style="display:flex;"><span>kubectl describe dbinstance <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>RDS_INSTANCE_NAME<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> | grep <span style="color:#e6db74">&#39;Db Instance Status&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 생성 완료 대기 : for 지정 상태가 완료되면 정상 종료됨</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># dbinstance.rds.services.k8s.aws/myrds condition met</span>
+</span></span><span style="display:flex;"><span>kubectl wait dbinstances <span style="color:#e6db74">${</span>RDS_INSTANCE_NAME<span style="color:#e6db74">}</span> --for<span style="color:#f92672">=</span>condition<span style="color:#f92672">=</span>ACK.ResourceSynced --timeout<span style="color:#f92672">=</span>15m
+</span></span></code></pre></div><h3 id="2-6-maria-db-접속">2-6. Maria DB 접속</h3>
+<ul>
+<li>RDS를 사용하는 파드를 생성하여 테스트
+<ul>
+<li>fieldexport를 먼저 생성 후 이를 활용</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>RDS_INSTANCE_CONN_CM<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>RDS_INSTANCE_NAME<span style="color:#e6db74">}</span><span style="color:#e6db74">-conn-cm&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; rds-field-exports.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: ConfigMap
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: ${RDS_INSTANCE_CONN_CM}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">data: {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: FieldExport
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: ${RDS_INSTANCE_NAME}-host
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  to:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: ${RDS_INSTANCE_CONN_CM}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    kind: configmap
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    path: &#34;.status.endpoint.address&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    resource:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      group: rds.services.k8s.aws
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      kind: DBInstance
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: ${RDS_INSTANCE_NAME}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: FieldExport
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: ${RDS_INSTANCE_NAME}-port
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  to:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: ${RDS_INSTANCE_CONN_CM}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    kind: configmap
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    path: &#34;.status.endpoint.port&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    resource:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      group: rds.services.k8s.aws
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      kind: DBInstance
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: ${RDS_INSTANCE_NAME}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">---
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: services.k8s.aws/v1alpha1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: FieldExport
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: ${RDS_INSTANCE_NAME}-user
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  to:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: ${RDS_INSTANCE_CONN_CM}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    kind: configmap
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  from:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    path: &#34;.spec.masterUsername&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    resource:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      group: rds.services.k8s.aws
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      kind: DBInstance
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      name: ${RDS_INSTANCE_NAME}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f rds-field-exports.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 상태 정보 확인 : address 와 port 정보 </span>
+</span></span><span style="display:flex;"><span>kubectl get dbinstances myrds -o jsonpath<span style="color:#f92672">={</span>.status.endpoint<span style="color:#f92672">}</span> | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 상태 정보 확인 : masterUsername 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get dbinstances myrds -o jsonpath<span style="color:#f92672">={</span>.spec.masterUsername<span style="color:#f92672">}</span> ; echo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 컨피그맵 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get cm myrds-conn-cm -o yaml | kubectl neat | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># fieldexport 정보 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get crd | grep fieldexport
+</span></span><span style="display:flex;"><span>kubectl get fieldexport
+</span></span><span style="display:flex;"><span>kubectl get fieldexport myrds-host -o yaml | k neat | yh
+</span></span></code></pre></div><p><img src="./images/check-rdb-and-configmap-data-with-fieldexport.png" alt="check rdb and configmap data with fieldexport"></p>
+<p><img src="./images/check-crd-and-fieldexport.png" alt="check crd and fieldexport"></p>
+<ul>
+<li>RDS 사용 파드 생성</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>APP_NAMESPACE<span style="color:#f92672">=</span>default
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt; rds-pods.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: app
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  namespace: ${APP_NAMESPACE}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">   - image: busybox
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     name: myapp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     command:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - sleep
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - &#34;3600&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     imagePullPolicy: IfNotPresent
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">     env:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: DBHOST
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         configMapKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          name: ${RDS_INSTANCE_CONN_CM}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          key: &#34;${APP_NAMESPACE}.${RDS_INSTANCE_NAME}-host&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: DBPORT
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         configMapKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          name: ${RDS_INSTANCE_CONN_CM}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          key: &#34;${APP_NAMESPACE}.${RDS_INSTANCE_NAME}-port&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: DBUSER
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         configMapKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          name: ${RDS_INSTANCE_CONN_CM}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          key: &#34;${APP_NAMESPACE}.${RDS_INSTANCE_NAME}-user&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: DBPASSWORD
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        valueFrom:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          secretKeyRef:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           name: &#34;${RDS_INSTANCE_NAME}-password&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           key: password
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f rds-pods.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 생성 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pod app
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드의 환경 변수 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it app -- env | grep DB
+</span></span></code></pre></div><p><img src="./images/check-pod-env.png" alt="check pod env"></p>
+<ul>
+<li>RDS의 identifier(접속 식별자)를 변경해보고 확인
+<ul>
+<li>Roll-out이 아닌, 새로운 식별자를 기반으로 RDS가 생성</li>
+<li>모니터링 준비: <code>watch -d &quot;kubectl get dbinstance; echo; kubectl get cm myrds-conn-cm -o yaml | kubectl neat&quot;</code></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># DB 식별자를 업데이트 </span>
+</span></span><span style="display:flex;"><span>kubectl patch dbinstance myrds --type<span style="color:#f92672">=</span>merge -p <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;dbInstanceIdentifier&#34;:&#34;studyend&#34;}}&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get dbinstance myrds
+</span></span><span style="display:flex;"><span>kubectl describe dbinstance myrds
+</span></span></code></pre></div><p><img src="./images/check-rds-creation-in-aws-web-console.png" alt="check rds creation in AWS web console"></p>
+<ul>
+<li>변경 정보 반영 확인
+<ul>
+<li>RDS address: 변경 확인 (<code>&quot;address&quot;: &quot;studyend.-&quot;</code>)</li>
+<li>pod 환경변수: 변경되지 않음 (<code>DBHOST=myrds.-</code>)
+<ul>
+<li>환경 변수(env)로 정보를 주입했기 때문에 업데이트 되지 않음</li>
+<li>pod rollout으로 env 변경 적용 가능 (deployments/daemonsets/statefulsets)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/rds-address-is-not-changed-after-rds-identifier-changed.png" alt="RDS address is not changed after RDS identifier changed"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 상태 정보 확인 : address 변경 확인!</span>
+</span></span><span style="display:flex;"><span>kubectl get dbinstances myrds -o jsonpath<span style="color:#f92672">={</span>.status.endpoint<span style="color:#f92672">}</span> | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드의 환경 변수 확인 &gt;&gt; 파드의 경우 환경 변수 env로 정보를 주입했기 때문에 변경된 정보를 확인 할 수 없다</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it app -- env | grep DB
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 삭제 후 재생성 후 확인</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod app <span style="color:#f92672">&amp;&amp;</span> kubectl apply -f rds-pods.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드의 환경 변수 업데이트 확인!</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it app -- env | grep DB
+</span></span></code></pre></div><p><img src="./images/check-rds-address-changed-in-configmap.png" alt="check rds address changed in configmap"></p>
+<p><img src="./images/rollout-pod-to-apply-changed-env.png" alt="rollout pod to apply changed env"></p>
+<ul>
+<li>RDS 삭제: 단, ACK의 관리에서 벗어난 myrds는 직접 삭제해야함</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 파드 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod app
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># RDS 삭제 </span>
+</span></span><span style="display:flex;"><span>kubectl delete -f rds-mariadb.yaml
+</span></span></code></pre></div><p><img src="./images/delete-not-tracked-rds.png" alt="delete not tracked rds"></p>
+<h2 id="3-flux">3. Flux</h2>
+<ul>
+<li>Flux하면, <a href="https://justgetflux.com/">f.lux</a> 시간별 화면 색조 변경프로그램이 떠오르는데&hellip; 아쉽지만, 이번엔 GitOps용 솔루션.</li>
+<li>GitHub 토큰을 활용
+<ul>
+<li>한번 생성되고, 재 조회가 안되므로 메모를 하거나 다시 생성</li>
+<li>같은 계정에서 발급한 다른 토큰을 써도 Flux사용은 연속적으로 사용 가능</li>
+</ul>
+</li>
+<li>부트스트랩으로 Github private repo 생성 후, manifest 추가하여 사용</li>
+</ul>
+<p><img src="./images/github-token-needed.png" alt="GitHub token needed"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Flux CLI 설치</span>
+</span></span><span style="display:flex;"><span>curl -s https://fluxcd.io/install.sh | sudo bash
+</span></span><span style="display:flex;"><span>. &lt;<span style="color:#f92672">(</span>flux completion bash<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 버전 확인</span>
+</span></span><span style="display:flex;"><span>flux --version
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># GitHub 토큰 주입</span>
+</span></span><span style="display:flex;"><span>export GITHUB_TOKEN<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>ghp_###<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>export GITHUB_USER<span style="color:#f92672">=</span>kkumtree
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Bootstrap</span>
+</span></span><span style="display:flex;"><span>flux bootstrap github <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --owner<span style="color:#f92672">=</span>$GITHUB_USER <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --repository<span style="color:#f92672">=</span>fleet-infra <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --branch<span style="color:#f92672">=</span>main <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --path<span style="color:#f92672">=</span>./clusters/my-cluster <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --personal
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 설치 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># GitHub에서 신규 private repo(fleet-infra) 생성 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pods -n flux-system
+</span></span><span style="display:flex;"><span>kubectl get-all -n flux-system
+</span></span><span style="display:flex;"><span>kubectl get crd | grep fluxc
+</span></span><span style="display:flex;"><span>kubectl get gitrepository -n flux-system
+</span></span></code></pre></div><p><img src="./images/private-repo-created.png" alt="private repo created"></p>
+<ul>
+<li>GitOps 도구 설치: flux 대시보드
+<ul>
+<li>admin / password</li>
+<li>ingress 설정: p8s, grafana 설치를 안했다면 시간 소요</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># gitops 도구 설치</span>
+</span></span><span style="display:flex;"><span>curl --silent --location <span style="color:#e6db74">&#34;https://github.com/weaveworks/weave-gitops/releases/download/v0.24.0/gitops-</span><span style="color:#66d9ef">$(</span>uname<span style="color:#66d9ef">)</span><span style="color:#e6db74">-</span><span style="color:#66d9ef">$(</span>uname -m<span style="color:#66d9ef">)</span><span style="color:#e6db74">.tar.gz&#34;</span> | tar xz -C /tmp
+</span></span><span style="display:flex;"><span>sudo mv /tmp/gitops /usr/local/bin
+</span></span><span style="display:flex;"><span>gitops version
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># flux 대시보드 설치</span>
+</span></span><span style="display:flex;"><span>PASSWORD<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;password&#34;</span>
+</span></span><span style="display:flex;"><span>gitops create dashboard ww-gitops --password<span style="color:#f92672">=</span>$PASSWORD
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>flux -n flux-system get helmrelease
+</span></span><span style="display:flex;"><span>kubectl -n flux-system get pod,svc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ingress 배포를 위한 ACM ARN</span>
+</span></span><span style="display:flex;"><span>CERT_ARN<span style="color:#f92672">=</span><span style="color:#e6db74">`</span>aws acm list-certificates --query <span style="color:#e6db74">&#39;CertificateSummaryList[].CertificateArn[]&#39;</span> --output text<span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>echo $CERT_ARN
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Ingress 설정</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; gitops-ingress.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: networking.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: gitops-ingress
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  annotations:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/certificate-arn: $CERT_ARN
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/group.name: study
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/listen-ports: &#39;[{&#34;HTTPS&#34;:443}, {&#34;HTTP&#34;:80}]&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/load-balancer-name: myeks-ingress-alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/scheme: internet-facing
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/ssl-redirect: &#34;443&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/success-codes: 200-399
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    alb.ingress.kubernetes.io/target-type: ip
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ingressClassName: alb
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  rules:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - host: gitops.$MyDomain
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    http:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      paths:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - backend:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          service:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            name: ww-gitops-weave-gitops
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            port:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              number: 9001
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        path: /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        pathType: Prefix
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f gitops-ingress.yaml -n flux-system
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get ingress -n flux-system
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># GitOps 접속 정보 확인 &gt;&gt; 웹 접속 후 정보 확인</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;GitOps Web https://gitops.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><p><img src="./images/flux-dashboard.png" alt="flux dashboard"></p>
+<h3 id="3-1-kustomize-예제로-샘플-실습">3-1. kustomize 예제로 샘플 실습</h3>
+<ul>
+<li>모니터링 준비: <code>watch -d kubectl get pod,svc nginx-example1</code></li>
+<li>GitHub에 있는 Nginx manifest를 k8s에 배포
+<ul>
+<li>배포 시에 kustomize를 사용</li>
+</ul>
+</li>
+<li>flux 지원 소스: git / helm / oci / bucket
+<ul>
+<li>`flux create source {target source}</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>GITURL<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://github.com/sungwook-practice/fluxcd-test.git&#34;</span>
+</span></span><span style="display:flex;"><span>flux create source git nginx-example1 --url<span style="color:#f92672">=</span>$GITURL --branch<span style="color:#f92672">=</span>main --interval<span style="color:#f92672">=</span>30s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 소스 확인</span>
+</span></span><span style="display:flex;"><span>flux get sources git
+</span></span><span style="display:flex;"><span>kubectl -n flux-system get gitrepositories
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># flux 애플리케이션 생성: 유형(kustomization), git 소스 경로(--path)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 생성 후 GitOps 대시보드에서 확인</span>
+</span></span><span style="display:flex;"><span>flux create kustomization nginx-example1 --target-namespace<span style="color:#f92672">=</span>default --interval<span style="color:#f92672">=</span>1m --source<span style="color:#f92672">=</span>nginx-example1 --path<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;./nginx&#34;</span> --health-check-timeout<span style="color:#f92672">=</span>2m
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get pod,svc nginx-example1
+</span></span><span style="display:flex;"><span>kubectl get kustomizations -n flux-system
+</span></span><span style="display:flex;"><span>flux get kustomizations
+</span></span></code></pre></div><p><img src="./images/git-source-creation-with-flux.png" alt="git source creation with flux"></p>
+<p><img src="./images/nginx-manifest-deployment-with-kustomize.png" alt="Nginx manifest deployment with kustomize"></p>
+<p><img src="./images/deployment-status-in-gitops-dashboard.png" alt="deployment status in GitOps dashboard"></p>
+<p><img src="./images/graph-view-in-gitops-dashboard.png" alt="graph view in GitOps dashboard"></p>
+<ul>
+<li>애플리케이션 삭제
+<ul>
+<li>처음 삭제 시: pod, svc는 사라지지 않음. annotation 개념</li>
+<li><code>--prune=true</code>를 통해 같이 삭제되도록 할 수 있음 (default: false)</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># flux 애플리케이션 삭제</span>
+</span></span><span style="display:flex;"><span>flux delete kustomization nginx-example1
+</span></span><span style="display:flex;"><span>flux get kustomizations
+</span></span><span style="display:flex;"><span>kubectl get pod,svc nginx-example1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># flux 애플리케이션 다시 생성 :  --prune 옵션 true</span>
+</span></span><span style="display:flex;"><span>flux create kustomization nginx-example1 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --target-namespace<span style="color:#f92672">=</span>default <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --prune<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --interval<span style="color:#f92672">=</span>1m <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --source<span style="color:#f92672">=</span>nginx-example1 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --path<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;./nginx&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --health-check-timeout<span style="color:#f92672">=</span>2m
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>flux get kustomizations
+</span></span><span style="display:flex;"><span>kubectl get pod,svc nginx-example1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># flux 애플리케이션 삭제: pod, svc 함께 삭제</span>
+</span></span><span style="display:flex;"><span>flux delete kustomization nginx-example1
+</span></span><span style="display:flex;"><span>flux get kustomizations
+</span></span><span style="display:flex;"><span>kubectl get pod,svc nginx-example1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># flux 소스 삭제</span>
+</span></span><span style="display:flex;"><span>flux delete source git nginx-example1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 소스 확인</span>
+</span></span><span style="display:flex;"><span>flux get sources git
+</span></span><span style="display:flex;"><span>kubectl -n flux-system get gitrepositories
+</span></span></code></pre></div><p><img src="./images/delete-kustomization-without-prune-option.png" alt="delete kustomization without prune option"></p>
+<p><img src="./images/only-kustomization-deleted.png" alt="only kustomization deleted"></p>
+<p><img src="./images/pod-and-service-survived-without-flux-prune-option.png" alt="pod and service survived without flux prune option"></p>
+<p><img src="./images/kustomization-reconciliation-with-existed-pod-and-service.png" alt="kustomization reconciliation with existed pod and service"></p>
+<p><img src="./images/delete-with-prune-option-1.png" alt="delete with prune option 1"></p>
+<p><img src="./images/delete-with-prune-option-2.png" alt="delete with prune option 2"></p>
+<h3 id="3-2-flux-공식-docs-샘플-실습">3-2. Flux 공식 Docs 샘플 실습</h3>
+<ul>
+<li>앞서 최성욱(악성코드분석)님께서 만들어주신 샘플로 계속 하려 했으나,
+<ul>
+<li>샘플 실습에서의 replica 변경이 적용되지 않아 새로이 진행</li>
+</ul>
+</li>
+<li>모니터링 준비: <code>watch -d kubectl get pod,svc</code>
+<ul>
+<li>scale down 시 pod가 삭제되었다가, 다시 재생성 됨</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/pratice-with-new-flux-sample.png" alt="pratice with new flux sample"></p>
+<p><img src="./images/another-git-source-creation-with-flux.png" alt="another git source creation with flux"></p>
+<p><img src="./images/source-events-in-gitops-dashboard.png" alt="source events in GitOps dashboard"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Clone the git repository : 자신의 Github 의 Username, Token 입력</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Username for &#39;https://github.com&#39;: &lt;자신의 Github 의 Username&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Password for &#39;https://kkumtree@github.com&#39;: &lt;자신의 Github의 Token&gt;</span>
+</span></span><span style="display:flex;"><span>git clone https://github.com/$GITHUB_USER/fleet-infra
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cd fleet-infra
+</span></span><span style="display:flex;"><span>tree
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## ADD podinfo repository to Flux</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># GitRepository yaml 파일 생성</span>
+</span></span><span style="display:flex;"><span>flux create source git podinfo <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --url<span style="color:#f92672">=</span>https://github.com/stefanprodan/podinfo <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --branch<span style="color:#f92672">=</span>master <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --interval<span style="color:#f92672">=</span>30s <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --export &gt; ./clusters/my-cluster/podinfo-source.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># GitRepository yaml 파일 확인</span>
+</span></span><span style="display:flex;"><span>cat ./clusters/my-cluster/podinfo-source.yaml | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Commit and push the podinfo-source.yaml file to the fleet-infra repository</span>
+</span></span><span style="display:flex;"><span>git config --global user.name <span style="color:#e6db74">&#34;Your Name&#34;</span>
+</span></span><span style="display:flex;"><span>git config --global user.email <span style="color:#e6db74">&#34;you@example.com&#34;</span>
+</span></span><span style="display:flex;"><span>git add -A <span style="color:#f92672">&amp;&amp;</span> git commit -m <span style="color:#e6db74">&#34;Add podinfo GitRepository&#34;</span>
+</span></span><span style="display:flex;"><span>git push
+</span></span><span style="display:flex;"><span>Username <span style="color:#66d9ef">for</span> <span style="color:#e6db74">&#39;https://github.com&#39;</span>: &lt;자신의 Github 의 Username&gt;
+</span></span><span style="display:flex;"><span>Password <span style="color:#66d9ef">for</span> <span style="color:#e6db74">&#39;https://gasida@github.com&#39;</span>: &lt;자신의 Github의 Token&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 소스 확인</span>
+</span></span><span style="display:flex;"><span>flux get sources git
+</span></span><span style="display:flex;"><span>kubectl -n flux-system get gitrepositories
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Deploy podinfo application</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Configure Flux to build and apply the kustomize directory located in the podinfo repository</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Use the flux create command to create a Kustomization that applies the podinfo deployment.</span>
+</span></span><span style="display:flex;"><span>flux create kustomization podinfo <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --target-namespace<span style="color:#f92672">=</span>default <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --source<span style="color:#f92672">=</span>podinfo <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --path<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;./kustomize&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --prune<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --interval<span style="color:#f92672">=</span>5m <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --export &gt; ./clusters/my-cluster/podinfo-kustomization.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파일 확인</span>
+</span></span><span style="display:flex;"><span>cat ./clusters/my-cluster/podinfo-kustomization.yaml | yh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Commit and push the Kustomization manifest to the repository:</span>
+</span></span><span style="display:flex;"><span>git add -A <span style="color:#f92672">&amp;&amp;</span> git commit -m <span style="color:#e6db74">&#34;Add podinfo Kustomization&#34;</span>
+</span></span><span style="display:flex;"><span>git push
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pod,svc
+</span></span><span style="display:flex;"><span>kubectl get kustomizations -n flux-system
+</span></span><span style="display:flex;"><span>flux get kustomizations
+</span></span><span style="display:flex;"><span>tree
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Watch Flux sync the application </span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment podinfo --replicas <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>kubectl scale deployment podinfo --replicas <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 삭제</span>
+</span></span><span style="display:flex;"><span>flux delete kustomization podinfo
+</span></span><span style="display:flex;"><span>flux delete source git podinfo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>flux uninstall --namespace<span style="color:#f92672">=</span>flux-system
+</span></span></code></pre></div><p><img src="./images/podinfo-running-as-default-in-2-replicas.png" alt="podinfo running as default in 2 replicas"></p>
+<p><img src="./images/health-check-in-gitops-dashboard.png" alt="health check in GitOps dashboard"></p>
+<p><img src="./images/podinfo-pod-scaled-to-1-but-failed.png" alt="podinfo pod scaled to 1 but failed"></p>
+<p><img src="./images/new-replica-created-to-fit-2-replicas.png" alt="new replica created to fit 2 replicas"></p>
+<p><img src="./images/cause-desiredReplicas-2-scaling-down-to-1-is-failed.png" alt="cause desiredReplicas 2, scaling down to 1 is failed"></p>
+<p><img src="./images/podinfo-pod-scaled-to-3-success.png" alt="podinfo pod scaled to 3 success"></p>
+<p><img src="./images/replica-status-when-scale-out-to-3.png" alt="replica status when scale out to 3"></p>
+<p><img src="./images/delete-kustomization-and-source.png" alt="delete kustomization and source"></p>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2023/06/04/how-to-add-comment-section-in-gh-pages/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">gh-pages에 댓글 기능 추가하기(giscus/Hugo)</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2023/06/19/vagrant-init-setup-with-docker/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">Vagrant 설치 및 Provider 지정</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

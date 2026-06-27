@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Network on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/network/</link>
+		<description>Recent content in Network on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 07 May 2023 07:30:52 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/network/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>AWS EKS 스터디 2주차 - Network</title>
+				<link>https://blog.minseong.xyz/2023/05/07/aws-eks-study-week2/</link>
+				<pubDate>Sun, 07 May 2023 07:30:52 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2023/05/07/aws-eks-study-week2/</guid>
+				<description>&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-note&#34; data-lang=&#34;note&#34;&gt;# 아쉽게도 신규 항목인 istio, kube-ops-view는 실습 실패&#xA;- istio: `myhome.yaml` 을 어떻게 생성할지 몰라서 중단&#xA;- kube-ops-view: A레코드에 제대로 잡히지 않음&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;지난 1주차에 이어, 이번 주에는 EKS의 네트워크 구성에 대해 알아보는 시간이었습니다.&lt;/p&gt;&#xA;&lt;p&gt;직전 스터디에서도 바로 광탈당하나?하며 밤과 주말을 하얗게 불태웠을 정도로&lt;br&gt;&#xA;가장 고난도라고 생각했던 네트워크를 다시 만나니 이제 1% 친근감이 느껴지고 있네요.&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;./images/00_intro.jpeg&#34; alt=&#34;이해했냐고요?&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;자 그럼 해보도록 합시다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;1-cloudformation을-활용한-eks-원클릭-구성&#34;&gt;1. cloudformation을 활용한 EKS 원클릭 구성&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;학습을 위해, 이번에도 &lt;a href=&#34;https://www.notion.so/gasidaseo/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;가시다&lt;/a&gt;님이 준비해주신 원클릭 배포 yaml을 활용하여 배포.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;완전 배포까지 대략 20분 가량 소요&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;li&gt;IAM에서 미리 발급해둔 액세스키/시크릿키를 알아두어야합니다.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 원클릭 셋업&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;aws cloudformation deploy --template-file ~/Documents/aews/eks-oneclick.yaml --stack-name myeks --parameter-overrides KeyName&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;aews SgIngressSshCidr&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;curl -s ipinfo.io/ip&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;/32 MyIamUserAccessKeyID&lt;span style=&#34;color:#f92672&#34;&gt;={&lt;/span&gt;ACSSKEY|AKIA..&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;  MyIamUserSecretAccessKey&lt;span style=&#34;color:#f92672&#34;&gt;={&lt;/span&gt;SECUKEY|7ob..&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt; ClusterBaseName&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;myeks --region ap-northeast-2&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 컨트롤 플레인(마스터노드) 접속 확인&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ssh -i ~/.ssh/aews.pem ec2-user@&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;aws cloudformation describe-stacks --stack-name myeks --query &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Stacks[*].Outputs[0].OutputValue&amp;#39;&lt;/span&gt; --output text&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;./images/01_oneclick.png&#34; alt=&#34;oneclick_templete&#34;&gt;&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>
