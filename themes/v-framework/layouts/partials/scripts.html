@@ -26,4 +26,9 @@ setSlideIndex(0);
 setInterval(nextSlide, 5000);
 </script>
 
+{{ if .Store.Get "hasMermaid" }}
+<script type="text/javascript" src='{{ "/js/mermaid.min.js" | relURL }}'></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+{{ end }}
+
 {{ template "_internal/google_analytics.html" . }}
