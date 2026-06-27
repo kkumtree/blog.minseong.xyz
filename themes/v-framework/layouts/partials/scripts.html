@@ -22,8 +22,10 @@ function nextSlide() {
 function prevSlide() {
     setSlideIndex(index - 1);
 }
-setSlideIndex(0);
-setInterval(nextSlide, 5000);
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
 </script>
 
 {{ if .Store.Get "hasMermaid" }}
