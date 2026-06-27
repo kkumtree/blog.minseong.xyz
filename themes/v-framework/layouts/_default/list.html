@@ -30,18 +30,36 @@
             {{ end }}
 
             {{ range where $pages "Section" "post" }}
-            <div class="p-list__item">
-              <a href="{{ .RelPermalink }}"><h2>{{.Title}}</h2></a>
-              <ul class="p-card__content p-inline-list--middot">
-                {{range .Params.authors}}
-                <li class="p-inline-list__item">
-                  {{.name}}
-                </li>
-                {{end}}
-              </ul>
-              <p><u class=" timedisplay" style="text-decoration-style: dotted;">{{.Date.Format "2006-01-02T15:04:05-07:00"}}</u></p>
-              <p>{{.Summary}}</p>
-            </div>
+            {{ $page := . }}
+            {{ $thumb := "" }}
+            {{ with .Params.image }}
+              {{ with $page.Resources.GetMatch . }}
+                {{ if in (slice "image/png" "image/jpeg" "image/webp") .MediaType.Type }}
+                  {{ $thumb = (.Fill "480x288 Center webp q80").RelPermalink }}
+                {{ else }}
+                  {{ $thumb = .RelPermalink }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+            <a class="post-card" href="{{ $page.RelPermalink }}">
+              <div class="post-card__media">
+                {{ if $thumb }}
+                <img src="{{ $thumb }}" alt="{{ $page.Title }}" loading="lazy">
+                {{ else }}
+                <img class="post-card__media--placeholder" src='{{ "/img/BlogWhite.svg" | relURL }}' alt="" loading="lazy">
+                {{ end }}
+              </div>
+              <div class="post-card__body">
+                <h2 class="post-card__title">{{ $page.Title }}</h2>
+                <ul class="p-inline-list--middot post-card__meta">
+                  {{ range $page.Params.authors }}
+                  <li class="p-inline-list__item">{{ .name }}</li>
+                  {{ end }}
+                  <li class="p-inline-list__item"><u class="timedisplay" style="text-decoration-style: dotted;">{{ $page.Date.Format "2006-01-02T15:04:05-07:00" }}</u></li>
+                </ul>
+                <p class="post-card__excerpt">{{ $page.Summary | plainify | truncate 160 }}</p>
+              </div>
+            </a>
             {{ end }}
             {{- partial "pagination.html" . -}}
           </div>
