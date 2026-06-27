@@ -2,7 +2,7 @@
 date: 2026-06-20T17:57:45+09:00
 title: "KV cache에 대한 이해"
 tags:
-  - aidc
+  - aidn
   - llm
   - CloudNet@
   - kvcache
@@ -17,7 +17,7 @@ image: image-1.png # 커버 이미지 URL
 draft: false # 글 초안 여부
 ---
 
-지난 주 일요일부터 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 (이하, AIDC)에 참여하게 되었습니다.  
+지난 주 일요일부터 [CloudNet@](https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863)에서 진행하고 있는 AI Datacenter Network Study(이하, AIDN)에 참여하게 되었습니다.  
 
 요새는 PC에 달린 그래픽카드 활용을 위해, 이것저것(RAG, ASR 및 일반적인 추론모델) 돌려보는 중인데 그 중에서 막히던게 KV cache에 대한 이해 부족으로 Hermes Agent용 모델 선정에 애를 먹고 있었습니다. 그래서 이왕 하는 김에 큰 욕심을 버리고 KV cache에 대한 이해를 해보고자 합니다.  
 
