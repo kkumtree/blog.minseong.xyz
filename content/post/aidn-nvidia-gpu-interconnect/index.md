@@ -68,7 +68,7 @@ flowchart TB
     - 앞서 말했던, NVLink 입니다. 데이터센터 [SXM(Server PCI Express Module)](https://ko.wikipedia.org/wiki/SXM_%28%EC%86%8C%EC%BC%93%29)에는 필요없다고 하는데, SXM? 모르기 때문에 한번 찾아봤습니다.  
       - 2016년도부터 NVIDIA가 써왔던 소켓이라고 하는데, 꽂혀있는 사진이 일본 TSUBAME 3.0 슈퍼컴퓨터 사진이고, 그 다음 사진의 오른쪽의 비어있는 소켓이 SXM 소켓이라고 합니다.(이해하는데 시간이 좀 걸림;)  
         ![TSUBAME Supercom](image-3.png)  
-        ![Bare SXM Socket](image-4.png))  
+        ![Bare SXM Socket](image-4.png)  
         > Image Referenced from [Wikipedia](https://ko.wikipedia.org/wiki/SXM_%28%EC%86%8C%EC%BC%93%29)  
       - PCIe 슬롯과는 달라서, [바꿔주는 어댑터](https://gigglehd.com/gg/hard/15728880)도 있는 모양  
       - SLI 브릿지랑 똑같은거 아닌가 싶은 생각이 문득 들었지만, 나중에 생각 더 해보는 걸로...  
