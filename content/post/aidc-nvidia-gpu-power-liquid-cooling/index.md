@@ -32,7 +32,7 @@ draft: false # 글 초안 여부
 
 ## 1. NVIDIA GPU 전원  
 
-- GPU 패키지 기준, Blackwell은 1000~1400W, Rubin은 1400~1600W (최대치는 Rubin Ultra 추정치)  
+- GPU 패키지 기준, Blackwell은 1000 ~ 1400W, Rubin은 1400 ~ 1600W (최대치는 Rubin Ultra 추정치)  
 - 참고로 일반 그래픽카드 RTX3090은 350W, RTX4090은 450W, RTX5090은 600W TDP
 
 ![NVIDIA GPU TDP roadmap](image-1.png)
@@ -65,7 +65,7 @@ draft: false # 글 초안 여부
 ## 3. 액체 냉각
 
 위의 그래프에서 봤듯이, GB200부터는 무조건 액체 냉각인 것으로 보입니다.  
-일반적인 데스크탑에 다는 수랭쿨러와 비슷한 걸꺼라는 생각은 No, No...  
+일반적인 데스크탑에 다는 수랭쿨러와 비슷한 방법만 있을 거라는 생각은 No, No...  
 
 크게 2가지, 총 4가지의 방법을 구분지어 설명된 사항을 찾았습니다.  
 
@@ -147,14 +147,14 @@ DLC의 L2L(Liquid to Liquid)방식은 아래의 사진과 같은데, DLC가 궁�
 
 2. 합성 오일(Synthetic Oil) 계열의 냉각수  
 
-기화 단계가 없는 걸 단상의 그림에서 알 수는 있었는데,  
-이를 홍보하는 제조사에서는 장기간 성능 유지가 가능하고 증발하지 않는다고 합니다.  
+    기화 단계가 없는 걸 단상의 그림에서 알 수는 있었는데,  
+    이를 홍보하는 제조사에서는 장기간 성능 유지가 가능하고 증발하지 않는다고 합니다.  
 
-개방형 랙이 가능해서 SF에서나 나올 법한 챔버를 열었다 닫았다하고,  
-아래 사진처럼 손으로 랜선을 꼽는 걸 보니 상대적으로 신기했습니다.  
+    개방형 랙이 가능해서 SF에서나 나올 법한 챔버를 열었다 닫았다하고,  
+    아래 사진처럼 손으로 랜선을 꼽는 걸 보니 상대적으로 신기했습니다.  
 
-![maintain it devices in hand at single-phase immersive cooling](image-6.png)  
-> Image Referenced from [Green Revolution Cooling](https://www.grcooling.com/iceraq/)  
+    ![maintain it devices in hand at single-phase immersive cooling](image-6.png)  
+    > Image Referenced from [Green Revolution Cooling](https://www.grcooling.com/iceraq/)  
 
 ## References
 
@@ -170,5 +170,5 @@ DLC의 L2L(Liquid to Liquid)방식은 아래의 사진과 같은데, DLC가 궁�
 Tom's Hardware에서 KAIST의 액침 냉각 관련 연구를 소개한 기사를 발견했습니다.  
 관심있는 분은 해당 기사에 쓰인 KAIST 자료를 비롯해서, 이후 자료를 참고해볼 수 있을 듯합니다.  
 
-[Future AI processors said to consume up to 15,360 watts of power — massive power draw will demand exotic immersion and embedded cooling tech](https://www.tomshardware.com/pc-components/cooling/future-ai-processors-said-to-consume-up-to-15-360w-massive-power-draw-will-demand-exotic-immersion-and-embedded-cooling-tech/)
+[Future AI processors said to consume up to 15,360 watts of power — massive power draw will demand exotic immersion and embedded cooling tech](https://www.tomshardware.com/pc-components/cooling/future-ai-processors-said-to-consume-up-to-15-360w-massive-power-draw-will-demand-exotic-immersion-and-embedded-cooling-tech/)  
 ~~미래의 AI 프로세서는 최대 15,360와트의 전력을 소비할 것으로 예상되며, 이러한 막대한 전력 소모를 감당하기 위해서는 특수한 침수 및 내장형 냉각 기술이 필요할 것입니다.~~  
