@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>Jenkins, git and kubernetes - CI/CD 스터디 3주차 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Jenkins, git and kubernetes - CI/CD 스터디 3주차" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2025/11/02/jenkins-ci-cd-kubernetes/image-40.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2025/11/02/jenkins-ci-cd-kubernetes/image-40.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2025/11/02/jenkins-ci-cd-kubernetes/image-40.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-40.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Jenkins, git and kubernetes - CI/CD 스터디 3주차</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-02T08:51:39&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/jenkins" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">jenkins</span>
+              </div>
+            </a>
+            
+            <a href="/tags/gitea" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">gitea</span>
+              </div>
+            </a>
+            
+            <a href="/tags/helm" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">helm</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cicd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CICD</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 CI/CD Study 3주차에는 Jenkins와 ArgoCD을 다뤘습니다.</p>
+<p>이번에는 kubernetes(이하, k8s)에 self-host Git과 Jenkins를 배포 후 CI/CD 부분을 다루도록 하겠습니다.</p>
+<p>하다보니 개인적으로, 아래 3가지가 주로 기억에 남았던 것 같습니다.</p>
+<ul>
+<li>Docker UDS의 GID</li>
+<li>Gitea와 Multibranch Pipeline의 결합</li>
+<li>Local PV의 Taint 및 Node 지정</li>
+</ul>
+<p>더불어, Gitea에 대해 Basic Auth를 통한 CLI 접근을 막아보는 것도 새로이 해보았습니다.</p>
+<blockquote>
+<p>해당 구성들은 아래 GitHub에 탑재되어 있습니다.<br>
+<a href="https://github.com/kkumtree/ci-cd-cloudnet-study">https://github.com/kkumtree/ci-cd-cloudnet-study</a> 의 3w 폴더</p>
+</blockquote>
+<h2 id="0-실습-준비">0. 실습 준비</h2>
+<h3 id="1-kind">(1) kind</h3>
+<blockquote>
+<p>kind 설치의 경우 다음 포스트를 참고할 수 있습니다.<br>
+<a href="../kans-2w-kind-installation-on-linux/">리눅스에 KIND 설치하기 w/golang</a><br>
+Docs: <a href="https://kind.sigs.k8s.io/">https://kind.sigs.k8s.io/</a></p>
+</blockquote>
+<p>kind를 통해, 로컬 환경에 k8s를 배포해보겠습니다.</p>
+<ul>
+<li>networking.apiServerAddress:<br>
+ControlPlane에 접속하기 위한 주소 지정</li>
+<li>nodes.extraPortMappings:<br>
+호스트의 포트를 kind의 각 노드 포트로 직접 연결 설정.<br>
+이를 통해, 호스트에서 kind 내부의 <code>NodePort</code> 서비스에 접근 가능</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 3w/shells/kind/up-kind.sh</span>
+</span></span><span style="display:flex;"><span>kind create cluster --name myk8s --image kindest/node:v1.32.8 --config - <span style="color:#e6db74">&lt;&lt;EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Cluster
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: kind.x-k8s.io/v1alpha4
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">networking:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  apiServerAddress: &#34;0.0.0.0&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">nodes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: control-plane
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  extraPortMappings:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 30000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30000
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 30001
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30001
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 30002
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30002
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - containerPort: 30003
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hostPort: 30003
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">- role: worker
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><p><img src="image.png" alt="deploy kind control plane and worker node"></p>
+<p>아래의 명령어로 <code>~/.kube/config</code> 권한 인증이 로드된 것을 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get pod -v6
+</span></span><span style="display:flex;"><span>cat ~/.kube/config | grep 0.0.0.0
+</span></span><span style="display:flex;"><span>docker ps
+</span></span><span style="display:flex;"><span>docker images | grep kindest
+</span></span></code></pre></div><p><img src="image-1.png" alt="check kubeconfig and kind nodes"></p>
+<h3 id="2-kube-ops-view-설치">(2) kube-ops-view 설치</h3>
+<p>아래 커맨드를 입력하여 시각화 툴인 kube-ops-view를 설치합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm repo add geek-cookbook https://geek-cookbook.github.io/charts/
+</span></span><span style="display:flex;"><span>helm install kube-ops-view geek-cookbook/kube-ops-view --version 1.2.2 --set service.main.type<span style="color:#f92672">=</span>NodePort,service.main.ports.http.nodePort<span style="color:#f92672">=</span><span style="color:#ae81ff">30001</span> --set env.TZ<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Asia/Seoul&#34;</span> --namespace kube-system
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>export NODE_PORT<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get --namespace kube-system -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.spec.ports[0].nodePort}&#34;</span> services kube-ops-view<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>export NODE_IP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get nodes --namespace kube-system -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.items[0].status.addresses[0].address}&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo http://$NODE_IP:$NODE_PORT  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># echo http://$NODE_IP:$NODE_PORT/#scale=2 # 배율</span>
+</span></span></code></pre></div><p><img src="image-2.png" alt="install kube-ops-view">
+<img src="image-3.png" alt="kube-ops-view"></p>
+<h2 id="1-각-어플리케이션-설정">1. 각 어플리케이션 설정</h2>
+<blockquote>
+<p>Docker compose로 Jenkins 및 Gitea 배포하고 각각에 대한 설정을 해봅니다.</p>
+</blockquote>
+<h3 id="1-기본-배포-및-jenkins-설정">(1) 기본 배포 및 Jenkins 설정</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 3w/cicd-labs/docker-compose.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 아래 파일을 docker compose up -d 로 배포  </span>
+</span></span><span style="display:flex;"><span>services:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  jenkins:
+</span></span><span style="display:flex;"><span>    container_name: jenkins
+</span></span><span style="display:flex;"><span>    image: jenkins/jenkins:lts
+</span></span><span style="display:flex;"><span>    restart: unless-stopped
+</span></span><span style="display:flex;"><span>    networks:
+</span></span><span style="display:flex;"><span>      - cicd-network
+</span></span><span style="display:flex;"><span>    ports:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;8080:8080&#34;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;50000:50000&#34;</span>                      
+</span></span><span style="display:flex;"><span>    volumes:
+</span></span><span style="display:flex;"><span>      - /var/run/docker.sock:/var/run/docker.sock
+</span></span><span style="display:flex;"><span>      - jenkins_home:/var/jenkins_home   
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># privileged: true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  gitea:
+</span></span><span style="display:flex;"><span>    container_name: gitea
+</span></span><span style="display:flex;"><span>    image: docker.gitea.com/gitea:1.25.0
+</span></span><span style="display:flex;"><span>    restart: unless-stopped
+</span></span><span style="display:flex;"><span>    networks:
+</span></span><span style="display:flex;"><span>      - cicd-network
+</span></span><span style="display:flex;"><span>    ports:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;10022:22&#34;</span>                         
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;3000:3000&#34;</span>
+</span></span><span style="display:flex;"><span>    volumes:
+</span></span><span style="display:flex;"><span>      - ./gitea-data:/data
+</span></span><span style="display:flex;"><span>      - /etc/timezone:/etc/timezone:ro
+</span></span><span style="display:flex;"><span>      - /etc/localtime:/etc/localtime:ro 
+</span></span><span style="display:flex;"><span>    environment:
+</span></span><span style="display:flex;"><span>      - USER_UID<span style="color:#f92672">=</span><span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>      - USER_GID<span style="color:#f92672">=</span><span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>volumes:
+</span></span><span style="display:flex;"><span>  jenkins_home:
+</span></span><span style="display:flex;"><span>  gitea-data:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>networks:
+</span></span><span style="display:flex;"><span>  cicd-network:
+</span></span><span style="display:flex;"><span>    driver: bridge
+</span></span></code></pre></div><p><img src="image-5.png" alt="deploy docker compose"></p>
+<blockquote>
+<p>jenkins에 볼륨을 <code>**./**jenkins_home:/var/jenkins_home</code>으로 했을 경우, <code>permission error</code>가 발생합니다.</p>
+</blockquote>
+<p><img src="image-4.png" alt="permission error"></p>
+<p>이후 정상적으로 배포되었는지 확인 후, Jenkins Admin 패스워드를 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i in gitea jenkins ; <span style="color:#66d9ef">do</span> echo <span style="color:#e6db74">&#34;&gt;&gt; container : </span>$i<span style="color:#e6db74"> &lt;&lt;&#34;</span>; docker compose exec $i sh -c <span style="color:#e6db74">&#34;whoami &amp;&amp; pwd&#34;</span>; echo; <span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><p><img src="image-6.png" alt="check docker compose and get jenkins passphrase"></p>
+<p>세팅할 때는 컨테이너가 Host에 접속할 수 있는 IP를 찾아서 변경합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 실습시 공유기 대역이 192.168.1.1/24 이었으므로, 해당 대역 검색 후 적용 </span>
+</span></span><span style="display:flex;"><span>ifconfig | grep 192.168 -C1
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># USB무선랜을 사용 중이어서, wlx로 시작되는 주소 사용  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># virbr0: flags=4099&lt;UP,BROADCAST,MULTICAST&gt;  mtu 1500</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         inet 192.168.122.1  netmask 255.255.255.0  broadcast 192.168.122.255</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         ether 52:54:00:a3:a7:2c  txqueuelen 1000  (Ethernet)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># wlx909f33eeed74: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         inet 192.168.1.25  netmask 255.255.255.0  broadcast 192.168.1.255</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         inet6 fe80::14af:e:a003:b5ab  prefixlen 64  scopeid 0x20&lt;link&gt;</span>
+</span></span></code></pre></div><p><img src="image-8.png" alt="find my local ip in ifconfig">
+<img src="image-9.png" alt="set with my local ip"></p>
+<p>또는 컨테이너들이 배포된 Docker 브릿지 주소를 활용할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker inspect gitea | grep Gateway
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># &#34;Gateway&#34;: &#34;&#34;,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># &#34;IPv6Gateway&#34;: &#34;&#34;,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#         &#34;Gateway&#34;: &#34;172.27.0.1&#34;,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#         &#34;IPv6Gateway&#34;: &#34;&#34;,</span>
+</span></span><span style="display:flex;"><span>ifconfig | grep 172.27
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># inet 172.27.0.1  netmask 255.255.0.0  broadcast 172.27.255.255</span>
+</span></span></code></pre></div><p><img src="image-10.png" alt="use docker bridge"></p>
+<h3 id="2-jenkins의-docker-out-of-dockerdood-설정">(2) Jenkins의 Docker-out-of-Docker(DooD) 설정</h3>
+<p>일반적인 DinD 으로 배포하려면, privileged 권한을 올려줘야합니다.<br>
+<del>더불어 여러 Job이 돌는 상황에는 그닥&hellip;</del></p>
+<p>그래서, 아래와 같은 구조로 바꾸기 위해 재구성합니다.</p>
+<pre class="mermaid">flowchart LR
+  A --> B --> C  
+  A[Jenkins Container 내의 Docker Client]  
+  B[Docker UDS를 통해 Host Daemon에 접근]  
+  C[Host에 새로운 컨테이너 Deploy]  </pre>
+
+<p>UDS로 접근하려면, Jenkins Container에 아래의 수정을 가합니다.</p>
+<ul>
+<li>Docker client 설치</li>
+<li>jenkins 유저에도 docker 실행권한 부여
+<ul>
+<li>그룹 생성 및 유저 추가 <code>jenkins:docker</code></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">## 상승된 root 권한으로 접근</span>
+</span></span><span style="display:flex;"><span>docker compose exec --privileged -u root jenkins bash
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">## jenkins 컨테이너 내에서 Docker Engine 설치 및 권한 부여</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>id <span style="color:#75715e"># 현재 권한 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># uid=0(root) gid=0(root) groups=0(root)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Docker Engine 클라이언트 설치  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## https://get.docker.com/ 출력 값을 변경하여, CLI만 설치하였습니다.  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## curl -fsSL https://get.docker.com -o get-docker.sh &amp;&amp; sh get-docker.sh --dry-run</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 실습 당시 이미지는 Debian 기반  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## `docker-ce-cli`에 유의합니다.  </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>apt-get -qq update &gt;/dev/null
+</span></span><span style="display:flex;"><span>DEBIAN_FRONTEND<span style="color:#f92672">=</span>noninteractive apt-get -y -qq install ca-certificates curl &gt;/dev/null
+</span></span><span style="display:flex;"><span>install -m <span style="color:#ae81ff">0755</span> -d /etc/apt/keyrings
+</span></span><span style="display:flex;"><span>curl -fsSL <span style="color:#e6db74">&#34;https://download.docker.com/linux/debian/gpg&#34;</span> -o /etc/apt/keyrings/docker.asc
+</span></span><span style="display:flex;"><span>chmod a+r /etc/apt/keyrings/docker.asc
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;deb [arch=</span><span style="color:#66d9ef">$(</span>dpkg --print-architecture<span style="color:#66d9ef">)</span><span style="color:#e6db74"> signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian </span><span style="color:#66d9ef">$(</span>. /etc/os-release <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;</span>$VERSION_CODENAME<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span><span style="color:#e6db74"> stable&#34;</span> &gt; /etc/apt/sources.list.d/docker.list
+</span></span><span style="display:flex;"><span>apt-get -qq update &gt;/dev/null
+</span></span><span style="display:flex;"><span>DEBIAN_FRONTEND<span style="color:#f92672">=</span>noninteractive apt-get -y -qq install docker-ce-cli curl tree jq yq wget &gt;/dev/null
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## jenkins 유저에도 Docker 실행권한 부여</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 작성 중 휴먼에러로, Docker 소켓의 권한이 바뀌어 롤백 후 아래와 같이 수정하였습니다.  </span>
+</span></span><span style="display:flex;"><span>stat -c <span style="color:#e6db74">&#39;%g&#39;</span> /var/run/docker.sock
+</span></span><span style="display:flex;"><span>groupadd -g <span style="color:#66d9ef">$(</span>stat -c <span style="color:#e6db74">&#39;%g&#39;</span> /var/run/docker.sock<span style="color:#66d9ef">)</span> -f docker  
+</span></span><span style="display:flex;"><span>usermod -aG docker jenkins
+</span></span><span style="display:flex;"><span>grep docker /etc/group
+</span></span><span style="display:flex;"><span>grep jenkins /etc/group
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>exit
+</span></span></code></pre></div><p><img src="image-12.png" alt="install docker client in jenkins"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker compose restart jenkins
+</span></span><span style="display:flex;"><span>docker compose exec jenkins id
+</span></span><span style="display:flex;"><span>docker compose exec jenkins docker info
+</span></span><span style="display:flex;"><span>docker compose exec jenkins docker ps
+</span></span></code></pre></div><p>다시 확인합니다.</p>
+<p><code>stat -c '%g' /var/run/docker.sock</code>의 경우,<br>
+Host의 GID와 맞추지 않을 경우, Host 소켓도 사용 불능이 되어, GID를 맞추는 작업입니다.<br>
+(Privileged 모드여서 가능한 부분)</p>
+<p><img src="image-11.png" alt="sync docker group gid"></p>
+<h3 id="3-gitea-설정">(3) Gitea 설정</h3>
+<p><code>Server Domain</code>과 <code>Gitea 기본 URL</code>을 Jenkins와 같이,<br>
+호스트 IP(Docker Compose의 브릿지 게이트웨이)로 설정하였습니다.</p>
+<p><img src="image-13.png" alt="get ip address is same"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>grep localhost /etc/hosts
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 127.0.0.1 localhost</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ::1     ip6-localhost ip6-loopback</span>
+</span></span><span style="display:flex;"><span>open <span style="color:#e6db74">&#34;http://127.0.0.1:3000&#34;</span>
+</span></span></code></pre></div><p>당장의 접속은 localhost, 즉 <code>127.0.0.1</code>로도 무방합니다.</p>
+<p><img src="image-14.png" alt="set gitea with host ip"></p>
+<p>추가로 관리자 계정도 설정합니다(옵션).</p>
+<p><img src="image-15.png" alt="set gitea administrator"></p>
+<h3 id="4-docker-token-생성">(4) Docker Token 생성</h3>
+<p><a href="https://app.docker.com">Docker</a>에서 Personal Access Token(PAT)을 생성합니다.<br>
+(Read, Write, Delete 모든 권한을 부여했습니다)</p>
+<p><img src="image-21.png" alt="create personal access token"></p>
+<p><code>dckr_pat_&lt;난수&gt;_&lt;난수&gt;</code> 형태를 가지며, 이 또한 메모해둡니다.</p>
+<h2 id="2-간단-배포-구성">2. 간단 배포 구성</h2>
+<p>Jenkins 컨테이너가 Gitea와 DockerHub에서 리소스를 받고,<br>
+빌드 후 kind 클러스터에 배포하도록 해봅니다.</p>
+<pre class="mermaid">flowchart LR
+  A --> C --> D
+  B --> C
+
+  A[Gitea Repo Pull]  
+  B[Docker Hub Pull]  
+  C[Jenkins Build]  
+  D[Deploy in kind]  </pre>
+
+<h3 id="1-gitea-소스코드-생성">(1) Gitea 소스코드 생성</h3>
+<blockquote>
+<p>Access Token을 활용하여, 평소와 같이 git clone/push를 해봅니다.</p>
+</blockquote>
+<p>Access Token도 만들어봅시다.<br>
+(우측 상단의 설정 &gt; 어플리케이션)</p>
+<p>이때, Token Permission에서 repository에 대한 <code>Read and Write</code>를 활성화 합니다.</p>
+<p><img src="image-16.png" alt="create access token"></p>
+<p>다른 토큰들과 마찬가지로, 한번만 확인가능하니 따로 메모를 해둡니다.</p>
+<p><img src="image-17.png" alt="token created"></p>
+<p>Private Repository들을 생성한 후에,<br>
+토큰을 통해 호스트 IDE에서도 편집을 할수 있는지 확인해봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>TOKEN<span style="color:#f92672">=</span>1965eb8dbc1751a78d6f91dc9f0f8a8f9e48b1d8  
+</span></span><span style="display:flex;"><span>TOKEN_NAME<span style="color:#f92672">=</span>devops  
+</span></span><span style="display:flex;"><span>HOSTIP<span style="color:#f92672">=</span>172.27.0.1  
+</span></span><span style="display:flex;"><span>git clone http://$TOKEN_NAME:$TOKEN@$HOSTIP:3000/kkumtree/dev-app.git  
+</span></span><span style="display:flex;"><span>git clone git@172.27.0.1:kkumtree/dev-app.git test <span style="color:#75715e"># 차단됨 확인  </span>
+</span></span><span style="display:flex;"><span>git clone http://172.27.0.1:3000/kkumtree/dev-app.git test <span style="color:#75715e"># ID/PW 정상 입력시 받음  </span>
+</span></span></code></pre></div><p>마지막 케이스의 경우 ID/PW로 접근이 가능한데, 추후 막아보겠습니다.</p>
+<p><img src="image-18.png" alt="git clone from gitea"></p>
+<p>Host IDE(VSCode)를 통해, 파일을 추가했습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">## 실습파일 </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 3w/cicd-labs/dev-app </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># tree -a</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># .</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ├── Dockerfile</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ├── .gitignore  # repo 생성 시, 함께 생성  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ├── Jenkinsfile</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ├── README.md</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ├── server.py</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># └── VERSION</span>
+</span></span></code></pre></div><p><img src="image-19.png" alt="add python sample app"></p>
+<p>평소 하듯이, 더하고 커밋하고 올려봅니다.<br>
+이미, 토큰값이 있기 때문에 remote에 올라감을 알 수 있습니다.</p>
+<p><img src="image-20.png" alt="push without passphrase"></p>
+<h3 id="2-gitea-조직-생성-및-개인-repository-소유권-이전">(2) Gitea 조직 생성 및 개인 Repository 소유권 이전</h3>
+<blockquote>
+<p>Jenkins 플러그인과의 연동을 위해서, 많은게 바뀌어서 설정을 다시 진행했습니다.</p>
+</blockquote>
+<ol>
+<li>ORG 생성(선택/권장사항)<br>
+<code>새로운 조직</code>을 클릭하여, 조직을 생성합니다.<br>
+<img src="image-22.png" alt="create gitea creation"></li>
+<li>기존 Repository 소유권 이전<br>
+기존 레포(e.g. dev-app) 설정 맨 아래에 소유권 이전을 클릭합니다.<br>
+이때, 새 소유자는 새로 생성한 조직 이름으로 지정합니다.<br>
+<img src="image-23.png" alt="transfer repository ownership to organization"></li>
+<li>Token 재 생성<br>
+조건 충족을 위해 아래의 권한을 부여합니다.</li>
+</ol>
+<ul>
+<li>read:organization # 조직 권한을 읽습니다.</li>
+<li>write:repository  # repository 편집 권한.</li>
+<li>read:user         # user의 정보를 읽습니다.</li>
+</ul>
+<h3 id="3-jenkins-플러그인-설치-및-token-주입">(3) Jenkins 플러그인 설치 및 Token 주입</h3>
+<p>설치한 Plugin들은 아래와 같습니다.</p>
+<ul>
+<li><a href="https://plugins.jenkins.io/docker-workflow/">Docker Pipeline</a></li>
+<li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline: Stage View</a></li>
+<li><a href="https://plugins.jenkins.io/gitea/">Gitea</a></li>
+</ul>
+<p>Gitea 서버 주소 및 토큰을 설정해봅니다.<br>
+경로는 Manage -&gt; System -&gt; Gitea server 입니다.<br>
+이전에 파악했던 Host IP와 포트번호를 입력합니다. 유효하면 Gitea 버전이 확인됩니다.</p>
+<p><img src="image-25.png" alt="system setting for gitea server"></p>
+<p>(선택) Jenkins 및 Jenkins Node에서만 현재 상황을 파악할 수 있게 read-only 키를 별도 생성하였습니다.</p>
+<ul>
+<li>read:organization</li>
+<li>read:repository</li>
+<li>read:user</li>
+</ul>
+<p><img src="image-24.png" alt="optional read-only key for system settings"></p>
+<p>New Item(혹은 Create a job) -&gt; Orgnization Folder를 선택합니다.</p>
+<p><img src="image-26.png" alt="Orgnization Folder/Jenkinsfile"></p>
+<p>Project -&gt; Repository Sources -&gt; Gitea Organization 을 클릭 후, 앞서 지정한 Server를 선택합니다.<br>
+Behaviours는 Discover branches의 기본 Strategy 외에 제거합니다.<br>
+이후 Repository Write 권한이 있는 Credential을 추가하기 위해, Add -&gt; cicd-labs를 클릭합니다.<br>
+Owner는 Token 발급 유저, 혹은 유저가 속한 Organization 이름을 기입합니다.</p>
+<p><img src="image-27.png" alt="set gitea organization"></p>
+<p>Kind에서 Gitea Personal Access Token 선택 후, 임의 ID 지정 후 저장합니다.</p>
+<p><img src="image-28.png" alt="save for organization key"></p>
+<p>저장하면, organization(혹은, User)의 repository, branch 정보를 읽어옵니다.</p>
+<p><img src="image-29.png" alt="Success Gitea plugin setup"></p>
+<p>마지막으로 Docker Token도 저장합니다.<br>
+(Username and password. Username은 Docker 계정명)</p>
+<p><img src="image-30.png" alt="find Registry credentials"><br>
+<img src="image-31.png" alt="save docker token"></p>
+<h3 id="4-파이프라인-구성">(4) 파이프라인 구성</h3>
+<p>기존의 dev-app에 Jenkinsfile을 생성 후, Push 합니다.<br>
+Jenkins Organization에서 <code>Scan Gitea Organizaton Now</code> 클릭 후,<br>
+Log를 조회하면, Jenkinsfile을 발견했다고 하면서, Build를 시작합니다.</p>
+<p><img src="image-32.png" alt="Jenkinsfile found"></p>
+<p>상세를 보면, 빌드가 성공한 것을 확인할 수 있습니다.</p>
+<p><img src="image-33.png" alt="Build Success"></p>
+<p>Docker Hub에도 정상 게시된 것을 확인할 수 있습니다.</p>
+<p><img src="image-34.png" alt="Docker Hub Upload Success"></p>
+<h3 id="5-helm으로-수동-배포">(5) Helm으로 수동 배포</h3>
+<p>해당 이미지를 가지고 Helm 파일로 만들어 배포를 해보았습니다.</p>
+<blockquote>
+<p>실습 파일들은 <code>/3w/helm</code> 에 있습니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># tree</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># .</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ├── Chart.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ├── templates</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># │   ├── deployment.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># │   └── service.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># └── values.yaml</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm install timeserver .
+</span></span></code></pre></div><p><img src="image-37.png" alt="deploy with helm"></p>
+<p><img src="image-35.png" alt="two pod are deployed"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i in <span style="color:#f92672">{</span>1..100<span style="color:#f92672">}</span>;  <span style="color:#66d9ef">do</span> curl -s http://127.0.0.1:30000 | grep name; <span style="color:#66d9ef">done</span> | sort | uniq -c | sort -nr
+</span></span></code></pre></div><p>2개의 파드에서 분산되는 것을 확인하였습니다.</p>
+<p><img src="image-36.png" alt="curl test"></p>
+<p>replica를 4개로 늘려둔 후에도 골고루 분산되는 것을 알 수 있었습니다.</p>
+<p><img src="image-39.png" alt="increased replicaSet"></p>
+<p><img src="image-38.png" alt="curl test after upgrade"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i in <span style="color:#f92672">{</span>1..100<span style="color:#f92672">}</span>;  <span style="color:#66d9ef">do</span> curl -s http://127.0.0.1:30000 | grep name; <span style="color:#66d9ef">done</span> | sort | uniq -c | sort -nr
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#  30 Server hostname: timeserver-85b54fcbb5-dk7rg</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#  26 Server hostname: timeserver-85b54fcbb5-kgv27</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#  24 Server hostname: timeserver-85b54fcbb5-dm5fp</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#  20 Server hostname: timeserver-85b54fcbb5-bp4p6</span>
+</span></span></code></pre></div><p>애플리케이션 0.0.1 버전에서 0.0.2 버전으로 소스코드를 변경한 후, 이를 Jenkins가 빌드한 이미지를 배포 해봅니다.<br>
+git push 이후 <code>Scan Multibranch Pipeline Now</code>를 클릭하면 Docker Hub에 새 버전의 이미지 태그가 생성된 것 확인할 수 있습니다.</p>
+<p><img src="image-40.png" alt="click Scan Multibranch Pipeline Now">
+<img src="image-41.png" alt="new tag on docker hub"></p>
+<p>다시 helm 변수를 바꿔서 배포해봅니다.<br>
+새로운 버전의 Pod가 생성된 뒤, 기존 버전의 Pod가 순차적으로 사라짐을 확인하였습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm upgrade timeserver --reuse-values --set image.tag<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0.0.2&#34;</span> .
+</span></span></code></pre></div><p><img src="image-42.png" alt="rolling updated with helm"></p>
+<h2 id="3-kind-cluster에-jenkins-배포해보기">3. kind cluster에 Jenkins 배포해보기</h2>
+<p>대부분은 Jenkins의 문서를 참조하였습니다만,<br>
+로컬(Kind)환경에 구성하다보니 다소 손을 봐야하는 부분을 다루어야 합니다.</p>
+<blockquote>
+<p>실습 파일들은 <code>/3w/jenkins-on-kind</code> 에 있습니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># tree</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># .</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ├── jenkins-01-volume.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ├── jenkins-01-volume.yaml.default  # 변경 비교를 위한 파일</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ├── jenkins-02-sa.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ├── jenkins-values.yaml</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># └── jenkins-values.yaml.default     # 변경 비교를 위한 파일</span>
+</span></span></code></pre></div><h3 id="1-helm-템플릿-다운로드-및-배포">(1) Helm 템플릿 다운로드 및 배포</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl https://raw.githubusercontent.com/jenkins-infra/jenkins.io/master/content/doc/tutorials/kubernetes/installing-jenkins-on-kubernetes/jenkins-01-volume.yaml -o jenkins-01-volume.yaml
+</span></span><span style="display:flex;"><span>curl https://raw.githubusercontent.com/jenkins-infra/jenkins.io/master/content/doc/tutorials/kubernetes/installing-jenkins-on-kubernetes/jenkins-02-sa.yaml -o jenkins-02-sa.yaml
+</span></span><span style="display:flex;"><span>curl https://raw.githubusercontent.com/jenkinsci/helm-charts/main/charts/jenkins/values.yaml -o jenkins-values.yaml
+</span></span><span style="display:flex;"><span>cp jenkins-01-volume.yaml jenkins-01-volume.yaml.default
+</span></span><span style="display:flex;"><span>cp jenkins-values.yaml jenkins-values.yaml.default
+</span></span></code></pre></div><p>아래와 같이 부분적으로 변경하여야합니다.</p>
+<ol>
+<li>
+<p>Local PV 폴더 생성 후, 권한 부여합니다.
+jenkins-01-volume.yaml에 의해서, 로컬 볼륨을 /data/jenkins-volume 으로 지정</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo mkdir -p /data/jenkins-volume
+</span></span><span style="display:flex;"><span>sudo chown -R 1000:1000 /data/jenkins-volume
+</span></span></code></pre></div></li>
+<li>
+<p>local로 바꾸고, nodeAffinity를 부여하여 Control Plane Taint 에러를 해소합니다.<br>
+이 경우에는 Worker Node를 특정하여, 해당 노드에만 Jenkins가 배포되게 지정했습니다.</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>diff jenkins-01-volume.yaml jenkins-01-volume.yaml.default
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 13c13</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   local:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   hostPath:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 15,22d14</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   nodeAffinity:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;     required:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;       nodeSelectorTerms:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;       - matchExpressions:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;         - key: kubernetes.io/hostname</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;           operator: In</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;           values:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;             - myk8s-worker</span>
+</span></span></code></pre></div><h3 id="2-valuesyaml-수정">(2) values.yaml 수정</h3>
+<p>앞서 PV 및 SA를 생성하였으므로 values에 이를 비활성화 하고,<br>
+NodePort로 열어두며, namespace를 jenkins로 지정해둡니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>diff jenkins-values.yaml jenkins-values.yaml.default
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4d3</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt; name: jenkins</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 226,227c225</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   serviceType: NodePort</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   # serviceType: ClusterIP</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   serviceType: ClusterIP</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 236c234</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   nodePort: 30003           # kind 배포 시, 열어두었던 nodePort 사용  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   nodePort:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1273c1271</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   storageClass: jenkins-pv</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   storageClass:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1339,1340c1337</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   create: false</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   # create: true</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   create: true</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1344c1341</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;   name: jenkins</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ---</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &gt;   name:</span>
+</span></span></code></pre></div><h3 id="3-배포-및-진입">(3) 배포 및 진입</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Helm Chart 추가</span>
+</span></span><span style="display:flex;"><span>helm repo add jenkinsci https://charts.jenkins.io
+</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f jenkins-01-volume.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f jenkins-02-sa.yaml
+</span></span><span style="display:flex;"><span>helm install jenkins -n jenkins -f jenkins-values.yaml jenkinsci/jenkins
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 출력 암호</span>
+</span></span><span style="display:flex;"><span>kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password <span style="color:#f92672">&amp;&amp;</span> echo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 포트 및 IP 주소를 통해 주소 획득</span>
+</span></span><span style="display:flex;"><span>export NODE_PORT<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get --namespace jenkins -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.spec.ports[0].nodePort}&#34;</span> services jenkins<span style="color:#66d9ef">)</span>  
+</span></span><span style="display:flex;"><span>export NODE_IP<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get nodes --namespace jenkins -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.items[0].status.addresses[0].address}&#34;</span><span style="color:#66d9ef">)</span>  
+</span></span><span style="display:flex;"><span>echo http://$NODE_IP:$NODE_PORT
+</span></span></code></pre></div><p><img src="image-43.png" alt="deploy jenkins with helm"></p>
+<p>마지막 출력 값을 주소창에 넣어 접속합니다.</p>
+<h3 id="2-jenkins-내부-설정">(2) Jenkins 내부 설정</h3>
+<p>리버스 프록시에 문제가 있으므로 다시 Jenkins URL을 <code>http://$NODE_IP:$NODE_PORT</code>로 수정합니다.<br>
+(관리 &gt; System &gt; Jenkins URL )</p>
+<p><img src="image-44.png" alt="edit Jenkins URL"></p>
+<p>플러그인은 이렇게 설치합니다.</p>
+<ul>
+<li><a href="https://plugins.jenkins.io/docker-workflow/">Docker Pipeline</a></li>
+<li><a href="https://plugins.jenkins.io/pipeline-stage-view/">Pipeline: Stage View</a></li>
+<li><a href="https://plugins.jenkins.io/gitea/">Gitea</a></li>
+<li><a href="https://plugins.jenkins.io/gitea-pat-kubernetes-credentials/">Gitea PAT Kubernetes Credentials</a></li>
+</ul>
+<h2 id="9-gitea-basic-auth-차단">9. (Gitea) Basic Auth 차단</h2>
+<p>앞서, ID 및 PW로 접속이 가능한 점을 확인했으니<br>
+이러한 Basic Auth 로 git에 접근하는 것만 차단해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker compose exec gitea sh -c <span style="color:#e6db74">&#39;echo $GITEA_CUSTOM&#39;</span>
+</span></span><span style="display:flex;"><span>ls
+</span></span><span style="display:flex;"><span>grep -F <span style="color:#e6db74">&#39;gitea-data:&#39;</span> docker-compose.yaml -n -B1
+</span></span><span style="display:flex;"><span>ls ./gitea-data/gitea/conf/app.ini
+</span></span><span style="display:flex;"><span>grep -F <span style="color:#e6db74">&#39;[service]&#39;</span> gitea-data/gitea/conf/app.ini -n -A <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>grep ENABLE_BASIC_AUTHENTICATION gitea-data/gitea/conf/app.ini  <span style="color:#75715e"># 환경변수가 없음을 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 해당 환경 변수 추가에 대해 dryrun 후 apply</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/\[service\]/a ENABLE_BASIC_AUTHENTICATION = false&#39;</span> gitea-data/gitea/conf/app.ini | <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  grep -F <span style="color:#e6db74">&#39;[service]&#39;</span> -n -A <span style="color:#ae81ff">2</span>  
+</span></span><span style="display:flex;"><span>cp ./gitea-data/gitea/conf/app.ini ./gitea-data/gitea/conf/app.ini.bak.251102 <span style="color:#75715e"># 백업본 생성</span>
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;/\[service\]/a ENABLE_BASIC_AUTHENTICATION = false&#39;</span> gitea-data/gitea/conf/app.ini
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이후, gitea 재시작하여 설정 값 적용</span>
+</span></span><span style="display:flex;"><span>docker compose restart gitea
+</span></span></code></pre></div><p><img src="image-45.png" alt="disable gitea basic auth"></p>
+<p>다시 시도하면, IP와 PW로 접근하는 것은 차단되었음을 확인하였습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone http://172.27.0.1:3000/kkumtree/dev-app.git basic-auth-test
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Cloning into &#39;basic-auth-test&#39;...</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Username for &#39;http://172.27.0.1:3000&#39;: kkumtree</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Password for &#39;http://kkumtree@172.27.0.1:3000&#39;: </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># remote: Unauthorized</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># fatal: Authentication failed for &#39;http://172.27.0.1:3000/cicd-labs/dev-app/&#39;</span>
+</span></span></code></pre></div><p><img src="image-46.png" alt="confirm basic auth is blocked"></p>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://www.jenkins.io/doc/book/installing/docker/#on-macos-and-linux">Docker/Jenkins</a></li>
+<li><a href="https://www.cloudbees.com/blog/how-to-install-and-run-jenkins-with-docker-compose">How to Install and Run Jenkins With Docker Compose/CloudBees</a></li>
+<li><a href="https://itnext.io/docker-inside-docker-for-jenkins-d906b7b5f527">Docker inside Docker for Jenkins/ITNEXT</a></li>
+<li><a href="https://github.com/NelsonMaty/docker-outside-of-docker-example">Jenkins Docker-outside-of-Docker with Nexus Registry/NelsonMaty</a></li>
+<li><a href="https://www.tmvtech.com/ubuntu-tutorial-jenkins-gitea-docker/">Ubuntu Tutorial: Jenkins + Gitea + Docker/TMVTech</a></li>
+<li><a href="https://mike42.me/blog/2019-05-how-to-integrate-gitea-and-jenkins">How to integrate Gitea and Jenkins/mike42.me</a></li>
+<li><a href="https://principaloftech.medium.com/so-kind-of-helm-using-kind-kubernetes-in-docker-helm-for-quick-jenkins-setup-587252d787f6">Quick Jenkins Setup with Kubernetes in Docker(kind) and Helm in 5 minutes/PrincipalOfTech</a></li>
+<li><a href="https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3">Kubernetes/Jenkins</a></li>
+<li><a href="https://docs.gitea.com/administration/config-cheat-sheet#service-service">Configuration Cheat Sheet/Gitea Documentation</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2025/10/26/helm-template-reusing-statements/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2025/11/09/argocd-hello-world/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">ArgoCD 101 - CI/CD 스터디 4주차</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+<script type="text/javascript" src='/js/mermaid.min.js'></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+
+
+</body>
+</html>

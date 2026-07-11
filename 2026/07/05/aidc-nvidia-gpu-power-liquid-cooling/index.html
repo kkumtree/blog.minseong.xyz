@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>NVIDIA GPU 전원과 액체 냉각 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="NVIDIA GPU 전원과 액체 냉각" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2026/07/05/aidc-nvidia-gpu-power-liquid-cooling/image-6.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2026/07/05/aidc-nvidia-gpu-power-liquid-cooling/image-6.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2026/07/05/aidc-nvidia-gpu-power-liquid-cooling/image-6.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-6.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>NVIDIA GPU 전원과 액체 냉각</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2026-07-05T01:02:23&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aidn" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">aidn</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/immersive_cooling" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">immersive_cooling</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 AI Datacenter Network Study(이하, AIDN)에서 데이터센터 전원(전력)과 냉각에 대한 부분을 다뤄주셨습니다.</p>
+<p>게임용으로 하던, <code>웹</code>개발을 하던, 영화를 보던, 컴퓨터를 쓰게 되면 전력 소모와 발열은 별개가 아닌 함께 발생하는 이슈라는 것은&hellip; 누구든 직관적으로 체득하는 부분이지요.</p>
+<p><del>저 또한 밀실에서 불타고 있는 서버 현황을 보며, 저 아이는 대체 어떻게 도와줘야할까 고민만 깊어집니다</del></p>
+<p><img src="image.png" alt="server temperature"></p>
+<blockquote>
+<p>적당히 차 우려먹기 좋아보이는 온도</p>
+</blockquote>
+<p>일반 그래픽카드를 쓰고 있긴 하지만, 저도 체감되는 부분이 있는지라<br>
+적당히 트렌드를 찾아보고 앞으로의 GPU TDP(Thermal Design Power)와 냉각에 대한 부분을 끄적여봅니다.</p>
+<hr>
+<h2 id="1-nvidia-gpu-전원">1. NVIDIA GPU 전원</h2>
+<ul>
+<li>GPU 패키지 기준, Blackwell은 1000 ~ 1400W, Rubin은 1400 ~ 1600W (최대치는 Rubin Ultra 추정치)</li>
+<li>참고로 일반 그래픽카드 RTX3090은 350W, RTX4090은 450W, RTX5090은 600W TDP</li>
+</ul>
+<p><img src="image-1.png" alt="NVIDIA GPU TDP roadmap"></p>
+<blockquote>
+<p>Image Referenced from <a href="https://tonecooling.com/nvidia-rubin-gpu-cooling-challenges/">ToneCooling</a></p>
+</blockquote>
+<ul>
+<li>물론 컴퓨팅 자원을 위한 냉각팬, UPS, PSU에 필요한 전원도 반영하게되면, 설계되어야할 공급 전력은 더 커지게 될 것입니다.</li>
+</ul>
+<p><img src="image-2.png" alt="Power Usage Effectiveness"></p>
+<blockquote>
+<p>Image Referenced from <a href="https://d2.naver.com/helloworld/176039">NAVER D2</a></p>
+</blockquote>
+<h2 id="2-rubin-nvl72는-얼마나-많은-전력을-소모할까">2. Rubin NVL72는 얼마나 많은 전력을 소모할까?</h2>
+<p>참고했던 게시물에서 아래와 같은 표를 발견하였습니다.</p>
+<table>
+	<thead>
+			<tr>
+					<th>Parameter</th>
+					<th>Current NVL72</th>
+					<th>Projected(RUMORED) NVL144</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>GPUs per rack</td>
+					<td>72</td>
+					<td>144</td>
+			</tr>
+			<tr>
+					<td>Rack GPU power (Rubin)</td>
+					<td>~100-200 kW</td>
+					<td>~200-260 kW</td>
+			</tr>
+			<tr>
+					<td>Total rack power</td>
+					<td>~150-250 kW</td>
+					<td>~280-350 kW</td>
+			</tr>
+			<tr>
+					<td>Coolant flow rate</td>
+					<td>54-108 LPM</td>
+					<td>108-216+ LPM</td>
+			</tr>
+			<tr>
+					<td>CDU capacity needed</td>
+					<td>160+ kW</td>
+					<td>300+ kW</td>
+			</tr>
+	</tbody>
+</table>
+<ul>
+<li>NVL72는 당연히 하나의 랙에 72개의 GPU가 들어간다는 의미입니다.<br>
+(실물이 궁금하면, <del>500원&hellip;</del> <a href="https://blog.minseong.xyz/2026/06/28/aidn-nvidia-gpu-interconnect/">NVIDIA GPU Interconnect 계층 훑어보기</a>을 참고)</li>
+<li>Coolant flow rate는 냉각수의 유량을 의미하며, LPM은 분당 리터(Liter Per Minute) 단위입니다.</li>
+<li>CDU(Cooling Distribution Unit) capacity는 냉각수의 흐름을 제어하고 분배하는 장치의 용량을 의미합니다.</li>
+</ul>
+<p>그러면, Rubin NVL72를 운용하기 위해서는 CDU 까지만 합쳐도, 피크 기준 400kW 로도 안심을 할 수 없다는 것으로 보입니다.</p>
+<h2 id="3-액체-냉각">3. 액체 냉각</h2>
+<p>위의 그래프에서 봤듯이, GB200부터는 무조건 액체 냉각인 것으로 보입니다.<br>
+일반적인 데스크탑에 다는 수랭쿨러와 비슷한 방법만 있을 거라는 생각은 No, No&hellip;</p>
+<p>크게 2가지, 총 4가지의 방법을 구분지어 설명된 사항을 찾았습니다.</p>
+<table>
+	<thead>
+			<tr>
+					<th>Type</th>
+					<th>Name</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>DLC</td>
+					<td>L2L</td>
+					<td>서버의 발열체에서 데워진 액체를 외부에서 공급되는 차가운 액체로 냉각하는 방식</td>
+			</tr>
+			<tr>
+					<td>DLC</td>
+					<td>L2A</td>
+					<td>발열체에서 데워진 냉각수를 공기로 냉각하는 방식</td>
+			</tr>
+			<tr>
+					<td>Immersive Cooling</td>
+					<td>Two-Phase</td>
+					<td>냉각수는 끓어오르며 열을 전달</td>
+			</tr>
+			<tr>
+					<td>Immersive Cooling</td>
+					<td>Single-Phase</td>
+					<td>냉각수는 끓지 않고 열을 전달</td>
+			</tr>
+	</tbody>
+</table>
+<p>(DLC: Direct-to-chip Liquid Cooling, Immersive Cooling: GPU 패키지를 냉각수에 직접 담그는 방식)</p>
+<p>DLC는 데스크탑에 다는 수랭쿨러 쪽이 맞는거 같은데, 액침방식은 절연성(비전도성) 액체에 담구는 방식.<br>
+DLC의 L2L(Liquid to Liquid)방식은 아래의 사진과 같은데, DLC가 궁금한 경우 이미지의 레퍼런스를 참고.</p>
+<p><img src="image-3.png" alt="DLC L2L"></p>
+<blockquote>
+<p>Image Referenced from <a href="https://www.hdrinc.com/insights/direct-chip-liquid-cooling">HDR</a></p>
+</blockquote>
+<h2 id="4-액침-냉각">4. 액침 냉각</h2>
+<blockquote>
+<p>처음, 2상(Two-Phase)과 단상(혹은 1상, Single-Phase)의 도식이 예상과는 달리 정반대였던 것이 인상적<br>
+간단히 말하면, 액체의 기화 여부에 따라 구분</p>
+</blockquote>
+<ol>
+<li>
+<p>2상(Two-Phase) 액침 냉각</p>
+<ul>
+<li>GPU 패키지를 절연성 액체에 담그고, GPU 패키지에서 발생한 열로 인해 액체가 끓어오르며 열을 전달하는 방식</li>
+<li>끓어오른 증기는 외부의 냉각장치에서 다시 액체로 응축되어 순환</li>
+</ul>
+<p><img src="image-4.png" alt="Immersive Cooling Two-Phase"></p>
+<blockquote>
+<p>Image Referenced from <a href="https://www.gr-cooling.com/blog/two-phase-versus-single-phase-immersion-cooling/">Green Revolution Cooling</a></p>
+</blockquote>
+<ul>
+<li>2상용 냉각수는 불화탄소계열의 냉각수(Fluorocarbon-based Coolant).<br>
+PFAS(per- and polyfluoroalkyl substances)가 이쪽인 듯합니다.</li>
+</ul>
+</li>
+<li>
+<p>단상(혹은 1상, Single-Phase) 액침 냉각</p>
+<ul>
+<li>GPU 패키지를 절연성 액체에 담그고, GPU 패키지에서 발생한 열을 액체가 흡수하여 외부의 냉각장치로 전달하는 방식</li>
+<li>액체는 끓지 않고, GPU 패키지에서 발생한 열을 흡수하여 외부의 냉각장치로 전달</li>
+</ul>
+<p><img src="image-5.png" alt="Immersive Cooling Single-Phase"></p>
+<blockquote>
+<p>Image Referenced from <a href="https://www.gr-cooling.com/blog/two-phase-versus-single-phase-immersion-cooling/">Green Revolution Cooling</a></p>
+</blockquote>
+<ul>
+<li>단상용 냉각수는 주로 합성 오일(Synthetic Oil) 계열의 냉각수.<br>
+합성 탄화수소계 유체(synthetic hydrocarbon-based fluids)라고 하는 듯.</li>
+</ul>
+</li>
+<li>
+<p>차이 - 단상이 2상보다 효율적일 수 있다</p>
+</li>
+</ol>
+<p>도식 상으로는 단상이 펌프가 있는 CDU랑 열교환기(Heat Exchanger)의 구성이 나뉘어져있어서, 관리 포인트가 더 늘어서 더 관리가 복잡하지 않을까 싶었는데, 반대라고 합니다.</p>
+<p>2상의 경우에는 기화된 증기를 다시 응축시킬 응축기가 밀폐랙에 들어있는데, 이 밀폐랙이 모든 것을 관리해야하기 때문에, 오히려 장애 요인이 될 수 있는 것으로 보입니다.</p>
+<p>(솔직히, 한여름철 전체 빌딩의 냉각탑이 고장나서, 긴급 출동이 와도 4시간 동안 에어컨 없이 고통받았던 기억을 생각하면 으음&hellip;)</p>
+<p>더해서, IT 장비를 교체하는 과정에서 기화된 냉각수가 소실되는데, 이를 보충하는 비용이 상당하다는 것 같습니다.</p>
+<h2 id="5-액침-냉각용-냉각수">5. 액침 냉각용 냉각수?</h2>
+<p>오늘도 그림책을 위한 원본 이미지를 찾던 중,<br>
+3M이 많이 표시 되길래 <del>여기서 멈췄어야 했는데</del> 좀더 구글링을 해보니,</p>
+<ol>
+<li>
+<p>PFAS?</p>
+<blockquote>
+<p>기화 유독성을 생각하다보니, 체르노빌이 문득 스쳤습니다.</p>
+</blockquote>
+<p>3M™ Novec™ Engineered Fluids랑 3M™ Fluorinert™ Electronic Liquid라는 제품군 중에서<br>
+<strong>PFAS</strong>는 2025년 말에 생산을 중단했다고 합니다.</p>
+<p>이 PFAS는,</p>
+<ul>
+<li>높은 온난화지수(GWP, Global Warming Potential)</li>
+<li>자연상태에서 분해가 잘되지 않음 (탄소와 불소의 강결합)</li>
+<li>이중 PFOA(과불화옥탄산)은 1급, PFOS (과불화옥탄술폰산) 2B급 인체 발암물질</li>
+</ul>
+<p>이라고 하는데, HFO(수소불화올레핀) 계열의 냉각수는 PFAS 중에서는<br>
+위 둘과 비교할 때, 비교적 덜 위험하다고 하나 단가가 높다고 합니다.<br>
+그래서 단상 액침냉각으로 전환하는 사례도 있는 것 같습니다.</p>
+<p>분자 중심에 탄소 간 이중결합으로 분해가 잘 된다고 하는데,<br>
+자세한 건 화공 전문가나 위키피디아에서 보셔야 할 듯합니다.</p>
+<p>반도체 노광/식각/세정/냉각에 이 계통이 쓰인다고 하는데, 이 또한 전문가에게&hellip;</p>
+</li>
+<li>
+<p>합성 오일(Synthetic Oil) 계열의 냉각수</p>
+<p>기화 단계가 없는 걸 단상의 그림에서 알 수는 있었는데,<br>
+이를 홍보하는 제조사에서는 장기간 성능 유지가 가능하고 증발하지 않는다고 합니다.</p>
+<p>개방형 랙이 가능해서 SF에서나 나올 법한 챔버를 열었다 닫았다하고,<br>
+아래 사진처럼 손으로 랜선을 꼽는 걸 보니 상대적으로 신기했습니다.</p>
+<p><img src="image-6.png" alt="maintain it devices in hand at single-phase immersive cooling"></p>
+<blockquote>
+<p>Image Referenced from <a href="https://www.grcooling.com/iceraq/">Green Revolution Cooling</a></p>
+</blockquote>
+</li>
+</ol>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://tonecooling.com/nvidia-rubin-gpu-cooling-challenges/">ToneCooling - NVIDIA Rubin GPU Cooling Challenges</a></li>
+<li><a href="https://d2.naver.com/helloworld/176039">NAVER D2 - 데이터 센터에 대한 일반 상식</a></li>
+<li><a href="https://www.hdrinc.com/insights/direct-chip-liquid-cooling">HDR - Direct-to-Chip Liquid Cooling</a></li>
+<li><a href="https://www.gr-cooling.com/blog/two-phase-versus-single-phase-immersion-cooling/">Green Revolution Cooling - Two-Phase Versus Single-Phase Immersion Cooling</a></li>
+<li><a href="https://news.3m.com/2022-12-20-3M-to-Exit-PFAS-Manufacturing-by-the-End-of-2025">3M - 3M to Exit PFAS Manufacturing by the End of 2025</a></li>
+<li><a href="https://www.grcooling.com/iceraq/">Green Revolution Cooling - PRODUCTS/ICEraQ</a></li>
+</ul>
+<h2 id="ps">ps</h2>
+<p>Tom&rsquo;s Hardware에서 KAIST의 액침 냉각 관련 연구를 소개한 기사를 발견했습니다.<br>
+관심있는 분은 해당 기사에 쓰인 KAIST 자료를 비롯해서, 이후 자료를 참고해볼 수 있을 듯합니다.</p>
+<p><a href="https://www.tomshardware.com/pc-components/cooling/future-ai-processors-said-to-consume-up-to-15-360w-massive-power-draw-will-demand-exotic-immersion-and-embedded-cooling-tech/">Future AI processors said to consume up to 15,360 watts of power — massive power draw will demand exotic immersion and embedded cooling tech</a><br>
+<del>미래의 AI 프로세서는 최대 15,360와트의 전력을 소비할 것으로 예상되며, 이러한 막대한 전력 소모를 감당하기 위해서는 특수한 침수 및 내장형 냉각 기술이 필요할 것입니다.</del></p>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2026/06/28/aidn-nvidia-gpu-interconnect/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">NVIDIA GPU Interconnect 계층 훑어보기</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2026/07/12/aidc-network-monitoring-microburst/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">Network 모니터링과 마이크로버스트</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>KV cache에 대한 이해 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="KV cache에 대한 이해" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2026/06/20/aidn-kvcache-and-localllm/image-1.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2026/06/20/aidn-kvcache-and-localllm/image-1.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2026/06/20/aidn-kvcache-and-localllm/image-1.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-1.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>KV cache에 대한 이해</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2026-06-20T17:57:45&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aidn" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">aidn</span>
+              </div>
+            </a>
+            
+            <a href="/tags/llm" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">llm</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kvcache" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kvcache</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>지난 주 일요일부터 <a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 AI Datacenter Network Study(이하, AIDN)에 참여하게 되었습니다.</p>
+<p>요새는 PC에 달린 그래픽카드 활용을 위해, 이것저것(RAG, ASR 및 일반적인 추론모델) 돌려보는 중인데 그 중에서 막히던게 KV cache에 대한 이해 부족으로 Hermes Agent용 모델 선정에 애를 먹고 있었습니다. 그래서 이왕 하는 김에 큰 욕심을 버리고 KV cache에 대한 이해를 해보고자 합니다.</p>
+<p>영상은 스터디에서 참고용으로 추천해주신 수 많은 영상들 중에서 <a href="https://www.youtube.com/watch?v=sq3XGM1qdQY">[KV cache 시각화로 설명]</a> 영상을 참고 하였습니다.</p>
+<h2 id="1-kv-cache-란">1. KV cache 란?</h2>
+<p>이해하고 있는 내용으로는 역시 말 그대로 Key-Value 형태의 캐싱입니다.</p>
+<p>그럼 이번에 찾아본 내용은 무엇을 캐싱하고, 이걸 어떻게 활용하는 가에 대한 부분입니다.</p>
+<p>물론 Gemma4 같은 모델을 사용해보면서 기존 프롬프트를 반복 호출하면 추론된 결과를 더 빨리 응답하기에, 이걸 캐싱하나보다 하고 이후는 눈 감고 있었지만요.<br>
+(이 또한 다 정리하고보니 결이 다른 이야기임을 깨달았습니다)</p>
+<p>영상을 보니 어텐션과 시퀀스가 많이 언급되길래, 이 부분부터 저만의 용어로 습득해보고자 했습니다.</p>
+<ol>
+<li>어텐션이란?
+<ul>
+<li>
+<p>입력 시퀀스의 각 요소가 어디에 집중해야하는 지를 결정하는 매커니즘.</p>
+</li>
+<li>
+<p>구성 3요소: 쿼리(Q), 키(K), 밸류(V)</p>
+<ul>
+<li>Q: 현재 처리 중인 단어</li>
+<li>K: 입력 시퀀스의 각 요소에 대한 가중치 계산 재료</li>
+<li>V: 각 키에 대응되는 어텐션 출력의 재료입니다.</li>
+</ul>
+</li>
+<li>
+<p>어텐션의 출력은 가중치와 밸류의 Weighted Sum 으로 계산된다고 합니다.</p>
+</li>
+</ul>
+</li>
+<li>셀프 어텐션이란?
+<ul>
+<li>입력 시퀀스의 각 요소가 시퀀스 내 다른 요소들과 상호작용하여 어텐션을 계산하는 방식.</li>
+<li>즉, 입력 시퀀스의 각 단어가 다른 단어들과의 관계를 고려하여 가중치(Q/K/V)를 계산하고, 이를 통해 출력값을 생성하는 과정입니다.</li>
+</ul>
+</li>
+<li>시퀀스란?
+<ul>
+<li>그래서 입력 시퀀스가 뭔지? 이쪽 용어가 낯설어서 따로 찾아서 끄적여봅니다.</li>
+<li>시퀀스는 일련의 요소들이 순서대로 배열된 것을 의미한다고 합니다.</li>
+<li>입력 시퀀스는 모델에 입력되는 단어들의 순서 있는 집합입니다.</li>
+<li>예를 들어, &ldquo;Hello world&quot;라는 문장이 입력 시퀀스라면, &ldquo;Hello&quot;와 &ldquo;world&quot;가 각각 시퀀스의 요소가 됩니다.<br>
+&hellip; 아, 이거 딥러닝 쪽에서 순서 있는 집합을 시퀀스라고 이미 예전부터 쓰고 있었네요.</li>
+</ul>
+</li>
+</ol>
+<p><del>그만 알아보자</del></p>
+<p>일단 KV cache 의 구성요소에서 쿼리가 있었다는 걸 처음 알았고, 그간 키의 값이라고 생각했던 것이 Q라는 것을 알아버렸습니다.</p>
+<h2 id="2-어텐션-계산에-대해">2. 어텐션 계산에 대해</h2>
+<p><img src="image.png" alt="key and value calculated in each sequence"></p>
+<ol>
+<li>
+<p>Key 와 Value 는 각 토큰에 가중치 행렬(W_K, W_V)을 곱하여 생성.</p>
+<p><img src="image-1.png" alt="queries independent with each others"></p>
+<ul>
+<li>각 Q는 독립적으로 softmax → weighted sum 계산을 수행함</li>
+<li>시퀀스 전체가 세로 방향으로 쌓입니다.</li>
+</ul>
+</li>
+<li>
+<p>쿼리는 서로 독립적으로 병렬 처리됩니다.</p>
+<ul>
+<li>세로 열 하나 = 하나의 Q 토큰이 전체 K/V 시퀀스에 대해<br>
+어텐션(softmax → weighted sum)을 계산하는 단위</li>
+<li>다른 Q의 계산 결과에 의존하지 않으므로 병렬 처리 가능</li>
+</ul>
+</li>
+<li>
+<p>쿼리는 시퀀스 내에서 서로 의존성 없이 병렬적으로 처리된다고 합니다.</p>
+<ul>
+<li><del>덕택에 유행이 살짝 지난 것 같은 RAG를 쌓아두고, 암만 RAG 기반 조회를 돌려봐도</del><br>
+<del>전체적인 맥락을 별도로 조회하지 않으면 의도했던 결과가 나오지 않았던 이유가 이 부분이었구나 하는 생각이 스쳤습니다</del><br>
+라고 썼는데, 그림을 그리고보니 뭔가 다른 결인 것 같아서 삭제.</li>
+</ul>
+</li>
+</ol>
+<h2 id="3-kv-cache-없이-계산한다면">3. KV cache 없이 계산한다면?</h2>
+<blockquote>
+<p>입력된 텍스트의 토큰 길이를 L이라고 지칭.</p>
+</blockquote>
+<h3 id="1-토큰-길이가-l인-입력-시퀀스가-셀프-어텐션을-통과하는-과정">(1) 토큰 길이가 L인 입력 시퀀스가 셀프 어텐션을 통과하는 과정</h3>
+<ol>
+<li>셀프 어텐션에 의해 L끼리 Q/K/V 시퀀스가 생성됨.<br>
+이 상태에서, Q/K 내적을 통해 <strong>L^2</strong> 개의 가중치가 생성됨.</li>
+<li>이 가중치와 V를 통해 Weighted Sum으로 어텐션 출력이 생성됨.</li>
+<li>이후 FFN을 거쳐 LLM의 출력이 생성됨.</li>
+</ol>
+<p>또, 용어가 낯설어서 FFN이 뭔지 찾아보니, <strong>Feed Forward Network</strong>의 약자라고 합니다.</p>
+<ul>
+<li>입력 → 은닉층 → 출력층으로 흐름</li>
+<li>순환이나 루프가 없는 구조로 RNN과 대비되는 구조</li>
+</ul>
+<p>작년에 학교 과정에서는 순방향 신경망이라고 외웠는데, 그게 FFN이었네요.</p>
+<p>그렇게 되면, 계산 복잡도는 O(L^2 * D)가 됩니다. (D는 시퀀스의 차원 수)</p>
+<h3 id="2-계산-부담이-큰-이유">(2) 계산 부담이 큰 이유</h3>
+<p>앞에서 셀프 어텐션을 통과하면 출력값은 다음 토큰 하나뿐인데 아래와 같이 비용이 크다고 합니다.</p>
+<ul>
+<li>계산은 L^2 * D만큼 수행</li>
+<li>출력값 외에는 모두 버려짐</li>
+</ul>
+<p>이거 완전 GitHub Actions 돌릴 때랑 똑같잖아? 란 생각을 했습니다.<br>
+Dependency 다 깔고 빌드해봐야, 남는 건 HTML 파일들이고 다 필요가 없는 것 처럼.</p>
+<h2 id="4-kv-cache-에서-저장하고-쓰는-것">4. KV cache 에서 저장하고 쓰는 것</h2>
+<ol>
+<li>저장 단계
+<ul>
+<li>셀프 어텐션에 의해 Q/K/V Weight를 통과 후, 이때 K, V시퀀스를 저장한다고 합니다.</li>
+</ul>
+</li>
+<li>활용 단계
+<ul>
+<li>이후 어텐션 계산 시, 입력 시퀀스의 마지막 샘플만을 Q/K/V Weight에 통과시킵니다.<br>
+기존에 매번, 시퀀스 길이 L만큼 Q/K/V Weight를 통과시키던 것과 달리, 마지막 샘플만 통과시킵니다.</li>
+<li>이때, K/V는 직전 LM 생성에서 저장한 K/V를 활용합니다.<br>
+통과한 마지막 샘플의 K/V의 앞에 직전 LM 생성에서 저장한 K/V를 붙입니다.</li>
+<li>이 붙인 값을 KV cache에 다시 저장.</li>
+</ul>
+</li>
+<li>단일 Q(마지막 샘플만 통과했기 때문에)로 K(가중치) -&gt; V(Weighted Sum) 계산을 수행합니다.
+<ul>
+<li>시퀀스는 병렬적으로 처리되기 때문에, 마지막 샘플만 있어도 어텐션 계산 결과는 동일합니다.</li>
+</ul>
+</li>
+</ol>
+<p>이렇게 되면 계산 복잡도가 O(L * D)로 줄어들게 됩니다.</p>
+<h2 id="5-원래-목적">5. 원래 목적</h2>
+<p>사실은 RTX 3060 12GB에 알맞는 모델을 찾는데 KV 캐시도 계산을 했어야 했는데,<br>
+KV cache를 어떻게 가져가느냐에 따라 어떤 효과가 있는지 이해해보고자 찾아본 내용이었습니다.</p>
+<p>복잡도를 개선함으로서 응답속도에 개선되리라는 점은 알았으니, KV Cache가 얼마나 필요할지 어림잡아 보려고 합니다.</p>
+<blockquote>
+<p>기존 VRAM: 20MB 미만으로 gnome-shell 프로세스만 차지하는 중.</p>
+</blockquote>
+<p><a href="https://huggingface.co/unsloth/Qwen3.5-9B-GGUF">unsloth/Qwen3.5-9B-GGUF</a> 모델을 차주에 테스트 해보려고 합니다.</p>
+<ul>
+<li>32레이어: 8 x (3: Gated DeltaNet + 1: Gated Attention)
+<ul>
+<li>Gated Attention: 일반 Softmax Attention</li>
+<li>Gated DeltaNet: 선형 어텐션. 토큰별 K/V 미보관</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-가중치--ud-q4_k_xl-597gb">(1) 가중치 — UD-Q4_K_XL (5.97GB)</h3>
+<ul>
+<li>VISION 추가 시, mmproj-BF16 0.92GB <a href="https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/tree/main">Hugging Face</a> 추가 계획.<br>
+다만 OOM 이슈 날꺼 같아서, 이번에는 계획에서 제외.</li>
+</ul>
+<h3 id="2-kv-캐시---q8_0-20gb">(2) KV 캐시 - q8_0 (2.0GB)</h3>
+<p><code>2 × 8 × 4 × 256 × T × P</code></p>
+<ul>
+<li>어텐션 레이어 8개만 적용. 토큰당 = 16,384 × P 바이트 → q8_0 16KiB</li>
+<li>T = 토큰 수, P = 양자화 정밀도</li>
+</ul>
+<table>
+	<thead>
+			<tr>
+					<th>컨텍스트</th>
+					<th>q4 KV</th>
+					<th>q8_0 KV</th>
+					<th>f16 KV</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>32K</td>
+					<td>0.28</td>
+					<td>0.50</td>
+					<td>1.0</td>
+			</tr>
+			<tr>
+					<td>64K</td>
+					<td>0.56</td>
+					<td>1.0</td>
+					<td>2.0</td>
+			</tr>
+			<tr>
+					<td>128K</td>
+					<td>1.13</td>
+					<td><strong>2.0</strong></td>
+					<td>4.0</td>
+			</tr>
+			<tr>
+					<td>256K</td>
+					<td>2.25</td>
+					<td>4.0</td>
+					<td>8.0</td>
+			</tr>
+	</tbody>
+</table>
+<p>(단위 GB)</p>
+<h3 id="3-고정-런타임-오버헤드-11gb">(3) 고정 런타임 오버헤드 (1.1GB)</h3>
+<ul>
+<li>DeltaNet 순환 상태(24레이어, 컨텍스트 무관): ~0.05GB</li>
+<li>컴퓨트 버퍼 + CUDA 컨텍스트(flash-attn on): ~1.0GB (긴 컨텍스트에서 약간 증가)</li>
+</ul>
+<h3 id="4-합산-시나리오-텍스트-전용-q8_0-kv">(4) 합산 시나리오 (텍스트 전용, q8_0 KV)</h3>
+<table>
+	<thead>
+			<tr>
+					<th>가중치</th>
+					<th>컨텍스트</th>
+					<th>합계</th>
+					<th>판정</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>UD-Q4_K_XL 5.97</td>
+					<td>64K</td>
+					<td>7.97</td>
+					<td>✅ 여유 3.8GB</td>
+			</tr>
+			<tr>
+					<td>UD-Q4_K_XL 5.97</td>
+					<td>128K</td>
+					<td>8.97</td>
+					<td>✅ 여유 2.8GB</td>
+			</tr>
+			<tr>
+					<td>UD-Q4_K_XL 5.97</td>
+					<td>256K</td>
+					<td>10.97</td>
+					<td>✅</td>
+			</tr>
+			<tr>
+					<td>Q5_K_M 6.58</td>
+					<td>128K</td>
+					<td>9.58</td>
+					<td>✅</td>
+			</tr>
+			<tr>
+					<td>Q5_K_M 6.58</td>
+					<td>256K</td>
+					<td>11.58</td>
+					<td>⚠️</td>
+			</tr>
+			<tr>
+					<td>Q6_K 7.46</td>
+					<td>128K</td>
+					<td>10.46</td>
+					<td>✅</td>
+			</tr>
+			<tr>
+					<td>Q6_K 7.46</td>
+					<td>256K</td>
+					<td>12.46</td>
+					<td>❌</td>
+			</tr>
+			<tr>
+					<td>Q8_0 9.53</td>
+					<td>32K</td>
+					<td>11.03</td>
+					<td>⚠️</td>
+			</tr>
+			<tr>
+					<td>Q8_0 9.53</td>
+					<td>64K</td>
+					<td>11.53</td>
+					<td>❌</td>
+			</tr>
+	</tbody>
+</table>
+<p>cf. 비전 추가 시 (mmproj 0.92 + 이미지 인코딩 시 일시 ~1.0)</p>
+<p>원격 컴퓨터를 끄고와서 예상으로 계산해두고, 다시 테스트 해보려고 합니다.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=sq3XGM1qdQY">Youtube - KV cache 시각화로 설명</a></li>
+<li><a href="https://huggingface.co/unsloth/Qwen3.5-9B-GGUF">Hugging Face - unsloth/Qwen3.5-9B-GGUF</a></li>
+<li><a href="https://www.kim2kie.com/res/html/0_formula/00%20AI/FFN.html">김두기 교수 - FFN (Feed Forward Network) - 순방향 신경망</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2025/12/07/vault-ha-metric-in-kubernetes/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Vault HA 및 Metric 수집 설정 - CI/CD 스터디 8주차</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2026/06/28/aidn-nvidia-gpu-interconnect/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">NVIDIA GPU Interconnect 계층 훑어보기</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

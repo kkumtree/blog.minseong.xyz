@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Coredns on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/coredns/</link>
+		<description>Recent content in Coredns on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Wed, 30 Oct 2024 23:44:01 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/coredns/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Monitoring CoreDNS in EKS with Grafana Cloud</title>
+				<link>https://blog.minseong.xyz/2024/10/30/kans-9w-monitoring-codedns-in-eks-with-grafana-cloud/</link>
+				<pubDate>Wed, 30 Oct 2024 23:44:01 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2024/10/30/kans-9w-monitoring-codedns-in-eks-with-grafana-cloud/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;Grafana Cloud 첫 사용기&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 &lt;strong&gt;K&lt;/strong&gt;8s &lt;strong&gt;A&lt;/strong&gt;dvanced &lt;strong&gt;N&lt;/strong&gt;etwork &lt;strong&gt;S&lt;/strong&gt;tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.&lt;/p&gt;&#xA;&lt;p&gt;이번 주차는 실감이 아직 안나는데, 스터디 마지막 주차입니다.&lt;br&gt;&#xA;그래서 &lt;strong&gt;여러분이 잘 알고, 매우 좋아하는&lt;/strong&gt; EKS를 통해, CoreDNS 이슈를 모니터링하는 Hands-on을 차근차근 따라해보려고합니다.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://aws.amazon.com/ko/blogs/mt/monitoring-coredns-for-dns-throttling-issues-using-aws-open-source-monitoring-services/&#34;&gt;AWS Cloud Operations Blog/Monitoring CoreDNS for DNS throttling issues using AWS Open source monitoring services&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;위의 Blog를 그대로 따라해볼 겁니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;0-eks-cluster-생성&#34;&gt;0. EKS Cluster 생성&lt;/h2&gt;&#xA;&lt;p&gt;스터디에서 제공된 CloudFormation을 통해 EKS Cluster를 생성해볼까합니다.&lt;br&gt;&#xA;&lt;code&gt;eksctl&lt;/code&gt;이 언급되어 있어서 왠지&amp;hellip; 나중에 롤백하고 태초마을부터 &lt;code&gt;eksctl&lt;/code&gt; 기반 CloudFormation 배포를 할 것 같은 불안함이 있지만 해보죠(?).&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

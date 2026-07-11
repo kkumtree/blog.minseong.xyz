@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Roce on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/roce/</link>
+		<description>Recent content in Roce on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 28 Jun 2026 00:04:17 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/roce/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>NVIDIA GPU Interconnect 계층 훑어보기</title>
+				<link>https://blog.minseong.xyz/2026/06/28/aidn-nvidia-gpu-interconnect/</link>
+				<pubDate>Sun, 28 Jun 2026 00:04:17 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2026/06/28/aidn-nvidia-gpu-interconnect/</guid>
+				<description>&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 AI Datacenter Network Study(이하, AIDN)에서 매주 생전 처음 접하는 단어들의 홍수에 허우적(?)하는 중입니다.&lt;/p&gt;&#xA;&lt;p&gt;RTX3090의 같은 경우에는 개인용 GPU 중 NV Link 브리지를 지원하는 가장 상위 모델로 알고있지만,&lt;br&gt;&#xA;가정용 메인보드의 PCIe 슬롯 간 속도가 다른건 차치하더라도, NV Link가 주는 효용을 다 쓸 수 있을지 애매해서 좀 고민을 하고 있었습니다.&lt;/p&gt;&#xA;&lt;p&gt;이번 주차에서 들은 생각은 NVIDIA 생태계에서 매우 비용효율적인 소모품이라는 것을 알게 되었습니다.&lt;/p&gt;&#xA;&lt;p&gt;대역폭에 있어서, 가까우면 가까울 수록 크다는 것은 일반적인 저장장치 (ROM -&amp;gt; RAM -&amp;gt; L1/L2 Cache) 계층 구조와 비슷한 느낌이었습니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

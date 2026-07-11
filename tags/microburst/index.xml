@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Microburst on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/microburst/</link>
+		<description>Recent content in Microburst on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 12 Jul 2026 02:24:00 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/microburst/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Network 모니터링과 마이크로버스트</title>
+				<link>https://blog.minseong.xyz/2026/07/12/aidc-network-monitoring-microburst/</link>
+				<pubDate>Sun, 12 Jul 2026 02:24:00 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2026/07/12/aidc-network-monitoring-microburst/</guid>
+				<description>&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 AI Datacenter Network Study(이하, AIDN) 마지막에는 AI 데이터센터 네트워크와 스토리지, 그리고 이에 대한 모니터링을 다뤄주셨습니다.&lt;/p&gt;&#xA;&lt;p&gt;네트워크 모니터링만 짧게 요약하면, 탐지하기 어려운 마이크로버스트(Microburst) 문제를 해결하기 위해,&lt;br&gt;&#xA;Streaming Telemetry, IFA(In-band Flow Analyzer) 등 다양하게 수집하여 네트워크 상태를 실시간으로 감시하고 분석하는 것이 중요하다는 내용이었고,&lt;br&gt;&#xA;이 많은 실시간 메트릭을 분석하는데 AI Agent를 활용할 시 유용할 수 있다는 내용이었습니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;1-기존의-네트워크-장비-모니터링&#34;&gt;1. 기존의 네트워크 장비 모니터링&lt;/h2&gt;&#xA;&lt;p&gt;글로서 주저리 쓰기 전에 Datadog에서 한 눈에 보기 쉽게 정리한 그림이 있어 가져왔습니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

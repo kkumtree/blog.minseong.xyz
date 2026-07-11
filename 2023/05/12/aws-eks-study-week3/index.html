@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>AWS EKS 스터디 3주차 - Storage | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="AWS EKS 스터디 3주차 - Storage" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2023/05/12/aws-eks-study-week3/cover.jpg' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2023/05/12/aws-eks-study-week3/cover.jpg' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2023/05/12/aws-eks-study-week3/cover.jpg' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.jpg'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>AWS EKS 스터디 3주차 - Storage</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-05-12T05:36:38&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">AWS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/eks" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">EKS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/storage" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">storage</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>이번 주차에는 스토리지에 대해 실습을 진행해보았습니다.
+지난번 kOps 스터디에서 다루었던 내용이지만, 부족했던 내용을 보충하면서 작성을 해보았습니다.</p>
+<p>주요한 내용은&hellip;</p>
+<ul>
+<li>NodeAffinity를 이용한 라벨링</li>
+<li>AWS EBS controller의 경우, AWS managed policy를 활용</li>
+<li>AWS Volume SnapShots Controller를 통한 볼륨 백업</li>
+<li>AWS EFS controller에서의 동적 프로비저닝</li>
+<li>AWS EKS 신규 노드그룹 생성</li>
+</ul>
+<p>별도로 <code>kube-ops-view</code>의 경우, 웹으로 확인할 수 있을 때까지 시간이 소요된다는 점이 있습니다.</p>
+<h2 id="1-실습-환경-배포">1. 실습 환경 배포</h2>
+<ul>
+<li>2주차에 실습했던 내용들을 미리 배포
+<ol>
+<li>AWS LB</li>
+<li>ExternalDNS</li>
+<li>kube-ops-view</li>
+</ol>
+</li>
+<li>context 이름 변경
+<ul>
+<li>지난 번까지 pkos가 뜨는 현상이 있었는데, 닉네임을 별도 지정할 수 있음</li>
+</ul>
+</li>
+<li>EFS 생성 관련 cloudformation이 추가되었음
+<ul>
+<li>EFS FS ID 조회를 하기 위해 aws-cli 필터 활용 <a href="https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/cli-usage-filter.html">(출처: AWS Docs)</a></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 실습 YAML 파일</span>
+</span></span><span style="display:flex;"><span>curl -O https://s3.ap-northeast-2.amazonaws.com/cloudformation.cloudneta.net/K8S/eks-oneclick2.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cloudformation 스택 생성</span>
+</span></span><span style="display:flex;"><span>aws cloudformation deploy --template-file eks-oneclick2.yaml --stack-name myeks --parameter-overrides KeyName<span style="color:#f92672">=</span>aews SgIngressSshCidr<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span>/32  MyIamUserAccessKeyID<span style="color:#f92672">=</span>AKIA5... MyIamUserSecretAccessKey<span style="color:#f92672">=</span>CVNa2... ClusterBaseName<span style="color:#f92672">=</span>myeks --region ap-northeast-2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ssh -i ~/.ssh/aews.pem ec2-user@<span style="color:#66d9ef">$(</span>aws cloudformation describe-stacks --stack-name myeks --query <span style="color:#e6db74">&#39;Stacks[*].Outputs[0].OutputValue&#39;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># default 네임스페이스 적용</span>
+</span></span><span style="display:flex;"><span>kubectl ns default
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (옵션) context 이름 변경</span>
+</span></span><span style="display:flex;"><span>NICK<span style="color:#f92672">=</span>kkumtree
+</span></span><span style="display:flex;"><span>kubectl ctx
+</span></span><span style="display:flex;"><span>kubectl config rename-context admin@myeks.ap-northeast-2.eksctl.io $NICK@myeks
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EFS 확인 : AWS 관리콘솔 EFS 확인</span>
+</span></span><span style="display:flex;"><span>EfsFsId<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws efs describe-file-systems --query <span style="color:#e6db74">&#39;FileSystems[*].FileSystemId&#39;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $EfsFsId
+</span></span><span style="display:flex;"><span>mount -t nfs4 -o nfsvers<span style="color:#f92672">=</span>4.1,rsize<span style="color:#f92672">=</span>1048576,wsize<span style="color:#f92672">=</span>1048576,hard,timeo<span style="color:#f92672">=</span>600,retrans<span style="color:#f92672">=</span>2,noresvport $EfsFsId.efs.ap-northeast-2.amazonaws.com:/ /mnt/myefs
+</span></span><span style="display:flex;"><span>df -hT --type nfs4
+</span></span><span style="display:flex;"><span>mount | grep nfs4
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Test efs exist with file &#34;</span> &gt; /mnt/myefs/memo.txt
+</span></span><span style="display:flex;"><span>cat /mnt/myefs/memo.txt
+</span></span><span style="display:flex;"><span>rm -f /mnt/myefs/memo.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 스토리지클래스 및 CSI 노드 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get sc
+</span></span><span style="display:flex;"><span>kubectl get sc gp2 -o yaml | yh
+</span></span><span style="display:flex;"><span>kubectl get csinodes
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 정보 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get node --label-columns<span style="color:#f92672">=</span>node.kubernetes.io/instance-type,eks.amazonaws.com/capacityType,topology.kubernetes.io/zone
+</span></span><span style="display:flex;"><span>eksctl get iamidentitymapping --cluster myeks
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 IP 확인 및 PrivateIP 변수 지정</span>
+</span></span><span style="display:flex;"><span>N1<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get node --label-columns<span style="color:#f92672">=</span>topology.kubernetes.io/zone --selector<span style="color:#f92672">=</span>topology.kubernetes.io/zone<span style="color:#f92672">=</span>ap-northeast-2a -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.addresses<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.address<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>N2<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get node --label-columns<span style="color:#f92672">=</span>topology.kubernetes.io/zone --selector<span style="color:#f92672">=</span>topology.kubernetes.io/zone<span style="color:#f92672">=</span>ap-northeast-2b -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.addresses<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.address<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>N3<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get node --label-columns<span style="color:#f92672">=</span>topology.kubernetes.io/zone --selector<span style="color:#f92672">=</span>topology.kubernetes.io/zone<span style="color:#f92672">=</span>ap-northeast-2c -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.addresses<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.address<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;export N1=</span>$N1<span style="color:#e6db74">&#34;</span> &gt;&gt; /etc/profile
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;export N2=</span>$N2<span style="color:#e6db74">&#34;</span> &gt;&gt; /etc/profile
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;export N3=</span>$N3<span style="color:#e6db74">&#34;</span> &gt;&gt; /etc/profile
+</span></span><span style="display:flex;"><span>echo $N1, $N2, $N3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 보안그룹 ID 확인</span>
+</span></span><span style="display:flex;"><span>NGSGID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws ec2 describe-security-groups --filters Name<span style="color:#f92672">=</span>group-name,Values<span style="color:#f92672">=</span>*ng1* --query <span style="color:#e6db74">&#34;SecurityGroups[*].[GroupId]&#34;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>aws ec2 authorize-security-group-ingress --group-id $NGSGID --protocol <span style="color:#e6db74">&#39;-1&#39;</span> --cidr 192.168.1.100/32
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 워커 노드 SSH 접속</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 hostname
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 hostname
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N3 hostname
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드에 툴 설치</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 sudo yum install links tree jq tcpdump sysstat -y
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 sudo yum install links tree jq tcpdump sysstat -y
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N3 sudo yum install links tree jq tcpdump sysstat -y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS LB, ExternalDNS 설치</span>
+</span></span><span style="display:flex;"><span>helm repo add eks https://aws.github.io/eks-charts
+</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span>helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName<span style="color:#f92672">=</span>$CLUSTER_NAME <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --set serviceAccount.create<span style="color:#f92672">=</span>false --set serviceAccount.name<span style="color:#f92672">=</span>aws-load-balancer-controller
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ExternalDNS</span>
+</span></span><span style="display:flex;"><span>MyDomain<span style="color:#f92672">=</span>awskops.click
+</span></span><span style="display:flex;"><span>MyDnzHostedZoneId<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws route53 list-hosted-zones-by-name --dns-name <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>MyDomain<span style="color:#e6db74">}</span><span style="color:#e6db74">.&#34;</span> --query <span style="color:#e6db74">&#34;HostedZones[0].Id&#34;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $MyDomain, $MyDnzHostedZoneId
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/aews/externaldns.yaml
+</span></span><span style="display:flex;"><span>MyDomain<span style="color:#f92672">=</span>$MyDomain MyDnzHostedZoneId<span style="color:#f92672">=</span>$MyDnzHostedZoneId envsubst &lt; externaldns.yaml | kubectl apply -f -
+</span></span></code></pre></div><h3 id="1-1-kube-ops-view">1-1. kube-ops-view</h3>
+<ul>
+<li>시각적으로 현재 k8s의 상태를 볼 수 있는 툴</li>
+<li>안되는 줄 알았는데, 뷰어가 뜰 때까지 시간이 걸리는 것이었음.</li>
+</ul>
+<p><img src="./images/1-kube-ops-view.png" alt="1-kube-ops-view"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># kube-ops-view</span>
+</span></span><span style="display:flex;"><span>helm repo add geek-cookbook https://geek-cookbook.github.io/charts/
+</span></span><span style="display:flex;"><span>helm install kube-ops-view geek-cookbook/kube-ops-view --version 1.2.2 --set env.TZ<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Asia/Seoul&#34;</span> --namespace kube-system
+</span></span><span style="display:flex;"><span>kubectl patch svc -n kube-system kube-ops-view -p <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;type&#34;:&#34;LoadBalancer&#34;}}&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl annotate service kube-ops-view -n kube-system <span style="color:#e6db74">&#34;external-dns.alpha.kubernetes.io/hostname=kubeopsview.</span>$MyDomain<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;Kube Ops View URL = http://kubeopsview.</span>$MyDomain<span style="color:#e6db74">:8080/#scale=1.5&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 이미지 정보 확인 &gt; eksctl 설치/업데이트 addon 확인 &gt; IRSA 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pods --all-namespaces -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.items[*].spec.containers[*].image}&#34;</span> | tr -s <span style="color:#e6db74">&#39;[[:space:]]&#39;</span> <span style="color:#e6db74">&#39;\n&#39;</span> | sort | uniq -c
+</span></span><span style="display:flex;"><span>eksctl get addon --cluster $CLUSTER_NAME
+</span></span><span style="display:flex;"><span>eksctl get iamserviceaccount --cluster $CLUSTER_NAME
+</span></span></code></pre></div><h2 id="2-스토리지의-이해">2. 스토리지의 이해</h2>
+<ul>
+<li>git 저장소를 마운트하여 사용하는 gitRepo도 있음 <a href="https://bcho.tistory.com/1259">(출처: 조대협님의 블로그)</a></li>
+</ul>
+<ol>
+<li>EmptyDir(Pod 임시 Volume)의 Lifecycle
+<ul>
+<li>Pod 생성 시, Volume이 함께 생성되고 Pod 삭제 시, Volume이 <strong>삭제</strong> 됨</li>
+<li>이때, Pod는 Stateless(상태가 없는) 애플리케이션</li>
+<li>영구적으로 데이터를 보존하려면 별도의 DB처럼 별도의 저장소를 사용할 필요성이 있음</li>
+</ul>
+</li>
+<li>PV(Persistent Volume): Pod와는 별개인 API 객체
+<ol>
+<li>hostPath(로컬 볼륨)
+<ul>
+<li>PV: 네트워크 스토리지를 모방하기 위해, 워커노드의 파일이나 디렉터리를 마운트하여 사용
+<ul>
+<li>워커노드의 파일 시스템에 접근하는데 유용 (예: 워커노드의 로그 파일 접근)</li>
+<li>같은 hostPath에 있는 볼륨은 여러 Pod 사이에서 공유되어 사용된다.</li>
+</ul>
+</li>
+<li>Stateful(상태가 있는) 애플리케이션</li>
+<li>RO(ReadOnly)를 강하게 권장하고 있음: 많은 보안 위험</li>
+<li>Pod가 재시작 되어 <strong>다른</strong> 노드에서 기동될 경우, 해당 노드의 hostPath를 사용</li>
+<li>이전의 다른 노드에서 사용한 hostPath의 파일 내용은 액세스 불가</li>
+</ul>
+</li>
+<li>CSI(Container Storage Interface)
+<ul>
+<li>과거엔, AWS EBS provisioner를 사용<br>
+신규기능을 사용하려면 k8s 버전 업그레이드 필요</li>
+<li>지금은 CSI 드라이버라는 별도의 Controller Pod를<br>
+만들어 동적 provisioning을 지원</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>PV 로직 이해(Static Provisioning 기준)
+<ol>
+<li>AWS EBS FS Volume 생성 후 FS ID 확인</li>
+<li>PV YAML정의 파일에 FS ID를 기입 후 PV 생성</li>
+<li>PVC를 생성하여 PV 요청</li>
+<li>Pod YAML정의 파일에서 Pod 객체에 PVC를 기입(마운트)</li>
+</ol>
+</li>
+<li>Dynamic Provisioning
+<ul>
+<li>장점: PV객체를 별도로 생성할 필요가 없음</li>
+<li>PVC 생성시 PV가 자동으로 생성됨</li>
+<li>요구사항: AWS EBS의 스토리지 클래스를 정의하는 Storage Class (추상화)객체가 필요
+<ul>
+<li>Name: 고유한 스토리지 클래스 객체를 식별</li>
+<li>Provisioner: CSI 드라이버. 연결되는 스토리지 기술 정의
+<ul>
+<li>AWS EFS: efs.csi.aws.com (변경될 수 있음)</li>
+<li>AWS EBS: ebs.csi.aws.com (상동)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-1-기본-컨테이너-환경에서의-임시-fsemptydir-사용">2-1. 기본 컨테이너 환경에서의 임시 fs(EmptyDir) 사용</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 파드 배포</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># date 명령어로 현재 시간을 10초 간격으로 /home/pod-out.txt 파일에 저장</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/3/date-busybox-pod.yaml
+</span></span><span style="display:flex;"><span>cat date-busybox-pod.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f date-busybox-pod.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파일 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pod
+</span></span><span style="display:flex;"><span>kubectl exec busybox -- tail -f /home/pod-out.txt
+</span></span><span style="display:flex;"><span>Sat Jan <span style="color:#ae81ff">28</span> 15:33:11 UTC <span style="color:#ae81ff">2023</span>
+</span></span><span style="display:flex;"><span>Sat Jan <span style="color:#ae81ff">28</span> 15:33:21 UTC <span style="color:#ae81ff">2023</span>
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 삭제 후 다시 생성 후 파일 정보 확인 &gt; 이전 기록이 보존되어 있는지?</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod busybox
+</span></span><span style="display:flex;"><span>kubectl apply -f date-busybox-pod.yaml
+</span></span><span style="display:flex;"><span>kubectl exec busybox -- tail -f /home/pod-out.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 실습 완료 후 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod busybox
+</span></span></code></pre></div><p><img src="./images/2-emptydir.png" alt="EmptyDir-test"></p>
+<h3 id="2-2-local-path-provisioner-스토리지-클래스-배포-pvpvc">2-2. local-path-provisioner 스토리지 클래스 배포 (PV/PVC)</h3>
+<ul>
+<li>hostPath 사용</li>
+<li>nodeAffinity: Pod를 배치할 위치 지정하는 힌트를 제공하는 스케쥴러에 제공
+<ul>
+<li>수동으로 정의를 하지 않았으나, 해당 워커노드의 주소를 확인할 수 있음<br>
+예) kubernetes.io/hostname in [ip-192-168-2-xxx.ap-northeast-2.compute.internal]</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/12-node_affinity_in_pv_yaml.png" alt="nodeAffinity_in_pv_yaml"></p>
+<p><img src="./images/13-node_affinity_in_node_label.png" alt="nodeAffinity_int_node_label"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 배포</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f local-path-storage.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get-all -n local-path-storage
+</span></span><span style="display:flex;"><span>kubectl get pod -n local-path-storage -owide
+</span></span><span style="display:flex;"><span>kubectl describe cm -n local-path-storage local-path-config
+</span></span><span style="display:flex;"><span>kubectl get sc
+</span></span><span style="display:flex;"><span>kubectl get sc local-path
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># PVC 생성</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/3/localpath1.yaml
+</span></span><span style="display:flex;"><span>cat localpath1.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f localpath1.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># PVC 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pvc
+</span></span><span style="display:flex;"><span>kubectl describe pvc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 생성</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/3/localpath2.yaml
+</span></span><span style="display:flex;"><span>cat localpath2.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f localpath2.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pod,pv,pvc
+</span></span><span style="display:flex;"><span>kubectl describe pv    <span style="color:#75715e"># Node Affinity 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it app -- tail -f /data/out.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 워커노드 중 어디에 파드가 배포되어 있는지, 아래 경로에 out.txt 파일 존재 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># N1에 없는 경우 N1 -&gt; N2 -&gt; N3 순으로 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## /opt/local-path-provisioner</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## └── pvc-pvc-898b3f68-aec0-478f-aa55-184a107780cd_default_localpath-claim</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">##    └── out.txt</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 tree /opt/local-path-provisioner
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 해당 워커노드 자체에서 out.txt 파일 확인 : pvc 경로는 각자 실습 환경에 따라 다름</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 tail -f /opt/local-path-provisioner/pvc-898b3f68-aec0-478f-aa55-184a107780cd_default_localpath-claim/out.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 삭제 후 PV/PVC 확인</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod app
+</span></span><span style="display:flex;"><span>kubectl get pod,pv,pvc
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 tree /opt/local-path-provisioner
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 다시 실행</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f localpath2.yaml
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it app -- head /data/out.txt
+</span></span><span style="display:flex;"><span>kubectl exec -it app -- tail -f /data/out.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드와 PVC 삭제 </span>
+</span></span><span style="display:flex;"><span>kubectl delete pod app
+</span></span><span style="display:flex;"><span>kubectl get pv,pvc
+</span></span><span style="display:flex;"><span>kubectl delete pvc localpath-claim
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pv
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 tree /opt/local-path-provisioner
+</span></span></code></pre></div><p><img src="./images/3-local-path-provisioner.png" alt="local-path-provisioner"></p>
+<p><img src="./images/4-pvc_pending_before_app.png" alt="pvc_pending_before_pod"></p>
+<p><img src="./images/5-pvc_bound_with_node_affinity.png" alt="pvc_bound_with_node_affinity"></p>
+<p><img src="./images/6-volume_lost_data_after_delete_pod.png" alt="volume_lost_data_after_delete_pod"></p>
+<h3 id="2-3-참고-kubestr-모니터링-및-성능-측정-nvme-ssd">2-3. (참고) kubestr 모니터링 및 성능 측정 (NVMe SSD)</h3>
+<ul>
+<li>디스크 I/O 성능을 측정</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># kubestr 툴 다운로드</span>
+</span></span><span style="display:flex;"><span>wget https://github.com/kastenhq/kubestr/releases/download/v0.4.37/kubestr_0.4.37_Linux_amd64.tar.gz
+</span></span><span style="display:flex;"><span>tar xvfz kubestr_0.4.37_Linux_amd64.tar.gz <span style="color:#f92672">&amp;&amp;</span> mv kubestr /usr/local/bin/ <span style="color:#f92672">&amp;&amp;</span> chmod +x /usr/local/bin/kubestr
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 워커노드별 iostat 확인</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N1 iostat -xmdz <span style="color:#ae81ff">1</span> -p nvme0n1
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N2 iostat -xmdz <span style="color:#ae81ff">1</span> -p nvme0n1
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N3 iostat -xmdz <span style="color:#ae81ff">1</span> -p nvme0n1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링 준비 </span>
+</span></span><span style="display:flex;"><span>watch <span style="color:#e6db74">&#39;kubectl get pod -owide;echo;kubectl get pv,pvc&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 측정 : Read</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [NVMe] 4k 디스크 블록 기준 Read 평균 IOPS는 20309 &gt;&gt; 4분 정도 소요</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/wikibook/kubepractice/main/ch10/fio-read.fio
+</span></span><span style="display:flex;"><span>kubestr fio -f fio-read.fio -s local-path --size 10G
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 측정 : Write</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [NVMe] 4k 디스크 블록 기준 Write 평균 IOPS는 9082 &gt;&gt; 9분 정도 소요</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/wikibook/kubepractice/main/ch10/fio-write.fio
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;/directory/d&#39;</span> fio-write.fio
+</span></span><span style="display:flex;"><span>kubestr fio -f fio-write.fio -s local-path --size 10G
+</span></span></code></pre></div><p><img src="./images/7-kubestr-io-test.png" alt="7-kubestr-io-test"></p>
+<h2 id="3-aws-ebs-controller">3. AWS EBS Controller</h2>
+<ul>
+<li>EBS CSI driver: EBS 볼륨을 생성하고 Pod에 이를 연결</li>
+<li>PV/PVC는 ReadWriteOnce로 설정해야 함: EBS 기본 설정이 동일 AZ의 EC2인스턴스만 연결 할 수 있음 <a href="https://malwareanalysis.tistory.com/598">(출처: 악분일상님)</a></li>
+<li>특징: ISRA 정책 설정시 <strong>AWS Managed Policy</strong>(AWS 관리형 정책)인 AmazonEBSCSIDriverPolicy 사용
+<ul>
+<li>AWS LB, ExternalDNS의 경우, Customer Policy(고객 관리형 정책)</li>
+</ul>
+</li>
+<li>(참고) k8s v1.22+ 에서는 ReadWriteOncePod를 지원하므로, 민감한 데이터를 다룰때 활용할 수 있음. <a href="https://kubernetes.io/blog/2021/09/13/read-write-once-pod-access-mode-alpha/">(출처: k8s blog)</a></li>
+</ul>
+<p><img src="./images/8-isra_aws_managed_policy_in_aws_ebs_controller.png" alt="IRSA_AWS_managed_policy_in_AWS_EBS_Controller"></p>
+<h3 id="3-1-설치-amazon-ebs-csi-driver-as-an-amazon-eks-add-on">3-1. (설치) Amazon EBS CSI driver as an Amazon EKS add-on</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># aws-ebs-csi-driver 전체 버전 정보와 기본 설치 버전(True) 정보 확인</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># v1.18.0-eksbuild.1</span>
+</span></span><span style="display:flex;"><span>aws eks describe-addon-versions <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    --addon-name aws-ebs-csi-driver <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    --kubernetes-version 1.24 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    --query <span style="color:#e6db74">&#34;addons[].addonVersions[].[addonVersion, compatibilities[].defaultVersion]&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    --output text
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ISRA 설정 : AWS관리형 정책 AmazonEBSCSIDriverPolicy 사용</span>
+</span></span><span style="display:flex;"><span>eksctl create iamserviceaccount <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --name ebs-csi-controller-sa <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --namespace kube-system <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --cluster <span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --approve <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --role-only <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --role-name AmazonEKS_EBS_CSI_DriverRole
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ISRA 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get sa -n kube-system ebs-csi-controller-sa -o yaml | head -5
+</span></span><span style="display:flex;"><span>eksctl get iamserviceaccount --cluster myeks
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>eksctl get addon --cluster <span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>kubectl get deploy,ds -l<span style="color:#f92672">=</span>app.kubernetes.io/name<span style="color:#f92672">=</span>aws-ebs-csi-driver -n kube-system
+</span></span><span style="display:flex;"><span>kubectl get pod -n kube-system -l <span style="color:#e6db74">&#39;app in (ebs-csi-controller,ebs-csi-node)&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl get pod -n kube-system -l app.kubernetes.io/component<span style="color:#f92672">=</span>csi-driver
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ebs-csi-controller 파드에 6개 컨테이너 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pod -n kube-system -l app<span style="color:#f92672">=</span>ebs-csi-controller -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.items[0].spec.containers[*].name}&#39;</span> ; echo
+</span></span><span style="display:flex;"><span>ebs-plugin csi-provisioner csi-attacher csi-snapshotter csi-resizer liveness-probe
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># gp3 스토리지 클래스 생성</span>
+</span></span><span style="display:flex;"><span>kubectl get sc
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; gp3-sc.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: StorageClass
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: storage.k8s.io/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: gp3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">allowVolumeExpansion: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">provisioner: ebs.csi.aws.com
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">volumeBindingMode: WaitForFirstConsumer
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">parameters:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  type: gp3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  allowAutoIOPSPerGBIncrease: &#39;true&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  encrypted: &#39;true&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  #fsType: ext4 # 기본값이 ext4 이며 xfs 등 변경 가능 &gt;&gt; 단 스냅샷 경우 ext4를 기본으로하여 동작하여 xfs 사용 시 문제가 될 수 있음 - 테스트해보자
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f gp3-sc.yaml
+</span></span><span style="display:flex;"><span>kubectl get sc
+</span></span><span style="display:flex;"><span>kubectl describe sc gp3 | grep Parameters
+</span></span></code></pre></div><p><img src="./images/9-aws_ebs_controller_installation.png" alt="9-AWS_EBS_controller_installation"></p>
+<h3 id="3-2-pvcpv-파드-테스트">3-2. PVC/PV 파드 테스트</h3>
+<ul>
+<li>PV YAML을 따로 준비하지 않아도 PVC에 의해 PV가 생성을 확인
+<ul>
+<li>nodeAffinity: {matchExpressions: {key: topology.ebs.csi.aws.com/zone}} 구조
+<ul>
+<li>topology.ebs.csi.aws.com/zone 라벨이 있는 워커노드에 연결</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 워커노드의 EBS 볼륨 확인 : tag(키/값) 필터링</span>
+</span></span><span style="display:flex;"><span>aws ec2 describe-volumes --filters Name<span style="color:#f92672">=</span>tag:Name,Values<span style="color:#f92672">=</span>$CLUSTER_NAME-ng1-Node --output table
+</span></span><span style="display:flex;"><span>aws ec2 describe-volumes --filters Name<span style="color:#f92672">=</span>tag:Name,Values<span style="color:#f92672">=</span>$CLUSTER_NAME-ng1-Node --query <span style="color:#e6db74">&#34;Volumes[].{VolumeId: VolumeId, VolumeType: VolumeType, InstanceId: Attachments[0].InstanceId, State: Attachments[0].State}&#34;</span> | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 워커노드에서 파드에 추가한 EBS 볼륨 확인</span>
+</span></span><span style="display:flex;"><span>aws ec2 describe-volumes --filters Name<span style="color:#f92672">=</span>tag:ebs.csi.aws.com/cluster,Values<span style="color:#f92672">=</span>true --output table
+</span></span><span style="display:flex;"><span>aws ec2 describe-volumes --filters Name<span style="color:#f92672">=</span>tag:ebs.csi.aws.com/cluster,Values<span style="color:#f92672">=</span>true --query <span style="color:#e6db74">&#34;Volumes[].{VolumeId: VolumeId, VolumeType: VolumeType, InstanceId: Attachments[0].InstanceId, State: Attachments[0].State}&#34;</span> | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 워커노드에서 파드에 추가한 EBS 볼륨 모니터링 준비</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> true; <span style="color:#66d9ef">do</span> aws ec2 describe-volumes --filters Name<span style="color:#f92672">=</span>tag:ebs.csi.aws.com/cluster,Values<span style="color:#f92672">=</span>true --query <span style="color:#e6db74">&#34;Volumes[].{VolumeId: VolumeId, VolumeType: VolumeType, InstanceId: Attachments[0].InstanceId, State: Attachments[0].State}&#34;</span> --output text; date; sleep 1; <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># PVC 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; awsebs-pvc.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: PersistentVolumeClaim
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: ebs-claim
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  accessModes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - ReadWriteOnce
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      storage: 4Gi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  storageClassName: gp3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f awsebs-pvc.yaml
+</span></span><span style="display:flex;"><span>kubectl get pvc,pv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 생성</span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; awsebs-pod.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: app
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  terminationGracePeriodSeconds: 3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: app
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: centos
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command: [&#34;/bin/sh&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    args: [&#34;-c&#34;, &#34;while true; do echo \$(date -u) &gt;&gt; /data/out.txt; sleep 5; done&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    volumeMounts:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - name: persistent-storage
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      mountPath: /data
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  volumes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: persistent-storage
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    persistentVolumeClaim:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      claimName: ebs-claim
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f awsebs-pod.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get VolumeAttachment
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 추가된 EBS 볼륨 상세 정보 확인 </span>
+</span></span><span style="display:flex;"><span>aws ec2 describe-volumes --volume-ids <span style="color:#66d9ef">$(</span>kubectl get pv -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.items[0].spec.csi.volumeHandle}&#34;</span><span style="color:#66d9ef">)</span> | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># PV 상세 확인 : nodeAffinity</span>
+</span></span><span style="display:flex;"><span>kubectl get pv -o yaml | yh
+</span></span><span style="display:flex;"><span>kubectl get node --label-columns<span style="color:#f92672">=</span>topology.ebs.csi.aws.com/zone,topology.kubernetes.io/zone
+</span></span><span style="display:flex;"><span>kubectl describe node | more
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파일 내용 추가 저장 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec app -- tail -f /data/out.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 아래 명령어는 확인까지 다소 시간이 소요됨</span>
+</span></span><span style="display:flex;"><span>kubectl df-pv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## 파드 내에서 볼륨 정보 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it app -- sh -c <span style="color:#e6db74">&#39;df -hT --type=overlay&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it app -- sh -c <span style="color:#e6db74">&#39;df -hT --type=ext4&#39;</span>
+</span></span></code></pre></div><p><img src="./images/10-check_ebs_volume_before_pod.png" alt="check_EBS_volume_before_pod"></p>
+<p><img src="./images/11-check_ebs_bound_with_pvc.png" alt="check_EBS_bound_with_pvc"></p>
+<h3 id="3-3-볼륨-증가-테스트">3-3. 볼륨 증가 테스트</h3>
+<ul>
+<li>당연한 이야기지만, 줄이는 건 안됨: 새로 작은거 만들어서 옮기면 된다.
+<ul>
+<li>하드디스크 조각 모음을 생각해보자</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 현재 pv 의 이름을 기준하여 4G &gt; 10G 로 증가 : .spec.resources.requests.storage의 4Gi 를 10Gi로 변경</span>
+</span></span><span style="display:flex;"><span>kubectl get pvc ebs-claim -o jsonpath<span style="color:#f92672">={</span>.spec.resources.requests.storage<span style="color:#f92672">}</span> ; echo
+</span></span><span style="display:flex;"><span>kubectl get pvc ebs-claim -o jsonpath<span style="color:#f92672">={</span>.status.capacity.storage<span style="color:#f92672">}</span> ; echo
+</span></span><span style="display:flex;"><span>kubectl patch pvc ebs-claim -p <span style="color:#e6db74">&#39;{&#34;spec&#34;:{&#34;resources&#34;:{&#34;requests&#34;:{&#34;storage&#34;:&#34;10Gi&#34;}}}}&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인 : 볼륨 용량 수정 반영이 되어야 되니, 수치 반영이 조금 느릴수 있다</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it app -- sh -c <span style="color:#e6db74">&#39;df -hT --type=ext4&#39;</span>
+</span></span><span style="display:flex;"><span>kubectl df-pv
+</span></span><span style="display:flex;"><span>aws ec2 describe-volumes --volume-ids <span style="color:#66d9ef">$(</span>kubectl get pv -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.items[0].spec.csi.volumeHandle}&#34;</span><span style="color:#66d9ef">)</span> | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 자원 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod app &amp; kubectl delete pvc ebs-claim
+</span></span></code></pre></div><p><img src="./images/14-resizing_ebs_volume.png" alt="resizing_EBS_volume"></p>
+<h2 id="4-aws-volume-snapshots-controller">4. AWS Volume SnapShots Controller</h2>
+<ul>
+<li>개인적으로는 신선하게 다가왔다. 평소에는 EC2를 통으로 AMI 백업하는 식으로 진행했었음</li>
+</ul>
+<h3 id="4-1-volumesnapshots-controller-설치">4-1. Volumesnapshots Controller 설치</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Install Snapshot CRDs</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/master/client/config/crd/snapshot.storage.k8s.io_volumesnapshots.yaml
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/master/client/config/crd/snapshot.storage.k8s.io_volumesnapshotclasses.yaml
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/master/client/config/crd/snapshot.storage.k8s.io_volumesnapshotcontents.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f snapshot.storage.k8s.io_volumesnapshots.yaml,snapshot.storage.k8s.io_volumesnapshotclasses.yaml,snapshot.storage.k8s.io_volumesnapshotcontents.yaml
+</span></span><span style="display:flex;"><span>kubectl get crd | grep snapshot
+</span></span><span style="display:flex;"><span>kubectl api-resources  | grep snapshot
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install Common Snapshot Controller</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/master/deploy/kubernetes/snapshot-controller/rbac-snapshot-controller.yaml
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/master/deploy/kubernetes/snapshot-controller/setup-snapshot-controller.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f rbac-snapshot-controller.yaml,setup-snapshot-controller.yaml
+</span></span><span style="display:flex;"><span>kubectl get deploy -n kube-system snapshot-controller
+</span></span><span style="display:flex;"><span>kubectl get pod -n kube-system -l app<span style="color:#f92672">=</span>snapshot-controller
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install Snapshotclass</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/master/examples/kubernetes/snapshot/manifests/classes/snapshotclass.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f snapshotclass.yaml
+</span></span><span style="display:flex;"><span>kubectl get vsclass <span style="color:#75715e"># volumesnapshotclasses</span>
+</span></span></code></pre></div><p><img src="./images/15-volumesnapshots_controller.png" alt="15-volumesnapshots_controller"></p>
+<h3 id="4-2-volumesnapshots-controller-테스트">4-2. Volumesnapshots Controller 테스트</h3>
+<ul>
+<li>테스트 PVC/파드 생성 및 장애 재현</li>
+<li>실습 YAML파일에서 ebs-claim이란 이름을 가진 PVC를 대상으로 하였음</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># PVC 생성</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f awsebs-pvc.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 생성</span>
+</span></span><span style="display:flex;"><span>kubectl apply -f awsebs-pod.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파일 내용 추가 저장 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec app -- tail -f /data/out.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># VolumeSnapshot 생성</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/3/ebs-volume-snapshot.yaml
+</span></span><span style="display:flex;"><span>cat ebs-volume-snapshot.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f ebs-volume-snapshot.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># VolumeSnapshot 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get volumesnapshot
+</span></span><span style="display:flex;"><span>kubectl get volumesnapshot ebs-volume-snapshot -o jsonpath<span style="color:#f92672">={</span>.status.boundVolumeSnapshotContentName<span style="color:#f92672">}</span> ; echo
+</span></span><span style="display:flex;"><span>kubectl describe volumesnapshot.snapshot.storage.k8s.io ebs-volume-snapshot
+</span></span><span style="display:flex;"><span>kubectl get volumesnapshotcontents
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># VolumeSnapshot ID 확인 </span>
+</span></span><span style="display:flex;"><span>kubectl get volumesnapshotcontents -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.items[*].status.snapshotHandle}&#39;</span> ; echo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS EBS 스냅샷 확인</span>
+</span></span><span style="display:flex;"><span>aws ec2 describe-snapshots --owner-ids self | jq
+</span></span><span style="display:flex;"><span>aws ec2 describe-snapshots --owner-ids self --query <span style="color:#e6db74">&#39;Snapshots[]&#39;</span> --output table
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># app &amp; pvc 제거 : 강제로 장애 재현</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod app <span style="color:#f92672">&amp;&amp;</span> kubectl delete pvc ebs-claim
+</span></span></code></pre></div><p><img src="./images/16-ebs_vol_snapshot_creation.png" alt="EBS_volume_snapshot_creation"></p>
+<ul>
+<li>스냅샷 복원 테스트</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 스냅샷에서 PVC 로 복원</span>
+</span></span><span style="display:flex;"><span>kubectl get pvc,pv
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; ebs-snapshot-restored-claim.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: PersistentVolumeClaim
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: ebs-snapshot-restored-claim
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  storageClassName: gp3
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  accessModes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - ReadWriteOnce
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  resources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    requests:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      storage: 4Gi
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  dataSource:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    name: ebs-volume-snapshot
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    kind: VolumeSnapshot
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    apiGroup: snapshot.storage.k8s.io
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>cat ebs-snapshot-restored-claim.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f ebs-snapshot-restored-claim.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get pvc,pv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 생성</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/3/ebs-snapshot-restored-pod.yaml
+</span></span><span style="display:flex;"><span>cat ebs-snapshot-restored-pod.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f ebs-snapshot-restored-pod.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파일 내용 저장 확인 : 파드 삭제 전까지의 저장 기록도 남아있고, 파드 재생성 후 기록도 잘 저장되어있음</span>
+</span></span><span style="display:flex;"><span>kubectl exec app -- cat /data/out.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod app <span style="color:#f92672">&amp;&amp;</span> kubectl delete pvc ebs-snapshot-restored-claim <span style="color:#f92672">&amp;&amp;</span> kubectl delete volumesnapshots ebs-volume-snapshot
+</span></span></code></pre></div><p><img src="./images/17-ebs_snapshot_restored_claim.png" alt="EBS_snapshot_restored_claim"></p>
+<h2 id="5-aws-efs-controller">5. AWS EFS Controller</h2>
+<ul>
+<li>GiB(기비바이트) 단위 기준으로 볼륨을 입력했는데 단위 8.0E(엑사바이트)가 뜨는 이유?
+<ul>
+<li>AWS EFS는 전체 용량 제한이 없음(볼륨 크기 프로비저닝 불필요) <a href="https://www.wisen.co.kr/pages/blog/blog-detail.html?idx=6883">(출처: GS Neotek blog)</a></li>
+<li>자동으로 확장되는 &lsquo;페타바이트급&rsquo; 데이터를 저장할 수 있다고 하기 때문에 자신감으로 표현한 것으로 보임
+<ul>
+<li>탄력적으로 자동으로 증가하고 줄어들 수 있다고 함 <a href="https://aws.amazon.com/ko/efs/faq/">(출처: AWS EFS FAQ)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/18-aws_efs_almost_unlimited_storage.png" alt="AWS_EFS_almost_unlimited_storage"></p>
+<h3 id="5-1-aws-efs-controller-설치">5-1. AWS EFS Controller 설치</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># EFS 정보 확인 </span>
+</span></span><span style="display:flex;"><span>aws efs describe-file-systems --query <span style="color:#e6db74">&#34;FileSystems[*].FileSystemId&#34;</span> --output text
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># IAM 정책 생성</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/master/docs/iam-policy-example.json
+</span></span><span style="display:flex;"><span>aws iam create-policy --policy-name AmazonEKS_EFS_CSI_Driver_Policy --policy-document file://iam-policy-example.json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ISRA 설정 : 고객관리형 정책 AmazonEKS_EFS_CSI_Driver_Policy 사용</span>
+</span></span><span style="display:flex;"><span>eksctl create iamserviceaccount <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --name efs-csi-controller-sa <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --namespace kube-system <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --cluster <span style="color:#e6db74">${</span>CLUSTER_NAME<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --attach-policy-arn arn:aws:iam::<span style="color:#e6db74">${</span>ACCOUNT_ID<span style="color:#e6db74">}</span>:policy/AmazonEKS_EFS_CSI_Driver_Policy <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --approve
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ISRA 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get sa -n kube-system efs-csi-controller-sa -o yaml | head -5
+</span></span><span style="display:flex;"><span>eksctl get iamserviceaccount --cluster myeks
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EFS Controller 설치</span>
+</span></span><span style="display:flex;"><span>helm repo add aws-efs-csi-driver https://kubernetes-sigs.github.io/aws-efs-csi-driver/
+</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span>helm upgrade -i aws-efs-csi-driver aws-efs-csi-driver/aws-efs-csi-driver <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    --namespace kube-system <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    --set image.repository<span style="color:#f92672">=</span>602401143452.dkr.ecr.<span style="color:#e6db74">${</span>AWS_DEFAULT_REGION<span style="color:#e6db74">}</span>.amazonaws.com/eks/aws-efs-csi-driver <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    --set controller.serviceAccount.create<span style="color:#f92672">=</span>false <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    --set controller.serviceAccount.name<span style="color:#f92672">=</span>efs-csi-controller-sa
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>helm list -n kube-system
+</span></span><span style="display:flex;"><span>kubectl get pod -n kube-system -l <span style="color:#e6db74">&#34;app.kubernetes.io/name=aws-efs-csi-driver,app.kubernetes.io/instance=aws-efs-csi-driver&#34;</span>
+</span></span></code></pre></div><p><img src="./images/19-efs_controller_installation_with_customer_managed_policy.png" alt="EFS_controller_install_with_customer_managed_policy"></p>
+<h3 id="5-2-static-provisioning-efs-파일시스템을-다수의-파드가-사용하게-설정">5-2. (Static provisioning) EFS 파일시스템을 다수의 파드가 사용하게 설정</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 모니터링</span>
+</span></span><span style="display:flex;"><span>watch <span style="color:#e6db74">&#39;kubectl get sc efs-sc; echo; kubectl get pv,pvc,pod&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 실습 코드 clone</span>
+</span></span><span style="display:flex;"><span>git clone https://github.com/kubernetes-sigs/aws-efs-csi-driver.git /root/efs-csi
+</span></span><span style="display:flex;"><span>cd /root/efs-csi/examples/kubernetes/multiple_pods/specs <span style="color:#f92672">&amp;&amp;</span> tree
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EFS 스토리지클래스 생성 및 확인</span>
+</span></span><span style="display:flex;"><span>cat storageclass.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f storageclass.yaml
+</span></span><span style="display:flex;"><span>kubectl get sc efs-sc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># PV 생성 및 확인 : volumeHandle을 자신의 EFS 파일시스템ID로 변경</span>
+</span></span><span style="display:flex;"><span>EfsFsId<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws efs describe-file-systems --query <span style="color:#e6db74">&#34;FileSystems[*].FileSystemId&#34;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#34;s/fs-4af69aab/</span>$EfsFsId<span style="color:#e6db74">/g&#34;</span> pv.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat pv.yaml | yh
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: PersistentVolume
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: efs-pv
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  capacity:
+</span></span><span style="display:flex;"><span>    storage: 5Gi
+</span></span><span style="display:flex;"><span>  volumeMode: Filesystem
+</span></span><span style="display:flex;"><span>  accessModes:
+</span></span><span style="display:flex;"><span>    - ReadWriteMany
+</span></span><span style="display:flex;"><span>  persistentVolumeReclaimPolicy: Retain
+</span></span><span style="display:flex;"><span>  storageClassName: efs-sc
+</span></span><span style="display:flex;"><span>  csi:
+</span></span><span style="display:flex;"><span>    driver: efs.csi.aws.com
+</span></span><span style="display:flex;"><span>    volumeHandle: fs-05699d3c12ef609e2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl apply -f pv.yaml
+</span></span><span style="display:flex;"><span>kubectl get pv; kubectl describe pv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># PVC 생성 및 확인</span>
+</span></span><span style="display:flex;"><span>cat claim.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f claim.yaml
+</span></span><span style="display:flex;"><span>kubectl get pvc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 생성 및 연동 : 파드 내에 /data 데이터는 EFS를 사용</span>
+</span></span><span style="display:flex;"><span>cat pod1.yaml pod2.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f pod1.yaml,pod2.yaml
+</span></span><span style="display:flex;"><span>kubectl df-pv
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 정보 확인 : PV에 5Gi 와 파드 내에서 확인한 NFS4 볼륨 크기 8.0E의 차이는 무엇? 파드에 6Gi 이상 저장 가능한가?</span>
+</span></span><span style="display:flex;"><span>kubectl get pods
+</span></span><span style="display:flex;"><span>kubectl exec -ti app1 -- sh -c <span style="color:#e6db74">&#34;df -hT -t nfs4&#34;</span>
+</span></span><span style="display:flex;"><span>kubectl exec -ti app2 -- sh -c <span style="color:#e6db74">&#34;df -hT -t nfs4&#34;</span>
+</span></span><span style="display:flex;"><span>Filesystem           Type            Size      Used Available Use% Mounted on
+</span></span><span style="display:flex;"><span>127.0.0.1:/          nfs4            8.0E         <span style="color:#ae81ff">0</span>      8.0E   0% /data
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 공유 저장소 저장 동작 확인</span>
+</span></span><span style="display:flex;"><span>tree /mnt/myefs              <span style="color:#75715e"># 작업용EC2에서 확인</span>
+</span></span><span style="display:flex;"><span>tail -f /mnt/myefs/out1.txt  <span style="color:#75715e"># 작업용EC2에서 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec -ti app1 -- tail -f /data/out1.txt
+</span></span><span style="display:flex;"><span>kubectl exec -ti app2 -- tail -f /data/out2.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 쿠버네티스 리소스 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete pod app1 app2 
+</span></span><span style="display:flex;"><span>kubectl delete pvc efs-claim <span style="color:#f92672">&amp;&amp;</span> kubectl delete pv efs-pv <span style="color:#f92672">&amp;&amp;</span> kubectl delete sc efs-sc
+</span></span></code></pre></div><p><img src="./images/20-efs_static_provisioning_with_rwm_mode.png" alt="EFS_static_provisioning_with_rwm_mode"></p>
+<h3 id="5-3-dynamic-provisioning-efs-파일시스템을-다수의-파드가-사용하게-설정">5-3. (Dynamic provisioning) EFS 파일시스템을 다수의 파드가 사용하게 설정</h3>
+<ul>
+<li>5-2처럼 하면, 매 순간 사람의 손이 더 많이 가므로 동적 프로비저닝을 실습</li>
+<li>PVC 생성시 {provisioningMode: efs-ap}를 비롯한 파라미터를 추가
+<ul>
+<li>AccessPoints를 통해 구현되며, 아직 Fargate 노드는 미지원</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 모니터링</span>
+</span></span><span style="display:flex;"><span>watch <span style="color:#e6db74">&#39;kubectl get sc efs-sc; echo; kubectl get pv,pvc,pod&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EFS 스토리지클래스 생성 및 확인</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/master/examples/kubernetes/dynamic_provisioning/specs/storageclass.yaml
+</span></span><span style="display:flex;"><span>cat storageclass.yaml | yh
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#34;s/fs-92107410/</span>$EfsFsId<span style="color:#e6db74">/g&#34;</span> storageclass.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f storageclass.yaml
+</span></span><span style="display:flex;"><span>kubectl get sc efs-sc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># PVC/파드 생성 및 확인</span>
+</span></span><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/kubernetes-sigs/aws-efs-csi-driver/master/examples/kubernetes/dynamic_provisioning/specs/pod.yaml
+</span></span><span style="display:flex;"><span>cat pod.yaml | yh
+</span></span><span style="display:flex;"><span>kubectl apply -f pod.yaml
+</span></span><span style="display:flex;"><span>kubectl get pvc,pv,pod
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># PVC/PV 생성 로그 확인</span>
+</span></span><span style="display:flex;"><span>kubectl logs -n kube-system -l app<span style="color:#f92672">=</span>efs-csi-controller -c csi-provisioner -f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 파드 정보 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it efs-app -- sh -c <span style="color:#e6db74">&#34;df -hT -t nfs4&#34;</span>
+</span></span><span style="display:flex;"><span>Filesystem           Type            Size      Used Available Use% Mounted on
+</span></span><span style="display:flex;"><span>127.0.0.1:/          nfs4            8.0E         <span style="color:#ae81ff">0</span>      8.0E   0% /data
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 공유 저장소 저장 동작 확인</span>
+</span></span><span style="display:flex;"><span>tree /mnt/myefs              <span style="color:#75715e"># 작업용EC2에서 확인</span>
+</span></span><span style="display:flex;"><span>kubectl exec efs-app -- bash -c <span style="color:#e6db74">&#34;cat data/out&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 쿠버네티스 리소스 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete -f pod.yaml
+</span></span><span style="display:flex;"><span>kubectl delete -f storageclass.yaml
+</span></span></code></pre></div><p><img src="./images/21-efs_dynamic_provisioning_in_efs-ap_mode.png" alt="EFS_dynamic_provisioning_in_efs-ap_mode"></p>
+<p><img src="./images/22-check_shared_efs_and_storageclass_efs-sc_defined_in_pvc.png" alt="check_shared_EFS_&amp;_storageclass_efs-sc_defined_in_pvc"></p>
+<h2 id="6-eks-pvs-for-instance-store--add-nodegroup">6. EKS PVs for Instance Store &amp; Add NodeGroup</h2>
+<ul>
+<li>EC2의 인스턴스 스토어는&hellip;
+<ul>
+<li><a href="https://kubernetes.io/ko/docs/concepts/storage/ephemeral-volumes/">ephemeral-storage(임시 볼륨)</a></li>
+<li>웹 콘솔의 EC2 스토리(EBS)정보에 출력되지 않음. 터미널에서 확인.</li>
+</ul>
+</li>
+<li>인스턴스 스토리지의 데이터 손실의 주요한 유형은 아래와 같음.
+<ol>
+<li>기본 디스크 드라이브 오류</li>
+<li>인스턴스 <strong>중지</strong></li>
+<li>인스턴스 <strong>최대 절전 모드</strong> 전환</li>
+<li>인스턴스 <strong>종료</strong></li>
+</ol>
+</li>
+<li><a href="https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/InstanceStorage.html">(출처: AWS Docs)</a></li>
+</ul>
+<h3 id="6-1-신규-노드-그룹-생성">6-1. 신규 노드 그룹 생성</h3>
+<ul>
+<li>신규 노드 그룹 ng2를 생성하여 실습 진행
+<ul>
+<li>c5d.large의 EC2 인스턴스 스토어(임시 블록 스토리지)를 대상으로 설정</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 인스턴스 스토어 볼륨이 있는 c5 모든 타입의 스토리지 크기 확인</span>
+</span></span><span style="display:flex;"><span>aws ec2 describe-instance-types <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span> --filters <span style="color:#e6db74">&#34;Name=instance-type,Values=c5*&#34;</span> <span style="color:#e6db74">&#34;Name=instance-storage-supported,Values=true&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span> --query <span style="color:#e6db74">&#34;InstanceTypes[].[InstanceType, InstanceStorageInfo.TotalSizeInGB]&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span> --output table
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 신규 노드 그룹 생성</span>
+</span></span><span style="display:flex;"><span>eksctl create nodegroup --help
+</span></span><span style="display:flex;"><span>eksctl create nodegroup -c $CLUSTER_NAME -r $AWS_DEFAULT_REGION --subnet-ids <span style="color:#e6db74">&#34;</span>$PubSubnet1<span style="color:#e6db74">&#34;</span>,<span style="color:#e6db74">&#34;</span>$PubSubnet2<span style="color:#e6db74">&#34;</span>,<span style="color:#e6db74">&#34;</span>$PubSubnet3<span style="color:#e6db74">&#34;</span> --ssh-access <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -n ng2 -t c5d.large -N <span style="color:#ae81ff">1</span> -m <span style="color:#ae81ff">1</span> -M <span style="color:#ae81ff">1</span> --node-volume-size<span style="color:#f92672">=</span><span style="color:#ae81ff">30</span> --node-labels disk<span style="color:#f92672">=</span>nvme --max-pods-per-node <span style="color:#ae81ff">100</span> --dry-run &gt; myng2.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT &gt; nvme.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  preBootstrapCommands:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - |
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # Install Tools
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      yum install nvme-cli links tree jq tcpdump sysstat -y
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # Filesystem &amp; Mount
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      mkfs -t xfs /dev/nvme1n1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      mkdir /data
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      mount /dev/nvme1n1 /data
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # Get disk UUID
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      uuid=\$(blkid -o value -s UUID mount /dev/nvme1n1 /data) 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      # Mount the disk during a reboot
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      echo /dev/nvme1n1 /data xfs defaults,noatime 0 2 &gt;&gt; /etc/fstab
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>sed -i -n -e <span style="color:#e6db74">&#39;/volumeType/r nvme.yaml&#39;</span> -e <span style="color:#e6db74">&#39;1,$p&#39;</span> myng2.yaml
+</span></span><span style="display:flex;"><span>eksctl create nodegroup -f myng2.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 보안그룹 ID 확인</span>
+</span></span><span style="display:flex;"><span>NG2SGID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws ec2 describe-security-groups --filters Name<span style="color:#f92672">=</span>group-name,Values<span style="color:#f92672">=</span>*ng2* --query <span style="color:#e6db74">&#34;SecurityGroups[*].[GroupId]&#34;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>aws ec2 authorize-security-group-ingress --group-id $NG2SGID --protocol <span style="color:#e6db74">&#39;-1&#39;</span> --cidr 192.168.1.100/32
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 워커 노드 SSH 접속</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 노드 그룹 생성시 나오는 프롬프트에서 노드 ip를 확인할 수 있음</span>
+</span></span><span style="display:flex;"><span>N4<span style="color:#f92672">=</span>192.168.1.209
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N4 hostname
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 확인</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N4 sudo nvme list
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N4 sudo lsblk -e <span style="color:#ae81ff">7</span> -d
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N4 sudo df -hT -t xfs
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N4 sudo tree /data
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N4 sudo cat /etc/fstab
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (옵션) max-pod 확인: 100개</span>
+</span></span><span style="display:flex;"><span>kubectl describe node -l disk<span style="color:#f92672">=</span>nvme | grep Allocatable: -A7
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (옵션) kubelet 데몬 파라미터 확인 : --max-pods=29 --max-pods=100</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 동일 파라미터가 2개 뜨는데, 29는 기본값이고, 100은 노드그룹 생성시 지정한 값임.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 마지막 파라미터에 덧씌워져서 적용되는 것으로 판단. </span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N4 sudo ps -ef | grep kubelet
+</span></span></code></pre></div><p><img src="./images/23-create_new_node_group_with_preBootstrapCommands.png" alt="create_new_node_group_with_preBootstrapCommands"></p>
+<p><img src="./images/24-confirm_new_node_ip.png" alt="confirm_new_node_ip"></p>
+<p><img src="./images/25-overrided_max-pods_parameter.png" alt="overrided_max-pods_parameter"></p>
+<h3 id="6-2-스토리지-클래스-재생성-및-io-테스트">6-2. 스토리지 클래스 재생성 및 I/O 테스트</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 기존 삭제 (2-2에서 실습한 내용 초기화)</span>
+</span></span><span style="display:flex;"><span>kubectl delete -f local-path-storage.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 경로 변경 opt -&gt; data 후 재생성</span>
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;s/opt/data/g&#39;</span> local-path-storage.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f local-path-storage.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 모니터링</span>
+</span></span><span style="display:flex;"><span>watch <span style="color:#e6db74">&#39;kubectl get pod -owide;echo;kubectl get pv,pvc&#39;</span>
+</span></span><span style="display:flex;"><span>ssh ec2-user@$N4 iostat -xmdz <span style="color:#ae81ff">1</span> -p nvme1n1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 측정 : Read</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#curl -s -O https://raw.githubusercontent.com/wikibook/kubepractice/main/ch10/fio-read.fio</span>
+</span></span><span style="display:flex;"><span>kubestr fio -f fio-read.fio -s local-path --size 10G --nodeselector disk<span style="color:#f92672">=</span>nvme
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 삭제</span>
+</span></span><span style="display:flex;"><span>kubectl delete -f local-path-storage.yaml
+</span></span><span style="display:flex;"><span>eksctl delete nodegroup -c $CLUSTER_NAME -n ng2
+</span></span></code></pre></div><p><img src="./images/26-read_test_on_new_node_nvme.png" alt="read_test_on_new_node_nvme"></p>
+<h2 id="reference">reference</h2>
+<ul>
+<li><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a> Notion 및 Slack 채널</li>
+<li><a href="https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/cli-usage-filter.html">aws-cli filter @AWS Docs</a></li>
+<li><a href="https://bcho.tistory.com/1259">k8s volume @조대협님의 블로그</a></li>
+<li><a href="https://malwareanalysis.tistory.com/598">AWS EBS Controller @악분일상님의 블로그</a></li>
+<li><a href="https://kubernetes.io/blog/2021/09/13/read-write-once-pod-access-mode-alpha/">ReadWriteOncePod(RWOP) access mode @k8s Blog</a></li>
+<li><a href="https://www.wisen.co.kr/pages/blog/blog-detail.html?idx=6883">AWS EFS ap-northeast-2 region @GS Neotek Blog</a></li>
+<li><a href="https://aws.amazon.com/ko/efs/faq/">EFS FAQ @AWS</a></li>
+<li><a href="https://kubernetes.io/ko/docs/concepts/storage/ephemeral-volumes/">ephemeral-storage @k8s Docs</a></li>
+<li><a href="https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/InstanceStorage.html">EC2 Instance Store @AWS Docs</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2023/05/07/aws-eks-study-week2/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">AWS EKS 스터디 2주차 - Network</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2023/05/18/modify-bastion-cidr-with-aws-cli/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">aws-cli를 이용한 bastion CIDR 변경</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

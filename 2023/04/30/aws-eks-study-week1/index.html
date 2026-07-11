@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>AWS EKS 스터디 1주차 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="AWS EKS 스터디 1주차" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2023/04/30/aws-eks-study-week1/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2023/04/30/aws-eks-study-week1/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2023/04/30/aws-eks-study-week1/cover.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>AWS EKS 스터디 1주차</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-04-30T03:00:15&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aws" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">AWS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/eks" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">EKS</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>최근 <a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는<br>
+AWS EKS Workshop Study(이하, AEWS)에 참여하게 되었습니다.</p>
+<p>k8s가 워낙 인기가 많기도 하지만, 지난 kOps 스터디를 통해 관리요소가 참 많은 것을 느꼈었고,<br>
+좀더 수월하게 이해를 해보고자 AWS 서비스인<br>
+EKS(Elastic Kubernetes Service)를 이번 기회에 살펴보기로 했습니다.</p>
+<h2 id="eks-사용에-있어-고려사항">EKS 사용에 있어 고려사항</h2>
+<p>EKS는 관리형 서비스(managed service)이기에 아래와 같은 장점이 있습니다.</p>
+<ul>
+<li>클러스터링을 위한 Control Plane(일명, 마스터 노드)을 AWS에서 관리해줍니다.
+<ul>
+<li>워커노드는
+<ol>
+<li>사용자가 AMI를 구성하여 이를 사용</li>
+<li>AWS에서 제공하는 Fargate로 <strong>VM</strong>을 할당하여 사용</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>kOps와도 유사하지만, 다른 AWS 서비스와의 연동이 용이합니다.<br>
+개인적으로는 ACM의 인증서 사용에 있어 더 편할 것이라 생각을 했습니다.
+<ol>
+<li>ECR에 저장한 컨테이너 이미지를 활용가능</li>
+<li>IAM을 통한 권한 관리</li>
+<li>ELB를 통한 로드밸런싱</li>
+<li>VPC를 통한 네트워크 관리</li>
+</ol>
+</li>
+<li>오픈소스 k8s 기반이기에 EKS로의 용이한 마이그레이션</li>
+</ul>
+<h2 id="api-서버-cluster-endpoint-구성">API 서버 Cluster Endpoint 구성</h2>
+<ul>
+<li>
+<p>EKS는 Control Plane을 관리해주나, 마스터 노드에 접근이 필요한 경우가 있습니다.<br>
+이를 위해, Cluster Endpoint를 구성하여 마스터 노드에 접근할 수 있습니다.</p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html">EKS Cluster Endpoint Access Control</a></p>
+</li>
+<li>
+<p>아래와 같이 구분할 수 있습니다.</p>
+</li>
+</ul>
+<table>
+	<thead>
+			<tr>
+					<th>Endpoint Public 액세스</th>
+					<th>Endpoint Private 액세스</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Enabled</td>
+					<td>Disabled</td>
+					<td>최초 기본 값, 퍼블릭 IP로 접속</td>
+			</tr>
+			<tr>
+					<td>Enabled</td>
+					<td>Enabled</td>
+					<td>k8s API 요청은 AWS VPC 엔드포인트 사용</td>
+			</tr>
+			<tr>
+					<td>Disabled</td>
+					<td>Enabled</td>
+					<td>모든 트래픽이 AWS VPC 엔드포인트 사용</td>
+			</tr>
+	</tbody>
+</table>
+<ul>
+<li>3번째 구성이 권장. kubectl 명령에 의한 모든 트래픽이 EKS에서 관리되는 ENI을 타게 됨.</li>
+</ul>
+<h2 id="eks-배포해보기">EKS 배포해보기</h2>
+<ul>
+<li>
+<p>스터디에서는 kOps 때와 같이 cloudformation 기반으로 배포.</p>
+</li>
+<li>
+<p><a href="https://github.com/awslabs/ec2-spot-labs/blob/master/ec2-spot-eks-solution/provision-worker-nodes/amazon-eks-nodegroup-with-spot.yaml">소스코드 예제</a>를 참조하여, spot instance를 사용하도록 템플릿 재구성을 하고 싶었으나,<br>
+아직 적용할 시점은 아니라고 생각되어 skip</p>
+</li>
+<li>
+<p>cloudformation 적용</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>aws cloudformation deploy --template-file ~/Documents/aews/myeks-1week.yaml <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>     --stack-name myeks --parameter-overrides KeyName<span style="color:#f92672">=</span>aews SgIngressSshCidr<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span>/32 --region ap-northeast-2
+</span></span></code></pre></div><p><img src="./images/1-cloudformation.png" alt="cloudformation"></p>
+<ul>
+<li>웹 콘솔에서도 확인 가능</li>
+</ul>
+<p><img src="./images/2-host_instance.png" alt="console"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># EC2 IP 출력</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#66d9ef">$(</span>aws cloudformation describe-stacks --stack-name myeks --query <span style="color:#e6db74">&#39;Stacks[*].Outputs[*].OutputValue&#39;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># EC2 SSH 접속</span>
+</span></span><span style="display:flex;"><span>ssh -i ~/.ssh/aews.pem ec2-user@<span style="color:#66d9ef">$(</span>aws cloudformation describe-stacks --stack-name myeks --query <span style="color:#e6db74">&#39;Stacks[*].Outputs[*].OutputValue&#39;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span></code></pre></div><ul>
+<li>아래와 같이 정상적으로 접속된다.</li>
+</ul>
+<p><img src="./images/3-ssh.png" alt="ssh"></p>
+<h2 id="eks-호스트-확인">EKS 호스트 확인</h2>
+<ul>
+<li>cloudformation 템플릿에 적어둔 각 버전을 정상적으로 확인</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl version --client<span style="color:#f92672">=</span>true -o yaml | yh
+</span></span><span style="display:flex;"><span>eksctl version
+</span></span><span style="display:flex;"><span>aws --version
+</span></span><span style="display:flex;"><span>ls /root/.ssh/id_rsa*
+</span></span><span style="display:flex;"><span>docker info
+</span></span></code></pre></div><ul>
+<li>아래와 같이 kubectl은 eks용 v1.25.7이 적용되었음을 알 수 있음</li>
+</ul>
+<p><img src="./images/4-host_info.png" alt="host"></p>
+<h2 id="eks-클러스터-생성">EKS 클러스터 생성</h2>
+<ul>
+<li>아래와 같이 입력하여 클러스터 생성하였음</li>
+<li>다만, ssh 접속 상태에서 aws configure로 access key, secret key를 입력해야하는데<br>
+다행인지 불행인지 로컬에서 해당 키값을 암호화하지 않았기 때문에 입력에 큰 어려움이 없었다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 환경 값 설정</span>
+</span></span><span style="display:flex;"><span>export VPCID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws ec2 describe-vpcs --filters <span style="color:#e6db74">&#34;Name=tag:Name,Values=</span>$CLUSTER_NAME<span style="color:#e6db74">-VPC&#34;</span> | jq -r .Vpcs<span style="color:#f92672">[]</span>.VpcId<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>export PubSubnet1<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws ec2 describe-subnets --filters Name<span style="color:#f92672">=</span>tag:Name,Values<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$CLUSTER_NAME<span style="color:#e6db74">-PublicSubnet1&#34;</span> --query <span style="color:#e6db74">&#34;Subnets[0].[SubnetId]&#34;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>export PubSubnet2<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws ec2 describe-subnets --filters Name<span style="color:#f92672">=</span>tag:Name,Values<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$CLUSTER_NAME<span style="color:#e6db74">-PublicSubnet2&#34;</span> --query <span style="color:#e6db74">&#34;Subnets[0].[SubnetId]&#34;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># eksctl 통해 생성을 하면, cloudformation에서 생성현황을 확인할 수 있음</span>
+</span></span><span style="display:flex;"><span>eksctl create cluster --name $CLUSTER_NAME --region<span style="color:#f92672">=</span>$AWS_DEFAULT_REGION --nodegroup-name<span style="color:#f92672">=</span>$CLUSTER_NAME-nodegroup --node-type<span style="color:#f92672">=</span>t3.medium <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>--node-volume-size<span style="color:#f92672">=</span><span style="color:#ae81ff">30</span> --vpc-public-subnets <span style="color:#e6db74">&#34;</span>$PubSubnet1<span style="color:#e6db74">,</span>$PubSubnet2<span style="color:#e6db74">&#34;</span> --version 1.24 --ssh-access --external-dns-access --verbose <span style="color:#ae81ff">4</span>
+</span></span></code></pre></div><ul>
+<li>생성 전</li>
+</ul>
+<p><img src="./images/5-before_create_cluster.png" alt="before"></p>
+<ul>
+<li>아래와 같이 정상적으로 생성되었음을 확인</li>
+</ul>
+<p><img src="./images/6-create_cluster.png" alt="create_cluster"></p>
+<ul>
+<li>한국 리전의 A, C AZ를 대상으로, 1.24 버전의 k8s 클러스터가 생성되었음을 확인</li>
+</ul>
+<p><img src="./images/7-cluster_detail.png" alt="cluster_detail"></p>
+<h2 id="클러스터-엔드포인트-및-eks-api-접속-시도">클러스터 엔드포인트 및 eks API 접속 시도</h2>
+<ul>
+<li>아래와 같이 클러스터 엔드포인트를 확인하고, 접속 시도
+<ul>
+<li>API server endpoint access가 현재 Public으로 활성화되어 있기 때문에 접속은 가능.</li>
+<li>AWS에서 관리하는 API 서버의 IP도 조회(=노출)된다.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 클러스터 엔드포인트 확인</span>
+</span></span><span style="display:flex;"><span>aws eks describe-cluster --name $CLUSTER_NAME | jq -r .cluster.endpoint
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># API서버 IP 확인</span>
+</span></span><span style="display:flex;"><span>APIDNS<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws eks describe-cluster --name $CLUSTER_NAME | jq -r .cluster.endpoint | cut -d <span style="color:#e6db74">&#39;/&#39;</span> -f 3<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>dig +short $APIDNS
+</span></span></code></pre></div><p><img src="./images/8-api_dns_check.png" alt="API_endpoint"></p>
+<h2 id="kubectl로-생성된-클러스터-및-파드-확인">kubectl로 생성된 클러스터 및 파드 확인</h2>
+<ul>
+<li>클러스터는 현재 온디맨드 t3.medium을 사용하고 있기 때문에, 빠르게 학습 확인하고 삭제하야여함</li>
+<li>파드의 경우, 컨트롤 플레인이 AWS에서 관리하기 때문에, 해당 파드는 명령어로 확인할 수 없음. [온프레미스와 다른 점]</li>
+<li>확인되는 ECR 이미지(<del>eksbuild</del>)를 pull하려고 하면 권한이 없다고 나옴.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get node --label-columns<span style="color:#f92672">=</span>node.kubernetes.io/instance-type,eks.amazonaws.com/capacityType,topology.kubernetes.io/zone
+</span></span><span style="display:flex;"><span>kubectl get node -v<span style="color:#f92672">=</span><span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span>kubectl get node --label-columns<span style="color:#f92672">=</span>eks.amazonaws.com/capacityType
+</span></span><span style="display:flex;"><span>kubectl get pod -n kube-system -o wide
+</span></span></code></pre></div><p><img src="./images/9-kubectl_instance_type.png" alt="kubectl_instance_type"></p>
+<p><img src="./images/10-kubectl_pod_check.png" alt="kubectl_pod_check"></p>
+<h2 id="노드-ping-테스트-및-ssh-접속">노드 ping 테스트 및 ssh 접속</h2>
+<ul>
+<li>노드는 Public Subnet에 생성되었기 때문에, ping 테스트가 당연히 될 줄 알았는데, 안됨</li>
+<li>ssh는 정상적으로 접속
+<ul>
+<li>이유는 해당 sg에서 ssh에 대해서만 허용이 걸려있어서, ping(ICMP)은 허용이 안되어있음</li>
+</ul>
+</li>
+<li>myeks-host에서 워커노드(파드)에 ping을 날릴 수 있도록 정책을 풀어줘야함</li>
+<li>참조
+<ul>
+<li><a href="https://www.cloudflare.com/ko-kr/learning/ddos/glossary/internet-control-message-protocol-icmp/">ICMP @cloudflare</a></li>
+<li><a href="https://docs.netapp.com/ko-kr/e-series-santricity/sm-hardware/what-are-icmp-ping-responses.html">ICMP @NetApp</a></li>
+<li><a href="https://stackoverflow.com/questions/45519815/what-does-protocol-1-on-aws-security-group-egress-mean">sg 프로토콜 &lsquo;-1&rsquo;의 의미</a></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># EC2 인스턴스의 현재 IP확인 및 각 노드에 대한 IP값 저장 </span>
+</span></span><span style="display:flex;"><span>aws ec2 describe-instances --query <span style="color:#e6db74">&#34;Reservations[*].Instances[*].{PublicIPAdd:PublicIpAddress,PrivateIPAdd:PrivateIpAddress,InstanceName:Tags[?Key==&#39;Name&#39;]|[0].Value,Status:State.Name}&#34;</span> --filters Name<span style="color:#f92672">=</span>instance-state-name,Values<span style="color:#f92672">=</span>running --output table
+</span></span><span style="display:flex;"><span>N1<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get node --label-columns<span style="color:#f92672">=</span>topology.kubernetes.io/zone --selector<span style="color:#f92672">=</span>topology.kubernetes.io/zone<span style="color:#f92672">=</span>ap-northeast-2a -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.addresses<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.address<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>N2<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl get node --label-columns<span style="color:#f92672">=</span>topology.kubernetes.io/zone --selector<span style="color:#f92672">=</span>topology.kubernetes.io/zone<span style="color:#f92672">=</span>ap-northeast-2c -o jsonpath<span style="color:#f92672">={</span>.items<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.status.addresses<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.address<span style="color:#f92672">}</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $N1, $N2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ping 테스트</span>
+</span></span><span style="display:flex;"><span>ping -c <span style="color:#ae81ff">2</span> $N1
+</span></span><span style="display:flex;"><span>ping -c <span style="color:#ae81ff">2</span> $N2
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 해당 sg 확인 </span>
+</span></span><span style="display:flex;"><span>NGSGID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>aws ec2 describe-security-groups --filters Name<span style="color:#f92672">=</span>group-name,Values<span style="color:#f92672">=</span>*nodegroup* --query <span style="color:#e6db74">&#34;SecurityGroups[*].[GroupId]&#34;</span> --output text<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $NGSGID
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ssh는 정상 작동 확인</span>
+</span></span><span style="display:flex;"><span>ssh -i ~/.ssh/id_rsa ec2-user@$N1 hostname
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 인바운드룰을 완화시켜서 ping이 가능하도록 변경 (오직 myeks-host에서만)</span>
+</span></span><span style="display:flex;"><span>aws ec2 authorize-security-group-ingress --group-id $NGSGID --protocol <span style="color:#e6db74">&#39;-1&#39;</span> --cidr 192.168.1.100/32
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     &#34;Return&#34;: true,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     &#34;SecurityGroupRules&#34;: [</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         {</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             &#34;SecurityGroupRuleId&#34;: &#34;sgr-0304dbf69b2b131b8&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             &#34;GroupId&#34;: &#34;sg-0e863cf3d7a36790e&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             &#34;GroupOwnerId&#34;: &#34;179746107155&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             &#34;IsEgress&#34;: false,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             &#34;IpProtocol&#34;: &#34;-1&#34;,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             &#34;FromPort&#34;: -1,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             &#34;ToPort&#34;: -1,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#             &#34;CidrIpv4&#34;: &#34;192.168.1.100/32&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         }</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#     ]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># }</span>
+</span></span></code></pre></div><p><img src="./images/11-node_icmp_ping.png" alt="aws_sg_ping"></p>
+<ul>
+<li>실제로, myeks-host로부터의 &lsquo;모든&rsquo; 트래픽이 허용되었음을 확인할 수 있다.
+<ul>
+<li>캡처는 생략하였으나, ping이 정상적으로 되었음을 확인하였음.</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/12-all_traffic_accept_from_ekshost.png" alt="aws_sg_all_from_host"></p>
+<h2 id="eks-테스트-서비스-배포-mario">EKS 테스트 서비스 배포 (mario)</h2>
+<ul>
+<li>CLB&hellip;로 배포 테스트를 시행</li>
+<li>정상적으로 구동되는 것을 확인할 수 있다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -s -O https://raw.githubusercontent.com/gasida/PKOS/main/1/mario.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f mario.yaml
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 배포 확인 : CLB 배포 확인</span>
+</span></span><span style="display:flex;"><span>kubectl get deploy,svc,ep mario
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 마리오 게임 접속 : CLB 주소로 웹 접속</span>
+</span></span><span style="display:flex;"><span>kubectl get svc mario -o jsonpath<span style="color:#f92672">={</span>.status.loadBalancer.ingress<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.hostname<span style="color:#f92672">}</span> | awk <span style="color:#e6db74">&#39;{ print &#34;Maria URL = http://&#34;$1 }&#39;</span>
+</span></span></code></pre></div><p><img src="./images/13-eks_service_deploy_test.png" alt="eks_service_deploy_test"></p>
+<h2 id="reference">reference</h2>
+<ul>
+<li><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a> Notion 및 Slack 채널</li>
+<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html">EKS userguide @AWS</a></li>
+<li><a href="https://www.cloudflare.com/ko-kr/learning/ddos/glossary/internet-control-message-protocol-icmp/">ICMP def. @cloudflare</a></li>
+<li><a href="https://docs.netapp.com/ko-kr/e-series-santricity/sm-hardware/what-are-icmp-ping-responses.html">ICMP def. @NetApp</a></li>
+<li><a href="https://stackoverflow.com/questions/45519815/what-does-protocol-1-on-aws-security-group-egress-mean">What does protocol -1 on AWS security group egress mean? @stackoverflow</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2023/03/28/fix-error-526-in-cloudflare-with-github-page/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">GitHub Pages가 고장났나? (Cloudflare 526 Error)</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2023/05/07/aws-eks-study-week2/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">AWS EKS 스터디 2주차 - Network</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

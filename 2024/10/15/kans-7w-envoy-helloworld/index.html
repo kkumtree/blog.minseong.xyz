@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>Kubernetes Service(4): envoy overview | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Kubernetes Service(4): envoy overview" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2024/10/15/kans-7w-envoy-helloworld/images/envoy-hello-world.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2024/10/15/kans-7w-envoy-helloworld/images/envoy-hello-world.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2024/10/15/kans-7w-envoy-helloworld/images/envoy-hello-world.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('images/envoy-hello-world.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Kubernetes Service(4): envoy overview</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2024-10-15T10:16:38&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/kans" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kans</span>
+              </div>
+            </a>
+            
+            <a href="/tags/envoy" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">envoy</span>
+              </div>
+            </a>
+            
+            <a href="/tags/proxy" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">proxy</span>
+              </div>
+            </a>
+            
+            <a href="/tags/kubernetes" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">kubernetes</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <blockquote>
+<p>따로 슥 찾아보니, envoy는 Micro Service Architecture 등 구현된 단위 기능간의 통신을 위한 L7 Proxy 라고 합니다.<br>
+Docker Compose 정도나 일반 서비스에서는 굳이 필요하지는 않을 것 같지만, Service Mesh 환경에서는 알아두면 좋을 것 같아 훝어봅니다.</p>
+</blockquote>
+<p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 <strong>K</strong>8s <strong>A</strong>dvanced <strong>N</strong>etwork <strong>S</strong>tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.</p>
+<h2 id="1-envoy-installation">1. Envoy Installation</h2>
+<ul>
+<li>Docs: <a href="https://www.envoyproxy.io/docs/envoy/latest/start/install">Installing Envoy</a></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wget -O- https://apt.envoyproxy.io/signing.key | sudo gpg --dearmor -o /etc/apt/keyrings/envoy-keyring.gpg
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;deb [signed-by=/etc/apt/keyrings/envoy-keyring.gpg] https://apt.envoyproxy.io jammy main&#34;</span> | sudo tee /etc/apt/sources.list.d/envoy.list
+</span></span><span style="display:flex;"><span>sudo apt-get update
+</span></span><span style="display:flex;"><span>sudo apt-get install envoy
+</span></span><span style="display:flex;"><span>envoy --version
+</span></span></code></pre></div><p>학습환경은 root로 접속되어 있기에 sudo는 쓰지 않았습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wget -O- https://apt.envoyproxy.io/signing.key | sudo gpg --dearmor -o /etc/apt/keyrings/envoy-keyring.gpg
+</span></span><span style="display:flex;"><span>--2024-10-15 09:46:22--  https://apt.envoyproxy.io/signing.key
+</span></span><span style="display:flex;"><span>Resolving apt.envoyproxy.io <span style="color:#f92672">(</span>apt.envoyproxy.io<span style="color:#f92672">)</span>... 13.215.144.61, 13.251.96.10, 2406:da18:880:3802::c8, ...
+</span></span><span style="display:flex;"><span>Connecting to apt.envoyproxy.io <span style="color:#f92672">(</span>apt.envoyproxy.io<span style="color:#f92672">)</span>|13.215.144.61|:443... connected.
+</span></span><span style="display:flex;"><span>HTTP request sent, awaiting response... <span style="color:#ae81ff">200</span> OK
+</span></span><span style="display:flex;"><span>Length: <span style="color:#ae81ff">3158</span> <span style="color:#f92672">(</span>3.1K<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>application/vnd.apple.keynote<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>Saving to: ‘STDOUT’
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>-                   100%<span style="color:#f92672">[===================</span>&gt;<span style="color:#f92672">]</span>   3.08K  --.-KB/s    in 0s      
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>2024-10-15 09:46:23 <span style="color:#f92672">(</span>86.8 MB/s<span style="color:#f92672">)</span> - written to stdout <span style="color:#f92672">[</span>3158/3158<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;deb [signed-by=/etc/apt/keyrings/envoy-keyring.gpg] https://apt.envoyproxy.io jammy main&#34;</span> | sudo tee /etc/apt/sources.list.d/envoy.list
+</span></span><span style="display:flex;"><span>deb <span style="color:#f92672">[</span>signed-by<span style="color:#f92672">=</span>/etc/apt/keyrings/envoy-keyring.gpg<span style="color:#f92672">]</span> https://apt.envoyproxy.io jammy main
+</span></span><span style="display:flex;"><span>apt-get update <span style="color:#f92672">&amp;&amp;</span> apt-get install envoy -y
+</span></span><span style="display:flex;"><span>Reading package lists... Done
+</span></span><span style="display:flex;"><span>Building dependency tree... Done
+</span></span><span style="display:flex;"><span>Reading state information... Done
+</span></span><span style="display:flex;"><span>The following NEW packages will be installed:
+</span></span><span style="display:flex;"><span>  envoy
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span> upgraded, <span style="color:#ae81ff">1</span> newly installed, <span style="color:#ae81ff">0</span> to remove and <span style="color:#ae81ff">8</span> not upgraded.
+</span></span><span style="display:flex;"><span>Need to get 73.2 MB of archives.
+</span></span><span style="display:flex;"><span>After this operation, <span style="color:#ae81ff">0</span> B of additional disk space will be used.
+</span></span><span style="display:flex;"><span>Get:1 https://apt.envoyproxy.io jammy/main amd64 envoy amd64 1.31.2 <span style="color:#f92672">[</span>73.2 MB<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>Fetched 73.2 MB in 6s <span style="color:#f92672">(</span>12.2 MB/s<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Selecting previously unselected package envoy.
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>Reading database ... <span style="color:#ae81ff">66661</span> files and directories currently installed.<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Preparing to unpack .../envoy_1.31.2_amd64.deb ...
+</span></span><span style="display:flex;"><span>Unpacking envoy <span style="color:#f92672">(</span>1.31.2<span style="color:#f92672">)</span> ...
+</span></span><span style="display:flex;"><span>Setting up envoy <span style="color:#f92672">(</span>1.31.2<span style="color:#f92672">)</span> ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>You have installed the Envoy proxy server.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>You can check your Envoy version by running the following in a terminal:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  $ envoy --version
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Documentation <span style="color:#66d9ef">for</span> your version is available at:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  https://www.envoyproxy.io/docs
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>The Envoy project can be found at:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  https://github.com/envoyproxy/envoy
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Scanning processes...                                                           
+</span></span><span style="display:flex;"><span>Scanning linux images...                                                        
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Running kernel seems to be up-to-date.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>No services need to be restarted.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>No containers need to be restarted.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>No user sessions are running outdated binaries.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>No VM guests are running outdated hypervisor <span style="color:#f92672">(</span>qemu<span style="color:#f92672">)</span> binaries on this host.
+</span></span><span style="display:flex;"><span>envoy --version
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>envoy  version: cc4a75482810de4b84c301d13deb551bd3147339/1.31.2/Clean/RELEASE/BoringSSL
+</span></span></code></pre></div><ul>
+<li>옵션 확인</li>
+</ul>
+<p>envoy 옵션은 <code>envoy -h</code> 로 확인가능합니다.<br>
+man page는 따로 설치되지 않는 것 같습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>man envoy
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># No manual entry for envoy</span>
+</span></span></code></pre></div><h2 id="2-envoy-quick-start">2. Envoy Quick start</h2>
+<ul>
+<li>잘 모르겠으니 그냥 따라합니다.</li>
+<li><a href="https://www.envoyproxy.io/docs/envoy/latest/start/quick-start/">Envoy Docs</a></li>
+</ul>
+<h3 id="a-config-데모-적용">(a) Config 데모 적용</h3>
+<p>한 쪽에는 Envoy를 켜고, 한 쪽에서는 접속 테스트를 해볼 겁니다.<br>
+스터디에서 같은 서브넷 구성이 된 환경을 제공해주셨기에, 이 점은 양해바랍니다.</p>
+<ul>
+<li>Terminal 0) Turn On Envoy
+<ul>
+<li>foreground 상태라, 켜놓은 상태에서 다른 터미널을 엽니다.</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -O https://www.envoyproxy.io/docs/envoy/latest/_downloads/92dcb9714fb6bc288d042029b34c0de4/envoy-demo.yaml
+</span></span><span style="display:flex;"><span>envoy -c envoy-demo.yaml
+</span></span></code></pre></div><ul>
+<li>Terminal 1) 테스트</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ss -tnlp
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># State    Recv-Q   Send-Q     Local Address:Port        Peer Address:Port   Process                                                                    </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># LISTEN   0        4096       127.0.0.53%lo:53               0.0.0.0:*       users:((&#34;systemd-resolve&#34;,pid=347,fd=14))                                 </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># LISTEN   0        128              0.0.0.0:22               0.0.0.0:*       users:((&#34;sshd&#34;,pid=703,fd=3))                                             </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># LISTEN   0        4096             0.0.0.0:10000            0.0.0.0:*       users:((&#34;envoy&#34;,pid=10390,fd=25))                                         </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># LISTEN   0        4096             0.0.0.0:10000            0.0.0.0:*       users:((&#34;envoy&#34;,pid=10390,fd=24))                                         </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># LISTEN   0        511                    *:80                     *:*       users:((&#34;apache2&#34;,pid=2376,fd=4),(&#34;apache2&#34;,pid=2375,fd=4),(&#34;apache2&#34;,pid=2373,fd=4))</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># LISTEN   0        128                 [::]:22                  [::]:*       users:((&#34;sshd&#34;,pid=703,fd=4))  </span>
+</span></span><span style="display:flex;"><span>curl -s http://127.0.0.1:10000 | grep -o <span style="color:#e6db74">&#34;&lt;title&gt;.*&lt;/title&gt;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;title&gt;Envoy proxy - home&lt;/title&gt;</span>
+</span></span><span style="display:flex;"><span>echo -e <span style="color:#e6db74">&#34;http://</span><span style="color:#66d9ef">$(</span>curl -s ipinfo.io/ip<span style="color:#66d9ef">)</span><span style="color:#e6db74">:10000&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># http://54.180.163.59:10000</span>
+</span></span></code></pre></div><p><img src="images/envoy-hello-world.png" alt="envoy-hello-world"></p>
+<ul>
+<li>Terminal2) Test in k3s master node
+<ul>
+<li><code>192.168.10.200</code>: Where envoy is running</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -s http://192.168.10.200:10000 | grep -o <span style="color:#e6db74">&#34;&lt;title&gt;.*&lt;/title&gt;&#34;</span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;title&gt;Envoy proxy - home&lt;/title&gt;</span>
+</span></span></code></pre></div><h3 id="b-config-설정-변경">(b) Config 설정 변경</h3>
+<p>앞서 구동한 envoy를 종료하고, 다시 실행합니다.<br>
+<code>-c</code> 나 <code>--config-path</code> 옵션은 동일합니다.<br>
+다만, 옵션 override를 할 때, 추가로 merging 되는 환경변수는<br>
+<code>--config-path</code> 옵션을 사용하도록 권하는 것 같습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOT&gt; envoy-override.yaml
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">admin:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  address:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    socket_address:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      address: 0.0.0.0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      port_value: 9902
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>envoy -c envoy-demo.yaml --config-path <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>cat envoy-override.yaml<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><p>이 경우, 10000 Port 외에 추가로 9902 포트를 통해 Admin 페이지에 접근 할 수 있었습니다.</p>
+<p><img src="images/envoy-admin.png" alt="envoy-admin"></p>
+<h3 id="c-config-유효성-검사">(c) Config 유효성 검사</h3>
+<p><code>--mode validate</code> 옵션을 통해, 설정 파일의 유효성을 검사할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>envoy --mode validate -c envoy-demo.yaml  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [2024-10-19 15:45:46.382][10661][info][main] [source/server/server.cc:879] runtime: {}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [2024-10-19 15:45:46.383][10661][info][config] [source/server/configuration_impl.cc:168] loading tracing configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [2024-10-19 15:45:46.383][10661][info][config] [source/server/configuration_impl.cc:124] loading 0 static secret(s)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [2024-10-19 15:45:46.383][10661][info][config] [source/server/configuration_impl.cc:130] loading 1 cluster(s)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [2024-10-19 15:45:46.384][10661][info][config] [source/server/configuration_impl.cc:138] loading 1 listener(s)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [2024-10-19 15:45:46.386][10661][warning][misc] [source/extensions/filters/network/http_connection_manager/config.cc:88] internal_address_config is not configured. The existing default behaviour will trust RFC1918 IP addresses, but this will be changed in next release. Please explictily config internal address config as the migration step or config the envoy.reloadable_features.explicit_internal_address_config to true to untrust all ips by default</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [2024-10-19 15:45:46.389][10661][info][config] [source/server/configuration_impl.cc:154] loading stats configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># configuration &#39;envoy-demo.yaml&#39; OK  </span>
+</span></span></code></pre></div><h3 id="d-envoy-logging-설정">(d) Envoy logging 설정</h3>
+<p>기본적으로 <code>/dev/stderr</code>에 로깅을 한다고 합니다.<br>
+character special file(문자 특수 파일)이네요.</p>
+<p>랄까, container 환경에서는 stderr/stdout을 통해 일반적으로 로깅하는 것 같긴 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>readlink -e /dev/stderr
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /dev/pts/3</span>
+</span></span><span style="display:flex;"><span>readlink /dev/stderr
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /proc/self/fd/2</span>
+</span></span><span style="display:flex;"><span>readlink /proc/self/fd/2
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /dev/pts/3</span>
+</span></span><span style="display:flex;"><span>ls -l /dev/pts/3
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># crw------- 1 root tty 136, 3 Oct 19 16:00 /dev/pts/3</span>
+</span></span></code></pre></div><h4 id="택1-실행시-파라미터-설정">[택1] 실행시 파라미터 설정</h4>
+<p><code>--log-level</code> 옵션을 통해, 로깅할 경로를 지정할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># ls /var/log/envoy</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ls: cannot access &#39;/var/log/envoy&#39;: No such file or directory</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># mkdir -p /var/log/envoy</span>
+</span></span><span style="display:flex;"><span>mkdir -p /tmp/envoy-logs
+</span></span><span style="display:flex;"><span>envoy -c envoy-demo.yaml --log-path /tmp/envoy-logs/custom.log
+</span></span></code></pre></div><h4 id="택2-admin-인터페이스에서-설정">[택2] Admin 인터페이스에서 설정</h4>
+<p><img src="images/envoy-admin-logging.png" alt="envoy-admin-logging"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat envoy-demo.yaml | grep -A <span style="color:#ae81ff">3</span> -B <span style="color:#ae81ff">3</span> access_log:
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># typed_config:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   &#34;@type&#34;: type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   stat_prefix: ingress_http</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   access_log:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#   - name: envoy.access_loggers.stdout</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#     typed_config:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#       &#34;@type&#34;: type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog</span>
+</span></span></code></pre></div><h4 id="이외-log-extension">[이외] Log extension</h4>
+<ul>
+<li>Log <a href="https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/config#api-v3-config">extension</a>을 통해, 다양한 로깅 설정을 할 수 있습니다.</li>
+</ul>
+<h3 id="e-envoy-networking">(e) Envoy networking</h3>
+<p>기본값은 IPv6와 IPv4를 모두 활성화하나 IPv6를 비활성화하여야하는 상황이 있다면,<br>
+데모 설정파일같이 <code>dns_lookup_family</code>를 <code>V4_ONLY</code>로 설정하면 되겠습니다.<br>
+linux 호스트가 아닌 환경에서도 해당 케이스가 있을 수 있다고 합니다. (<a href="https://docs.docker.com/engine/daemon/ipv6/">Docker Docs</a>)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat envoy-demo.yaml | grep -A <span style="color:#ae81ff">7</span> -B <span style="color:#ae81ff">4</span> dns_lookup_family
+</span></span><span style="display:flex;"><span>  clusters:
+</span></span><span style="display:flex;"><span>  - name: service_envoyproxy_io
+</span></span><span style="display:flex;"><span>    type: LOGICAL_DNS
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Comment out the following line to test on v6 networks</span>
+</span></span><span style="display:flex;"><span>    dns_lookup_family: V4_ONLY
+</span></span><span style="display:flex;"><span>    load_assignment:
+</span></span><span style="display:flex;"><span>      cluster_name: service_envoyproxy_io
+</span></span><span style="display:flex;"><span>      endpoints:
+</span></span><span style="display:flex;"><span>      - lb_endpoints:
+</span></span><span style="display:flex;"><span>        - endpoint:
+</span></span><span style="display:flex;"><span>            address:
+</span></span><span style="display:flex;"><span>              socket_address:
+</span></span></code></pre></div><h3 id="f-envoy-debugging">(f) Envoy debugging</h3>
+<h4 id="택1-basic">[택1] basic</h4>
+<p><code>-l</code> 혹은 <code>--log-level</code> 옵션을 통해, 로깅 레벨을 설정할 수 있습니다.</p>
+<ul>
+<li>Default: <code>info</code></li>
+<li>List: <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning/warn</code>, <code>error</code>, <code>critical</code>, <code>off</code></li>
+</ul>
+<h4 id="택2-component">[택2] component</h4>
+<p><code>--component-log-level</code> 옵션을 통해, 컴포넌트별로 로깅을 지정할 수 있습니다.<br>
+전역 로깅 레벨을 <code>off</code>로 설정하고, 특정 컴포넌트만 로깅하고 싶을 때 사용할 수 있습니다.</p>
+<ul>
+<li><code>ALL_LOGGER_IDS</code> : <a href="https://github.com/envoyproxy/envoy/blob/5691519b9430b119c9580ad57e965ed482db68e8/source/common/common/logger.h#L36">GitHub</a></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>envoy -c envoy-demo.yaml -l off --component-log-level upstream:debug,connection:trace
+</span></span></code></pre></div>
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2024/10/10/kans-6w-k3s-ingress/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Kubernetes Service(3): Ingress(ingress-nginx) w/k3s</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2024/10/19/kans-7w-envoy-config/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">Kubernetes Service(4): envoy config</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

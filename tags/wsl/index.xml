@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>WSL on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/wsl/</link>
+		<description>Recent content in WSL on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Thu, 29 Jun 2023 02:28:34 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/wsl/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Release file for URL is not valid yet 해결 방법</title>
+				<link>https://blog.minseong.xyz/2023/06/29/how-to-fix-ubuntu-release-file-is-not-valid-yet/</link>
+				<pubDate>Thu, 29 Jun 2023 02:28:34 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2023/06/29/how-to-fix-ubuntu-release-file-is-not-valid-yet/</guid>
+				<description>&lt;p&gt;최근 WSL를 쓰게 되면서, 한 가지 이슈가 생겼다.&lt;br&gt;&#xA;APT repo를 업데이트 하면 아래와 같은 에러가 발생한다.&lt;br&gt;&#xA;이것저것 손대보고 해결법을 적어보고자 한다.&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;images/apt-update-with-error.png&#34; alt=&#34;apt-update-with-error&#34;&gt;&lt;/p&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-message&#34; data-lang=&#34;message&#34;&gt;E: Release file for http://ports.ubuntu.com/ubuntu-ports/dists/jammy/InRelease is not valid yet (invalid for another 5min 1s). Updates for this repository will not be applied.&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;오류 증상은 릴리스 파일이 존재하지 않는데, 5분 1초동안 유효하지 않는다고 한다.&lt;br&gt;&#xA;무슨 말인가 싶은데, 5분 있다가 업데이트 해보라는 것이다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;원인&#34;&gt;원인&lt;/h2&gt;&#xA;&lt;p&gt;오랫동안 절전모드로 두어서 시간 동기화가 안된 것으로 보인다.&lt;br&gt;&#xA;재부팅하지 않으려고 했기에, 해결을 위해 더 많은 시간을 보냈다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

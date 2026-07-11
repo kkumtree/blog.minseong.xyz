@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Ingress on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/ingress/</link>
+		<description>Recent content in Ingress on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 16 Nov 2025 17:38:34 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/ingress/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>ArgoCD with Ingress - CI/CD 스터디 5주차</title>
+				<link>https://blog.minseong.xyz/2025/11/16/argocd-ingress/</link>
+				<pubDate>Sun, 16 Nov 2025 17:38:34 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2025/11/16/argocd-ingress/</guid>
+				<description>&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 CI/CD Study 5주차에는 ArgoCD를 좀더 다루었습니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;0-실습-준비&#34;&gt;0. 실습 준비&lt;/h2&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;해당 구성들은 아래 GitHub에 탑재되어 있습니다.&#xA;&lt;a href=&#34;https://github.com/kkumtree/ci-cd-cloudnet-study&#34;&gt;https://github.com/kkumtree/ci-cd-cloudnet-study&lt;/a&gt; 의 5w 폴더&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;우선 80/443 포트를 사용할 수 있는지 확인하여야합니다. 아닌 경우, 다른 포트를 사용해야합니다.&lt;/p&gt;&#xA;&lt;p&gt;&lt;del&gt;실제로 해보았을 경우 tailscale이 포트를 사용하는 것으로 오인하여 해당 서비스를 중지해보았습니다.&lt;/del&gt;&lt;br&gt;&#xA;다만, 단순히 kind YAML을 잘못 작성한 것으로 보입니다.&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;image-8.png&#34; alt=&#34;stop other processes&#34;&gt;&lt;/p&gt;&#xA;&lt;h3 id=&#34;1-kind-및-kube-ops-view&#34;&gt;(1) kind 및 kube-ops-view&lt;/h3&gt;&#xA;&lt;p&gt;이번에는 Ingress의 배포를 하기 위한 밑작업으로&lt;br&gt;&#xA;Control Node에 라벨링을 진행합니다.&lt;br&gt;&#xA;이는 다음에 이어질 &lt;code&gt;ingress-nginx&lt;/code&gt; 배포 시, nodeSeletor 조건으로 사용합니다.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Kubernetes Service(3): Ingress(ingress-nginx) w/k3s</title>
+				<link>https://blog.minseong.xyz/2024/10/10/kans-6w-k3s-ingress/</link>
+				<pubDate>Thu, 10 Oct 2024 22:12:57 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2024/10/10/kans-6w-k3s-ingress/</guid>
+				<description>&lt;p&gt;지난 포스팅, &lt;a href=&#34;https://blog.minseong.xyz/post/kans-5w-metallb-loadbalancer/&#34;&gt;Kubernetes Service(2): LoadBalancer(MetalLB)&lt;/a&gt;에 이어 Ingress Type을 가볍게 살펴보고, Ingress-Nginx를 가볍게 붙여보겠습니다.&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 &lt;strong&gt;K&lt;/strong&gt;8s &lt;strong&gt;A&lt;/strong&gt;dvanced &lt;strong&gt;N&lt;/strong&gt;etwork &lt;strong&gt;S&lt;/strong&gt;tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;1-ingress-type&#34;&gt;1. Ingress Type&lt;/h2&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;이제, 신규 기능(New feature)은 &lt;code&gt;Gateway API&lt;/code&gt;에 추가된다고 합니다.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;우선, Kubernetes가 헷갈리는 것 중 하나가,&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;code&gt;Ingress Type 과 LoadBalancer Type의 명확한 차이가 뭘까...?&lt;/code&gt;&lt;br&gt;&#xA;라는 점이라고 봅니다.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;물론, 그거 외에도 k8s에는 알쏭달쏭한 것들이 아-주 많지만요.&lt;/p&gt;&#xA;&lt;p&gt;친절한 &lt;a href=&#34;https://kubernetes.io/docs/concepts/services-networking/ingress/&#34;&gt;Docs&lt;/a&gt;에 따르면,&lt;br&gt;&#xA;클러스터 외부로 클러스터 내부 서비스에 대한 HTTP 및 HTTPS 라우팅을 노출하는 것이라고 합니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

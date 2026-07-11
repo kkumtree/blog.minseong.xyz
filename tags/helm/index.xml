@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Helm on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/helm/</link>
+		<description>Recent content in Helm on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 02 Nov 2025 08:51:39 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/helm/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Jenkins, git and kubernetes - CI/CD 스터디 3주차</title>
+				<link>https://blog.minseong.xyz/2025/11/02/jenkins-ci-cd-kubernetes/</link>
+				<pubDate>Sun, 02 Nov 2025 08:51:39 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2025/11/02/jenkins-ci-cd-kubernetes/</guid>
+				<description>&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 CI/CD Study 3주차에는 Jenkins와 ArgoCD을 다뤘습니다.&lt;/p&gt;&#xA;&lt;p&gt;이번에는 kubernetes(이하, k8s)에 self-host Git과 Jenkins를 배포 후 CI/CD 부분을 다루도록 하겠습니다.&lt;/p&gt;&#xA;&lt;p&gt;하다보니 개인적으로, 아래 3가지가 주로 기억에 남았던 것 같습니다.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Docker UDS의 GID&lt;/li&gt;&#xA;&lt;li&gt;Gitea와 Multibranch Pipeline의 결합&lt;/li&gt;&#xA;&lt;li&gt;Local PV의 Taint 및 Node 지정&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;더불어, Gitea에 대해 Basic Auth를 통한 CLI 접근을 막아보는 것도 새로이 해보았습니다.&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;해당 구성들은 아래 GitHub에 탑재되어 있습니다.&lt;br&gt;&#xA;&lt;a href=&#34;https://github.com/kkumtree/ci-cd-cloudnet-study&#34;&gt;https://github.com/kkumtree/ci-cd-cloudnet-study&lt;/a&gt; 의 3w 폴더&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;h2 id=&#34;0-실습-준비&#34;&gt;0. 실습 준비&lt;/h2&gt;&#xA;&lt;h3 id=&#34;1-kind&#34;&gt;(1) kind&lt;/h3&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;kind 설치의 경우 다음 포스트를 참고할 수 있습니다.&lt;br&gt;&#xA;&lt;a href=&#34;../kans-2w-kind-installation-on-linux/&#34;&gt;리눅스에 KIND 설치하기 w/golang&lt;/a&gt;&lt;br&gt;&#xA;Docs: &lt;a href=&#34;https://kind.sigs.k8s.io/&#34;&gt;https://kind.sigs.k8s.io/&lt;/a&gt;&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Helm 템플릿으로 재사용성 높이기 - CI/CD 스터디 2주차</title>
+				<link>https://blog.minseong.xyz/2025/10/26/helm-template-reusing-statements/</link>
+				<pubDate>Sun, 26 Oct 2025 03:16:04 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2025/10/26/helm-template-reusing-statements/</guid>
+				<description>&lt;p&gt;이번에는 재사용성을 위해서 &lt;code&gt;_helpers.tpl&lt;/code&gt; 파일을 활용해보겠습니다.&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;기존의 &lt;a href=&#34;../helm-hello-world/&#34;&gt;Helm 101 - CI/CD 스터디 2주차&lt;/a&gt;에서 이어집니다.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;h2 id=&#34;1-_helperstpl을-통한-공통-변수-재사용&#34;&gt;1. &lt;code&gt;_helpers.tpl&lt;/code&gt;을 통한 공통 변수 재사용&lt;/h2&gt;&#xA;&lt;h3 id=&#34;1-공통사항-숙지&#34;&gt;(1) 공통사항 숙지&lt;/h3&gt;&#xA;&lt;p&gt;이전에 생성한 &lt;code&gt;deployment.yaml&lt;/code&gt;과 &lt;code&gt;service.yaml&lt;/code&gt;의 &lt;code&gt;selector&lt;/code&gt; 부분에 공통점이 있습니다.&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# `{{ .Values.replicaCount }}&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;## deployment.yaml  &lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;spec.selector.matchLabels&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;spec.template.metadata.labels&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;## service.yaml  &lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;spec.selector&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;2-템플릿-생성&#34;&gt;(2) 템플릿 생성&lt;/h3&gt;&#xA;&lt;p&gt;해당 label을 추가/삭제하려면, 여러 필드를 업데이트를 하여야합니다.&lt;br&gt;&#xA;대신 &lt;code&gt;_helpers.tpl&lt;/code&gt;파일을 생성하여 구성읋 합니다.&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;&lt;code&gt;_helpers.tpl&lt;/code&gt; 뿐만 아니라, 맨 앞에 &lt;code&gt;_&lt;/code&gt;로 시작하기만 하면 되며,&lt;br&gt;&#xA;이 파일은 k8s manifest 파일로 취급되지 않습니다.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Helm 101 - CI/CD 스터디 2주차</title>
+				<link>https://blog.minseong.xyz/2025/10/24/helm-hello-world/</link>
+				<pubDate>Fri, 24 Oct 2025 01:17:39 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2025/10/24/helm-hello-world/</guid>
+				<description>&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 CI/CD Study 2주차에는 Helm과 Tekton을 다뤘습니다.&lt;/p&gt;&#xA;&lt;p&gt;이번에는 Helm의 기본적인 부분을 다루도록 하겠습니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;1-helm의-역할과-실습-준비사항&#34;&gt;1. Helm의 역할과 실습 준비사항&lt;/h2&gt;&#xA;&lt;h3 id=&#34;helm&#34;&gt;Helm?&lt;/h3&gt;&#xA;&lt;p&gt;템플릿 기반 솔루션. 즉, 버전 관리 및 공유, 배포가 가능한 아티팩트를 생성하도록 돕습니다.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;Helm chart(차트)&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;공유 가능한 Kubernetes(쿠버네티스, 이하 k8s) 패키지며, 차트 간 의존성 등 다양한 요소를 포함합니다.&lt;/li&gt;&#xA;&lt;li&gt;k8s를 다루면 Helm을 많이 사용하게 되는데, 그 이유 중 하나가 chart 개념입니다.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;Rolling Update for ConfigMap&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;애플리케이션의 설정값은 일반적으로 k8s의 ConfigMap에 대응되는 속성입니다.&lt;/li&gt;&#xA;&lt;li&gt;ConfigMap: 수정되어도 애플리케이션의 롤링 업데이트 전, 즉 애플리케이션을 수동 재시작 하기 전까지는 값이 적용되지 않습니다.&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Helm은 ConfigMap이 변경되면, 자동으로 Rolling Update가 이루어지는 기능들을 제공합니다.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;실습-준비&#34;&gt;실습 준비&lt;/h3&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;kind&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

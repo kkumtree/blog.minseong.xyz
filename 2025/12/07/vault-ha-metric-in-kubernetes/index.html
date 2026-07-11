@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>Vault HA 및 Metric 수집 설정 - CI/CD 스터디 8주차 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Vault HA 및 Metric 수집 설정 - CI/CD 스터디 8주차" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2025/12/07/vault-ha-metric-in-kubernetes/image-27.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2025/12/07/vault-ha-metric-in-kubernetes/image-27.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2025/12/07/vault-ha-metric-in-kubernetes/image-27.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-27.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Vault HA 및 Metric 수집 설정 - CI/CD 스터디 8주차</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-12-07T05:59:10&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/vault" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">vault</span>
+              </div>
+            </a>
+            
+            <a href="/tags/datadog" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">datadog</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cicd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CICD</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 CI/CD Study 8주차에는 <a href="https://www.vaultproject.io/">Vault</a>의 HA(High Availability)에 대해 다루었습니다.</p>
+<p>구성 방법의 이론적 부분은 단순했으나, 예상한 구성 방법과 달라서 제가 나중에 참고하려고 부연설명을 해두려고 합니다.</p>
+<p>더불어 대시보드에서 Vault 관련 메트릭을 보고 싶어서, Datadog과 연동하여 관측하였습니다.</p>
+<h2 id="0-실습-환경-준비">0. 실습 환경 준비</h2>
+<blockquote>
+<p>해당 구성들은 아래 GitHub에 탑재되어 있습니다.<br>
+<a href="https://github.com/kkumtree/ci-cd-cloudnet-study">https://github.com/kkumtree/ci-cd-cloudnet-study</a> 의 8w 폴더
+Helm v4 출시 후 한 달도 안된 시점에 작성되었기에, v3에 호환되는 차트 버전을 명시하여 배포했습니다.</p>
+</blockquote>
+<p>kind 배포와 ingress-nginx, 그리고 vault-worker 까지 배포하면, 아래와 같은 구성도가 됩니다.</p>
+<p><img src="image-2.png" alt="testbed for practice"></p>
+<p>(1-1) kind의 경우 (8w/shells/kind/up-kind.sh)</p>
+<ol>
+<li>control-plane 하나 (containerPort:hostPort)
+<ul>
+<li>80:80, 443:443 (TCP)</li>
+<li>30000:30000, 30001</li>
+</ul>
+</li>
+<li>vault-worker간 raft 알고리즘을 위한, 3개의 worker 노드</li>
+</ol>
+<p>(1-2) ingress-nginx의 경우 (8w/shells/kind/up-kind.sh)</p>
+<ul>
+<li>kind용으로 배포하며 해당 컨트롤러가 control-plane에 배포됩니다.</li>
+<li>nodeSelecter: <code>ingress-ready:true</code></li>
+<li>SSL paththrough 활성화
+(배포 단순 확인을 위해, <code>traefik/whoami</code> 서비스 추가 배포)</li>
+</ul>
+<p>(2) vault-worker의 경우 (8w/shells/vault/vault-ha.sh)</p>
+<ol>
+<li>HA모드 활성화 및 replica 3개 구성
+<ul>
+<li>raft 및 ui 활성화 / TLS 비활성화</li>
+<li>Port: 8200(API), 8201(vault-worker간 통신)</li>
+<li>kubernetes 서비스 등록</li>
+</ul>
+</li>
+<li>readinessProbe 활성화</li>
+<li>PVC: raft 데이터 저장 (10Gi)</li>
+<li>UI (NodePort)
+<ul>
+<li>externalPort: 8200</li>
+<li>serviceNodePort: 300000</li>
+</ul>
+</li>
+<li>injector 비활성화</li>
+</ol>
+<h2 id="1-vault-클러스터-구성">1. Vault 클러스터 구성</h2>
+<p>각 worker 노드에 배포된 replica pod들에서 로그를 반복적으로 확인할 수 있습니다.<br>
+또한 구성이 완료되지 않은 상태이기 때문에, running 상태가 아님을 확인할 수 도 있습니다. (readinessProbe)</p>
+<pre tabindex="0"><code class="language-log" data-lang="log">[INFO]  core: security barrier not initialized  
+[INFO]  core: seal configuration missing, not initialize  
+</code></pre><p><img src="image.png" alt="before raft"></p>
+<p>그래서 아래와 같은 절차를 밟습니다.</p>
+<ol>
+<li>3개의 Pod 중 하나를 선택하여, 터미널에서 Vault 클러스터 초기화(initialize)를 합니다.
+<ul>
+<li>출력되는 Unseal Key 5개와 Initial Root Token 1개를 메모해둡니다.</li>
+<li>Unseal Key 3개를 골라, Vault를 Unseal 상태로 바꿉니다. (다수결 충족 및 리더로 선출)</li>
+<li>해당 Pod에서 확인되는 Vault HA Cluster 주소를 메모해둡니다.</li>
+</ul>
+</li>
+<li>남은 Pod의 터미널에서는 <strong>초기화하지 않습니다</strong>.
+<ul>
+<li>초기화한 Vault Pod에서 확인된 Cluster 주소를 기반으로 Cluster에 Join 합니다.</li>
+<li>Vault를 Unseal 상태로 만듭니다. (1번에서 확인된 Unseal Key 사용)</li>
+</ul>
+</li>
+</ol>
+<p><img src="image-1.png" alt="init vault operator in a pod"></p>
+<p>이를 도식화하면 아래와 같이 됩니다.</p>
+<p>(1-하나의 Pod를 초기화)<br>
+<img src="image-3.png" alt="init vault cluster in a pod"></p>
+<p>(2-해당 Pod에서 Unseal 시행)<br>
+<img src="image-4.png" alt="unseal in the initiated pod"></p>
+<p>(3-남은 Pod에서 초기화한 Pod로 Join)<br>
+<img src="image-5.png" alt="cluster join at other pods"></p>
+<p>(4-남은 Pod에서 Unseal 시행)<br>
+<img src="image-6.png" alt="unseal in other pods"></p>
+<p>각 Pod에서 Unsealed 시행 시 다음과 같이 확인할 수 있습니다.</p>
+<p><img src="image-7.png" alt="unsealed vault"></p>
+<p>vault-0 Pod가 Unsealed 되었을 시, 아래와 같이 해당 Pod만 Ready 상태가 됩니다.</p>
+<p><img src="image-8.png" alt="alt text"></p>
+<p>다른 두 Pod에서 join 후, 똑같이 Unsealed를 하면 이 또한 Ready 상태가 됩니다.</p>
+<p><img src="image-9.png" alt="join in other pods"></p>
+<p><img src="image-10.png" alt="ready with unsealed"></p>
+<p>이후 vault-worker Pod 외부에서 vault와 통신하려면, 아래와 같이 두 변수를 설정해야합니다.</p>
+<ul>
+<li><code>VAULT_ROOT_TOKEN</code>: 초기화 시 확인된 root token</li>
+<li><code>VAULT_ADDR</code>: <code>'http://localhost:30000'</code> (ui.ServiceNodePort)</li>
+</ul>
+<blockquote>
+<p>여기서 눈치챘겠지만, vault cli는 HTTP API 호출을 기반으로 한다는 것을 알 수 있습니다.</p>
+</blockquote>
+<p>그러면 아래와 같이 leader 1개, follower 2개의 raft 피어목록을 확인할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># vault login</span>
+</span></span><span style="display:flex;"><span>vault operator raft list-peers  
+</span></span></code></pre></div><p><img src="image-11.png" alt="raft list-peers to check peers"></p>
+<h2 id="2-vault-api-간단-맛보기">2. Vault API 간단 맛보기</h2>
+<p>이번에는 Vault CLI를 통해 비밀을 저장해보도록 하겠습니다.</p>
+<p>(1) <code>mysecret</code> 경로로 secret 활성화</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>vault secrets enable -path<span style="color:#f92672">=</span>mysecret kv-v2
+</span></span></code></pre></div><p>(2) 하위 <code>logins/study</code>에 샘플 시크릿 저장</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>vault kv put mysecret/logins/study <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  username<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;demo&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  password<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;p@ssw0rd&#34;</span>
+</span></span></code></pre></div><p>(3) 입력된 시크릿 확인</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>vault kv get mysecret/logins/study
+</span></span></code></pre></div><p><img src="image-12.png" alt="vault api usage"></p>
+<p>세부 경로는 list 명령어를 통해서도 확인할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>vault kv list mysecret
+</span></span><span style="display:flex;"><span>vault kv list mysecret/logins
+</span></span></code></pre></div><p><img src="image-13.png" alt="check with list"></p>
+<p>curl을 통한 API 요청으로도 확인할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -s --header <span style="color:#e6db74">&#34;X-Vault-Token: </span>$VAULT_ROOT_TOKEN<span style="color:#e6db74">&#34;</span> http://localhost:30000/v1/mysecret/data/logins/study | jq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s --header <span style="color:#e6db74">&#34;X-Vault-Token: </span>$VAULT_ROOT_TOKEN<span style="color:#e6db74">&#34;</span> http://localhost:30000/v1/mysecret/data/logins/study <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  | jq -r .data.data.username
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -s --header <span style="color:#e6db74">&#34;X-Vault-Token: </span>$VAULT_ROOT_TOKEN<span style="color:#e6db74">&#34;</span> http://localhost:30000/v1/mysecret/data/logins/study <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  | jq -r .data.data.password
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>export USER_NAME<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s --header <span style="color:#e6db74">&#34;X-Vault-Token: </span>$VAULT_ROOT_TOKEN<span style="color:#e6db74">&#34;</span> http://localhost:30000/v1/mysecret/data/logins/study | jq -r .data.data.username<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>export PASSWORD<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>curl -s --header <span style="color:#e6db74">&#34;X-Vault-Token: </span>$VAULT_ROOT_TOKEN<span style="color:#e6db74">&#34;</span> http://localhost:30000/v1/mysecret/data/logins/study | jq -r .data.data.password<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>echo $USER_NAME $PASSWORD
+</span></span></code></pre></div><p><img src="image-14.png" alt="check with curl"></p>
+<p>UI로도 확인합니다.</p>
+<p><img src="image-15.png" alt="check with ui"></p>
+<h2 id="3-openldap-연동해보기">3. OpenLDAP 연동해보기</h2>
+<h3 id="1-환경-구성">(1) 환경 구성</h3>
+<blockquote>
+<p>8w/shells/openldap/openldap.sh</p>
+</blockquote>
+<p><img src="image-16.png" alt="deploy openldap with shell"></p>
+<p>아래와 같은 구조로 구성해보겠습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>dc<span style="color:#f92672">=</span>example,dc<span style="color:#f92672">=</span>org
+</span></span><span style="display:flex;"><span>├── ou<span style="color:#f92672">=</span>people
+</span></span><span style="display:flex;"><span>│   ├── uid<span style="color:#f92672">=</span>alice
+</span></span><span style="display:flex;"><span>│   │   ├── cn: Alice
+</span></span><span style="display:flex;"><span>│   │   ├── sn: Kim
+</span></span><span style="display:flex;"><span>│   │   ├── uid: alice
+</span></span><span style="display:flex;"><span>│   │   └── mail: alice@example.org
+</span></span><span style="display:flex;"><span>│   └── uid<span style="color:#f92672">=</span>bob
+</span></span><span style="display:flex;"><span>│       ├── cn: Bob
+</span></span><span style="display:flex;"><span>│       ├── sn: Lee
+</span></span><span style="display:flex;"><span>│       ├── uid: bob
+</span></span><span style="display:flex;"><span>│       └── mail: bob@example.org
+</span></span><span style="display:flex;"><span>└── ou<span style="color:#f92672">=</span>groups
+</span></span><span style="display:flex;"><span>    ├── cn<span style="color:#f92672">=</span>devs
+</span></span><span style="display:flex;"><span>    │   └── member: uid<span style="color:#f92672">=</span>bob,ou<span style="color:#f92672">=</span>people,dc<span style="color:#f92672">=</span>example,dc<span style="color:#f92672">=</span>org
+</span></span><span style="display:flex;"><span>    └── cn<span style="color:#f92672">=</span>admins
+</span></span><span style="display:flex;"><span>        └── member: uid<span style="color:#f92672">=</span>alice,ou<span style="color:#f92672">=</span>people,dc<span style="color:#f92672">=</span>example,dc<span style="color:#f92672">=</span>org
+</span></span></code></pre></div><p>OpenLDAP 컨테이너에 접근하여, 생성합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl -n openldap exec -it deploy/openldap -c openldap -- bash
+</span></span></code></pre></div><p>(1) OU(Orgnization Unit) 생성</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | ldapadd -x -D &#34;cn=admin,dc=example,dc=org&#34; -w admin
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">dn: ou=people,dc=example,dc=org
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">objectClass: organizationalUnit
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ou: people
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">dn: ou=groups,dc=example,dc=org
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">objectClass: organizationalUnit
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">ou: groups
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><p><img src="image-17.png" alt="alt text"></p>
+<p>(2) user(inetOrgPerson) 추가</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | ldapadd -x -D &#34;cn=admin,dc=example,dc=org&#34; -w admin
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">dn: uid=alice,ou=people,dc=example,dc=org
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">objectClass: inetOrgPerson
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">cn: Alice
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">sn: Kim
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">uid: alice
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mail: alice@example.org
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">userPassword: alice123
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">dn: uid=bob,ou=people,dc=example,dc=org
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">objectClass: inetOrgPerson
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">cn: Bob
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">sn: Lee
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">uid: bob
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mail: bob@example.org
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">userPassword: bob123
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><p><img src="image-18.png" alt="ldapadd with inetOrgPerson"></p>
+<p>(3) group(groupOfNames) 추가</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | ldapadd -x -D &#34;cn=admin,dc=example,dc=org&#34; -w admin
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">dn: cn=devs,ou=groups,dc=example,dc=org
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">objectClass: groupOfNames
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">cn: devs
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">member: uid=bob,ou=people,dc=example,dc=org
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">dn: cn=admins,ou=groups,dc=example,dc=org
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">objectClass: groupOfNames
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">cn: admins
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">member: uid=alice,ou=people,dc=example,dc=org
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 생성 확인 후 exit</span>
+</span></span><span style="display:flex;"><span>exit
+</span></span></code></pre></div><p><img src="image-19.png" alt="add group and exit"></p>
+<h3 id="2-ldap-인증-활성화">(2) LDAP 인증 활성화</h3>
+<p>이제 Vault에서 LDAP을 쓸 수 있게 활성화합니다.<br>
+OpenLDAP 배포 시, 포트 389번을 ldap 컨테이너에 연결하였기에 이를 사용합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>vault auth enable ldap
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>vault auth list
+</span></span><span style="display:flex;"><span>vault auth list -detailed
+</span></span></code></pre></div><p>기본 인증으로 활성화된 token과 함께 ldap이 활성화된 것을 확인</p>
+<p><img src="image-20.png" alt="enable ldap"></p>
+<p>ldap 엔드포인트를 설정 후, 앞서 만들었던 alice 계정으로 접근해봅니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>vault write auth/ldap/config <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    url<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ldap://openldap.openldap.svc:389&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    starttls<span style="color:#f92672">=</span>false <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    insecure_tls<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    binddn<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;cn=admin,dc=example,dc=org&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    bindpass<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;admin&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    userdn<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ou=people,dc=example,dc=org&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    groupdn<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ou=groups,dc=example,dc=org&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    groupfilter<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;(member=uid={{.Username}},ou=people,dc=example,dc=org)&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    groupattr<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;cn&#34;</span>
+</span></span><span style="display:flex;"><span>vault login -method<span style="color:#f92672">=</span>ldap username<span style="color:#f92672">=</span>alice
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 패스워드는 alice123 를 입력  </span>
+</span></span></code></pre></div><p><img src="image-21.png" alt="login with ldap"></p>
+<p>alice 계정에 적용된 정책 <code>default</code>가 적용되었음을 확인합니다.<br>
+다른 계정 <code>bob</code>으로 로그인 시, 토큰값이 바뀐 것을 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>vault token lookup -format<span style="color:#f92672">=</span>json | jq .data.policies
+</span></span><span style="display:flex;"><span>vault token lookup
+</span></span><span style="display:flex;"><span>vault login -method<span style="color:#f92672">=</span>ldap username<span style="color:#f92672">=</span>bob password<span style="color:#f92672">=</span>bob123
+</span></span></code></pre></div><p><img src="image-22.png" alt="check policy for each user"></p>
+<h2 id="4-datadog-메트릭-수집해보기">4. Datadog 메트릭 수집해보기</h2>
+<blockquote>
+<p>로컬 k8s 환경이라 이것저것 손좀 봐야되는게 있었지만,<br>
+그것보다도, Vault Helm Chart 셋업이 좀 혼동되는 부분이 있어 적어봅니다.</p>
+</blockquote>
+<p>JWT토큰을 사용해서 할 수도 있는데, 이번에는 metric 엔드포인트만으로 가져올 수 있도록 합시다.</p>
+<h3 id="1-vault-재배포">(1) Vault 재배포</h3>
+<blockquote>
+<p>8w/shells/vault/vault-ha-ot.sh</p>
+</blockquote>
+<p>PV에 기존 설정값이 보존되어 있기에, 아래와 같이 Vault를 내립니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm uninstall vault -n vault
+</span></span></code></pre></div><p>이후 메트릭이 노출될 수 있도록 Vault의 Helm 차트를 설정해야되는데,<br>
+raft를 설정했다보니 어디를 설정해야할지 혼동되었었습니다.<br>
+설정이 잘 적용되지 않으면 prometheus 포맷에 대해 쿼리시, 아래처럼 Vault가 거부를 하니 유의.</p>
+<p><img src="image-24.png" alt="prometheus is not enabled"></p>
+<p>잠정적으로 내린 결론은 <code>server.ha.raft</code>를 활성화하기로 했다면,<br>
+<code>server.ha.config</code> 는 무시되는 것으로 보입니다.</p>
+<blockquote>
+<p>Hashicorp Discourse랑 Vault Chart의 GitHub Issue를 참고했는데,<br>
+아주 명확한 해설은 없었고, 특히, GitHub의 values.yaml 주석이 제게는 애매했었습니다.</p>
+</blockquote>
+<p>따라서 밑에 발췌해둔 <code>server.ha.raft.config</code> 부분을 참고해서,</p>
+<ul>
+<li>listener &ldquo;tcp&rdquo; 스탠자에 `unauthenticated_metrics_access = &ldquo;true&rdquo;</li>
+<li>따로 telemetry 스탠자에 옵션을 설정합니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">server</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ha</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">raft</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">config</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        listener &#34;tcp&#34; {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          tls_disable = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          address = &#34;[::]:8200&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          cluster_address = &#34;[::]:8201&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          # Enable unauthenticated metrics access (necessary for Prometheus Operator)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          telemetry {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            unauthenticated_metrics_access = &#34;true&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        telemetry {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          prometheus_retention_time = &#34;30s&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          disable_hostname = true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        }</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">config</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      listener &#34;tcp&#34; {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        tls_disable = 1                           
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        address = &#34;[::]:8200&#34;                     
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        cluster_address = &#34;[::]:8201&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        telemetry {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          unauthenticated_metrics_access = &#34;true&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      telemetry {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        prometheus_retention_time = &#34;30s&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        disable_hostname = true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      }    </span>
+</span></span></code></pre></div><p>배포 후에는 Unseal 및 Join 작업을 통해 다시 설정합니다.</p>
+<h3 id="2-vault-내-acl-설정">(2) Vault 내 ACL 설정</h3>
+<p>Hashicorp 및 Dataodog 문서에서는 HCL파일 기준으로 API를 통해 설정이 안내되어있으나,<br>
+UI로 이미 열려있으니 안에서 설정해두었습니다.</p>
+<ul>
+<li>경로: Policies(ACL Policies) &gt; default</li>
+</ul>
+<p>API로 하면 Override 될 것 같았는데, 막상 보니 ACL을 여러파일로 겹치기가 되는 것으로 판단</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">path</span> <span style="color:#e6db74">&#34;sys/metrics*&#34;</span> {
+</span></span><span style="display:flex;"><span>  capabilities <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;read&#34;, &#34;list&#34;</span>]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><img src="image-26.png" alt="Add ACL Policies"></p>
+<h3 id="3-datadog-배포helm">(3) Datadog 배포(Helm)</h3>
+<blockquote>
+<p>8w/shells/datadog
+편의상 default 네임스페이스에 배포</p>
+</blockquote>
+<p>먼저 API키를 고르고 시크릿을 만듭니다. API는 가려두었습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm repo add datadog https://helm.datadoghq.com  
+</span></span><span style="display:flex;"><span>helm repo update  
+</span></span><span style="display:flex;"><span>kubctl create secret generic datadog-secret --from-literal api-key<span style="color:#f92672">=</span>&lt;DATADOG_API_KEY&gt;  
+</span></span></code></pre></div><p><img src="image-23.png" alt="create secret with datadog api key"></p>
+<p>배포하기 전에 실습용 kind이므로 값을 손봐야합니다.<br>
+주요한 부분은 hostname 인식 쪽인데, 환경변수 설정을 통해 KIND 각 노드 이름으로 대체합니다.<br>
+kubelet에 대한 TLS 검증도 스킵.</p>
+<p>이후는 <code>datadog.confd</code>에서 Auto Discovery를 활용하는 것인데,<br>
+요약하자면, yaml 파일을 직접 만들어 Datadog Pod가 읽도록 하는 방식입니다.<br>
+(물론 Vault 차트 배포 시, 어노테이션을 통해 인식하게 하는 방법도 있습니다. 기호에 맞게 취사선택)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">datadog</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">(..)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">DD_HOSTNAME</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">valueFrom</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">fieldRef</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">fieldPath</span>: <span style="color:#ae81ff">spec.nodeName</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">confd</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">vault.yaml</span>: |-<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      ad_identifiers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - vault
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      init_config:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      instances:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        - use_openmetrics: false
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          api_url: http://localhost:30000/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          no_token: true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kubelet</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tlsVerify</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">(..)</span>
+</span></span></code></pre></div><p>다 작성했다면 배포</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm install datadog-agent -f datadog-values.yaml datadog/datadog
+</span></span></code></pre></div><p><img src="image-25.png" alt="deploy datadog agent"></p>
+<p>이후에는 대시보드에서 주요 메트릭을 확인할 수 있습니다.</p>
+<p><img src="image-27.png" alt="datadog vault metrics"></p>
+<p>vault 배포의 경우에는 아래와 같이 기본적으로 확인가능 합니다.</p>
+<p>(Stateful Set)
+<img src="image-28.png" alt="stateful set"></p>
+<p>(Pod)<br>
+<img src="image-29.png" alt="alt text">
+<del>아무래도 kind로 배포한 환경이라 그런지 Node Pod 4개만큼 스펙이 뻥튀기되었습니다</del></p>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://github.com/hashicorp/vault-helm/blob/975c7abf9030178e0677ca57dc4fc8a73a0e19ef/values.yaml#L901-L971">vault-helm/values.yaml - GitHub</a></li>
+<li><a href="https://developer.hashicorp.com/vault/docs/configuration/telemetry">Telemetry - Configuration | Vault</a></li>
+<li><a href="https://developer.hashicorp.com/vault/docs/configuration/listener/tcp#configuring-unauthenticated-metrics-access">TCP listener configuration | Vault</a></li>
+<li><a href="https://discuss.hashicorp.com/t/what-is-the-difference-between-ha-config-and-ha-raft-config-in-vault-helm-values-yaml/26724">What is the difference between ha.config and ha.raft.config in vault-helm values.yaml - Hashicorp Discuss</a></li>
+<li><a href="https://discuss.hashicorp.com/t/raft-config-override-for-helm-chart/59917">Raft config override for Helm chart - Hashicorp Discuss</a></li>
+<li><a href="https://github.com/hashicorp/vault-helm/issues/121">prometheus is not enabled% #121 - GitHub(vault-helm)</a></li>
+<li><a href="https://github.com/DataDog/helm-charts/blob/92fd908e3dd7b7149ce02de1fe859ae5ac717d03/charts/datadog/values.yaml#L315-L330">helm-charts/values.yaml - GitHub(Datadog)</a></li>
+<li><a href="https://github.com/DataDog/integrations-core/blob/master/vault/datadog_checks/vault/data/conf.yaml.example">integrations-core/conf.yaml.example - GitHub(Datadog)</a></li>
+<li><a href="https://docs.datadoghq.com/containers/kubernetes/integrations/?tab=helm#configuration">Kubernetes and Integrations(Helm) - Datadog</a></li>
+<li><a href="https://docs.datadoghq.com/integrations/vault/?tab=containerized">Vault - Datadog</a></li>
+<li><a href="https://developer.hashicorp.com/vault/tutorials/archive/monitoring-vault-with-datadog">Monitoring Vault with Datadog | Vault</a></li>
+<li><a href="https://developer.hashicorp.com/vault/docs/internals/telemetry/enable-telemetry">Enable Vault telemetry | Vault</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2025/11/30/vault-101-in-kubernetes/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Vault 101 in Kubernetes - CI/CD 스터디 7주차</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2026/06/20/aidn-kvcache-and-localllm/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">KV cache에 대한 이해</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

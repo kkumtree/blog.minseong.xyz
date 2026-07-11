@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>Network 모니터링과 마이크로버스트 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Network 모니터링과 마이크로버스트" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2026/07/12/aidc-network-monitoring-microburst/image-4.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2026/07/12/aidc-network-monitoring-microburst/image-4.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2026/07/12/aidc-network-monitoring-microburst/image-4.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-4.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Network 모니터링과 마이크로버스트</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2026-07-12T02:24:00&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/aidn" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">aidn</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/network" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">network</span>
+              </div>
+            </a>
+            
+            <a href="/tags/monitoring" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">monitoring</span>
+              </div>
+            </a>
+            
+            <a href="/tags/microburst" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">microburst</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 AI Datacenter Network Study(이하, AIDN) 마지막에는 AI 데이터센터 네트워크와 스토리지, 그리고 이에 대한 모니터링을 다뤄주셨습니다.</p>
+<p>네트워크 모니터링만 짧게 요약하면, 탐지하기 어려운 마이크로버스트(Microburst) 문제를 해결하기 위해,<br>
+Streaming Telemetry, IFA(In-band Flow Analyzer) 등 다양하게 수집하여 네트워크 상태를 실시간으로 감시하고 분석하는 것이 중요하다는 내용이었고,<br>
+이 많은 실시간 메트릭을 분석하는데 AI Agent를 활용할 시 유용할 수 있다는 내용이었습니다.</p>
+<h2 id="1-기존의-네트워크-장비-모니터링">1. 기존의 네트워크 장비 모니터링</h2>
+<p>글로서 주저리 쓰기 전에 Datadog에서 한 눈에 보기 쉽게 정리한 그림이 있어 가져왔습니다.</p>
+<p><img src="image.png" alt="Datadog Network Device Monitoring"></p>
+<blockquote>
+<p>Image Referenced from <a href="https://docs.datadoghq.com/network_monitoring/devices/setup#how-it-works/">Datadog</a></p>
+</blockquote>
+<p>SD-WAN 콘트롤러 조회는 제외하고 간단히 짚고 넘어가면,<br>
+3가지 방식 있고, SNMP에는 폴링(Polling) 방식과 푸시(Push 혹은 Trap) 방식이 있습니다.<br>
+제 경험을 바탕으로 하면요.</p>
+<p>그림의 화살표가 다른 방향으로 되어있는 것과 같이</p>
+<ul>
+<li>Polling: SNMP</li>
+<li>Push: SNMP Trap, Syslog, NetFlow/sFlow</li>
+</ul>
+<table>
+	<thead>
+			<tr>
+					<th>구분</th>
+					<th>핵심 의미</th>
+					<th>활용</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>SNMP Polling</td>
+					<td>주기적으로 장비 상태 조회</td>
+					<td>몇 초/몇 분마다 카운터 확인</td>
+			</tr>
+			<tr>
+					<td>SNMP Trap</td>
+					<td>임계치 초과 시 이벤트 알림</td>
+					<td>CPU 높음, PFC 과다 같은 알람</td>
+			</tr>
+			<tr>
+					<td>Syslog</td>
+					<td>장비 로그 수집</td>
+					<td>critical/fatal/interface error 확인</td>
+			</tr>
+			<tr>
+					<td>NetFlow/sFlow</td>
+					<td>장비를 통과하는 트래픽의 흐름·통계 수집</td>
+					<td>출발지·목적지, 포트, 프로토콜, 트래픽량 및 상위 통신 주체 분석</td>
+			</tr>
+	</tbody>
+</table>
+<p>이렇게 요약됩니다.</p>
+<h3 id="snmpsimple-network-management-protocol">SNMP(Simple Network Management Protocol)</h3>
+<p>SNMP는 라우터, 스위치, 프린터, CCTV, UPS 등 IP 네트워크에 연결된 다양한 장비들의 상태를 중앙에서 원격으로 모니터링하고 관리하기 위한 인터넷 표준 프로토콜입니다.</p>
+<p>OID(Object Identifier)랑 MIB(Management Information Base)를 기반으로 장비의 상태를 확인하도록 설정하고요.</p>
+<p>그 중 Trap은 주로 아래의 목적으로 장비에 임계치를 지정하여 외부의 모니터링 에이전트(Collector)가 받도록 장비가 전송합니다.</p>
+<ul>
+<li>인터페이스 Link Down/Up</li>
+<li>장비 재부팅</li>
+<li>전원공급장치 장애</li>
+<li>팬 고장</li>
+<li>온도 임계치 초과</li>
+<li>인증 실패</li>
+<li>라우팅 프로토콜 인접 관계 변경</li>
+</ul>
+<h3 id="netflowsflow">NetFlow/sFlow</h3>
+<p>NetFlow 도 조금만 파보면, 아래와 같이 역사와 함께 표준화가 이뤄졌습니다.</p>
+<table>
+	<thead>
+			<tr>
+					<th>구분</th>
+					<th>NetFlow v5</th>
+					<th>NetFlow v9</th>
+					<th>IPFIX</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>개발·표준화</td>
+					<td>Cisco</td>
+					<td>Cisco</td>
+					<td>IETF 국제표준</td>
+			</tr>
+			<tr>
+					<td>데이터 구조</td>
+					<td>고정 형식</td>
+					<td>템플릿 기반</td>
+					<td>템플릿 기반</td>
+			</tr>
+			<tr>
+					<td>확장성</td>
+					<td>낮음</td>
+					<td>높음</td>
+					<td>매우 높음</td>
+			</tr>
+			<tr>
+					<td>IPv6</td>
+					<td>지원하지 않음</td>
+					<td>지원</td>
+					<td>지원</td>
+			</tr>
+			<tr>
+					<td>벤더 범위</td>
+					<td>주로 Cisco 계열</td>
+					<td>여러 벤더에서 지원</td>
+					<td>벤더 중립적</td>
+			</tr>
+			<tr>
+					<td>일반적인 전송</td>
+					<td>UDP</td>
+					<td>주로 UDP</td>
+					<td>UDP·TCP·SCTP</td>
+			</tr>
+			<tr>
+					<td>관계</td>
+					<td>초기 고정형 규격</td>
+					<td>IPFIX의 기반</td>
+					<td>NetFlow v9을 바탕으로 표준화</td>
+			</tr>
+	</tbody>
+</table>
+<p>Datadog에서는 NetFlow/sFlow 모니터링에 대해 NetFlow Monitoring이라고 묶어 부르긴 하는데,<br>
+sFlow v5는 패킷 일부의 <strong>헤더</strong>를 샘플링하고 인터페이스 카운터를 주기적으로 전송하여 전체 트래픽을 추정하는 프로토콜이라고 합니다.</p>
+<p>장비가 전송하는 데이터가 서로 다른 느낌</p>
+<table>
+	<thead>
+			<tr>
+					<th>구분</th>
+					<th>sFlow</th>
+					<th>NetFlow/IPFIX</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>패킷 샘플링</td>
+					<td>일반적으로 사용</td>
+					<td>선택적으로 사용 가능</td>
+			</tr>
+			<tr>
+					<td>장비가 내보내는 핵심 데이터</td>
+					<td>선택된 패킷의 헤더</td>
+					<td>집계된 Flow 레코드</td>
+			</tr>
+			<tr>
+					<td>Flow 상태 유지</td>
+					<td>일반적으로 하지 않음</td>
+					<td>Flow 캐시·카운터 유지</td>
+			</tr>
+			<tr>
+					<td>인터페이스 카운터</td>
+					<td>프로토콜 구성에 포함</td>
+					<td>보통 SNMP 등으로 별도 수집</td>
+			</tr>
+			<tr>
+					<td>Collector의 역할</td>
+					<td>샘플을 분류·집계하여 트래픽 추정</td>
+					<td>장비가 만든 Flow 레코드를 수집·분석</td>
+			</tr>
+			<tr>
+					<td>작은 통신</td>
+					<td>샘플에 없으면 관찰 불가</td>
+					<td>비샘플링이면 기록 가능하고, 샘플링하면 누락 가능</td>
+			</tr>
+			<tr>
+					<td>통신 시작·종료 시간</td>
+					<td>패킷 샘플만으로는 정확히 알기 어려움</td>
+					<td>Flow 레코드에 포함 가능</td>
+			</tr>
+	</tbody>
+</table>
+<h2 id="2-마이크로버스트-측정-문제">2. 마이크로버스트 측정 문제</h2>
+<p>앞서 말한 기존의 네트워크 장비 모니터링에서 눈치를 챘을 수도 있는데<br>
+샘플링, 주기적 폴링 등으로 인해 AI 혹은 ML Fabric에서 발생하는 밀리초, 마이크로초 (혹은 나노초) 사이에 이뤄지는 장애를 놓칠 수 있다고 합니다.</p>
+<p>제가 이해한 거로는 초단위 간격 사이의 Window를 놓치기 때문에 마이크로버스트 문제와 같이 유의미한 이벤트를 놓칠 수 있다는 것 같습니다.</p>
+<h3 id="마이크로버스트-문제">마이크로버스트 문제</h3>
+<p>마이크로버스트(Microburst)는 아주 짧은 시간 동안 여러 패킷이 특정 출력 포트로 한꺼번에 몰리는 현상을 의미한다고 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>일반적인 마이크로버스트 발생
+</span></span><span style="display:flex;"><span>→ 출력 속도보다 패킷 유입 속도가 빨라짐
+</span></span><span style="display:flex;"><span>→ 출력 큐에 패킷 적재
+</span></span><span style="display:flex;"><span>→ 큐 사용량과 대기시간 증가
+</span></span><span style="display:flex;"><span>→ 설정에 따라 ECN Mark(마킹) 또는 PFC Pause(손실방지)로 완화 시도
+</span></span><span style="display:flex;"><span>→ 버퍼가 끝까지 차면 Tail Drop 
+</span></span></code></pre></div><ul>
+<li>ECN(Explicit Congestion Notification) Mark: 혼잡 상태를 나타내는 신호를 패킷 헤더에 표시하는 방식.</li>
+<li>PFC(Priority Flow Control) Pause: 특정 우선순위의 트래픽을 일시적으로 중단시키는 혼잡 제어 방식.</li>
+<li>Tail Drop: 큐가 가득 찬 상태에서 새로 도착한 패킷을 큐의 끝에서 폐기하는 혼잡 제어 방식.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>입력 1 (100Gbps) ─┐
+</span></span><span style="display:flex;"><span>입력 2 (100Gbps) ─┼─→ 출력 포트 하나 (100Gbps)
+</span></span><span style="display:flex;"><span>입력 3 (100Gbps) ─┘
+</span></span></code></pre></div><p>찰나의 순간에 처리되지 않는 패킷이 버퍼에 쌓이며, 초단위 평균 통계에서는 사용률이 낮아지지만<br>
+실제 마이크로초·밀리초 단위로는 혼잡(Congestion) 상태가 발생할 수 있습니다.</p>
+<h3 id="pfc-pause-부작용">PFC Pause 부작용</h3>
+<ul>
+<li>혼잡이 이전 홉으로 전파</li>
+<li>Head-of-Line Blocking: 큐 맨 앞의 패킷이 막히면서, 그 뒤에 있는 정상적으로 전송 가능한 패킷도 막힘</li>
+<li>Pause Storm: 지나치게 많이 또는 지속적으로 발생해 네트워크 여러 구간의 송신이 반복적으로 중단</li>
+<li>PFC Deadlock: 서로에게 Pause를 보내면서, 어느 쪽도 패킷을 전송하지 못해 영구적 또는 장시간 정지</li>
+<li>
+<dl>
+<dt>한 Flow의 혼잡이 다른 Flow에 영향 (802.1p Priority/Traffic Class 단위)</dt>
+<dd>이건 찾아보니, 하나의 Priority 그룹이 Pause 되면, 혼잡 원인의 Flow와 상관없는 다른 Flow도 Pause 되는 것을 말함</dd>
+</dl>
+</li>
+</ul>
+<p><del>음&hellip; 역시 네트워크, 어렵네요.</del></p>
+<h2 id="3-ai-datacenter-network-에서의-모니터링">3. AI Datacenter Network 에서의 모니터링</h2>
+<p>관련해서 스터디 내에서 Telemetry란 용어 빼고 모르는 단어들이 슈슈슉 많이 나왔었는데요.<br>
+결론은 인터페이스 사용량 지표 뿐만이 아니라 더 봐야한다는 것 같습니다.</p>
+<ul>
+<li>고주기 Streaming Telemetry</li>
+<li>큐 깊이·버퍼 사용량 텔레메트리</li>
+<li>In-band Network Telemetry</li>
+<li>하드웨어 타임스탬프</li>
+<li>패킷 캡처 및 TAP(Test Access Point)</li>
+<li>스위치 ASIC의 마이크로버스트 감지 기능</li>
+</ul>
+<p>위 내용은 생성형 AI가 짚어준 거고요&hellip;</p>
+<p>스터디에서 나왔던 내용은 버퍼 큐와 그와 관련된 지표들을 더 수집해야하는 것 같습니다.</p>
+<table>
+	<thead>
+			<tr>
+					<th>지표</th>
+					<th>의미</th>
+					<th>용도</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Egress buffer utilization</td>
+					<td>egress queue/buffer 사용률</td>
+					<td>congestion의 직접 신호</td>
+			</tr>
+			<tr>
+					<td>Shared vs dedicated buffer</td>
+					<td>공유/전용 버퍼 사용 추세</td>
+					<td>특정 queue가 buffer를 잠식하는지 확인</td>
+			</tr>
+			<tr>
+					<td>Latency changes</td>
+					<td>leaf 간 latency 변화</td>
+					<td>fabric 전체 지연 일관성 확인</td>
+			</tr>
+			<tr>
+					<td>Bandwidth utilization</td>
+					<td>leaf-spine, spine-leaf 사용률</td>
+					<td>특정 spine 과부하 확인</td>
+			</tr>
+			<tr>
+					<td>Application flows</td>
+					<td>sFlow/IPFIX 기반 flow 분석</td>
+					<td>elephant flow, low entropy flow 확인</td>
+			</tr>
+			<tr>
+					<td>PFC stats</td>
+					<td>PFC XOFF/pushback</td>
+					<td>lossless fabric 위험 신호</td>
+			</tr>
+			<tr>
+					<td>ECN stats</td>
+					<td>ECN marking 증가</td>
+					<td>DCQCN rate control 유발</td>
+			</tr>
+			<tr>
+					<td>Frame loss</td>
+					<td>queue별 frame loss</td>
+					<td>packet drop 원인 분석</td>
+			</tr>
+			<tr>
+					<td>Mirroring on drop</td>
+					<td>drop packet 복제</td>
+					<td>어떤 packet이 왜 drop됐는지 확인</td>
+			</tr>
+	</tbody>
+</table>
+<p>스터디에서는 3개로 분류</p>
+<table>
+	<thead>
+			<tr>
+					<th>구분</th>
+					<th>설명</th>
+					<th>활용</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Streaming Telemetry</td>
+					<td>gRPC/gNMI 기반 장비 push</td>
+					<td>촘촘한 주기로 메트릭* 수집</td>
+			</tr>
+			<tr>
+					<td>Real-time Monitoring</td>
+					<td>실시간 메트릭* 분석</td>
+					<td>트래픽 엔지니어링, 소스 차단, job 재시작 검토</td>
+			</tr>
+			<tr>
+					<td>IFA*</td>
+					<td>telemetry 정보 삽입</td>
+					<td>AI Fabric의 병목 위치 식별을 위한 enrichment</td>
+			</tr>
+	</tbody>
+</table>
+<ul>
+<li>Streaming Telemetry 메트릭: queue, buffer, interface, FIB/RIB, TCAM, CPU/memory</li>
+<li>Real-time Monitoring 메트릭: PFC, ECN, queue drop, tail latency, fat flow, entropy 분석</li>
+<li>IFA(In-band Flow Analyzer) 패킷 또는 cloned probe에 metadata 삽입<br>
+(hop별 latency, queue ID, congestion, port 정보를 수집)</li>
+</ul>
+<h3 id="ifain-band-flow-analyzer">IFA(In-band Flow Analyzer)</h3>
+<p>IFA는 패킷에 metadata를 삽입하여, 패킷이 지나가는 경로에서 hop별 latency, queue ID, congestion, port 정보 등을 수집하는 기술로 이를 통해 AI Fabric의 병목 위치를 식별하고, 트래픽 엔지니어링 및 문제 해결에 활용할 수 있다고 합니다.</p>
+<p>홉이 늘어나면 패킷에 삽입되는 metadata도 늘어나지 않을까 싶긴한데, 그보다 플로우의 경로를 추적하는데 초점을 둔 듯합니다.</p>
+<p><img src="image-3.png" alt="IFA"></p>
+<blockquote>
+<p>Image Referenced from <a href="https://egstory.net/%eb%84%a4%ed%8a%b8%ec%9b%8c%ed%81%ac-%ec%b5%9c%ec%a0%81%ed%99%94-%ec%a7%84%eb%8b%a8%ec%9d%84-%ec%9c%84%ed%95%9c-%ed%98%81%ec%8b%a0%ec%a0%81%ec%9d%b8-%ec%84%a0%eb%8f%84-%ea%b8%b0%ec%88%a0-ifa-in-ba/">루바루바의 엣지있는 네트워크 이야기</a></p>
+</blockquote>
+<p>IFA2.0 Metadata Stack 기준<br>
+왼쪽은 Juniper, 오른쪽은 HPE의 자료인데 메타데이터가 얼추 같아보이면서도<br>
+Additional Egress Queue Fields 가 Juniper에는 있고, HPE에는 없는 걸 보면<br>
+벤더별로 차이가 있는 것 같아서 장비간 호환이 타지 않을까란 생각을 해봤습니다.</p>
+<p><img src="image-4.png" alt="IFA2.0 Metadata Stack"></p>
+<blockquote>
+<p>Image Referenced from <a href="https://www.juniper.net/documentation/us/en/software/junos/flow-monitoring/topics/topic-map/ifa2.0-probe-for-real-time-performance-monitoring.html">Juniper</a> and <a href="https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/monitoring_8100-83xx-9300-10000/Content/Chp_IFA/ifa-process.htm">HPE</a></p>
+</blockquote>
+<h2 id="8-intin-band-network-telemetry">8. INT(In-band Network Telemetry)</h2>
+<p>sFlow 홉 측정 관련해서 찾다가 나온 개념이라 메모만</p>
+<h3 id="전통적인-intin-band-network-telemetry">전통적인 INT(In-band Network Telemetry)</h3>
+<p>2021년 포스팅 기준, 전통적인 INT는 스위치를 통과할 때마다 패킷 헤더에 정보를 계속 추가</p>
+<p><img src="image-1.png" alt="In-band Network Telemetry"></p>
+<blockquote>
+<p>Image Referenced from <a href="https://blog.sflow.com/2021/03/in-band-network-telemetry-int.html">sFlow</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>송신지
+</span></span><span style="display:flex;"><span>  → Ingress 스위치: INT 헤더 삽입
+</span></span><span style="display:flex;"><span>  → 중간 스위치: 자신의 측정값 추가
+</span></span><span style="display:flex;"><span>  → Egress 스위치: INT 헤더 제거·수집
+</span></span><span style="display:flex;"><span>  → Analyzer로 전달
+</span></span></code></pre></div><p>헤더 증가로 MTU에 영향을 줄 가능성이 있음</p>
+<h3 id="out-of-band-alternative-sflow">out-of-band alternative (sFlow)</h3>
+<p>sFlow는 패킷 내에 INT 헤더를 삽입하지 않고, 스위치에서 샘플링된 패킷의 일부와 인터페이스 카운터를 sFlow Collector로 전송</p>
+<p><img src="image-2.png" alt="Transit Delay Structures Architecture"></p>
+<blockquote>
+<p>Image Referenced from <a href="https://blog.sflow.com/2021/03/in-band-network-telemetry-int.html">sFlow</a></p>
+</blockquote>
+<p>샘플 패킷에 ASIC 측정 메타데이터를 결합해 별도의 sFlow 스트림으로 분석기에 보내는 방식</p>
+<table>
+	<thead>
+			<tr>
+					<th>구분</th>
+					<th>전통적인 INT</th>
+					<th>링크의 sFlow 확장 방식</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>측정 정보 위치</td>
+					<td>실제 전달 패킷 내부</td>
+					<td>샘플 복사본의 메타데이터</td>
+			</tr>
+			<tr>
+					<td>경로별 측정</td>
+					<td>각 홉이 INT 헤더에 추가</td>
+					<td>스위치가 자신의 측정값을 sFlow로 내보냄</td>
+			</tr>
+			<tr>
+					<td>실제 패킷 변경</td>
+					<td>변경함</td>
+					<td>변경하지 않음</td>
+			</tr>
+			<tr>
+					<td>MTU 영향</td>
+					<td>헤더 증가로 발생 가능</td>
+					<td>실제 패킷에는 없음</td>
+			</tr>
+			<tr>
+					<td>분석 주체</td>
+					<td>INT Collector/Analyzer</td>
+					<td>sFlow Analyzer</td>
+			</tr>
+			<tr>
+					<td>데이터 특성</td>
+					<td>패킷별 또는 선택된 패킷별 INT</td>
+					<td>샘플링된 패킷 기반</td>
+			</tr>
+	</tbody>
+</table>
+<ul>
+<li>ASIC: Application-Specific Integrated Circuit, 특정 용도에 맞게 설계된 집적회로</li>
+</ul>
+<h2 id="9-references">9. References</h2>
+<ul>
+<li><a href="https://docs.datadoghq.com/network_monitoring/devices/setup#how-it-works/">Datadog - Network Device Monitoring</a></li>
+<li><a href="https://egstory.net/%eb%84%a4%ed%8a%b8%ec%9b%8c%ed%81%ac-%ec%b5%9c%ec%a0%81%ed%99%94-%ec%a7%84%eb%8b%a8%ec%9d%84-%ec%9c%84%ed%95%9c-%ed%98%81%ec%8b%a0%ec%a0%81%ec%9d%b8-%ec%84%a0%eb%8f%84-%ea%b8%b0%ec%88%a0-ifa-in-ba/">루바루바의 엣지있는 네트워크 이야기 - 네트워크 최적화, 진단을 위한 혁신적인 선도 기술 – IFA (In-band Flow Analyzer)</a></li>
+<li><a href="https://www.juniper.net/documentation/us/en/software/junos/flow-monitoring/topics/topic-map/ifa2.0-probe-for-real-time-performance-monitoring.html">Juniper - Inband Flow Analyzer 2.0</a></li>
+<li><a href="https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/monitoring_8100-83xx-9300-10000/Content/Chp_IFA/ifa-process.htm">HPE - Inband Flow Analyzer Packet Headers</a></li>
+<li><a href="https://blog.sflow.com/2021/03/in-band-network-telemetry-int.html">sFlow - In-band Network Telemetry (INT)</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2026/07/05/aidc-nvidia-gpu-power-liquid-cooling/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">NVIDIA GPU 전원과 액체 냉각</span>
+        </a>
+        
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

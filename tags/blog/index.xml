@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Blog on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/blog/</link>
+		<description>Recent content in Blog on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Mon, 26 Aug 2024 00:02:49 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/blog/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Blog maintanence in 2024</title>
+				<link>https://blog.minseong.xyz/2024/08/26/maintanence-in-2024/</link>
+				<pubDate>Mon, 26 Aug 2024 00:02:49 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2024/08/26/maintanence-in-2024/</guid>
+				<description>&lt;p&gt;Before starting group study, I decided to update my blog.&lt;/p&gt;&#xA;&lt;p&gt;Very small things, but I have some needs about it.&lt;/p&gt;&#xA;&lt;p&gt;One is GitHub Actions&amp;rsquo; dependency update and another is Licences.&lt;/p&gt;&#xA;&lt;p&gt;Cause, Blog is deployed via Github Actions, I need to check dependencies in Github Actions&amp;rsquo; workflow.&lt;/p&gt;&#xA;&lt;p&gt;What I use is &lt;code&gt;actions/checkout&lt;/code&gt;, &lt;code&gt;actions/setup-go&lt;/code&gt;, and &lt;code&gt;actions/setup-node&lt;/code&gt;.&lt;/p&gt;&#xA;&lt;table&gt;&#xA;&#x9;&lt;thead&gt;&#xA;&#x9;&#x9;&#x9;&lt;tr&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;th&gt;Name&lt;/th&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;th&gt;Prev. Version&lt;/th&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;th&gt;Latest Version&lt;/th&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;th&gt;Purpose&lt;/th&gt;&#xA;&#x9;&#x9;&#x9;&lt;/tr&gt;&#xA;&#x9;&lt;/thead&gt;&#xA;&#x9;&lt;tbody&gt;&#xA;&#x9;&#x9;&#x9;&lt;tr&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;checkout&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/checkoutv3&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/checkoutv4&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;Src. and Dest. Branch&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&lt;/tr&gt;&#xA;&#x9;&#x9;&#x9;&lt;tr&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;setup-go&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/setup-go@v4&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/setup-go@v5&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&lt;/tr&gt;&#xA;&#x9;&#x9;&#x9;&lt;tr&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;setup-node&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/setup-node@v3&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;actions/setup-node@v4&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&lt;td&gt;&lt;a href=&#34;https://vanillaframework.io/&#34;&gt;Vanila Framework&lt;/a&gt;&lt;/td&gt;&#xA;&#x9;&#x9;&#x9;&lt;/tr&gt;&#xA;&#x9;&lt;/tbody&gt;&#xA;&lt;/table&gt;&#xA;&lt;p&gt;&lt;img src=&#34;images/github_actions.png&#34; alt=&#34;github_actions&#34;&gt;&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>gh-pages에 댓글 기능 추가하기(giscus/Hugo)</title>
+				<link>https://blog.minseong.xyz/2023/06/04/how-to-add-comment-section-in-gh-pages/</link>
+				<pubDate>Sun, 04 Jun 2023 09:15:14 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2023/06/04/how-to-add-comment-section-in-gh-pages/</guid>
+				<description>&lt;h2 id=&#34;요약&#34;&gt;요약&lt;/h2&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-summary&#34; data-lang=&#34;summary&#34;&gt;앞으로 가감없는 피드백 환영합니다.&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/kkumtree/blog.minseong.xyz/commit/e17822e72e8d357dcdbda1025c5372161a7b93ff&#34;&gt;https://github.com/kkumtree/blog.minseong.xyz/commit/e17822e72e8d357dcdbda1025c5372161a7b93ff&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;배경&#34;&gt;배경&lt;/h2&gt;&#xA;&lt;p&gt;gh-pages로 블로그를 구축해서, 첫 게시물을 올린 지 만 4개월이 지났다.&lt;br&gt;&#xA;구축기는 나중에 올려야지.&lt;/p&gt;&#xA;&lt;p&gt;급히 벤치마킹해서 올린거라, 부족한 점은 많지만 가장 중요한 댓글 기능이 없어서 아쉬웠다.&lt;/p&gt;&#xA;&lt;p&gt;원래는 댓글을 달지 않으려고 했는데,&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;부족한 부분에 대해서 조언도 받아보고 싶고&lt;/li&gt;&#xA;&lt;li&gt;추가로 궁금한 점이나 이해가 안되는 부분에 대해서 피드백도 받고 싶었다.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;다른 블로그에서 답을 찾으려고 검색엔진을 돌리면, 뭔가 2% 부족하거나 / 내가 원하는 해답이 아니거나 / 매번 이모티콘으로 끝나는 특유의 허탈감으로 짜증이 밀려와서 번역기 돌려가며 국외 포스트나 문서를 보다보니, 반대로 내 글도 큰 도움이 되지 못할 경우도 있겠다 싶었다. 그래서 댓글 기능을 추가하기로 했다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

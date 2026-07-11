@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>Terraform resource 이해하기 w/AWS VPC | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="Terraform resource 이해하기 w/AWS VPC" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2023/09/08/terraform-basic-resource-concept/cover.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2023/09/08/terraform-basic-resource-concept/cover.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2023/09/08/terraform-basic-resource-concept/cover.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('cover.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>Terraform resource 이해하기 w/AWS VPC</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2023-09-08T22:41:14&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/terraform" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">Terraform</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+            <a href="/tags/hcl" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">HCL</span>
+              </div>
+            </a>
+            
+            <a href="/tags/immutable" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">immutable</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p>이번에는 <a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>를 통해 학습한 내용을 기반으로,</p>
+<ul>
+<li>AZ를 대상으로 한 data 조회</li>
+<li>AWS VPC 생성 예제로 살펴보는 output</li>
+<li>resource 이름 변경</li>
+</ul>
+<p>순으로 알아보도록 하겠습니다.</p>
+<p>교재로 사용한 [<a href="https://link.coupang.com/a/8mN0N">테라폼으로 시작하는 IaC</a>] 도 참고하였습니다.</p>
+<h2 id="기본-설정">기본 설정</h2>
+<ul>
+<li>aws-cli에 리전을 <code>ap-northeast-2</code>을 설정하였습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ aws configure list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      Name                    Value             Type    Location
+</span></span><span style="display:flex;"><span>      ----                    -----             ----    --------
+</span></span><span style="display:flex;"><span>   profile                &lt;not set&gt;             None    None
+</span></span><span style="display:flex;"><span>access_key     ****************2U5J shared-credentials-file    
+</span></span><span style="display:flex;"><span>secret_key     ****************Z0co shared-credentials-file    
+</span></span><span style="display:flex;"><span>    region           ap-northeast-2      config-file    ~/.aws/config
+</span></span></code></pre></div><h2 id="1-data-조회">1. data 조회</h2>
+<p>data는 사용자가 정의하는 resource 및 리소스에 대한 스펙과 반대로,<br>
+provider(이번 포스트에서는 aws)에서 제공하는 리소스를 조회하는 기능입니다.</p>
+<h3 id="1-data-조회를-위한-tf-파일-작성">(1) data 조회를 위한 tf 파일 작성</h3>
+<p>이번에는 작업 대상 폴더 내의 루트 경로에 az.tf 파일만 작성을 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-HCL" data-lang="HCL"><span style="display:flex;"><span><span style="color:#75715e"># az.tf
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">data</span> <span style="color:#e6db74">&#34;aws_availability_zones&#34; &#34;available&#34;</span> {
+</span></span><span style="display:flex;"><span>    state <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;available&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><img src="./images/az1.png" alt="availablity_zones_tf"></p>
+<ul>
+<li>
+<p>해당 파일은 AWS(프로바이더)가 제공하는 AZ 중에서,<br>
+사용가능한 AZ들을 조회하여 available이라는 데이터로 가져옵니다.</p>
+</li>
+<li>
+<p>작성 후에 아래와 같이 명령어를 적습니다.<br>
+(다른 파일도 있는 경우에는 <code>--auto-approve</code> 옵션을 빼고 실행하여 확인하기 바랍니다)</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>terraform init -upgrade <span style="color:#f92672">&amp;&amp;</span> terraform apply -auto-approve
+</span></span></code></pre></div><ul>
+<li><code>-upgrade</code> 옵션은<br>
+(1) 기존 테라폼 lock파일을 무시하고, 사용 중인 플러그인을 업데이트 하는 역할을 합니다.
+(2) 이 경우에는 az.tf 파일 하나만 있기에, AWS(프로바이더)에서 제공하는 정보들을 lock파일에 재작성한다고 이해하면 될 것 같습니다.
+(3) 자세한 사항은 <a href="https://developer.hashicorp.com/terraform/cli/commands/init#child-module-installation">Terraform CLI</a>에서 확인할 수 있습니다.</li>
+</ul>
+<h3 id="2-tfstate-확인">(2) tfstate 확인</h3>
+<ul>
+<li>tfstate 파일에서 가용할 수 있는 AZ 목록을 확인할 수 있습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;resources&#34;</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;mode&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;data&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;type&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;aws_availability_zones&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;name&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;available&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;provider&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;provider[</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">&#34;</span><span style="color:#a6e22e">registry</span>.<span style="color:#a6e22e">terraform</span>.<span style="color:#a6e22e">io</span><span style="color:#f92672">/</span><span style="color:#a6e22e">hashicorp</span><span style="color:#f92672">/</span><span style="color:#a6e22e">aws</span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">&#34;]&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;instances&#34;</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;schema_version&#34;</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;attributes&#34;</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;all_availability_zones&#34;</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">null</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;exclude_names&#34;</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">null</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;exclude_zone_ids&#34;</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">null</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;filter&#34;</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">null</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;group_names&#34;</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#34;ap-northeast-2&#34;</span>
+</span></span><span style="display:flex;"><span>            ],
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;id&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;ap-northeast-2&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;names&#34;</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#34;ap-northeast-2a&#34;</span>,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#34;ap-northeast-2b&#34;</span>,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#34;ap-northeast-2c&#34;</span>,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#34;ap-northeast-2d&#34;</span>
+</span></span><span style="display:flex;"><span>            ],
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;state&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;available&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;timeouts&#34;</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">null</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;zone_ids&#34;</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#34;apne2-az1&#34;</span>,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#34;apne2-az2&#34;</span>,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#34;apne2-az3&#34;</span>,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#34;apne2-az4&#34;</span>
+</span></span><span style="display:flex;"><span>            ]
+</span></span><span style="display:flex;"><span>          },
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;sensitive_attributes&#34;</span><span style="color:#f92672">:</span> []
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      ]
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ],
+</span></span></code></pre></div><p><img src="./images/az2.png" alt="availablity_zones_tfstate"></p>
+<ul>
+<li>파일을 직접 확인하지 않아도, terraform 명령어를 통해서도 조회가 가능합니다.
+<ul>
+<li><code>terraform console</code></li>
+<li><code>terraform state show</code></li>
+</ul>
+</li>
+</ul>
+<p>(1) terraform console</p>
+<ul>
+<li>파이프로 리소스를 전달하여, 조회합니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;data.aws_availability_zones.available.names&#39;</span> | terraform console
+</span></span></code></pre></div><p><img src="./images/az4.png" alt="tfstate_console"></p>
+<p>(2) terraform state show</p>
+<ul>
+<li><code>terraform state</code>: state 관리를 위한 서브 커맨드를 제공.
+<ul>
+<li>list / mv / pull / push / replace-provider / rm / show</li>
+</ul>
+</li>
+<li>subcommand <code>show</code>: 지정한 리소스의 state를 조회.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>terraform state show data.aws_availability_zones.available
+</span></span></code></pre></div><p><img src="./images/az3.png" alt="tfstate_state_show"></p>
+<h2 id="2-output-알아보기">2. output 알아보기</h2>
+<ul>
+<li><a href="https://blog.minseong.xyz/post/terraform-hello-world-tfenv/">지난번</a>의 예제에서는 생성된 인스턴스를 확인하기 위해,<br>
+별도로 aws-cli를 구동하여 IP를 획득하였습니다.</li>
+<li>번거로울 뿐만 아니라, 생성되는 정보를 파악하기 힘들기 때문에 그 다음 액션을 취하기 대단히 어렵습니다.<br>
+이번에는 output을 활용하여, 생성된 VPC ID를 얻어보도록 하겠습니다.</li>
+</ul>
+<h3 id="1-vpc-리소스-생성-파일-작성">(1) VPC 리소스 생성 파일 작성</h3>
+<ul>
+<li>루트 폴더에 <code>vpc</code>라는 폴더를 생성하고, 아래와 같은 <code>vpc.tf</code>파일을 생성합니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir vpc <span style="color:#f92672">&amp;&amp;</span> cd vpc
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-HCL" data-lang="HCL"><span style="display:flex;"><span><span style="color:#75715e"># vpc.tf
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">provider</span> <span style="color:#e6db74">&#34;aws&#34;</span> {
+</span></span><span style="display:flex;"><span>  region <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ap-northeast-2&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_vpc&#34; &#34;primary_vpc&#34;</span> {
+</span></span><span style="display:flex;"><span>  cidr_block <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;172.16.0.0/16&#34;</span>
+</span></span><span style="display:flex;"><span>  tags <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;t101-vpc-primary&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_vpc&#34; &#34;secondary_vpc&#34;</span> {
+</span></span><span style="display:flex;"><span>  cidr_block <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;172.18.0.0/16&#34;</span>
+</span></span><span style="display:flex;"><span>  tags <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;t101-vpc-secondary&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;aws_vpc_primary_id&#34;</span> {
+</span></span><span style="display:flex;"><span>  value <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_vpc</span>.<span style="color:#66d9ef">primary_vpc</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;aws_vpc_secondary_id&#34;</span> {
+</span></span><span style="display:flex;"><span>  value <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_vpc</span>.<span style="color:#66d9ef">secondary_vpc</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>output에 표시할 값으로 각 VPC 리소스의 ID를 가져오도록 하였습니다.</li>
+<li>참고) 작성시점 기준, <code>172.17.0.0/16</code> CIDR은 AWS의 일부 서비스(AWS Cloud9/Amazon SageMaker)에서 사용하므로 피하도록 합니다. (링크: <a href="https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-cidr-blocks.html">AWS VPC Docs</a>)</li>
+</ul>
+<p><img src="./images/vpc_tf1.jpg" alt="vpc_tf"></p>
+<ul>
+<li>
+<p>같은 backend를 바라보고 있지 않으므로, <code>terraform init</code>을 하고,<br>
+<code>terraform plan</code> 으로 확인해보고, <code>terraform apply</code>를 해봅니다.</p>
+</li>
+<li>
+<p><code>plan</code>: 실제 적용을 하지 않기에, <code>output</code>란에는 <code>(known after apply)</code>로 표기됨을 확인</p>
+</li>
+</ul>
+<p><img src="./images/vpc_tf1_plan.jpg" alt="vpc_output_plan"></p>
+<ul>
+<li><code>apply</code>: (<code>yes</code>를 선택하여 적용 후) <code>output</code>란에 각 VPC의 ID가 표기됨을 알 수 있습니다.</li>
+</ul>
+<p><img src="./images/vpc_tf1_apply.jpg" alt="vpc_output_apply"></p>
+<h3 id="2-output-값-조회">(2) output 값 조회</h3>
+<ul>
+<li>이렇게까지 output에 대해 알아볼 수 있는 기회가 없었었기에,<br>
+output은 단순히 <code>apply</code> 단계에서만 확인할 수 있는 출력값으로만 여겼었습니다.</li>
+<li>하지만, 이번 시간에는 이렇게 출력되도록 설정한 <code>output</code>값을 재조회 해보도록 하겠습니다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 전체 output 조회</span>
+</span></span><span style="display:flex;"><span>terraform output
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 특정 output 값 조회 (e.g. aws_vpc_primary_id)</span>
+</span></span><span style="display:flex;"><span>terraform output aws_vpc_primary_id
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &#39;개행없이&#39; 특정 output 값 조회</span>
+</span></span><span style="display:flex;"><span>terraform output -raw aws_vpc_primary_id
+</span></span></code></pre></div><ul>
+<li>개행없이 출력하는 옵션은 여러모로 유용해보입니다.</li>
+</ul>
+<p><img src="./images/vpc_output.jpg" alt="vpc_output"></p>
+<h2 id="3-resource-이름-변경">3. resource 이름 변경</h2>
+<ul>
+<li>앞에서 두 VPC 리소스를 tf파일 내부에서<br>
+<code>primary_vpc</code>와 <code>secondary_vpc</code>란 이름으로 지정하였습니다.</li>
+<li>현재, 각 VPC ID는 아래와 같이 확인됩니다.
+<ul>
+<li>t101-vpc-primary: vpc-0af570aef245dc55f</li>
+<li>t101-vpc-secondary: vpc-0f700cf4401c5f346</li>
+</ul>
+</li>
+</ul>
+<p><img src="./images/console_vpc_origin.jpg" alt="vpc_origin_id"></p>
+<ul>
+<li>이번에는 이 이름을 수정해보고, 적용해보면서 terraform에서 이를 어떻게 처리하는 지 알아봅시다.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-HCL" data-lang="HCL"><span style="display:flex;"><span><span style="color:#66d9ef">provider</span> <span style="color:#e6db74">&#34;aws&#34;</span> {
+</span></span><span style="display:flex;"><span>  region <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ap-northeast-2&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_vpc&#34; &#34;kkumtree_first_vpc&#34;</span> {   <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">HERE</span>
+</span></span><span style="display:flex;"><span>  cidr_block <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;172.16.0.0/16&#34;</span>
+</span></span><span style="display:flex;"><span>  tags <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;t101-vpc-primary&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_vpc&#34; &#34;kkumtree_second_vpc&#34;</span> {  <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">HERE</span>
+</span></span><span style="display:flex;"><span>  cidr_block <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;172.18.0.0/16&#34;</span>
+</span></span><span style="display:flex;"><span>  tags <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    Name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;t101-vpc-secondary&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;aws_vpc_primary_id&#34;</span> {
+</span></span><span style="display:flex;"><span>  value <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_vpc</span>.<span style="color:#66d9ef">kkumtree_first_vpc</span>.<span style="color:#66d9ef">id</span>     <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">HERE</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;aws_vpc_secondary_id&#34;</span> {
+</span></span><span style="display:flex;"><span>  value <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_vpc</span>.<span style="color:#66d9ef">kkumtree_second_vpc</span>.<span style="color:#66d9ef">id</span>    <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">HERE</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><img src="./images/vpc_tf2.jpg" alt="resource_rename"></p>
+<ul>
+<li>당연하게도 <code>terraform apply</code>로 변경사항을 적용합니다.</li>
+</ul>
+<p><img src="./images/immutable.jpg" alt="immutable"></p>
+<ul>
+<li>
+<p>혹시, 이때 뭔가 위화감이 들지 않나요?</p>
+<ul>
+<li>cidr_block 값을 바꾸지 않았고,</li>
+<li>기존에 생성된 VPC에 대해 terraform 상에서 관리하는 리소스명만 바뀌었는데</li>
+<li><code>destroyed</code>가 뜹니다!</li>
+</ul>
+</li>
+<li>
+<p>이유는 terraform의 immutable 원칙(Tao/도?)때문입니다.</p>
+</li>
+<li>
+<p>기존의 인프라를 수정하거나 업데이트하는 것이 아닌,<br>
+변경된 정보로 새로운 인프라를 생성하여 교체합니다.</p>
+</li>
+<li>
+<p>F1 피트 스톱에서 바퀴를 갈아끼는 것을 연상하면 이해가 쉬울 수도 있을 것 같습니다.<br>
+(참고로, VPC 블록도 한 번 정하면, 대역을 변경할 수 없습니다)</p>
+</li>
+<li>
+<p>아래와 같이, VPC ID가 변경(교체)되었음을 확인할 수 있습니다.</p>
+</li>
+</ul>
+<p><img src="./images/console_vpc_rename.jpg" alt="vpc_renamed_id"></p>
+<h2 id="마무리-및-느낀점">마무리 및 느낀점</h2>
+<ul>
+<li>이번에는 아래의 사항을 중점으로 알아보았습니다.
+<ul>
+<li>output의 필요성과 활용</li>
+<li>terraform의 immutable 속성</li>
+</ul>
+</li>
+<li>덤으로, <code>172.17.0.0/16</code> CIDR은 사실상 AWS에서 예약한 VPC CIDR 블록임을 알 수 있었습니다.</li>
+</ul>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a></li>
+<li><a href="https://link.coupang.com/a/8mN0N">테라폼으로 시작하는 IaC</a></li>
+<li><a href="https://developer.hashicorp.com/terraform/cli/commands/init#child-module-installation">Terraform CLI</a></li>
+<li><a href="https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-cidr-blocks.html">AWS VPC Docs</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2023/08/31/terraform-hello-world-tfenv/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Terraform 시작하기 w/Minimal Ubuntu</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2023/09/13/terraform-cloud-with-iam-sts/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">IAM STS를 이용한 Terraform Cloud 권한 부여</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

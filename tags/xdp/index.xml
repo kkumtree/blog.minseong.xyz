@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Xdp on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/xdp/</link>
+		<description>Recent content in Xdp on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Mon, 21 Oct 2024 19:47:33 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/xdp/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Why eBPF?</title>
+				<link>https://blog.minseong.xyz/2024/10/21/kans-8w-why-ebpf/</link>
+				<pubDate>Mon, 21 Oct 2024 19:47:33 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2024/10/21/kans-8w-why-ebpf/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;고쳐야할 부분이 &lt;code&gt;너무&lt;/code&gt; 많아서 나중에 해당 부분만 글을 작성할 예정입니다.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;어느덧 이번 스터디도 대망의 Cilium을 다루기 시작합니다.&lt;br&gt;&#xA;Cilium에 이렇게도 (저를 포함한) 모?두가 열광하는지 알아보기 전에&lt;br&gt;&#xA;근간이 되는 eBPF를 먼저 가볍게 알아보고 가려합니다.&lt;br&gt;&#xA;&lt;del&gt;이 때는 설마 했지만, 역시나 스불재 엔딩이었다&lt;/del&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 &lt;strong&gt;K&lt;/strong&gt;8s &lt;strong&gt;A&lt;/strong&gt;dvanced &lt;strong&gt;N&lt;/strong&gt;etwork &lt;strong&gt;S&lt;/strong&gt;tudy(이하, KANS)를 통해 학습한 내용을 정리합니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;1-linux-network-stack&#34;&gt;1. Linux Network Stack&lt;/h2&gt;&#xA;&lt;p&gt;스터디 1주차의 &lt;a href=&#34;https://blog.minseong.xyz/post/kans-1w-container-socket/&#34;&gt;Jenkins 컨테이너에서 Host의 Docker 데몬 사용하기&lt;/a&gt;에서 가볍게 맛을 보고 도망치기 바빴지만, 여튼 아래의 사항은 스쳐지나갔습니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

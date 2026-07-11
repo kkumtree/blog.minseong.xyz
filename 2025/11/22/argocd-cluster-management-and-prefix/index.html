@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="apple-icon-180x180" sizes="180x180" href='/img/favicon/apple-icon-180x180.png'>
+    <link rel="icon" type="image/png" sizes="32x32" href='/img/favicon/favicon-32x32.png'>
+    <link rel="icon" type="image/png" sizes="16x16" href='/img/favicon/favicon-16x16.png'>
+
+    <title>ArgoCD Cluster 및 Prefix 관리 - CI/CD 스터디 6주차 | kkumtree</title>
+    
+    <meta property="og:site_name" content="kkumtree" />
+    <meta property="og:title" content="ArgoCD Cluster 및 Prefix 관리 - CI/CD 스터디 6주차" />
+
+    
+    <meta property="og:image" content='https://blog.minseong.xyz/2025/11/22/argocd-cluster-management-and-prefix/image-11.png' />
+    <meta property="og:image:secure_url" content='https://blog.minseong.xyz/2025/11/22/argocd-cluster-management-and-prefix/image-11.png' />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content='https://blog.minseong.xyz/2025/11/22/argocd-cluster-management-and-prefix/image-11.png' />
+
+    <link rel="stylesheet" href="https://blog.minseong.xyz/sass/theme.min.dc8e4bed2b67dd4eda3954655840d2efca40f0446a15d66bf815c46421dd8401.css">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src='/js/search.js'></script>
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GCJ1CESNKD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GCJ1CESNKD');
+</script><body><header id="navigation" class="p-navigation is-dark">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <div class="p-navigation__tagged-logo" style="min-width: 6rem;">
+        <a class="p-navigation__link" href="/">
+          <div class="p-navigation__logo-tag">
+            <img class="p-navigation__logo-icon" src='/img/BlogWhite.svg' alt="">
+          </div>
+          <span class="p-navigation__logo-title">Blog</span>
+        </a>
+      </div>
+      <a href="#navigation" class="p-navigation__toggle--open" title="menu">Menu</a>
+      <a href="#navigation-closed" class="p-navigation__toggle--close" title="close menu">Close menu</a>
+    </div>
+    <nav class="p-navigation__nav" aria-label="Example sub navigation">
+      <ul class="p-navigation__items">
+        
+      </ul>
+
+      <ul class="p-navigation__items">
+        <li class="p-navigation__item">
+          <a href="#" id="search-toggle" class="p-navigation__link" title="Search">
+            🔍 <span class="p-sr-only">Search</span>
+          </a>
+        </li>
+        <div id="search-modal" class="search-modal" style="display: none;">
+    <div class="search-modal-content">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search..." aria-label="Search">
+            <button id="close-search" class="close-search" aria-label="Close search">×</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+    </div>
+</div>
+
+<style>
+    .search-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 5rem;
+    }
+
+    .search-modal-content {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .close-search {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .search-results {
+        margin-top: 1rem;
+    }
+
+    .search-result-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .search-result-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .search-result-item p {
+        margin-top: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+        
+
+        <li class="p-navigation__item">
+          <a class="p-navigation__link" href="/tags">
+            🏷️ <span class="p-sr-only">Tags</span>
+          </a>
+        </li>
+        <li class="p-navigation__item--dropdown-toggle" id="link-4">
+          <a class="p-navigation__link" aria-controls="account-menu">
+            🔗 <span class="p-sr-only">Links</span>
+          </a>
+          <ul class="p-navigation__dropdown--right" id="account-menu" aria-hidden="true">
+            <li>
+              <a href="https://github.com/kkumtree" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">GitHub ⧉</a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Linkedin ⧉</a>
+            </li>
+            <li>
+              <a href="https://launchpad.net/~mscho7969" class="p-navigation__dropdown-item" target="_blank"
+                rel="noopener noreferrer">Launchpad ⧉</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header><div id="content">
+
+
+<main>
+  <section class="p-strip--image main-strip"
+    }
+    style="background-image:url('image-11.png'); background-position: center; background-repeat: no-repeat; background-size: cover;"
+    >
+      <div class="row">
+        
+        <div class="col-6">
+          <div class="p-card--overlay">
+            <h2>ArgoCD Cluster 및 Prefix 관리 - CI/CD 스터디 6주차</h2>
+            <ul class="p-card__content p-inline-list--middot">
+              
+              <li class="p-inline-list__item">
+                kkumtree
+              </li>
+              
+            </ul>
+            <p><u class=" timedisplay" style="text-decoration-style: dotted;">2025-11-22T20:56:43&#43;09:00</u></p>
+            <p class="p-card__content"></p>
+            
+            <a href="/tags/argocd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">argocd</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cicd" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CICD</span>
+              </div>
+            </a>
+            
+            <a href="/tags/cloudnet@" class="tag">
+              <div class="p-chip">
+                <span class="p-chip__value">CloudNet@</span>
+              </div>
+            </a>
+            
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <section class="p-strip">
+  <div class="row">
+  <p><a href="https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863">CloudNet@</a>에서 진행하고 있는 CI/CD Study 6주차에는 ArgoCD를 마지막으로 다루었습니다.<br>
+Cluster를 추가해보고 Gitea를 붙이기 전에, ArgoCD를 Prefix로 라우팅하려고 했는데 로그아웃하고 나서 원치않는 경로로 빠지는 바람에<br>
+이것저것 살펴보고 수정을 하여 원하는 대로 구동되도록 셋업했습니다.</p>
+<h2 id="0-실습-준비">0. 실습 준비</h2>
+<blockquote>
+<p>해당 구성들은 아래 GitHub에 탑재되어 있습니다.<br>
+<a href="https://github.com/kkumtree/ci-cd-cloudnet-study">https://github.com/kkumtree/ci-cd-cloudnet-study</a> 의 6w 폴더</p>
+</blockquote>
+<p>이전 포스팅 <a href="../playing-argocd-with-tailscale/">Tailscale을 타고, ArgoCD에 접근해보기</a>을 하였다면, 리소스 정리를 합니다.</p>
+<blockquote>
+<p>kind 배포 시, 포트 점유로 오류가 발생합니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo tailscale serve --tcp <span style="color:#ae81ff">443</span> off
+</span></span></code></pre></div><p><img src="image.png" alt="disable tailscale tcp 443 serve"></p>
+<p>이후 실습을 위한 배포를 합니다.</p>
+<h3 id="1-kind-클러스터-배포">(1) kind 클러스터 배포</h3>
+<p>이번 실습에서는 k8s 다중 클러스터 환경에서의 ArgoCD를 다루기에,<br>
+총 3개의 클러스터를 배포합니다.</p>
+<p>(6w/shells/kind/)</p>
+<ol>
+<li>up-kind-mgmt.sh 실행
+<ul>
+<li>kind 클러스터, mgmt 생성</li>
+<li>ingress-nginx 배포</li>
+<li>ingress-nginx에 SSL passthrough 활성화</li>
+</ul>
+</li>
+<li>up-kind-dev-prd.sh 실행
+<ul>
+<li>kind 클러스터, dev 생성</li>
+<li>kind 클러스터, prd 생성</li>
+</ul>
+</li>
+</ol>
+<p><img src="image-1.png" alt="provisioning mgmt kind cluster"><br>
+<img src="image-2.png" alt="provisioning dev, prd kind cluster"></p>
+<p>이후 아래 3개의 context를 확인할 수 있습니다.<br>
+(<code>kubectl config get-contexts</code>, k9s의 경우 <code>:ctx</code>)</p>
+<ul>
+<li>kind-mgmt / kind-prd / kind-dev</li>
+</ul>
+<p><img src="image-4.png" alt="confirm three contexts in host"></p>
+<h3 id="2-argocd-배포mgmt">(2) ArgoCD 배포(mgmt)</h3>
+<p>Tailscale 연동이 재밌었기 때문에, 이번엔 이쪽[sol.2]으로 합니다.</p>
+<p><strong>[sol.1] <code>/etc/hosts</code> 파일을 변경하여 접근하도록 하는 방법</strong></p>
+<p>(6w/shells/argocd/)</p>
+<ol>
+<li><code>9-create-local-tls.sh</code> 실행</li>
+<li><code>deploy-chart.sh</code> 실행
+<ul>
+<li><code>kind-mgmt</code>로 context 전환</li>
+<li>ArgoCD 배포</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>아래처럼 <code>/etc/hosts</code> 파일도 수정하여, 임의의 도메인을 추가합니다.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># (Mac/Linux)  </span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;127.0.0.1 argocd.example.com&#34;</span> | sudo tee -a /etc/hosts
+</span></span><span style="display:flex;"><span>cat /etc/hosts
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (Windows)  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># C:\Windows\System32\drivers\etc\hosts 관리자모드에서 메모장에 내용 추가</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 127.0.0.1 argocd.example.com</span>
+</span></span></code></pre></div><p><img src="image-3.png" alt="edit etc hosts file"></p>
+<p><strong>[sol.2] Tailscale 로 접근하도록 하는 방법</strong></p>
+<blockquote>
+<p>이전 포스팅 <a href="../playing-argocd-with-tailscale/">Tailscale을 타고, ArgoCD에 접근해보기</a>을 참고하여 각자의 DNS로 변경 후 실행합니다.</p>
+</blockquote>
+<p>(6w/shells/tailnet-argocd)</p>
+<ul>
+<li>tailnet에 등록된 해당 hostname 확인: 두 번째 값<br>
+<code>tailscale status | head -n 1</code></li>
+<li>tailnet DNS 확인: <code>Search Domains:</code>의 항목 확인<br>
+<code>sudo tailscale dns status</code></li>
+<li><code>create-local-tls.sh</code> 파일을 확인된 값으로 변경 후, 실행</li>
+<li><code>deploy-chart.sh</code> 파일을 확인된 값으로 변경 후, 실행
+<ul>
+<li><code>kind-mgmt</code>로 context 전환</li>
+<li>ArgoCD 배포</li>
+</ul>
+</li>
+</ul>
+<p><img src="image-5.png" alt="deploy argocd chart with tls"></p>
+<p>이후에 아래 커맨드로 Tailscale serve를 활성화 합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo tailscale serve --bg --tcp <span style="color:#ae81ff">443</span> tcp://localhost:443
+</span></span></code></pre></div><h3 id="3-argocd-초기-패스워드-변경">(3) ArgoCD 초기 패스워드 변경</h3>
+<p>ArgoCD 권장 사항으로 패스워드 변경 후, 초기 패스워드는 제거합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ARGOPW<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{.data.password}&#34;</span> | base64 -d ;echo<span style="color:#66d9ef">)</span>  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># argocd login argocd.example.com --insecure --username admin --password $ARGOPW</span>
+</span></span><span style="display:flex;"><span>argocd login kkumtree-ms-7a34.panda-ule.ts.net --insecure --username admin --password $ARGOPW  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 사용자 지정 패스워드로 변경  </span>
+</span></span><span style="display:flex;"><span>argocd account update-password --current-password $ARGOPW --new-password kkumtree  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># (권장) 초기 비밀번호 제거  </span>
+</span></span><span style="display:flex;"><span>kubectl delete secret argocd-initial-admin-secret -n argocd  
+</span></span></code></pre></div><p><img src="image-6.png" alt="change admin password and delete initial password"></p>
+<p>이후, 변경된 패스워드로 로그인을 확인합니다.</p>
+<p><img src="image-7.png" alt="login with new password"></p>
+<h2 id="1-argocd-클러스터-관리">1. ArgoCD 클러스터 관리</h2>
+<p>ArgoCD가 배포된 클러스터 외의 클러스터들은 별도로 ArgoCD에 등록하여야합니다.</p>
+<p>이에 앞서, kind를 위한 설정과 Alias 등록을 해두겠습니다.</p>
+<h3 id="1-kind를-위한-설정-및-alias-등록">(1) kind를 위한 설정 및 Alias 등록</h3>
+<p>kind는 Docker위에서 구동되는 것이기에,<br>
+kind가 사용중인 Docker 네트워크와 Docker 포트포워딩 정보를 확인해야합니다.</p>
+<blockquote>
+<p>실습 환경 별로, 사용 중인 네트워크 정보는 달라질 수 있습니다.<br>
+또한 호스트 재부팅 시 각 Docker Network내 IP가 변경될 수 있으니, 확인하여 변경하여야 합니다.</p>
+</blockquote>
+<p>6443 포트를 사용하고 있고 네트워크는 172.16.0.0/16 대역을 사용 중인 것을 확인하였습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker ps
+</span></span><span style="display:flex;"><span>docker network inspect kind | grep -E <span style="color:#e6db74">&#39;Name|IPv4Address&#39;</span>
+</span></span></code></pre></div><p><img src="image-8.png" alt="docker network which kind is in-use"></p>
+<p>이후, 각 cluster별로 확인된 IP주소로 변경합니다. (<code>vi ~/.kube/config</code>)</p>
+<p><img src="image-9.png" alt="change address in kube config"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>alias kctx-mgmt<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;kubectl --context kind-mgmt&#39;</span>
+</span></span><span style="display:flex;"><span>alias kctx-dev<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;kubectl --context kind-dev&#39;</span>
+</span></span><span style="display:flex;"><span>alias kctx-prd<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;kubectl --context kind-prd&#39;</span>
+</span></span></code></pre></div><h3 id="2-클러스터-등록">(2) 클러스터 등록</h3>
+<p>아래 커맨드를 입력한 다음, y로 승인하여 등록 절차를 밟습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>argocd cluster add kind-dev --name dev-k8s
+</span></span><span style="display:flex;"><span>argocd cluster add kind-prd --name prd-k8s
+</span></span></code></pre></div><p><img src="image-10.png" alt="register clusters with argocd cli"></p>
+<p>등록이 되었는지 확인해봅니다.<br>
+클러스터의 자격증명은 <code>argocd.argoproj.io/secret-type=cluster</code>과 함께 시크릿으로 저장됩니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get secret -n argocd -l argocd.argoproj.io/secret-type<span style="color:#f92672">=</span>cluster
+</span></span><span style="display:flex;"><span>argocd cluster list
+</span></span></code></pre></div><p><img src="image-11.png" alt="check registered clusters"></p>
+<h2 id="2-argocd-prefix-재적용">2. ArgoCD Prefix 재적용</h2>
+<p>Gitea도 같이 띄우기 위해서, ArgoCD 진입점을 Prefix <code>/_argocd</code> 로 변경을 해보겠습니다.</p>
+<p>추가로 설정한 값은 아래와 같습니다.</p>
+<p>특히, 로그아웃 시 지정한 Prefix로 리디렉션되지 않아 <code>configs.cm.url</code>을 사용자 정의했습니다.<br>
+추정컨대, SSO 설정을 하려면 필수적으로 필요한 값이라 로직상 사소한 버그는 놔둔 것으로 보입니다.</p>
+<p><img src="image-17.png" alt="set url in argocd-cm"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">configs.params.server.basehref</span>: <span style="color:#e6db74">&#34;/&lt;Prefix&gt;&#34;</span>   <span style="color:#75715e"># Reverse Proxy 사용 시, 하위 경로가 다를 때 사용. 웹콘솔의 index.html 경로 정의</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">configs.params.server.rootpath</span>: <span style="color:#ae81ff">&lt;Prefix&gt;/    </span> <span style="color:#75715e"># Reverse Proxy 사용 시, 하위 경로가 다를 때 사용.  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">configs.cm.url</span>: <span style="color:#e6db74">&#34;https://&lt;DOMAIN&gt;/&lt;Prefix&gt;&#34;</span>   <span style="color:#75715e"># Logout 시, ArgoCD 메인페이지로 가지 못하는 이슈가 있어, 수동으로 지정  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">server.ingress.path</span>: <span style="color:#ae81ff">/&lt;/Prefix&gt;/             </span> <span style="color:#75715e"># 마지막에 `/` 추가하지 않으면 에러발생 확인.  </span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">server.ingress.pathType</span>: <span style="color:#ae81ff">Prefix              </span> <span style="color:#75715e"># ImplementationSpecific로 할 경우, Prefix 뿐만이 아니고 Domain 최상위 경로도 점유하는 것으로 확인  </span>
+</span></span></code></pre></div><p><code>configs</code> 네임스페이스에 정의된 사항은 ConfigMap <code>argocd-cmd-parmas-cm</code> 과 <code>argocd-cm</code> 에서 확인할 수 있습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl get cm -n argocd  
+</span></span><span style="display:flex;"><span>kubectl describe cm/argocd-cmd-params-cm -n argocd | grep -E <span style="color:#e6db74">&#39;server.basehref|server.rootpath&#39;</span> -A <span style="color:#ae81ff">2</span>  
+</span></span></code></pre></div><p><img src="image-15.png" alt="argocd configmap"></p>
+<ol>
+<li>네임스페이스 argocd 제거</li>
+<li><code>deploy-chart-prefix.sh</code> 실행 (로컬 TLS 인증서 없는 경우, 생성 후 진행)</li>
+<li>명령어로 지정한 Prefix로 정상 접근되는 지 점검: Prefix 마지막에 <code>/</code> 추가</li>
+<li>이후, 로그인 재설정 및 클러스터 재등록을 진행했습니다.</li>
+</ol>
+<p>하지만, 네임스페이스를 지우면 TLS 인증서와 cluster 등록을 반복했어야 해서<br>
+디버깅 중에는 helm 업그레이드로 진행했습니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm upgrade argocd -n argocd argo/argo-cd --values argocd-values-tailnet-prefix.yaml
+</span></span></code></pre></div><p>아래 명령어로 정상 접근되는지 확인합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># curl -k https://&lt;DOMAIN&gt;/&lt;Prefix&gt;/  </span>
+</span></span><span style="display:flex;"><span>curl -k https://kkumtree-MS-7A34.panda-ule.ts.net/_argocd/
+</span></span></code></pre></div><p><img src="image-14.png" alt="check after prefix added argocd"></p>
+<p>로그인 시에는 다음과 같이 <code>--grpc-web-root-path /&lt;Prefix&gt;</code> 파라미터를 추가하여 접속합니다.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#  ARGOPW=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=&#34;{.data.password}&#34; | base64 -d ;echo)</span>
+</span></span><span style="display:flex;"><span>argocd login kkumtree-ms-7a34.panda-ule.ts.net --grpc-web-root-path /_argocd --insecure --username admin --password $ARGOPW
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#  argocd account update-password --current-password $ARGOPW --new-password kkumtree</span>
+</span></span><span style="display:flex;"><span>argocd login kkumtree-ms-7a34.panda-ule.ts.net --grpc-web-root-path /_argocd --insecure --username admin --password kkumtree
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#  kubectl delete secret argocd-initial-admin-secret -n argocd</span>
+</span></span></code></pre></div><p><img src="image-16.png" alt="argocli usage with custom prefix path"></p>
+<!-- ## 3. Tailscale Kubernetes Operator 설치  
+
+생각해보니, ArgoCD가 네트워크 내부의 Gitea를 읽으려면 Host 뿐만이 아니라, kind 내부에도 설치를 해야합니다.  
+
+> <https://tailscale.com/kb/1486/kubernetes-operator-multi-cluster-argocd>  
+
+그 전에 Tailscale ACL부터 설정해보겠습니다.  
+
+### (1) Tag 생성
+
+> (Visual editor 기준)
+> Access controls > Tags  
+
+아래처럼 `k8s-operator` 및 `k8s` 태그를 생성하고,  
+`k8s` 태그 소유자(tagOwners)는 `k8s-operator`로 지정합니다.  
+
+![tailscale Access Control](image-18.png)
+
+### (2) OAuth키 발급  
+
+> Settings > Trust credentials > + Credential  
+
+먼저 아래의 형태를 갖습니다. 계정별로 고유합니다.  
+
+```yaml
+OAuth client ID: "k123456CNTRL"
+OAuth client secret: "tskey-client-k123456CNTRL-abcdef"
+```
+
+아래 화면에서 `+ Credential` 클릭
+
+![tailscale trust credential](image-19.png)
+
+`New credential`에서 OAuth 선택 확인 후, Continue.  
+
+Write 권한은 아래 두 가지를 지정하며,  
+tag는 앞서 지정한 `k8s-operator`로 설정합니다.  
+
+- Devices > Core  
+- Keys > Auth Keys  
+
+![Set scope with tag](image-20.png)
+
+생성 버튼을 누르면 모달창이 뜨는데, 닫으면 조회가 안되므로 메모해둡니다.  
+
+### (3) 배포  
+
+(6w/shells/tailscale-operator/)
+
+```bash
+TAIL_OAUTH_CLIENT_ID=k123456CNTRL 
+TAIL_OAUTH_CLIENT_SECRET=skey-client-k123456CNTRL-abcdef
+
+TAIL_OAUTH_CLIENT_ID=$TAIL_OAUTH_CLIENT_ID TAIL_OAUTH_CLIENT_SECRET=$TAIL_OAUTH_CLIENT_SECRET ./deploy-chart.sh
+```
+
+![deploy tailscale operator](image-21.png)
+
+정상적으로 배포되었다면, 기기 등록 페이지에서도 확인됩니다.  
+
+![check operators are registered](image-22.png)
+
+### (4) MagicDNS(tailnet) 사용 설정  
+
+Tailscale의 dnsconfig 리소스를 활용하여, coredns에 추가하여야 합니다.  
+
+```bash
+./deploy-ts-dns.sh
+```
+
+해당 스크립트에는 
+
+- dnsconfig 리소스 생성
+- coredns에 ts.net을 위한 DNS정보 추가
+
+![deploy ts dns](image-23.png) -->
+<h2 id="9-host-재부팅-시-unhandled-error">9. Host 재부팅 시, Unhandled Error</h2>
+<p><img src="image-12.png" alt="Unhandled Error after reboot"></p>
+<p>재부팅 후 kubectl 명령어 입력 시 kind 클러스터, 즉 Docker pod의 Docker network 상의 IP주소가 변경되므로 <code>1-(1) kind를 위한 설정 및 Alias 등록</code>을 참조하여 <code>~/.kube/config</code> 설정을 업데이트 합니다.</p>
+<p>더불어 ArgoCD 클러스터도 재등록 해야합니다.</p>
+<ul>
+<li>기존 클러스터 제거: <code>argocd cluster rm &lt;CLUSTER NAME&gt;</code></li>
+</ul>
+<p><img src="image-13.png" alt="re-assign clusters with argocd cli"></p>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cmd-params-cm.yaml">argocd-cmd-params-cm.yaml/GitHub</a></li>
+<li><a href="https://github.com/argoproj/argo-cd/blob/d5fee5a18af39b71b151d306b973956dadded7e4/docs/operator-manual/argocd-cm.yaml#L11">url in argocd-cm.yaml/GitHub</a></li>
+<li><a href="https://github.com/argoproj/argo-cd/blob/d5fee5a18af39b71b151d306b973956dadded7e4/server/logout/logout.go#L73">logoutRedirectURL in logout.go</a></li>
+</ul>
+
+  </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <script src="https://giscus.app/client.js"
+        data-repo="kkumtree/blog.minseong.xyz"
+        data-repo-id="R_kgDOIv-sqA"
+        data-category="Blog Comments"
+        data-category-id="DIC_kwDOIv-sqM4CW7uO"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ko"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </div>
+  </section>
+  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card-body" id="adbody">
+      <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1254864146899485"
+          crossorigin="anonymous"></script>
+      
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1254864146899485"
+          data-ad-slot="3556422150" data-ad-format="auto"
+          data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
+  
+  <script>
+      let adsection = document.getElementsByClassName("adsbygoogle")[0];
+      let adfallback = document.getElementById("adfallback");
+      adfallback.style.display = "none";
+      if (window.getComputedStyle(adsection).display == "none") {
+          document.getElementById("adbody").style.display = "none";
+          adfallback.style.display = "block";
+      } 
+  </script>
+</div>
+  <section class="p-strip--light">
+    <div class="row">
+      
+      <div class="col-12">
+        <div class="p-media-object">
+          <img src="https://avatars.githubusercontent.com/u/52643858?v=4" class="p-media-object__image is-round" alt="">
+          <div class="p-media-object__details">
+            <h3 class="p-media-object__title">
+              <a href="#">kkumtree</a>
+            </h3>
+            <p class="p-media-object__content">plumber for infra</p>
+            <ul class="p-inline-list--middot">
+              <li class="p-inline-list__item"><a href="mailto:mscho7969@ubuntu.com">Email</a></li>
+              <li class="p-inline-list__item"><a href="https://launchpad.net/~mscho7969">Launchpad</a></li>
+              <li class="p-inline-list__item"><a href="https://github.com/kkumtree">GitHub</a></li>
+            </ul>
+          </div>
+        </div>
+         
+    </div>
+  </section>
+  <section class="p-strip">
+    <div class="row">
+      <footer class="p-article-pagination">
+        
+        <a class="p-article-pagination__link--previous" href="/2025/11/17/playing-argocd-with-tailscale/">
+          <span class="p-article-pagination__label">Previous</span>
+          <span class="p-article-pagination__title">Tailscale을 타고, ArgoCD에 접근해보기</span>
+        </a>
+        
+        
+        <a class="p-article-pagination__link--next" href="/2025/11/30/vault-101-in-kubernetes/">
+          <span class="p-article-pagination__label">Next</span>
+          <span class="p-article-pagination__title">Vault 101 in Kubernetes - CI/CD 스터디 7주차</span>
+        </a>
+        
+      </footer>
+    </div>
+  </section>
+</main>
+
+        </div><section class="p-strip--accent">
+  <div class="row">
+    <div class="col-12">
+      <h2>kkumtree</h2>
+      <ul class="p-inline-list--middot is-dark">
+        <li class="p-inline-list__item">
+          <a href="mailto:mscho7969@ubuntu.com">Contact with (Email)</a>
+        </li>
+        
+        
+        
+        <li class="p-inline-list__item">
+          <a href="https://github.com/kkumtree">GitHub</a>
+        </li>
+        <li class="p-inline-list__item">
+          <a href="https://launchpad.net/~mscho7969">Launchpad</a>
+        </li>
+      </ul>
+      <a href="https://github.com/kkumtree/blog.minseong.xyz">Source code on GitHub</a>
+      <p>
+        © 2025 kkumtree and contributors All rights reserved.<br>
+        Licensed under <br>
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+          CC BY-NC-ND 4.0
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg">
+          <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nd.svg">
+        </a>
+      </p>
+    </div>
+  </div><script type="text/javascript" src='/js/v-framework.js'></script>
+<script type="text/javascript" src='/js/timedisplay.js'></script>
+<script>
+
+let slides = document.getElementsByClassName("main-slide");
+let index = 0;
+let count = slides.length;
+function setSlideIndex(destination) {
+    index = destination % count;
+    index = index < 0 ? index * -1 : index;
+    for (let i = 0; i < count; i++) {
+        if(i == index) {
+            slides[i].style.display = "block";
+        } else {
+            slides[i].style.display = "none";
+        }
+    }
+}
+function nextSlide() {
+    setSlideIndex(index + 1);
+}
+function prevSlide() {
+    setSlideIndex(index - 1);
+}
+if (count > 0) {
+    setSlideIndex(0);
+    setInterval(nextSlide, 5000);
+}
+</script>
+
+
+
+</body>
+</html>

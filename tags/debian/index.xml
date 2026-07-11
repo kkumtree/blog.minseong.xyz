@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Debian on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/debian/</link>
+		<description>Recent content in Debian on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 02 Mar 2025 22:31:49 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/debian/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>How to manage Microsoft packages with APT manager</title>
+				<link>https://blog.minseong.xyz/2025/03/02/how-to-manage-microsoft-packages-with-apt-manager/</link>
+				<pubDate>Sun, 02 Mar 2025 22:31:49 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2025/03/02/how-to-manage-microsoft-packages-with-apt-manager/</guid>
+				<description>&lt;p&gt;Microsoft gave us a lot of programs as Ubuntu/Debian packages.&lt;/p&gt;&#xA;&lt;p&gt;In this post, I will show you how to manage Edge and VSCode packages with APT package manager.&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;APT is stands for &lt;code&gt;Advanced Package Tool&lt;/code&gt;.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;h2 id=&#34;why&#34;&gt;Why?&lt;/h2&gt;&#xA;&lt;p&gt;Simple. I want to upgrade them easily with APT package manager rather than using &lt;code&gt;dpkg&lt;/code&gt; command.&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo apt-get update -y &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; sudo apt-get upgrade -y  &#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;When I installed Microsoft Edge and Visual Studio Code, I used &lt;code&gt;dpkg&lt;/code&gt; command.&#xA;But, It is little burdensome to manage packages with &lt;code&gt;dpkg&lt;/code&gt; command in Update/Upgrade.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>The following signatures were invalid: EXPKEYSIG</title>
+				<link>https://blog.minseong.xyz/2024/11/04/apt-expkeysig-troubleshooting/</link>
+				<pubDate>Mon, 04 Nov 2024 21:24:49 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2024/11/04/apt-expkeysig-troubleshooting/</guid>
+				<description>&lt;blockquote&gt;&#xA;&lt;p&gt;매번 수정하기 귀찮아서, 나중에 찾아서 쓰려고 끄적이는 메모&lt;br&gt;&#xA;보통 GPG키 지우고 다시 받으면 된다.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;그런 날이 있다. 무심결에 &lt;code&gt;sudo apt-get update&lt;/code&gt;를 실행하는 순간, 에러가 뜨는 날.&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;images/expkeysig.png&#34; alt=&#34;expkeysig&#34;&gt;&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.31/deb  InRelease: The following signatures were invalid: EXPKEYSIG 234654DA9A296436 isv:kubernetes OBS Project &amp;lt;isv:kubernetes@build.opensuse.org&amp;gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;W: Failed to fetch https://pkgs.k8s.io/core:/stable:/v1.31/deb/InRelease  The following signatures were invalid: EXPKEYSIG 234654DA9A296436 isv:kubernetes OBS Project &amp;lt;isv:kubernetes@build.opensuse.org&amp;gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;W: Some index files failed to download. They have been ignored, or old ones used instead.&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Zorin OS로 처음 입문할 때는 이거 마주치면 버티다 버티다 포맷했는데, 이제는 뭐&amp;hellip; 어디서 키 만료됐나보다 하고 그려려니 한다. =ㅅ=);&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

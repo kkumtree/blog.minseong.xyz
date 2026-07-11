@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Kvcache on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/kvcache/</link>
+		<description>Recent content in Kvcache on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sat, 20 Jun 2026 17:57:45 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/kvcache/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>KV cache에 대한 이해</title>
+				<link>https://blog.minseong.xyz/2026/06/20/aidn-kvcache-and-localllm/</link>
+				<pubDate>Sat, 20 Jun 2026 17:57:45 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2026/06/20/aidn-kvcache-and-localllm/</guid>
+				<description>&lt;p&gt;지난 주 일요일부터 &lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 AI Datacenter Network Study(이하, AIDN)에 참여하게 되었습니다.&lt;/p&gt;&#xA;&lt;p&gt;요새는 PC에 달린 그래픽카드 활용을 위해, 이것저것(RAG, ASR 및 일반적인 추론모델) 돌려보는 중인데 그 중에서 막히던게 KV cache에 대한 이해 부족으로 Hermes Agent용 모델 선정에 애를 먹고 있었습니다. 그래서 이왕 하는 김에 큰 욕심을 버리고 KV cache에 대한 이해를 해보고자 합니다.&lt;/p&gt;&#xA;&lt;p&gt;영상은 스터디에서 참고용으로 추천해주신 수 많은 영상들 중에서 &lt;a href=&#34;https://www.youtube.com/watch?v=sq3XGM1qdQY&#34;&gt;[KV cache 시각화로 설명]&lt;/a&gt; 영상을 참고 하였습니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;1-kv-cache-란&#34;&gt;1. KV cache 란?&lt;/h2&gt;&#xA;&lt;p&gt;이해하고 있는 내용으로는 역시 말 그대로 Key-Value 형태의 캐싱입니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

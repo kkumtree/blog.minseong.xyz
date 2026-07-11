@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Book on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/book/</link>
+		<description>Recent content in Book on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Tue, 21 Nov 2023 13:51:29 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/book/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>그림으로 배우는 구글 클라우드 101 리뷰</title>
+				<link>https://blog.minseong.xyz/2023/11/21/visualizing-google-cloud-101-book-review/</link>
+				<pubDate>Tue, 21 Nov 2023 13:51:29 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2023/11/21/visualizing-google-cloud-101-book-review/</guid>
+				<description>&lt;p&gt;Jpub에서 최근 출판한 &lt;a href=&#34;https://jpub.tistory.com/1488&#34;&gt;그림으로 배우는 구글 클라우드 101 - 제이펍 홈페이지&lt;/a&gt;에 대해,&lt;br&gt;&#xA;짧막하게 소개하는 글입니다.&lt;/p&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-info&#34; data-lang=&#34;info&#34;&gt;《그림으로 배우는 구글 클라우드 101》 서평단으로 본 도서를 제공받아 작성하였습니다.&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;최근 AWS 프로젝트를 진행하고 있습니다. Terraform을 활용하여, IaC 기반의 인프라 구성을 하고 있는데요.&lt;/p&gt;&#xA;&lt;p&gt;작년부터 DR(DR, Disaster Recovery)이 급격하게 화두가 되면서,&lt;br&gt;&#xA;Multi-AZ, Multi-Region을 넘어 Multi-Cloud도 고려의 대상이 되는 것 같습니다.&lt;/p&gt;&#xA;&lt;p&gt;관심이 있는지라 이번 프로젝트가 끝나면, AWS 외에도 GCP같은 다양한 CSP를 다시금 다뤄보고 싶다는 생각이 들었습니다.&lt;/p&gt;&#xA;&lt;p&gt;물론 GCP를 주력으로 쓰고 있다면 이야기가 다르겠지만,&lt;br&gt;&#xA;맨 처음 클라우드를 배우는 입장, 혹은 GCP에 대한 구축 경험이 적은 상황에서 요구사항에 따라 추가적으로 GCP를 구축해야하는 상황이라면&lt;br&gt;&#xA;국내에서는 기존에 GCP를 빠르게 접근하고 배울 수 있는 방법이 AWS 대비 많지 않다고 느꼈습니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

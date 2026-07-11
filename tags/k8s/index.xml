@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>K8s on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/k8s/</link>
+		<description>Recent content in K8s on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Tue, 25 Jul 2023 00:40:14 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Init Calico from quay registry</title>
+				<link>https://blog.minseong.xyz/2023/07/25/init-calico-from-quay-registry/</link>
+				<pubDate>Tue, 25 Jul 2023 00:40:14 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2023/07/25/init-calico-from-quay-registry/</guid>
+				<description>&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-message&#34; data-lang=&#34;message&#34;&gt;Written in 25 July 2023.&#xA;It could be different when you read this article.&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;error-i-met&#34;&gt;Error I met&lt;/h2&gt;&#xA;&lt;p&gt;I met error message like &lt;code&gt;Init:ImagePullBackOff&lt;/code&gt; when I tried to create calico pod.&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kubectl get pods --all-namespaces&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;NAMESPACE     NAME                                                     READY   STATUS                  RESTARTS   AGE   &#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kube-system   calico-kube-controllers-xxxxxxxxxx-yyyyy                 1/1     Running                 &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;          13h   &#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kube-system   calico-node-xxxxx                                        0/1     Init:ImagePullBackOff   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          13h&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;why-it-happened&#34;&gt;Why it happened&lt;/h2&gt;&#xA;&lt;p&gt;Yes, it&amp;rsquo;s because of changed docker hub policy.&#xA;Recently, I&amp;rsquo;m in an environment that about 20~30 people use 4 public IP addresses.&#xA;So, it&amp;rsquo;s easy to reach docker hub pull rate limit.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

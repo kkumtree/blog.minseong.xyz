@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Aidn on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/aidn/</link>
+		<description>Recent content in Aidn on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 12 Jul 2026 02:24:00 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/aidn/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Network 모니터링과 마이크로버스트</title>
+				<link>https://blog.minseong.xyz/2026/07/12/aidc-network-monitoring-microburst/</link>
+				<pubDate>Sun, 12 Jul 2026 02:24:00 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2026/07/12/aidc-network-monitoring-microburst/</guid>
+				<description>&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 AI Datacenter Network Study(이하, AIDN) 마지막에는 AI 데이터센터 네트워크와 스토리지, 그리고 이에 대한 모니터링을 다뤄주셨습니다.&lt;/p&gt;&#xA;&lt;p&gt;네트워크 모니터링만 짧게 요약하면, 탐지하기 어려운 마이크로버스트(Microburst) 문제를 해결하기 위해,&lt;br&gt;&#xA;Streaming Telemetry, IFA(In-band Flow Analyzer) 등 다양하게 수집하여 네트워크 상태를 실시간으로 감시하고 분석하는 것이 중요하다는 내용이었고,&lt;br&gt;&#xA;이 많은 실시간 메트릭을 분석하는데 AI Agent를 활용할 시 유용할 수 있다는 내용이었습니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;1-기존의-네트워크-장비-모니터링&#34;&gt;1. 기존의 네트워크 장비 모니터링&lt;/h2&gt;&#xA;&lt;p&gt;글로서 주저리 쓰기 전에 Datadog에서 한 눈에 보기 쉽게 정리한 그림이 있어 가져왔습니다.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>NVIDIA GPU 전원과 액체 냉각</title>
+				<link>https://blog.minseong.xyz/2026/07/05/aidc-nvidia-gpu-power-liquid-cooling/</link>
+				<pubDate>Sun, 05 Jul 2026 01:02:23 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2026/07/05/aidc-nvidia-gpu-power-liquid-cooling/</guid>
+				<description>&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 AI Datacenter Network Study(이하, AIDN)에서 데이터센터 전원(전력)과 냉각에 대한 부분을 다뤄주셨습니다.&lt;/p&gt;&#xA;&lt;p&gt;게임용으로 하던, &lt;code&gt;웹&lt;/code&gt;개발을 하던, 영화를 보던, 컴퓨터를 쓰게 되면 전력 소모와 발열은 별개가 아닌 함께 발생하는 이슈라는 것은&amp;hellip; 누구든 직관적으로 체득하는 부분이지요.&lt;/p&gt;&#xA;&lt;p&gt;&lt;del&gt;저 또한 밀실에서 불타고 있는 서버 현황을 보며, 저 아이는 대체 어떻게 도와줘야할까 고민만 깊어집니다&lt;/del&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;image.png&#34; alt=&#34;server temperature&#34;&gt;&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;적당히 차 우려먹기 좋아보이는 온도&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;일반 그래픽카드를 쓰고 있긴 하지만, 저도 체감되는 부분이 있는지라&lt;br&gt;&#xA;적당히 트렌드를 찾아보고 앞으로의 GPU TDP(Thermal Design Power)와 냉각에 대한 부분을 끄적여봅니다.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>NVIDIA GPU Interconnect 계층 훑어보기</title>
+				<link>https://blog.minseong.xyz/2026/06/28/aidn-nvidia-gpu-interconnect/</link>
+				<pubDate>Sun, 28 Jun 2026 00:04:17 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2026/06/28/aidn-nvidia-gpu-interconnect/</guid>
+				<description>&lt;p&gt;&lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 AI Datacenter Network Study(이하, AIDN)에서 매주 생전 처음 접하는 단어들의 홍수에 허우적(?)하는 중입니다.&lt;/p&gt;&#xA;&lt;p&gt;RTX3090의 같은 경우에는 개인용 GPU 중 NV Link 브리지를 지원하는 가장 상위 모델로 알고있지만,&lt;br&gt;&#xA;가정용 메인보드의 PCIe 슬롯 간 속도가 다른건 차치하더라도, NV Link가 주는 효용을 다 쓸 수 있을지 애매해서 좀 고민을 하고 있었습니다.&lt;/p&gt;&#xA;&lt;p&gt;이번 주차에서 들은 생각은 NVIDIA 생태계에서 매우 비용효율적인 소모품이라는 것을 알게 되었습니다.&lt;/p&gt;&#xA;&lt;p&gt;대역폭에 있어서, 가까우면 가까울 수록 크다는 것은 일반적인 저장장치 (ROM -&amp;gt; RAM -&amp;gt; L1/L2 Cache) 계층 구조와 비슷한 느낌이었습니다.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>KV cache에 대한 이해</title>
+				<link>https://blog.minseong.xyz/2026/06/20/aidn-kvcache-and-localllm/</link>
+				<pubDate>Sat, 20 Jun 2026 17:57:45 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2026/06/20/aidn-kvcache-and-localllm/</guid>
+				<description>&lt;p&gt;지난 주 일요일부터 &lt;a href=&#34;https://gasidaseo.notion.site/CloudNet-Blog-c9dfa44a27ff431dafdd2edacc8a1863&#34;&gt;CloudNet@&lt;/a&gt;에서 진행하고 있는 AI Datacenter Network Study(이하, AIDN)에 참여하게 되었습니다.&lt;/p&gt;&#xA;&lt;p&gt;요새는 PC에 달린 그래픽카드 활용을 위해, 이것저것(RAG, ASR 및 일반적인 추론모델) 돌려보는 중인데 그 중에서 막히던게 KV cache에 대한 이해 부족으로 Hermes Agent용 모델 선정에 애를 먹고 있었습니다. 그래서 이왕 하는 김에 큰 욕심을 버리고 KV cache에 대한 이해를 해보고자 합니다.&lt;/p&gt;&#xA;&lt;p&gt;영상은 스터디에서 참고용으로 추천해주신 수 많은 영상들 중에서 &lt;a href=&#34;https://www.youtube.com/watch?v=sq3XGM1qdQY&#34;&gt;[KV cache 시각화로 설명]&lt;/a&gt; 영상을 참고 하였습니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;1-kv-cache-란&#34;&gt;1. KV cache 란?&lt;/h2&gt;&#xA;&lt;p&gt;이해하고 있는 내용으로는 역시 말 그대로 Key-Value 형태의 캐싱입니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

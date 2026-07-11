@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>CIDR on kkumtree</title>
+		<link>https://blog.minseong.xyz/tags/cidr/</link>
+		<description>Recent content in CIDR on kkumtree</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Thu, 18 May 2023 21:36:19 +0900</lastBuildDate>
+		
+			<atom:link href="https://blog.minseong.xyz/tags/cidr/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>aws-cli를 이용한 bastion CIDR 변경</title>
+				<link>https://blog.minseong.xyz/2023/05/18/modify-bastion-cidr-with-aws-cli/</link>
+				<pubDate>Thu, 18 May 2023 21:36:19 +0900</pubDate>
+				<guid>https://blog.minseong.xyz/2023/05/18/modify-bastion-cidr-with-aws-cli/</guid>
+				<description>&lt;h2 id=&#34;0-요약&#34;&gt;0. 요약&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/describe-security-group-rules.html&#34;&gt;Docs 1&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-security-group-rules.html&#34;&gt;Docs 2&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;aws ec2 describe-security-groups &#xA;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;aws ec2 modify-security-group-rules &#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;1-배경&#34;&gt;1. 배경&lt;/h2&gt;&#xA;&lt;p&gt;&lt;img src=&#34;./images/What_I_asked_in_Slack.png&#34; alt=&#34;intro&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;2주 전에 문득 이런 질문을 올렸던 적이 있었다.&lt;br&gt;&#xA;물론 바꾸면 안될 일은 없었는데 이렇게 하는게 맞나 확신이 모자라서 의견을 여쭤봤었고,&lt;br&gt;&#xA;이게 맞다는 확신을 받았다.&lt;/p&gt;&#xA;&lt;p&gt;그리고 오늘&amp;hellip; 카페를 두 곳이나 들리면서 하느라&#xA;약간의 번거로움도 있고 AWS 웹 콘솔에서 하려 했다.&lt;/p&gt;&#xA;&lt;p&gt;그런데, 유독 SG에서만 페이지 로딩이 timeout 걸려서,&lt;br&gt;&#xA;도저히 수정은 커녕 해당 ID도 파악을 하기 힘든 상황이 되었다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>
