@@ -51,8 +51,6 @@ SD-WAN 콘트롤러 조회는 제외하고 간단히 짚고 넘어가면,
 
 ### SNMP(Simple Network Management Protocol)  
 
-사실... 모니터링 주제란 걸 보고 이 부분은 좀 이해가 되겠지! 싶었는데 음 역시.  
-
 SNMP는 라우터, 스위치, 프린터, CCTV, UPS 등 IP 네트워크에 연결된 다양한 장비들의 상태를 중앙에서 원격으로 모니터링하고 관리하기 위한 인터넷 표준 프로토콜입니다.  
 
 OID(Object Identifier)랑 MIB(Management Information Base)를 기반으로 장비의 상태를 확인하도록 설정하고요.  
